@@ -1,5 +1,5 @@
 ---
-"@singularityfm/design-system": minor
+"@singularityfm/design-system": major
 ---
 
-The Button is a React component (DS-3): import it as `@singularityfm/design-system/Button`. `Button.astro` still resolves, to the same component, and is deprecated. An Astro app now needs `react`, `react-dom` (^19.3) and `@astrojs/react` in its integrations, and passes `className` instead of `class` to place a Button (`@astrojs/react` drops `class`). Markup and look are unchanged; a static Button renders on the server and ships no script.
+BREAKING: the Button is a React component (DS-3). An Astro app adds `react`, `react-dom` (^19.3) and `@astrojs/react` to its integrations, and places a Button with `className` instead of `class` (`@astrojs/react` drops `class`): before `<Button variant="text" class="queue-listen">`, after `<Button variant="text" className="queue-listen">`. Import it as `@singularityfm/design-system/Button`; `Button.astro` still resolves, to the same component, and is deprecated. Markup and look are unchanged; a static Button renders on the server and ships no script.
