@@ -11,7 +11,7 @@ renders on the server in an Astro page with no client directive and ships no scr
 pnpm add @singularityfm/design-system
 ```
 
-Peer dependencies: `react` and `react-dom` (^19.3.1), `astro` (^7.4.4), and `@base-ui/react` (^1.9.0)
+Peer dependencies: `react` and `react-dom` (^19.3.0), `astro` (^7.4.4), and `@base-ui/react` (^1.9.0)
 once you draw a component with behaviour. An Astro app adds `@astrojs/react` to its integrations. Node 24
 or later.
 
