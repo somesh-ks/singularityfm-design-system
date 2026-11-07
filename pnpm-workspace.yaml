@@ -1,0 +1,4 @@
+# Two packages: the published library and the style guide that draws it.
+packages:
+  - packages/*
+  - apps/*

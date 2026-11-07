@@ -1,0 +1,75 @@
+name: ci
+
+# Every pull request, one job (each job rounds its minutes up on its own, D148). In this repository every
+# change is a design-system change, so there is no path filter: the whole gate runs each time, in about
+# two minutes. The job is named `check`, the context the ruleset requires.
+on:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # gitleaks lists the pull request's commits, which needs pull-requests: read.
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      # What ships, read from the lockfile. A high or critical advisory fails; the audit service being
+      # away (a hang or a 5xx) warns and passes, any other error fails.
+      - name: Audit production dependencies
+        shell: bash
+        run: |
+          set +e
+          out=$(timeout 150 pnpm audit --prod --audit-level high --json 2>/dev/null)
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then exit 0; fi
+          if ! jq -e '.metadata.vulnerabilities' >/dev/null 2>&1 <<<"$out"; then
+            if [ "$code" -eq 124 ] || grep -qiE '"code": *"(E5[0-9][0-9]|ETIMEDOUT|ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN)"|Service Unavailable|Bad Gateway|Gateway Time' <<<"$out"; then
+              echo "::warning::the audit service did not answer; dependencies were not audited this run"
+              exit 0
+            fi
+            echo "pnpm audit failed: $out"
+            exit 1
+          fi
+          jq -r '[.advisories[] | select(.severity == "high" or .severity == "critical") | "\(.severity): \(.module_name): \(.title) \(.url)"] | unique[]' <<<"$out"
+          exit 1
+      # Links that only resolve in singularityfm-app, and dashes. Plain node, before the install.
+      - name: Docs check
+        run: node scripts/docsCheck.mjs
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      # tsc over the package and scripts, then astro check over the style guide.
+      - name: Typecheck
+        run: pnpm run typecheck
+      - name: Lint
+        run: pnpm run lint
+      - name: Test
+        run: pnpm test
+      # The token build must leave the committed tokens.css as it is; then the style guide builds.
+      - name: Build tokens and the style guide
+        run: |
+          pnpm run build
+          git diff --exit-code -- packages/design-system/styles/tokens.css
+      # The package as a customer installs it: pack, install the tarball into a throwaway Astro project,
+      # build a page. A file left out of `files` or a broken export fails only here.
+      - name: Pack and install
+        run: pnpm run pack:check

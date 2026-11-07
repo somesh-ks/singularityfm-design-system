@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+tone_instructions: "Senior design engineer. Be concise, direct, and actionable. Flag concrete bugs, logic errors, design system regressions, breaking changes to the published package, and performance regressions. Do not generate conversational filler or pedantic stylistic complaints."
+early_access: false
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    # A push spends no review: CodeRabbit reviews a PR when it opens, then only on `@coderabbitai review`
+    # (D292 in singularityfm-app).
+    auto_incremental_review: false
+    drafts: false
+    ignore_title_keywords:
+      - "[skip-review]"
+    base_branches:
+      - ".*"
+  path_filters:
+    - "!docs/state.md"
+    - "!docs/specs/**"
+    - "!pnpm-lock.yaml"
+    - "!**/CHANGELOG.md"
+    - "!packages/design-system/tokens/system.json"
+    - "!packages/design-system/tokens/llms.txt"
+    - "!packages/design-system/flags/**"
+    - "!**/dist/**"
+    - "!**/.astro/**"
+  # Docstrings are not a house convention; generated tests fight the test rules (AGENTS.md, Tests); the
+  # finishing touches commit to a branch its thread owns.
+  pre_merge_checks:
+    docstrings:
+      mode: "off"
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+    autofix:
+      enabled: false
+    fix_ci:
+      enabled: false
+    resolve_merge_conflict:
+      enabled: false
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        - Conventional Commits: PR titles and commit messages follow Conventional Commits.
+        - No em dashes or en dashes anywhere in comments, markdown or text. Use commas, semicolons, colons or periods.
+        - Never expose API keys or secrets. This repository needs none: npm publishing is trusted publishing.
+        - TypeScript: strict, on 6.x.
+        - Persisted data: JSON keys snake_case; config and doc files lowercase kebab-case.
+    - path: "packages/design-system/**/*"
+      instructions: |
+        - This is a published package. Check every change against packages/design-system/COMPATIBILITY.md: a removed or renamed export, token, consumer-visible class or prop is breaking (major). Flag a PR that changes what ships without a changeset in .changeset/, or whose changeset names a smaller bump than the change needs.
+        - A new file the package needs at runtime must be covered by `files` and `exports` in package.json; the pack-and-install test (scripts/designSystemPack.mjs) is the proof.
+        - 8pt grid: spatial values follow the 8pt grid (4px for named exceptions only). Use existing tokens from tokens/tokens.json; flag a new token or a new control class, never suggest one.
+        - Load-bearing design fixes: a rule or markup with a rationale comment (a date, a D-number or DS-number, a sizer) must not be removed or rewritten to make another task work.
+        - Reduced motion is handled once, in the motion tokens: travel distances collapse to 0, the enter scale to 1, sheet and spring durations to 0.01 ms; fades keep their time on purpose. Flag only a move written as a raw value with no reduced-motion rule of its own.
+        - Sheets and menus (D329): every bottom sheet is the Menu, Sheet or Dialog. A menu keeps its header in the markup even over one row; only menu.css hides it.
+        - styles/tokens.css is generated from tokens/tokens.json by scripts/buildTokens.ts; flag a hand edit to it.
+        - Reply convention: when the author answers a finding by naming a rule (AGENTS.md, a D- or DS-number, a ledger line), accept it and do not repeat the finding.
+    - path: "**/*.test.ts"
+      instructions: |
+        - Few tests, one layer each, aimed at what fails silently (AGENTS.md, Tests). A test names the bug it prevents; do not ask for a test without one, for coverage, or for a presentation detail.
+        - Never ask a test to pin copy, CSS values, class names, markup, geometry or constants. Fake the clock, crypto and network; never a sleep.
+    - path: "docs/decisions/**"
+      instructions: |
+        - A decision is a new file entries/DS-<n>.md with the next free number; an old entry is never rewritten. An entry that changes another says "amends" or "supersedes" and the old one's status says so; one that supersedes adds "Context changed:", one whose reason can expire adds "Revisit if:". App D-records are never edited here.
+  tools:
+    ast-grep:
+      enabled: true
+chat:
+  auto_reply: true

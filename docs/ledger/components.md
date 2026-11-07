@@ -1,6 +1,6 @@
 # Small component fixes
 
-Ledger section 3, one surface. Read [the core](../design-engineering-ledger.md) first (taste in section 1, how to work in section 2, the phone in section 11). Each row: the ask, what was built, the decision; if a decision and a row disagree, the decision wins.
+Ledger section 3, one surface. Read [the core](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design-engineering-ledger.md) first (taste in section 1, how to work in section 2, the phone in section 11). Each row: the ask, what was built, the decision; if a decision and a row disagree, the decision wins.
 
 ## Small component fixes
 

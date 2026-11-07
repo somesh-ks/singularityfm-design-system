@@ -21,9 +21,10 @@ import { join } from "node:path";
 const root = join(import.meta.dirname, "..");
 const packageDir = join(root, "packages/design-system");
 const { name } = JSON.parse(readFileSync(join(packageDir, "package.json"), "utf8"));
-// The astro the apps build with, exact, so the install resolves from the store without the network.
+// The astro the style guide builds with, exact, so the install resolves from the store without the
+// network. (In singularityfm-app this read apps/web, which this repository does not have.)
 const astro = JSON.parse(
-  readFileSync(join(root, "apps/web/node_modules/astro/package.json"), "utf8"),
+  readFileSync(join(root, "apps/design/node_modules/astro/package.json"), "utf8"),
 ).version;
 
 const work = mkdtempSync(join(tmpdir(), "ds-pack-"));

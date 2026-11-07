@@ -1,0 +1,8 @@
+## DS-1: the library repository is created from singularityfm-app by filter-repo
+
+- Status: active; carries out D382 step 6
+- Date: 2026-11-07
+- Decision: `somesh-ks/singularityfm-design-system` starts from the history of `somesh-ks/singularityfm-app`, kept by git filter-repo to the library's paths: `packages/design-system/`, `apps/design/`, `.changeset/`, `release.yml`, the pack-and-install test, the deploy batch script and the docs that are only about the library (the style guide and motion specs, the components and the look, tokens and type ledger files). Each kept file is followed back through its renames, so its history starts where it was born, not at the D382 step 4 move. The layout stays a two-package pnpm workspace (`packages/design-system`, `apps/design`) so paths, the release workflow and the package's `repository.directory` match the app repo's records. One commit on top adds the repository files: CI, CODEOWNERS, AGENTS.md, CodeRabbit, the licence, the docs check and a generated lockfile. The script is reproducible (`extract.sh <ref>`).
+- Why: npm trusted publishing names one repository and workflow file, so the first publish waits for this repository (D382). Carried history keeps `git log` and `git blame` useful for the load-bearing design fixes.
+- Rejected: copying the files without history (loses the reasons the rationale comments point at); flattening the package to the repository root (every path in the records and in `release.yml` would change, and a second consumer app has no place to go); moving the ledger core (it is the owner's taste for the app's pages too; this repo links to it).
+- Revisit if: the app repo's history is rewritten (D298) before this repository is pushed: then run `extract.sh` again on the rewritten history.

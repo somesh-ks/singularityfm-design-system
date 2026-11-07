@@ -1,6 +1,6 @@
 # Style guide
 
-The reader's design system as its own site, "Singularity design": `news.someshks.work/design`, the app `apps/design`. What it does now. Reasons: D226, D224; plan: [command-center.md](../design/command-center.md).
+The reader's design system as its own site, "Singularity design": `news.someshks.work/design`, the app `apps/design`. What it does now. Reasons: D226, D224; plan: [command-center.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design/command-center.md).
 
 ## Requirements
 
@@ -27,4 +27,4 @@ The reader's design system as its own site, "Singularity design": `news.someshks
 
 - A Settings view hides its switches until `data-ready`, so every guide page sets it.
 - `--layout-column` stays 40rem: sheets and pickers are as wide as it makes them. Only the page's own column widens (`.shell.page`).
-- The first build had a spec per shared part (44 files of hand-copied markup, with cards that stepped through states). The owner required the guide to show the real components, so it was removed from the pull request; see the [history note](../history/2026-10-29-style-guide.md).
+- The first build had a spec per shared part (44 files of hand-copied markup, with cards that stepped through states). The owner required the guide to show the real components, so it was removed from the pull request; see the [history note](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/history/2026-10-29-style-guide.md).

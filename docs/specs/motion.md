@@ -1,6 +1,6 @@
 # Motion
 
-How things move, as rules an agent can apply without asking. The values live in `packages/design-system/tokens/tokens.json` (built to `packages/design-system/styles/tokens.css`); the design site's Motion page runs them live. Rests on D94, D95, D230 and the owner's taste in [the ledger](../design-engineering-ledger.md) (section 1).
+How things move, as rules an agent can apply without asking. The values live in `packages/design-system/tokens/tokens.json` (built to `packages/design-system/styles/tokens.css`); the design site's Motion page runs them live. Rests on D94, D95, D230 and the owner's taste in [the ledger](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design-engineering-ledger.md) (section 1).
 
 ## The one rule
 

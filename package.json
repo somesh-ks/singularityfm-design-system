@@ -1,0 +1,31 @@
+{
+  "name": "singularityfm-design-system",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --filter @singularity/design run check",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "docs:check": "node scripts/docsCheck.mjs",
+    "pack:check": "node scripts/designSystemPack.mjs",
+    "build": "pnpm --filter @singularityfm/design-system run build && pnpm --filter @singularity/design run build",
+    "gate": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run docs:check && pnpm run build && pnpm run pack:check",
+    "dev": "pnpm --filter @singularity/design run dev",
+    "tokens": "tsx packages/design-system/scripts/buildTokens.ts",
+    "ds": "tsx packages/design-system/scripts/system/cli.ts",
+    "changeset": "changeset"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.4",
+    "@changesets/cli": "3.0.3",
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  }
+}

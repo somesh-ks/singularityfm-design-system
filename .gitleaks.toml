@@ -1,0 +1,6 @@
+# The default rules. Add an allowlist entry only for a value made up for a test, never a whole path:
+# a real key pasted into a test must still fail the scan.
+title = "singularityfm-design-system"
+
+[extend]
+useDefault = true
