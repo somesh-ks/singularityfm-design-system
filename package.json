@@ -17,6 +17,7 @@
     "gate": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run docs:check && pnpm run build && pnpm run pack:check",
     "dev": "pnpm --filter @singularity/design run dev",
     "tokens": "tsx packages/design-system/scripts/buildTokens.ts",
+    "system": "tsx packages/design-system/scripts/system/build.ts",
     "ds": "tsx packages/design-system/scripts/system/cli.ts",
     "changeset": "changeset"
   },

@@ -520,7 +520,6 @@
         "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element."
       ],
       "styles": [
-        "apps/web/src/styles/manage.css",
         "packages/design-system/styles/field.css"
       ],
       "usage": "The text field, and the select and textarea that share its looks: a filled pill (D186; a textarea 24px), the one control with an outline, which shows on focus.",
@@ -660,10 +659,6 @@
         "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass()."
       ],
       "styles": [
-        "apps/web/src/styles/library.css",
-        "apps/web/src/styles/queue.css",
-        "apps/web/src/styles/story-controls.css",
-        "apps/web/src/styles/topics.css",
         "packages/design-system/styles/menu.css"
       ],
       "usage": "A popover lives in the top layer, so it is placed against the viewport, not the row. Where anchor positioning exists it hangs under the button, right edges level; elsewhere heroMenu.ts writes --menu-top and --menu-right from the button's box when it opens.",
@@ -902,7 +897,6 @@
         "drawer-panel"
       ],
       "files": [
-        "apps/web/src/sheets/SheetFrame.tsx",
         "packages/design-system/src/drawer.ts"
       ],
       "when": [
@@ -999,9 +993,6 @@
       "classes": [
         "btn-action-tonal"
       ],
-      "files": [
-        "apps/web/src/components/AppNav.astro"
-      ],
       "when": [
         "the Catch up action in the side column"
       ],
@@ -1071,8 +1062,6 @@
         "`.press` gives the press as a state layer; the glyph never scales."
       ],
       "styles": [
-        "apps/web/src/styles/queue.css",
-        "apps/web/src/styles/story-controls.css",
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/foundations.css"
       ],
@@ -1080,15 +1069,9 @@
       "tokens": [
         "--button-radius",
         "--color-accent",
-        "--color-accent-container",
-        "--color-on-accent-container",
         "--color-on-surface",
         "--color-on-surface-disabled",
         "--color-on-surface-muted",
-        "--cta-bg",
-        "--cta-bg-hover",
-        "--cta-bg-pressed",
-        "--cta-fg",
         "--size-icon-lg",
         "--size-touch"
       ]
@@ -1133,9 +1116,6 @@
       "classes": [
         "chip"
       ],
-      "files": [
-        "apps/web/src/components/PlayChip.astro"
-      ],
       "when": [
         "play an episode or a story and show idle, current, played, error or preparing",
         "episode duration with a play mark"
@@ -1162,7 +1142,6 @@
         "A label that changes keeps a hidden copy of the widest one so the chip keeps its width."
       ],
       "styles": [
-        "apps/web/src/styles/reader.css",
         "packages/design-system/styles/buttons.css"
       ],
       "usage": "The tonal pill that plays a briefing or one story: a play mark and a short label on the container fill, with no outline.",
@@ -1307,9 +1286,6 @@
         "segmented-nav-tab",
         "segmented-nav-compact"
       ],
-      "files": [
-        "apps/web/src/scripts/segmentedNav.ts"
-      ],
       "when": [
         "switch between Stories and Transcript",
         "switch the view of one page without leaving it",
@@ -1384,7 +1360,6 @@
         "Drawn only for two sections or more."
       ],
       "styles": [
-        "apps/web/src/styles/player.css",
         "packages/design-system/styles/primitives.css"
       ],
       "usage": "The bar sticks and carries the surface and the line under it; the strip inside it scrolls and fades its ends. A mask on the bar itself would fade its surface and line too, and what scrolls under a stuck strip would show through at its edges.",
@@ -1395,7 +1370,6 @@
         "--color-on-surface",
         "--color-on-surface-muted",
         "--color-surface",
-        "--player-padding",
         "--row-radius",
         "--tabs-height",
         "--tabs-indicator-height",
@@ -1441,14 +1415,12 @@
         "Sits in a `.rows.card-group`."
       ],
       "styles": [
-        "apps/web/src/styles/settings.css",
         "packages/design-system/styles/foundations.css",
         "packages/design-system/styles/primitives.css"
       ],
       "usage": "A row that is one link or button: the whole row responds. Its fill is a rounded tile clear of the hairlines and reaching a little past the words, as a menu's options are, so a hovered row reads as one thing to press rather than a band across the page.",
       "tokens": [
         "--color-focus-ring",
-        "--color-on-surface-muted",
         "--row-tile-radius",
         "--size-touch-comfortable"
       ]
@@ -1484,8 +1456,6 @@
         "Dividers run edge to edge inside."
       ],
       "styles": [
-        "apps/web/src/styles/multiselect.css",
-        "apps/web/src/styles/settings.css",
         "packages/design-system/styles/primitives.css",
         "packages/design-system/styles/select.css"
       ],
@@ -1535,23 +1505,15 @@
         "setting"
       ],
       "styles": [
-        "apps/web/src/styles/multiselect.css",
-        "apps/web/src/styles/podcast.css",
-        "apps/web/src/styles/settings.css",
         "packages/design-system/styles/picker.css",
         "packages/design-system/styles/primitives.css"
       ],
-      "usage": "Label and description at the start, the control at the end. The row grammar adds the padding and the hairline; with that padding this minimum is the 48px floor, and most rows are taller.",
+      "usage": "",
       "tokens": [
         "--button-radius",
         "--card-inset",
-        "--color-on-surface",
-        "--color-on-surface-muted",
         "--field-chevron-gap",
-        "--row-padding-block",
-        "--size-icon",
-        "--size-touch-comfortable",
-        "--slider-max-width"
+        "--size-icon"
       ]
     },
     {
@@ -1563,11 +1525,6 @@
         "toast",
         "toast-action",
         "toast-dismiss"
-      ],
-      "files": [
-        "apps/web/src/sheets/Toaster.tsx",
-        "apps/web/src/sheets/toastStore.ts",
-        "apps/web/src/scripts/toastEvent.ts"
       ],
       "when": [
         "a brief message with an Undo after a delete",
@@ -1595,24 +1552,10 @@
         "From a script outside the sheets chunk, use `sendToast`."
       ],
       "styles": [
-        "apps/web/src/styles/sheets.css",
         "packages/design-system/styles/buttons.css"
       ],
-      "usage": "One quiet message at a time: a flat, inverse surface with a hairline radius, an optional leading icon (a check or an alert, so the outcome is not told by colour alone), the message at the label size, at most one text action in the accent and, only while it stays until used, a close button. A top-layer popover above whatever is docked at the bottom: the navigation bar, and the player once it is showing. The fallbacks cover a page without the shell and a player that has not published its height yet.",
-      "tokens": [
-        "--color-accent-on-inverse",
-        "--color-surface-inverse",
-        "--color-surface-inverse-action-hover",
-        "--color-surface-inverse-action-pressed",
-        "--color-surface-inverse-hover",
-        "--color-surface-inverse-pressed",
-        "--layout-dialog",
-        "--shape-md",
-        "--shape-round",
-        "--size-touch",
-        "--toast-bg",
-        "--toast-fg"
-      ]
+      "usage": "",
+      "tokens": []
     },
     {
       "id": "empty-state",
@@ -1622,10 +1565,6 @@
       "classes": [
         "empty",
         "empty-actions"
-      ],
-      "files": [
-        "apps/web/src/components/EmptyState.astro",
-        "apps/web/src/components/EmptyArt.astro"
       ],
       "when": [
         "a page or section with nothing to list yet",
@@ -1651,13 +1590,9 @@
       "rules": [
         "Never hand-write `.empty` markup."
       ],
-      "styles": [
-        "apps/web/src/styles/empty.css"
-      ],
-      "usage": "No briefings yet, an empty library, no results, offline, not found: a spot illustration, a title, one line on what happens next and one way on, centred in the content column. Material's rhythm: 24px from the art to the title, 8px to the line, 24px to the button.",
-      "tokens": [
-        "--color-on-surface"
-      ]
+      "styles": [],
+      "usage": "",
+      "tokens": []
     },
     {
       "id": "multiselect",
@@ -1666,10 +1601,6 @@
       "summary": "A field-like trigger that opens a list of checkable choices.",
       "classes": [
         "multiselect-trigger"
-      ],
-      "files": [
-        "apps/web/src/components/MultiSelect.astro",
-        "apps/web/src/scripts/multiSelect.ts"
       ],
       "when": [
         "choose several from a long list",
@@ -1685,21 +1616,9 @@
         "dropdown with checkboxes",
         "picker"
       ],
-      "styles": [
-        "apps/web/src/styles/multiselect.css"
-      ],
+      "styles": [],
       "usage": "",
-      "tokens": [
-        "--button-radius",
-        "--color-accent",
-        "--color-on-surface",
-        "--color-on-surface-muted",
-        "--field-border",
-        "--field-chevron-gap",
-        "--field-height",
-        "--field-padding",
-        "--size-icon"
-      ]
+      "tokens": []
     },
     {
       "id": "search-field",
@@ -1725,8 +1644,6 @@
         "text filter"
       ],
       "styles": [
-        "apps/web/src/styles/library.css",
-        "apps/web/src/styles/manage.css",
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/search-field.css"
       ],
@@ -1739,8 +1656,7 @@
         "--color-surface-container-focus",
         "--color-surface-container-hover",
         "--field-height",
-        "--shape-round",
-        "--size-touch"
+        "--shape-round"
       ]
     },
     {
@@ -1890,10 +1806,6 @@
       "classes": [
         "cover"
       ],
-      "files": [
-        "apps/web/src/components/Cover.astro",
-        "apps/web/src/lib/covers.ts"
-      ],
       "when": [
         "show an episode or briefing cover"
       ],
@@ -1902,17 +1814,9 @@
         "thumbnail",
         "album art"
       ],
-      "styles": [
-        "apps/web/src/styles/cover.css"
-      ],
-      "usage": "Covers. The box carries the palette color, so there is no empty flash while the image decodes. Weekly digests have their framing rule drawn into the image; at thumb size (3rem and under) that hairline is too fine to see, so the small covers get an extra inset rule. Larger covers show the drawn one alone.",
-      "tokens": [
-        "--color-accent",
-        "--color-surface-sunken",
-        "--cover-outline",
-        "--cover-radius-hero",
-        "--cover-shadow"
-      ]
+      "styles": [],
+      "usage": "",
+      "tokens": []
     },
     {
       "id": "fab",
@@ -1923,11 +1827,6 @@
         "create-fab",
         "add-fab",
         "play-fab"
-      ],
-      "files": [
-        "apps/web/src/components/CreateFab.astro",
-        "apps/web/src/components/AddFab.astro",
-        "apps/web/src/components/PlayFab.astro"
       ],
       "when": [
         "the page's one creating action on a phone",
@@ -1945,149 +1844,10 @@
         "create button"
       ],
       "styles": [
-        "apps/web/src/styles/create-sheet.css",
-        "apps/web/src/styles/topics.css",
         "packages/design-system/styles/foundations.css"
       ],
       "usage": "",
-      "tokens": [
-        "--color-on-surface-disabled",
-        "--color-surface",
-        "--color-surface-sunken",
-        "--cta-bg",
-        "--cta-bg-hover",
-        "--cta-bg-pressed",
-        "--cta-fg",
-        "--shape-round",
-        "--size-icon-lg"
-      ]
-    }
-  ],
-  "bespoke": [
-    {
-      "class": "create-fab",
-      "reason": "the extended floating create button (D133); its own size, label and sheet origin",
-      "part": "fab"
-    },
-    {
-      "class": "play-fab",
-      "reason": "the floating play button of a story, a circle over a cover",
-      "part": "fab"
-    },
-    {
-      "class": "add-fab",
-      "reason": "the Topics floating add button",
-      "part": "fab"
-    },
-    {
-      "class": "view-btn",
-      "reason": "the Library's gallery/list switch: two icon segments"
-    },
-    {
-      "class": "dock-btn",
-      "reason": "the player dock's icon buttons, sized to the dock"
-    },
-    {
-      "class": "dock-open",
-      "reason": "the dock's whole-bar button that opens the player"
-    },
-    {
-      "class": "transport-btn",
-      "reason": "the player transport: play, skip and seek on the player's own scale"
-    },
-    {
-      "class": "transport-skip",
-      "reason": "the player transport's skip variant"
-    },
-    {
-      "class": "source-plus-btn",
-      "reason": "the sources list's inline add control"
-    },
-    {
-      "class": "source-edit",
-      "reason": "a text action on a source row"
-    },
-    {
-      "class": "source-remove",
-      "reason": "a text action on a source row"
-    },
-    {
-      "class": "cover-play",
-      "reason": "the cover's play overlay"
-    },
-    {
-      "class": "menu-item",
-      "reason": "a row of the popover menu",
-      "part": "menu"
-    },
-    {
-      "class": "menu-item-danger",
-      "reason": "the menu's destructive row",
-      "part": "menu"
-    },
-    {
-      "class": "topic-delete",
-      "reason": "the topic page's destructive menu row"
-    },
-    {
-      "class": "toast-action",
-      "reason": "a toast's text action",
-      "part": "toast"
-    },
-    {
-      "class": "toast-dismiss",
-      "reason": "a toast's close control",
-      "part": "toast"
-    },
-    {
-      "class": "multiselect-trigger",
-      "reason": "the multi-select's field-like trigger",
-      "part": "multiselect"
-    },
-    {
-      "class": "picker-trigger",
-      "reason": "the search picker's field-like trigger, drawn by scripts/picker.ts"
-    },
-    {
-      "class": "profile-shape",
-      "reason": "a shape choice in the profile's avatar picker: the avatar is its face (D335)"
-    },
-    {
-      "class": "emoji-cell",
-      "reason": "a cell of the topic emoji grid: a square tile, not a pill (D186)"
-    },
-    {
-      "class": "search-clear",
-      "reason": "the clear control inside .search-field",
-      "part": "search-field"
-    },
-    {
-      "class": "queue-fold",
-      "reason": "the podcast queue dock's whole-row button that folds and opens it: a row, not a control face"
-    },
-    {
-      "class": "app-nav-queue",
-      "reason": "the side column's queue row: the navigation row's own look (app-nav-item) on a button"
-    },
-    {
-      "class": "player-queue-row",
-      "reason": "a queue row: a row-sized button, not a control face"
-    },
-    {
-      "class": "player-upnext-row",
-      "reason": "an Up next row: a row-sized button, not a control face"
-    },
-    {
-      "class": "story-row",
-      "reason": "a story row in the player's list"
-    },
-    {
-      "class": "script-back",
-      "reason": "the transcript's back-to-playing control"
-    },
-    {
-      "class": "script-turn",
-      "reason": "a transcript turn that seeks on tap"
+      "tokens": []
     }
   ],
   "tokens": [

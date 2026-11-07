@@ -1,14 +1,36 @@
 ---
+import { COMPONENTS } from "@singularity/design-system/registry";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
+
+// Every component the library ships, from its registry (DS-2, amending D226): what an app imports is
+// that app's usage report, not this page's filter.
+const slug = (name: string): string => name.toLowerCase().replace(/\s+/g, "-");
 ---
 
 <Shell title="Components" current="/components">
   <div class="settings-view guide-page" data-settings data-ready>
     <PageHead title="Components" />
-    <section aria-labelledby="empty">
-      <h2 class="section-head text-heading" id="empty">Not here yet</h2>
-      <p class="guide-prose">A component appears once the app itself imports it, so nothing shown can differ from the app. Each will say when to use it and when not to.</p>
-    </section>
+    <p class="guide-lead">Every component the library ships, with when to use it and when to reach for another.</p>
+    {COMPONENTS.map((component) => (
+      <section aria-labelledby={slug(component.name)}>
+        <h2 class="section-head text-heading" id={slug(component.name)}>{component.name}</h2>
+        <p class="guide-prose">{component.summary}</p>
+        <h3 class="guide-group-name">Use when</h3>
+        <ul class="guide-list">
+          {component.useWhen.map((line) => <li>{line}</li>)}
+        </ul>
+        {component.dontUseWhen.length > 0 && (
+          <>
+            <h3 class="guide-group-name">Do not use when</h3>
+            <ul class="guide-list">
+              {component.dontUseWhen.map((item) => (
+                <li>{item.when}{item.instead && <> Use {item.instead.replace(".", " ")} instead.</>}</li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+    ))}
   </div>
 </Shell>

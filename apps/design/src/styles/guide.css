@@ -63,6 +63,11 @@
   font-weight: var(--font-weight-regular);
 }
 
+/* A component's "Do not use when" heading stands off the list above it. */
+.guide-list + .guide-group-name {
+  margin-block-start: var(--space-4);
+}
+
 /* ------------------------------------------------------------------ color */
 
 .guide-swatches {

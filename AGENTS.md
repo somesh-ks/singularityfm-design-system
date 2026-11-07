@@ -42,7 +42,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 - Spacing keeps the 8pt grid (4px for named cases only). Use a token; a new token or control class needs the owner's OK first. If the system cannot express a request, stop, propose a small deviation and wait.
 - Design fixes are load-bearing: a rule or markup with a rationale comment is never removed or rewritten for another task. Before changing `primitives.css`, `buttons.css` or the tokens, read `git log -L '/<selector>/,+20:<file>'` and the ledger.
 - No flag emoji: Flag (D367).
-- The style guide shows only what the package exports (D226).
+- The style guide lists every component in the registry; `tokens/system.json` is built from the library's files alone, and app usage is the app's report (DS-2).
 
 ## Releases
 
