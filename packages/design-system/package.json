@@ -1,7 +1,7 @@
 {
   "name": "@singularityfm/design-system",
   "version": "0.0.0",
-  "description": "Singularity's design system: Astro components, stylesheets, tokens, fonts and flags.",
+  "description": "Singularity's design system: React components (Base UI where they have behaviour), stylesheets, tokens, fonts and flags.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -38,14 +38,29 @@
     "./flags/*": "./flags/*",
     "./scripts/themeInit.js": "./scripts/themeInit.js",
     "./scripts/*": "./scripts/*.ts",
+    "./Button": "./src/Button.tsx",
+    "./Button.astro": "./src/Button.tsx",
     "./*.astro": "./src/*.astro",
     "./*": "./src/*.ts"
   },
   "peerDependencies": {
-    "astro": "^7.4.4"
+    "@base-ui/react": "^1.9.0",
+    "astro": "^7.4.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@base-ui/react": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@base-ui/react": "^1.9.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "astro": "^7.4.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "tsx": "^4.23.15",
     "vitest": "^5.0.5"
   }

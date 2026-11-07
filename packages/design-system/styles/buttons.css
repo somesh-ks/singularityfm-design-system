@@ -1,6 +1,6 @@
 /*
  * Controls: the Button (filled, tonal and text), the icon button, the play chip and the play
- * and pause glyph swap. The Button is drawn by design-system/Button.astro and nowhere else (a script
+ * and pause glyph swap. The Button is drawn by design-system/Button.tsx and nowhere else (a script
  * or an island takes its class from design-system/button.ts). One accent carries every control. Hover and press are state layers
  * (primitives.css): the control's text colour laid over its own fill. Hover only inside
  * (hover: hover) and (pointer: fine); a press on an icon comes from the .press utility in foundations.
@@ -8,7 +8,7 @@
 
 /* ------------------------------------------------------------------ text and icon buttons */
 
-/* Button, text variant (design-system/Button.astro): an accent label with no container until it is
+/* Button, text variant (design-system/Button.tsx): an accent label with no container until it is
    hovered or pressed. Usage: Cancel, Clear, Try again; the quiet action beside or under a filled
    button. */
 .button-text,
@@ -104,7 +104,7 @@
 
 /* ------------------------------------------------------------------ block buttons */
 
-/* Button, filled and tonal variants (design-system/Button.astro): the one committing action of a
+/* Button, filled and tonal variants (design-system/Button.tsx): the one committing action of a
    sheet or an empty page, and its alternative. Both fill their row. */
 .button-filled,
 .button-tonal {

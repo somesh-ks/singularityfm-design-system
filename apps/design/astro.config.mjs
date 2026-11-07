@@ -1,3 +1,4 @@
+import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 
 // The style guide (D218, D220): its own app and deploy, reached at news.someshks.work/design by a
@@ -9,4 +10,6 @@ export default defineConfig({
   output: "static",
   trailingSlash: "never",
   compressHTML: true,
+  // The library's components are React (DS-3); a static one renders here with no client directive.
+  integrations: [react()],
 });

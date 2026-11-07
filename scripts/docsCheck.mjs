@@ -21,7 +21,7 @@ const APP_CODE = /`((?:apps\/(?:web|admin)|packages\/(?:engine|core|cover|sound)
 const OWN_DOCS = /^(AGENTS\.md|README\.md|docs\/state\.md|docs\/decisions\/)/;
 // Built from code points so this file does not contain the characters it forbids.
 const DASH = new RegExp(`[${String.fromCharCode(0x2013)}${String.fromCharCode(0x2014)}]`);
-const DASH_FILES = /\.(md|ts|mjs|js|astro|css|json|ya?ml|sh)$/;
+const DASH_FILES = /\.(md|tsx?|mjs|js|astro|css|json|ya?ml|sh)$/;
 
 const args = process.argv.slice(2);
 const fix = args.includes("--fix");

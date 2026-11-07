@@ -1,6 +1,6 @@
 /**
  * The Button: its variants, its tone, their classes and when to use each. The one place a button's
- * class is written. Button.astro renders from it; a script or a React island that draws a button
+ * class is written. Button.tsx renders from it; a script or a React island that draws a button
  * calls buttonClass(); the style guide lists BUTTON. The rules are in styles/buttons.css.
  */
 import type { Guidance } from "./guidance";

@@ -10,7 +10,7 @@
         "button-filled"
       ],
       "files": [
-        "packages/design-system/src/Button.astro",
+        "packages/design-system/src/Button.tsx",
         "packages/design-system/src/button.ts"
       ],
       "when": [
@@ -52,7 +52,7 @@
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/foundations.css"
       ],
-      "usage": "Button, filled and tonal variants (design-system/Button.astro): the one committing action of a sheet or an empty page, and its alternative. Both fill their row.",
+      "usage": "Button, filled and tonal variants (design-system/Button.tsx): the one committing action of a sheet or an empty page, and its alternative. Both fill their row.",
       "tokens": [
         "--button-height",
         "--button-padding",
@@ -75,7 +75,7 @@
         "button-tonal"
       ],
       "files": [
-        "packages/design-system/src/Button.astro",
+        "packages/design-system/src/Button.tsx",
         "packages/design-system/src/button.ts"
       ],
       "when": [
@@ -129,7 +129,7 @@
         "button-text"
       ],
       "files": [
-        "packages/design-system/src/Button.astro",
+        "packages/design-system/src/Button.tsx",
         "packages/design-system/src/button.ts"
       ],
       "when": [
@@ -163,7 +163,7 @@
         "packages/design-system/styles/foundations.css",
         "packages/design-system/styles/primitives.css"
       ],
-      "usage": "Button, text variant (design-system/Button.astro): an accent label with no container until it is hovered or pressed. Usage: Cancel, Clear, Try again; the quiet action beside or under a filled button.",
+      "usage": "Button, text variant (design-system/Button.tsx): an accent label with no container until it is hovered or pressed. Usage: Cancel, Clear, Try again; the quiet action beside or under a filled button.",
       "tokens": [
         "--button-radius",
         "--color-accent",
@@ -179,7 +179,7 @@
         "button-danger"
       ],
       "files": [
-        "packages/design-system/src/Button.astro",
+        "packages/design-system/src/Button.tsx",
         "packages/design-system/src/button.ts"
       ],
       "when": [
@@ -221,7 +221,7 @@
         "button-small"
       ],
       "files": [
-        "packages/design-system/src/Button.astro",
+        "packages/design-system/src/Button.tsx",
         "packages/design-system/src/button.ts"
       ],
       "when": [

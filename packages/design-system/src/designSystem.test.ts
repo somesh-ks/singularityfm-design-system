@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { flagParts } from "./flag";
@@ -59,5 +59,49 @@ describe("the Flag", () => {
     expect(flagParts("You're in India 🇮🇳")).toEqual(["You're in India", { region: "IN" }]);
     expect(flagParts("🇸🇪")).toEqual([{ region: "SE" }]);
     expect(flagParts("🎨 Design")).toEqual(["🎨 Design"]);
+  });
+});
+
+// The library's one component framework is React (DS-3). Each family PR moves its .astro files to .tsx
+// and trims this list; nothing joins it.
+const ASTRO_LEFT = [
+  "Avatar.astro",
+  "Badge.astro",
+  "Banner.astro",
+  "BrandMark.astro",
+  "ChapterAside.astro",
+  "Code.astro",
+  "Dialog.astro",
+  "DialogActions.astro",
+  "DialogTitle.astro",
+  "Field.astro",
+  "Flag.astro",
+  "Icon.astro",
+  "Menu.astro",
+  "MenuItem.astro",
+  "Ripple.astro",
+  "RowExit.astro",
+  "SectionTabs.astro",
+  "Select.astro",
+  "Sheet.astro",
+  "SheetHeader.astro",
+  "Slider.astro",
+  "Switch.astro",
+];
+
+describe("the component framework", () => {
+  const files = readdirSync(import.meta.dirname, { recursive: true }).map(String);
+
+  it("adds no Astro component, and drops a migrated one from the list", () => {
+    expect(files.filter((file) => file.endsWith(".astro")).sort()).toEqual(ASTRO_LEFT);
+  });
+
+  // Without its own entry, `<pkg>/Button` falls to the "./*" pattern, src/Button.ts, which a
+  // case-blind disk (Windows, macOS) serves as button.ts: the import finds no component and says so late.
+  it("exports each React component by its name", () => {
+    const pkg = JSON.parse(readFileSync(join(import.meta.dirname, "..", "package.json"), "utf8"));
+    for (const file of files.filter((name) => name.endsWith(".tsx"))) {
+      expect(pkg.exports[`./${file.replace(/\.tsx$/, "")}`], file).toBe(`./src/${file}`);
+    }
   });
 });
