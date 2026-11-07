@@ -2,19 +2,22 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { buildSystem, classTokens, LLMS_PATH, SYSTEM_PATH } from "./build.js";
+import { buildSystem, LLMS_PATH, SYSTEM_PATH, systemFiles } from "./build.js";
 import { findParts, findTokens } from "./query.js";
 import type { System } from "./types.js";
 import { usageComment } from "./usage.js";
 
-/**
- * The file as published, which `npm run ds` answers from. Whether it matches the code the apps draw
- * the system with is checked where both are visible (scripts/system.test.ts at the repository root).
- */
+/** The file as published, which `npm run ds` answers from. */
 const system = JSON.parse(readFileSync(SYSTEM_PATH, "utf8")) as System;
 const ids = new Set(system.parts.map((part) => part.id));
 
 describe("the design system file", () => {
+  // Prevents publishing a lookup file that no longer says what the package ships: the library builds
+  // it from its own files alone (DS-2), so a part or token edit without `npm run system` fails here.
+  it("is what the package's own files build", () => {
+    for (const [path, text] of systemFiles()) expect(readFileSync(path, "utf8")).toBe(text);
+  });
+
   // Prevents a "not this, use that" pointing at a part that does not exist.
   it("points every alternative at a part", () => {
     const dangling = system.parts.flatMap((part) =>
@@ -54,17 +57,6 @@ describe("the design system file", () => {
   // Prevents the index outgrowing its purpose: it is read whole, so each byte is paid for on every task.
   it("keeps llms.txt under 14 KB", () => {
     expect(Buffer.byteLength(readFileSync(LLMS_PATH))).toBeLessThan(14 * 1024);
-  });
-});
-
-describe("class detection", () => {
-  // Prevents a dead class passing for a live part: role="switch" and the word in prose once made
-  // `.switch` look used in 49 files while no markup wore it, and an agent was sent to it.
-  it("counts only names written as classes", () => {
-    const used = classTokens(
-      `<input class="settings-switch x" role="switch" /> <a class:list={["a-b", cond && 'c-d']}> switch (mode) {} el.classList.add("e-f") iconBtnHtml({ className: "g-h i-j" })`,
-    );
-    expect([...used].sort()).toEqual(["a-b", "c-d", "e-f", "g-h", "i-j", "settings-switch", "x"]);
   });
 });
 

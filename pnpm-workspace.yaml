@@ -2,3 +2,8 @@
 packages:
   - packages/*
   - apps/*
+
+# The app's pin, kept: @vercel/cli-config (under astro's unstorage) asks for a zod below the fix for
+# GHSA-mrhx-c7xc-m3w5, which fails the CI audit.
+overrides:
+  "@vercel/cli-config>zod": 4.6.7

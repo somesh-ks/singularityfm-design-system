@@ -1,5 +1,5 @@
 /**
- * The parts of the system that are real components (apps/web/src/design-system). Their facts come
+ * The parts of the system that are real components (packages/design-system/src). Their facts come
  * from the registry, so the lookup file and the style guide cannot disagree; this file adds only the
  * words a lookup matches against and the one-line rules the registry does not hold. A family that
  * becomes a component adds its entry here and deletes its hand-written ones from parts.ts.
@@ -353,7 +353,7 @@ export const componentParts = (): PartSource[] => [
   control("drawer", "Drawer", DRAWER, {
     kind: "container",
     classes: ["drawer-scrim", "drawer-viewport", "drawer-popup", "drawer-panel"],
-    files: ["apps/web/src/sheets/SheetFrame.tsx", "packages/design-system/src/drawer.ts"],
+    files: ["packages/design-system/src/drawer.ts"],
     keywords: ["island sheet", "swipe to dismiss", "Base UI drawer", "react sheet"],
     markup:
       '<SheetFrame open={open} onOpenChange={setOpen} title="Create" closeLabel="Close">...</SheetFrame>',

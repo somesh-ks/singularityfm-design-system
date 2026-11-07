@@ -40,8 +40,6 @@ export interface Part extends PartSource {
   usage: string;
   /** Semantic and component tokens the part's rules read. */
   tokens: string[];
-  /** Source files that name one of its classes. Zero would mean a dead part. Not written to system.json: it shifts with every UI edit and would make the file stale. */
-  usedIn: number;
 }
 
 export interface SystemToken {
@@ -59,18 +57,9 @@ export interface SystemToken {
   reducedMotion?: string;
 }
 
-export interface BespokeControl {
-  class: string;
-  reason: string;
-  /** The part that lists this class, when one does: the class is used through that part. */
-  part?: string;
-}
-
 export interface System {
   /** Where the file comes from and how to refresh it. */
   generated: string;
   parts: Part[];
-  /** Controls built for one place, each allowed with the reason it is not a shared part. */
-  bespoke: BespokeControl[];
   tokens: SystemToken[];
 }

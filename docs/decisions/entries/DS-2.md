@@ -1,0 +1,8 @@
+## DS-2: the style guide lists every library component; system.json is built from the library alone
+
+- Status: active; amends [D226](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/decisions/design-system.md#d226-the-style-guide-shows-only-components-the-app-imports)
+- Date: 2026-11-07
+- Decision: the owner's call after the split. The style guide's Components page lists every component in the library's registry (`packages/design-system/src/registry.ts`), with its summary and its "use when / do not use when", whether or not an app imports it; D226's rule that it shows only what the app imports no longer holds. `tokens/system.json` and `tokens/llms.txt` are built by `npm run system` from the package's own tokens, stylesheets and part list. The build takes no app stylesheets, sources or bespoke list, and a part's `files` names only library files. Where an app uses a part, and the controls it builds for one place, become a report the app writes about itself; that report is not built yet.
+- Why: the library now has its own repository and release, and can have more than one consumer. A guide filtered by one app's imports, and a system file that reads one app's code, would describe that app rather than the library, and could only be built where both were checked out.
+- Lost for now: the usage comments and app stylesheets that came from the reader's CSS (settings row, toast, empty state, multiselect, cover) and the bespoke-controls list. A part whose usage now reads empty gets its comment in the library's stylesheet or moves to the app's report.
+- Revisit if: a second app consumes the library and needs the guide to show which parts it draws.

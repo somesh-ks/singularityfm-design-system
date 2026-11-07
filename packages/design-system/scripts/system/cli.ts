@@ -24,13 +24,6 @@ switch (command) {
     console.log(answer(system, argument));
     break;
   case "part": {
-    if (argument === "bespoke") {
-      for (const item of system.bespoke)
-        console.log(
-          `.${item.class}${item.part ? ` (use the ${item.part} part)` : " (not for reuse)"}: ${item.reason}`,
-        );
-      break;
-    }
     const part = system.parts.find((candidate) => candidate.id === argument);
     if (!part) {
       console.error(`No part "${argument}". Parts: ${system.parts.map((p) => p.id).join(", ")}`);
@@ -56,6 +49,6 @@ switch (command) {
     for (const part of system.parts) console.log(`${part.id}: ${part.summary}`);
     break;
   default:
-    console.error('Usage: npm run ds -- find "<need>" | part <id|bespoke> | token <words> | list');
+    console.error('Usage: npm run ds -- find "<need>" | part <id> | token <words> | list');
     process.exit(command ? 1 : 0);
 }

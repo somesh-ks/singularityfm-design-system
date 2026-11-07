@@ -1,9 +1,10 @@
 /**
  * The shared parts of the reader, as an author states them: what each is for and what it is not for.
- * Everything checkable (the class exists, who styles it, which tokens it reads, where it is used) is
- * derived from the code by build.ts, so this file holds only judgment.
+ * Everything checkable (the class exists, who styles it, which tokens it reads) is derived from the
+ * package's code by build.ts, so this file holds only judgment. `files` names library files only
+ * (DS-2): an app's component that draws a part is in that app's usage report.
  *
- * The families that are real components (apps/web/src/design-system) come from componentParts.ts,
+ * The families that are real components (packages/design-system/src) come from componentParts.ts,
  * built from the registry; a family that moves there deletes its entries here. system.test.ts
  * checks ids only within the whole list.
  */
@@ -18,7 +19,6 @@ export const PARTS: PartSource[] = [
     kind: "action",
     summary: "The one creating action in the side column (Catch up), on the action tone.",
     classes: ["btn-action-tonal"],
-    files: ["apps/web/src/components/AppNav.astro"],
     when: ["the Catch up action in the side column"],
     not: [{ when: "any other button", use: "button-tonal" }],
     keywords: ["catch up", "side column", "create action"],
@@ -65,7 +65,6 @@ export const PARTS: PartSource[] = [
     kind: "action",
     summary: "The tonal pill that plays a briefing or one story, with its state.",
     classes: ["chip"],
-    files: ["apps/web/src/components/PlayChip.astro"],
     when: [
       "play an episode or a story and show idle, current, played, error or preparing",
       "episode duration with a play mark",
@@ -127,7 +126,6 @@ export const PARTS: PartSource[] = [
     kind: "navigation",
     summary: "A tonal track with one sliding pill: switch between views of the same content.",
     classes: ["segmented-nav", "segmented-nav-tab", "segmented-nav-compact"],
-    files: ["apps/web/src/scripts/segmentedNav.ts"],
     when: [
       "switch between Stories and Transcript",
       "switch the view of one page without leaving it",
@@ -210,11 +208,6 @@ export const PARTS: PartSource[] = [
     kind: "feedback",
     summary: "One quiet message at a time on the inverse surface, with an optional action.",
     classes: ["toast", "toast-action", "toast-dismiss"],
-    files: [
-      "apps/web/src/sheets/Toaster.tsx",
-      "apps/web/src/sheets/toastStore.ts",
-      "apps/web/src/scripts/toastEvent.ts",
-    ],
     when: [
       "a brief message with an Undo after a delete",
       "a failure that clears itself",
@@ -238,7 +231,6 @@ export const PARTS: PartSource[] = [
     summary:
       "A spot illustration, a title, one line and at most two actions, for a page with nothing in it.",
     classes: ["empty", "empty-actions"],
-    files: ["apps/web/src/components/EmptyState.astro", "apps/web/src/components/EmptyArt.astro"],
     when: ["a page or section with nothing to list yet", "no results, offline, not found"],
     not: [
       { when: "a list that has items", use: "card-group" },
@@ -255,7 +247,6 @@ export const PARTS: PartSource[] = [
     kind: "field",
     summary: "A field-like trigger that opens a list of checkable choices.",
     classes: ["multiselect-trigger"],
-    files: ["apps/web/src/components/MultiSelect.astro", "apps/web/src/scripts/multiSelect.ts"],
     when: ["choose several from a long list", "pick sources or topics in a field"],
     not: [{ when: "a few choices that fit on screen", use: "filter-chip" }],
     keywords: ["dropdown with checkboxes", "picker"],
@@ -325,7 +316,6 @@ export const PARTS: PartSource[] = [
     kind: "container",
     summary: "A generated cover image, drawn once per theme.",
     classes: ["cover"],
-    files: ["apps/web/src/components/Cover.astro", "apps/web/src/lib/covers.ts"],
     when: ["show an episode or briefing cover"],
     keywords: ["artwork", "thumbnail", "album art"],
   },
@@ -335,11 +325,6 @@ export const PARTS: PartSource[] = [
     kind: "action",
     summary: "Floating triggers above the bottom bar: create, add, play.",
     classes: ["create-fab", "add-fab", "play-fab"],
-    files: [
-      "apps/web/src/components/CreateFab.astro",
-      "apps/web/src/components/AddFab.astro",
-      "apps/web/src/components/PlayFab.astro",
-    ],
     when: ["the page's one creating action on a phone", "play a story from its cover"],
     not: [{ when: "an action in a form", use: "button-filled" }],
     keywords: ["floating button", "fab", "create button"],
