@@ -9,14 +9,15 @@ name: release
 # file of its own would be refused the OIDC token exchange.
 #
 # - release: weekly and on demand. Pending changesets open or update the version pull request; the merge
-#   of that pull request (it writes the package's CHANGELOG.md) publishes the new version at once. With
-#   nothing pending and the version already on npm, `changeset publish` finds nothing and it is a no-op.
-# - canary: a pull request labelled `canary` publishes 0.0.0-canary-<sha> under the `canary` dist-tag,
+#   of that pull request (it writes the package's CHANGELOG.md) stages the new version on npm
+#   (scripts/stagePublish.mjs). With the version already on npm the script does nothing.
+# - canary: a pull request labelled `canary` stages 0.0.0-canary-<sha> under the `canary` dist-tag,
 #   so an app pull request can try a fix before the library pull request merges.
 #
+# Staged, never published directly (owner, 2026-11-08): the trusted publisher allows `npm stage publish`
+# only, and a maintainer approves each staged version with 2FA on npmjs.com before it goes live.
 # No NPM_TOKEN: npm trusted publishing exchanges the job's OIDC token (id-token: write) and signs
-# provenance. pnpm 10 hands the publish to the npm CLI, and the npm that ships with Node 24 (.nvmrc) does
-# the exchange.
+# provenance; the npm that ships with Node 24 (.nvmrc, npm 11.15 or later) does the exchange.
 on:
   schedule:
     - cron: "23 6 * * 1"
@@ -77,7 +78,7 @@ jobs:
           NPM_CONFIG_LOGLEVEL: verbose
         with:
           github-token: ${{ steps.app-token.outputs.token || github.token }}
-          publish-script: pnpm exec changeset publish
+          publish-script: node scripts/stagePublish.mjs
           commit-message: "chore(release): version the design system"
           pr-title: "chore(release): version the design system"
 
@@ -119,4 +120,6 @@ jobs:
             0.0.0-canary-*) echo "publishing $version" ;;
             *) echo "::error::No changeset in this pull request, so no canary version ($version). Add one: pnpm exec changeset"; exit 1 ;;
           esac
-      - run: pnpm exec changeset publish --tag canary --no-git-tag
+      # Staged like a release: it reaches npm once a maintainer approves it.
+      - run: npm stage publish --tag canary
+        working-directory: packages/design-system
