@@ -1,0 +1,265 @@
+---
+import Avatar from "@singularity/design-system/Avatar.astro";
+import Badge from "@singularity/design-system/Badge.astro";
+import Banner from "@singularity/design-system/Banner.astro";
+import BrandMark from "@singularity/design-system/BrandMark.astro";
+import Button from "@singularity/design-system/Button";
+import Code from "@singularity/design-system/Code.astro";
+import Dialog from "@singularity/design-system/Dialog.astro";
+import DialogActions from "@singularity/design-system/DialogActions.astro";
+import DialogTitle from "@singularity/design-system/DialogTitle.astro";
+import Field from "@singularity/design-system/Field.astro";
+import Flag from "@singularity/design-system/Flag.astro";
+import Icon from "@singularity/design-system/Icon.astro";
+import type { IconName } from "@singularity/design-system/icons";
+import Menu from "@singularity/design-system/Menu.astro";
+import MenuItem from "@singularity/design-system/MenuItem.astro";
+import Ripple from "@singularity/design-system/Ripple.astro";
+import RowExit from "@singularity/design-system/RowExit.astro";
+import SectionTabs from "@singularity/design-system/SectionTabs.astro";
+import Select from "@singularity/design-system/Select.astro";
+import Sheet from "@singularity/design-system/Sheet.astro";
+import Slider from "@singularity/design-system/Slider.astro";
+import Switch from "@singularity/design-system/Switch.astro";
+import {
+  BANNER_ICON,
+  FLAG_CHOICES,
+  regionEmoji,
+  SAMPLE,
+  type State,
+  sampleSlug,
+} from "../lib/components";
+
+/**
+ * One state of a component page's controls, drawn by the component itself. The page renders every
+ * state and componentPage.ts shows the one the controls name, so the preview is the library's own
+ * markup and ships no framework. An id keeps the overlays' ids unique across the states.
+ */
+interface Props {
+  slug: string;
+  state: State;
+  id: string;
+}
+
+const { slug, state, id } = Astro.props;
+const on = (name: string): boolean => state[name] === "on";
+const menuIcons: IconName[] = ["share", "queueAdd", "download", "check", "openInNew"];
+const FLAG_NAMES = Object.fromEntries(FLAG_CHOICES);
+const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
+---
+
+{
+  slug === "button" && (
+    <Button
+      variant={state.variant === "danger" ? "text" : (state.variant as "filled" | "tonal" | "text")}
+      tone={state.variant === "danger" ? "danger" : undefined}
+      size={state.size === "small" ? "small" : undefined}
+      href={state.element === "link" ? "#" : undefined}
+      disabled={state.element === "link" ? undefined : on("disabled")}
+    >
+      {state.variant === "danger" ? SAMPLE.danger : SAMPLE.label}
+    </Button>
+  )
+}
+
+{
+  slug === "menu" && (
+    <>
+      <Button variant="tonal" popoverTarget={`${id}-menu`}>
+        {SAMPLE.menu.trigger}
+      </Button>
+      <Menu id={`${id}-menu`} title={SAMPLE.menu.title} subtitle={on("subtitle") ? SAMPLE.menu.subtitle : undefined}>
+        {SAMPLE.menu.items.slice(0, Number(state.items)).map((label, n) => (
+          <MenuItem>
+            <Icon name={menuIcons[n] ?? "check"} /> {label}
+          </MenuItem>
+        ))}
+        {
+          on("danger") && (
+            <MenuItem tone="danger">
+              <Icon name="trash" /> {SAMPLE.danger}
+            </MenuItem>
+          )
+        }
+      </Menu>
+    </>
+  )
+}
+
+{
+  slug === "field" && (
+    <Field
+      multiline={state.lines === "multi"}
+      value={on("filled") ? SAMPLE.value : undefined}
+      placeholder={on("filled") ? undefined : SAMPLE.label}
+      aria-label={SAMPLE.label}
+      disabled={on("disabled")}
+    />
+  )
+}
+
+{
+  slug === "switch" && (
+    <Switch
+      checked={state.state === "on"}
+      data-mixed={state.state === "mixed" ? "" : undefined}
+      aria-label={SAMPLE.label}
+      disabled={on("disabled")}
+    />
+  )
+}
+
+{
+  slug === "slider" && (
+    <Slider
+      hue={state.variant === "hue"}
+      wavy={state.variant === "wavy"}
+      min="0"
+      max="100"
+      value="40"
+      aria-label={SAMPLE.label}
+      disabled={on("disabled")}
+    />
+  )
+}
+
+{
+  slug === "select" && (
+    <Select variant={state.variant as "outlined" | "tonal"} label={SAMPLE.label} disabled={on("disabled")}>
+      {SAMPLE.select.map((option, n) => <option value={n + 1}>{option}</option>)}
+    </Select>
+  )
+}
+
+{
+  slug === "section-tabs" && (
+    <SectionTabs
+      sections={SAMPLE.tabs.slice(0, Number(state.count)).map((title) => ({
+        slug: sampleSlug(title),
+        title,
+      }))}
+    />
+  )
+}
+
+{
+  slug === "row-exit" && (
+    <>
+      <ul data-row-list>
+        {Array.from({ length: Number(state.rows) }, (_, i) => (
+          <RowExit>
+            <span>{SAMPLE.rows[i]}</span>{" "}
+            <Button variant="text" size="small" data-row-remove>
+              Remove
+            </Button>
+          </RowExit>
+        ))}
+      </ul>
+      <Button variant="tonal" size="small" data-row-reset>
+        Reset
+      </Button>
+    </>
+  )
+}
+
+{
+  slug === "dialog" && (
+    <>
+      <Button variant="tonal" data-preview-open={`${id}-dialog`}>
+        Open dialog
+      </Button>
+      <Dialog id={`${id}-dialog`} form={{ method: "dialog" }} aria-labelledby={`${id}-title`}>
+        <DialogTitle id={`${id}-title`}>{SAMPLE.dialog.title}</DialogTitle>
+        <DialogActions stacked={state.answers === "three"}>
+          {state.answers === "three" && (
+            <>
+              {on("danger") ? (
+                <Button variant="text" tone="danger" type="submit">{SAMPLE.danger}</Button>
+              ) : (
+                <Button variant="filled" type="submit">{SAMPLE.dialog.confirm}</Button>
+              )}
+              <Button variant="tonal" type="submit">{SAMPLE.dialog.secondary}</Button>
+            </>
+          )}
+          <Button variant="text" type="submit">{SAMPLE.dialog.cancel}</Button>
+          {state.answers !== "three" &&
+            (on("danger") ? (
+              <Button variant="text" tone="danger" type="submit">{SAMPLE.danger}</Button>
+            ) : (
+              <Button variant="filled" type="submit">{SAMPLE.dialog.confirm}</Button>
+            ))}
+        </DialogActions>
+      </Dialog>
+    </>
+  )
+}
+
+{
+  slug === "sheet" && (
+    <>
+      <Button variant="tonal" data-preview-open={`${id}-sheet`}>
+        Open sheet
+      </Button>
+      <Sheet
+        id={`${id}-sheet`}
+        title={SAMPLE.sheet}
+        titleId={`${id}-sheet-title`}
+        close="data-panel-close"
+        kind={state.kind === "create" ? "create" : "panel"}
+      >
+        <Field placeholder={SAMPLE.label} aria-label={SAMPLE.label} />
+        <Button variant="filled" data-panel-close>{SAMPLE.dialog.confirm}</Button>
+      </Sheet>
+    </>
+  )
+}
+
+{
+  slug === "banner" && (
+    <Banner
+      tone={tone}
+      variant={state.variant === "strip" ? "strip" : undefined}
+      icon={BANNER_ICON[tone]}
+      title={SAMPLE.banner.title}
+      body={on("body") ? SAMPLE.banner.body : undefined}
+      action={on("action") ? { label: SAMPLE.banner.action, href: "#" } : undefined}
+    />
+  )
+}
+
+{slug === "badge" && <Badge>{state.content === "number" ? "12" : SAMPLE.badge}</Badge>}
+
+{
+  slug === "ripple" && (
+    <Button variant="tonal" data-ripple>
+      {SAMPLE.label}
+      <Ripple />
+    </Button>
+  )
+}
+
+{slug === "icon" && <Icon name={state.name as IconName} size={state.size === "lg" ? "lg" : "md"} />}
+
+{slug === "avatar" && <Avatar shape={state.shape} size={state.size as "md" | "lg" | "xl"} />}
+
+{
+  slug === "flag" &&
+    (state.mode === "text" ? (
+      <span>
+        <Flag text={`${regionEmoji(state.region ?? "SE")} ${FLAG_NAMES[state.region ?? "SE"]}`} />
+      </span>
+    ) : (
+      <Flag region={state.region} />
+    ))
+}
+
+{slug === "brand-mark" && <BrandMark />}
+
+{
+  slug === "code" && (
+    <Code
+      label={SAMPLE.label}
+      text={state.text === "lines" ? SAMPLE.codeLines : SAMPLE.code}
+    />
+  )
+}

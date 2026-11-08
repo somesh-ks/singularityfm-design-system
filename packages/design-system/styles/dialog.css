@@ -106,8 +106,10 @@ dialog.dialog-panel:focus-visible {
   margin-block-start: var(--space-4);
 }
 
-/* Three choices stacked, the committing one first: the unsaved-changes guard (sheetGuard.ts). */
+/* Three choices stacked, the committing one first: the unsaved-changes guard (sheetGuard.ts).
+   Stacked or in a row, every answer hugs its label and lines up at the end; nothing stretches to
+   the dialog's width (owner, 2026-10-30 and again 2026-11-08). designSystem.test.ts guards it. */
 .dialog-actions-stacked {
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-end;
 }

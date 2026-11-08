@@ -15,7 +15,7 @@ const art = {
 <Shell title="Foundations" current="/foundations">
   <div class="settings-view guide-page" data-settings data-ready>
     <PageHead title="Foundations" />
-    <section aria-label="Foundations" class="guide-tiles">
+    <section aria-label="Foundations" class="guide-tiles guide-tiles-pairs">
       {FOUNDATION_PAGES.map((page) => <GuideTile page={page} art={art[page.path as keyof typeof art]} />)}
     </section>
   </div>

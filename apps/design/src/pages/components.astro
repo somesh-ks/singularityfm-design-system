@@ -1,35 +1,22 @@
 ---
-import { COMPONENTS } from "@singularity/design-system/registry";
+import ComponentArt from "../components/ComponentArt.astro";
+import GuideTile from "../components/GuideTile.astro";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
-
-// Every component the library ships, from its registry (DS-2, amending D226): what an app imports is
-// that app's usage report, not this page's filter.
-const slug = (name: string): string => name.toLowerCase().replace(/\s+/g, "-");
+import { COMPONENT_GROUPS } from "../lib/sections";
 ---
 
 <Shell title="Components" current="/components">
   <div class="settings-view guide-page" data-settings data-ready>
     <PageHead title="Components" />
-    <p class="guide-lead">Every component the library ships, with when to use it and when to reach for another.</p>
-    {COMPONENTS.map((component) => (
-      <section aria-labelledby={slug(component.name)}>
-        <h2 class="section-head text-heading" id={slug(component.name)}>{component.name}</h2>
-        <p class="guide-prose">{component.summary}</p>
-        <h3 class="guide-group-name">Use when</h3>
-        <ul class="guide-list">
-          {component.useWhen.map((line) => <li>{line}</li>)}
-        </ul>
-        {component.dontUseWhen.length > 0 && (
-          <>
-            <h3 class="guide-group-name">Do not use when</h3>
-            <ul class="guide-list">
-              {component.dontUseWhen.map((item) => (
-                <li>{item.when}{item.instead && <> Use {item.instead.replace(".", " ")} instead.</>}</li>
-              ))}
-            </ul>
-          </>
-        )}
+    <p class="guide-lead">Every component the library ships, grouped by what it does for a person. Each page has a live preview with its states, the code, when to use it and its props.</p>
+    {COMPONENT_GROUPS.map((group) => (
+      <section aria-labelledby={`group-${group.label.toLowerCase()}`}>
+        <h2 class="section-head text-heading" id={`group-${group.label.toLowerCase()}`}>{group.label}</h2>
+        <p class="guide-note">{group.note}</p>
+        <div class="guide-tiles">
+          {group.pages.map((page) => <GuideTile page={page}><ComponentArt slot="art" slug={page.path.split("/").pop() ?? ""} /></GuideTile>)}
+        </div>
       </section>
     ))}
   </div>

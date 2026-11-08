@@ -112,7 +112,7 @@ const kept: { title: string; line: string; icon: IconName }[] = [
 
     <section aria-labelledby="rules">
       <h2 class="section-head text-heading" id="rules">What it follows</h2>
-      <ol class="guide-cards" role="list">
+      <ol class="guide-cards guide-cards-pairs" role="list">
         {
           principles.map((principle, index) => (
             <li class="guide-card" data-tone={principle.tone} style={`--n: ${index}`}>
@@ -135,7 +135,7 @@ const kept: { title: string; line: string; icon: IconName }[] = [
 
     <section aria-labelledby="kept">
       <h2 class="section-head text-heading" id="kept">How it is kept</h2>
-      <ol class="guide-cards" role="list">
+      <ol class="guide-cards guide-cards-three" role="list">
         {
           kept.map((step, index) => (
             <li class="guide-card" data-tone="accent" style={`--n: ${index}`}>

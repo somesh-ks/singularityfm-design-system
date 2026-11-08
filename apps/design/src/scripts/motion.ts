@@ -13,5 +13,8 @@ document.addEventListener("click", (event) => {
     track.dataset.run = "false";
   };
   dot?.addEventListener("transitionend", back, { once: true });
-  setTimeout(back, 2000);
+  // Backstop for a transition that never ends (none to run): the token's own duration, not a fixed
+  // two seconds, which cut the 2.4 s avatar token short and sent the dot back mid-flight.
+  const ms = dot ? Number.parseFloat(getComputedStyle(dot).transitionDuration) * 1000 : 0;
+  setTimeout(back, (Number.isFinite(ms) ? ms : 0) + 250);
 });
