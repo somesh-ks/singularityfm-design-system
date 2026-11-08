@@ -33,8 +33,7 @@ describe("a pill that changes shape", () => {
     const jumps = [...radii].flatMap(([key, set]) =>
       set.some(
         (a) =>
-          BARE_ROUND.test(a.value) &&
-          set.some((b) => b.state !== a.state && b.value !== a.value),
+          BARE_ROUND.test(a.value) && set.some((b) => b.state !== a.state && b.value !== a.value),
       )
         ? [`${set[0]?.sheet} ${key}`]
         : [],
