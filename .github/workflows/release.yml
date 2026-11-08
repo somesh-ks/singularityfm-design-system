@@ -43,21 +43,24 @@ jobs:
       group: release
       cancel-in-progress: false
     # The OIDC token for npm. The version pull request, its branch, the tags and the GitHub releases use
-    # the library's GitHub App token instead of GITHUB_TOKEN: GitHub holds the checks on a pull request
+    # the library's GitHub App token when the App is set up: GitHub holds the checks on a pull request
     # GITHUB_TOKEN opens until a person approves them; one the App opens runs CI at once (owner,
     # 2026-11-08). The App needs Contents and Pull requests (read and write) on this repository only.
+    # Without the App's variable the job falls back to GITHUB_TOKEN, hence the write permissions.
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
       id-token: write
     steps:
       - id: app-token
+        if: vars.RELEASE_APP_CLIENT_ID != ''
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          token: ${{ steps.app-token.outputs.token || github.token }}
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -68,8 +71,12 @@ jobs:
       # The tarball a customer gets must pack, install and build before anything is published.
       - run: node scripts/designSystemPack.mjs
       - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        # npm's trusted-publishing exchange fails silently below verbose, leaving only E404 in the log
+        # (2026-11-08). Verbose shows why: a publisher setting that does not match, or no id_token.
+        env:
+          NPM_CONFIG_LOGLEVEL: verbose
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ steps.app-token.outputs.token || github.token }}
           publish-script: pnpm exec changeset publish
           commit-message: "chore(release): version the design system"
           pr-title: "chore(release): version the design system"
