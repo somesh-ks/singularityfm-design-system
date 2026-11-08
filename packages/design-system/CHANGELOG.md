@@ -1,5 +1,11 @@
 # @singularityfm/design-system
 
+## 0.2.0
+
+### Minor Changes
+
+- 7bb8213: Button: a tonal button on a dialog, sheet or drawer takes the sheet tile tone, so its fill shows in dark mode. What looks different: in dark mode a tonal button on those surfaces is one step lighter than before; in light mode it is unchanged.
+
 ## 0.1.1
 
 ### Patch Changes
