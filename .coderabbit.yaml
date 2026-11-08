@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 language: "en-US"
-tone_instructions: "Senior design engineer. Be concise, direct, and actionable. Flag concrete bugs, logic errors, design system regressions, breaking changes to the published package, and performance regressions. Do not generate conversational filler or pedantic stylistic complaints."
+tone_instructions: "Senior design engineer. Be concise, direct, actionable. Flag bugs, logic errors, design system regressions, breaking changes to the published package and performance regressions. No filler, no pedantic style nits."
 early_access: false
 reviews:
   profile: "assertive"

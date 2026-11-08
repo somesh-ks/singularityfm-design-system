@@ -78,7 +78,7 @@ const words: Record<string, { keywords: string[]; markup: string; rules?: string
 const sentences = (lines: readonly string[]): string[] =>
   lines.map((line) => line.replace(/\.$/, ""));
 
-const FILES = ["packages/design-system/src/Button.astro", "packages/design-system/src/button.ts"];
+const FILES = ["packages/design-system/src/Button.tsx", "packages/design-system/src/button.ts"];
 
 /** A single-class control (Switch, Slider): the registry's guidance plus the words a lookup matches. */
 const control = (
