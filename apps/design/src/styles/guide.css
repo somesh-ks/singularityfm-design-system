@@ -11,10 +11,12 @@
   max-width: calc(var(--layout-column) * 1.75);
 }
 
+/* Only the column's width changes: the shell's own three tracks (shell.css) keep it on the middle of the
+   pane. A one-track override here left `main` (grid-column: 2 in shell.css) in an implicit second track,
+   right of the pane's middle (owner, 2026-11-08). */
 @media (width >= 80rem) {
   .shell {
     --column-inner: calc(var(--layout-column) * 1.75 - var(--page-gutter) * 2);
-    grid-template-columns: minmax(0, var(--column-inner));
   }
 }
 
