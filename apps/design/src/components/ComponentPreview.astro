@@ -21,7 +21,14 @@ import Select from "@singularity/design-system/Select.astro";
 import Sheet from "@singularity/design-system/Sheet.astro";
 import Slider from "@singularity/design-system/Slider.astro";
 import Switch from "@singularity/design-system/Switch.astro";
-import { BANNER_ICON, FLAG_CHOICES, regionEmoji, type State } from "../lib/components";
+import {
+  BANNER_ICON,
+  FLAG_CHOICES,
+  regionEmoji,
+  SAMPLE,
+  type State,
+  sampleSlug,
+} from "../lib/components";
 
 /**
  * One state of a component page's controls, drawn by the component itself. The page renders every
@@ -36,14 +43,7 @@ interface Props {
 
 const { slug, state, id } = Astro.props;
 const on = (name: string): boolean => state[name] === "on";
-const sectionTitles = ["Top stories", "Design", "Research", "Tools", "Reading"];
-const menuRows: [IconName, string][] = [
-  ["share", "Share"],
-  ["queueAdd", "Add to queue"],
-  ["download", "Download"],
-  ["check", "Mark as played"],
-  ["openInNew", "Open source"],
-];
+const menuIcons: IconName[] = ["share", "queueAdd", "download", "check", "openInNew"];
 const FLAG_NAMES = Object.fromEntries(FLAG_CHOICES);
 const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
 ---
@@ -57,7 +57,7 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       href={state.element === "link" ? "#" : undefined}
       disabled={state.element === "link" ? undefined : on("disabled")}
     >
-      {state.variant === "danger" ? "Delete" : "Save"}
+      {state.variant === "danger" ? SAMPLE.danger : SAMPLE.label}
     </Button>
   )
 }
@@ -66,18 +66,18 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
   slug === "menu" && (
     <>
       <Button variant="tonal" popoverTarget={`${id}-menu`}>
-        More
+        {SAMPLE.menu.trigger}
       </Button>
-      <Menu id={`${id}-menu`} title="Episode" subtitle={on("subtitle") ? "12 min" : undefined}>
-        {menuRows.slice(0, Number(state.items)).map(([icon, label]) => (
+      <Menu id={`${id}-menu`} title={SAMPLE.menu.title} subtitle={on("subtitle") ? SAMPLE.menu.subtitle : undefined}>
+        {SAMPLE.menu.items.slice(0, Number(state.items)).map((label, n) => (
           <MenuItem>
-            <Icon name={icon} /> {label}
+            <Icon name={menuIcons[n] ?? "check"} /> {label}
           </MenuItem>
         ))}
         {
           on("danger") && (
             <MenuItem tone="danger">
-              <Icon name="trash" /> Delete
+              <Icon name="trash" /> {SAMPLE.danger}
             </MenuItem>
           )
         }
@@ -90,9 +90,9 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
   slug === "field" && (
     <Field
       multiline={state.lines === "multi"}
-      value={on("filled") ? "https://example.com/feed.xml" : undefined}
-      placeholder={on("filled") ? undefined : "Feed address"}
-      aria-label="Feed address"
+      value={on("filled") ? SAMPLE.value : undefined}
+      placeholder={on("filled") ? undefined : SAMPLE.label}
+      aria-label={SAMPLE.label}
       disabled={on("disabled")}
     />
   )
@@ -103,7 +103,7 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
     <Switch
       checked={state.state === "on"}
       data-mixed={state.state === "mixed" ? "" : undefined}
-      aria-label="Autoplay"
+      aria-label={SAMPLE.label}
       disabled={on("disabled")}
     />
   )
@@ -117,7 +117,7 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       min="0"
       max="100"
       value="40"
-      aria-label="Speed"
+      aria-label={SAMPLE.label}
       disabled={on("disabled")}
     />
   )
@@ -125,10 +125,8 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
 
 {
   slug === "select" && (
-    <Select variant={state.variant as "outlined" | "tonal"} label="Sort by" disabled={on("disabled")}>
-      <option value="new">Newest</option>
-      <option value="old">Oldest</option>
-      <option value="long">Longest</option>
+    <Select variant={state.variant as "outlined" | "tonal"} label={SAMPLE.label} disabled={on("disabled")}>
+      {SAMPLE.select.map((option, n) => <option value={n + 1}>{option}</option>)}
     </Select>
   )
 }
@@ -136,8 +134,8 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
 {
   slug === "section-tabs" && (
     <SectionTabs
-      sections={sectionTitles.slice(0, Number(state.count)).map((title) => ({
-        slug: title.toLowerCase().replace(/\W+/g, "-"),
+      sections={SAMPLE.tabs.slice(0, Number(state.count)).map((title) => ({
+        slug: sampleSlug(title),
         title,
       }))}
     />
@@ -150,7 +148,7 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       <ul data-row-list>
         {Array.from({ length: Number(state.rows) }, (_, i) => (
           <RowExit>
-            <span>Source {i + 1}</span>{" "}
+            <span>{SAMPLE.rows[i]}</span>{" "}
             <Button variant="text" size="small" data-row-remove>
               Remove
             </Button>
@@ -171,24 +169,24 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
         Open dialog
       </Button>
       <Dialog id={`${id}-dialog`} form={{ method: "dialog" }} aria-labelledby={`${id}-title`}>
-        <DialogTitle id={`${id}-title`}>{on("danger") ? "Delete this source?" : "Save changes?"}</DialogTitle>
+        <DialogTitle id={`${id}-title`}>{SAMPLE.dialog.title}</DialogTitle>
         <DialogActions stacked={state.answers === "three"}>
           {state.answers === "three" && (
             <>
               {on("danger") ? (
-                <Button variant="text" tone="danger" type="submit">Delete</Button>
+                <Button variant="text" tone="danger" type="submit">{SAMPLE.danger}</Button>
               ) : (
-                <Button variant="filled" type="submit">Save</Button>
+                <Button variant="filled" type="submit">{SAMPLE.dialog.confirm}</Button>
               )}
-              <Button variant="tonal" type="submit">Discard</Button>
+              <Button variant="tonal" type="submit">{SAMPLE.dialog.secondary}</Button>
             </>
           )}
-          <Button variant="text" type="submit">Cancel</Button>
+          <Button variant="text" type="submit">{SAMPLE.dialog.cancel}</Button>
           {state.answers !== "three" &&
             (on("danger") ? (
-              <Button variant="text" tone="danger" type="submit">Delete</Button>
+              <Button variant="text" tone="danger" type="submit">{SAMPLE.danger}</Button>
             ) : (
-              <Button variant="filled" type="submit">Save</Button>
+              <Button variant="filled" type="submit">{SAMPLE.dialog.confirm}</Button>
             ))}
         </DialogActions>
       </Dialog>
@@ -204,13 +202,13 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       </Button>
       <Sheet
         id={`${id}-sheet`}
-        title="Add source"
+        title={SAMPLE.sheet}
         titleId={`${id}-sheet-title`}
         close="data-panel-close"
         kind={state.kind === "create" ? "create" : "panel"}
       >
-        <Field placeholder="Feed address" aria-label="Feed address" />
-        <Button variant="filled" data-panel-close>Add source</Button>
+        <Field placeholder={SAMPLE.label} aria-label={SAMPLE.label} />
+        <Button variant="filled" data-panel-close>{SAMPLE.dialog.confirm}</Button>
       </Sheet>
     </>
   )
@@ -222,19 +220,19 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       tone={tone}
       variant={state.variant === "strip" ? "strip" : undefined}
       icon={BANNER_ICON[tone]}
-      title="Briefing is late"
-      body={on("body") ? "The next one is due tomorrow." : undefined}
-      action={on("action") ? { label: "See all", href: "#" } : undefined}
+      title={SAMPLE.banner.title}
+      body={on("body") ? SAMPLE.banner.body : undefined}
+      action={on("action") ? { label: SAMPLE.banner.action, href: "#" } : undefined}
     />
   )
 }
 
-{slug === "badge" && <Badge>{state.content === "number" ? "12" : "Admin"}</Badge>}
+{slug === "badge" && <Badge>{state.content === "number" ? "12" : SAMPLE.badge}</Badge>}
 
 {
   slug === "ripple" && (
     <Button variant="tonal" data-ripple>
-      Press here
+      {SAMPLE.label}
       <Ripple />
     </Button>
   )
@@ -260,8 +258,8 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
 {
   slug === "code" && (
     <Code
-      label="Run details"
-      text={state.text === "lines" ? "run 2026-11-07\nstatus failed\nsource example.com" : "run_2026_11_07_0314"}
+      label={SAMPLE.label}
+      text={state.text === "lines" ? SAMPLE.codeLines : SAMPLE.code}
     />
   )
 }

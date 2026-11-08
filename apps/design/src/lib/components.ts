@@ -111,6 +111,35 @@ export const FLAG_CHOICES: readonly [string, string][] = [
 
 const FLAG_NAMES = Object.fromEntries(FLAG_CHOICES);
 
+/**
+ * The words every sample says: neutral placeholders, never the app's own copy. The previews, the
+ * index pictures and the code snippets all read these, so they cannot disagree.
+ */
+export const SAMPLE = {
+  label: "Label",
+  danger: "Delete",
+  value: "Sample value",
+  code: "sample-value",
+  codeLines: "sample-value\nsample-value-two\nsample-value-three",
+  dialog: { title: "Dialog title", confirm: "Confirm", cancel: "Cancel", secondary: "Secondary" },
+  menu: {
+    trigger: "Menu",
+    title: "Menu title",
+    subtitle: "Supporting text",
+    items: ["Action one", "Action two", "Action three", "Action four", "Action five"],
+  },
+  select: ["Option one", "Option two", "Option three"],
+  tabs: ["Tab one", "Tab two", "Tab three", "Tab four", "Tab five"],
+  chapters: ["Section one", "Section two", "Section three"],
+  rows: ["Item one", "Item two", "Item three", "Item four", "Item five"],
+  banner: { title: "Title", body: "Supporting text", action: "Action" },
+  badge: "Label",
+  sheet: "Sheet title",
+} as const;
+
+/** A sample's words as a slug, for an anchor. */
+export const sampleSlug = (text: string): string => text.toLowerCase().replace(/\W+/g, "-");
+
 /** The tones' icons on the Banner page. */
 export const BANNER_ICON = { warning: "alert", danger: "blocked", success: "checkCircle" } as const;
 
@@ -148,9 +177,9 @@ export const SPECS: readonly ComponentSpec[] = [
       const attrs = [`variant="${state.variant === "danger" ? "text" : state.variant}"`];
       if (state.variant === "danger") attrs.push('tone="danger"');
       if (state.size === "small") attrs.push('size="small"');
-      if (state.element === "link") attrs.push('href="/sources"');
+      if (state.element === "link") attrs.push('href="/path"');
       else if (on(state, "disabled")) attrs.push("disabled");
-      return jsx("Button", attrs, state.variant === "danger" ? "Delete" : "Save");
+      return jsx("Button", attrs, state.variant === "danger" ? SAMPLE.danger : SAMPLE.label);
     },
     note: "A link is a Button with an href; a link cannot be disabled, so the switch applies to the button.",
   },
@@ -170,22 +199,19 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Button", "Menu", "MenuItem", "Icon"],
     code: (state) => {
-      const rows = [
-        ["share", "Share"],
-        ["queueAdd", "Add to queue"],
-        ["download", "Download"],
-        ["check", "Mark as played"],
-        ["openInNew", "Open source"],
-      ].slice(0, Number(state.items));
+      const icons = ["share", "queueAdd", "download", "check", "openInNew"];
+      const rows = SAMPLE.menu.items
+        .map((label, n) => [icons[n], label])
+        .slice(0, Number(state.items));
       const lines = rows.map(
         ([icon, label]) => `  <MenuItem><Icon name="${icon}" /> ${label}</MenuItem>`,
       );
       if (on(state, "danger"))
-        lines.push('  <MenuItem tone="danger"><Icon name="trash" /> Delete</MenuItem>');
-      const sub = on(state, "subtitle") ? ' subtitle="12 min"' : "";
+        lines.push(`  <MenuItem tone="danger"><Icon name="trash" /> ${SAMPLE.danger}</MenuItem>`);
+      const sub = on(state, "subtitle") ? ` subtitle="${SAMPLE.menu.subtitle}"` : "";
       return [
-        '<Button variant="tonal" popoverTarget="episode-menu">More</Button>',
-        `<Menu id="episode-menu" title="Episode"${sub}>`,
+        `<Button variant="tonal" popoverTarget="sample-menu">${SAMPLE.menu.trigger}</Button>`,
+        `<Menu id="sample-menu" title="${SAMPLE.menu.title}"${sub}>`,
         ...lines,
         "</Menu>",
       ].join("\n");
@@ -217,9 +243,9 @@ export const SPECS: readonly ComponentSpec[] = [
     code: (state) => {
       const attrs: string[] = [];
       if (state.lines === "multi") attrs.push("multiline");
-      if (on(state, "filled")) attrs.push('value="https://example.com/feed.xml"');
-      else attrs.push('placeholder="Feed address"');
-      attrs.push('aria-label="Feed address"');
+      if (on(state, "filled")) attrs.push(`value="${SAMPLE.value}"`);
+      else attrs.push(`placeholder="${SAMPLE.label}"`);
+      attrs.push(`aria-label="${SAMPLE.label}"`);
       if (on(state, "disabled")) attrs.push("disabled");
       return jsx("Field", attrs);
     },
@@ -242,7 +268,7 @@ export const SPECS: readonly ComponentSpec[] = [
     code: (state) => {
       const attrs: string[] = [];
       if (state.state === "on") attrs.push("checked");
-      attrs.push('aria-label="Autoplay"');
+      attrs.push(`aria-label="${SAMPLE.label}"`);
       if (on(state, "disabled")) attrs.push("disabled");
       const tag = jsx("Switch", attrs);
       return state.state === "mixed"
@@ -266,7 +292,7 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Slider"],
     code: (state) => {
-      const attrs = ['min="0"', 'max="100"', 'value="40"', 'aria-label="Speed"'];
+      const attrs = ['min="0"', 'max="100"', 'value="40"', `aria-label="${SAMPLE.label}"`];
       if (state.variant !== "default") attrs.unshift(state.variant ?? "");
       if (on(state, "disabled")) attrs.push("disabled");
       return jsx("Slider", attrs);
@@ -288,13 +314,11 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Select"],
     code: (state) => {
-      const attrs = [`variant="${state.variant}"`, 'label="Sort by"'];
+      const attrs = [`variant="${state.variant}"`, `label="${SAMPLE.label}"`];
       if (on(state, "disabled")) attrs.push("disabled");
       return [
         `<Select ${attrs.join(" ")}>`,
-        '  <option value="new">Newest</option>',
-        '  <option value="old">Oldest</option>',
-        '  <option value="long">Longest</option>',
+        ...SAMPLE.select.map((option, n) => `  <option value="${n + 1}">${option}</option>`),
         "</Select>",
       ].join("\n");
     },
@@ -335,12 +359,9 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["SectionTabs"],
     code: (state) =>
-      `<SectionTabs\n  sections={[\n${["Top stories", "Design", "Research", "Tools", "Reading"]
+      `<SectionTabs\n  sections={[\n${SAMPLE.tabs
         .slice(0, Number(state.count))
-        .map(
-          (title) =>
-            `    { slug: "${title.toLowerCase().replace(/\W+/g, "-")}", title: "${title}" },`,
-        )
+        .map((title) => `    { slug: "${sampleSlug(title)}", title: "${title}" },`)
         .join("\n")}\n  ]}\n/>`,
     note: "The links are real anchors; here a press moves the mark and goes nowhere. The app's briefingPage.ts moves it as the page scrolls.",
   },
@@ -364,7 +385,7 @@ export const SPECS: readonly ComponentSpec[] = [
     controls: [],
     imports: ["ChapterAside"],
     code: () =>
-      '<ChapterAside\n  sections={[\n    { slug: "top-stories", title: "Top stories" },\n    { slug: "design", title: "Design" },\n  ]}\n/>',
+      `<ChapterAside\n  sections={[\n${SAMPLE.chapters.map((title) => `    { slug: "${sampleSlug(title)}", title: "${title}" },`).join("\n")}\n  ]}\n/>`,
     noPreview:
       "It is hidden below 80rem and, from there, sticks to the middle of the window beside the reading column, so it cannot sit inside a stage.",
   },
@@ -383,7 +404,7 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["RowExit"],
     code: (state) =>
-      `<ul>\n${Array.from({ length: Number(state.rows) }, (_, i) => `  <RowExit>Source ${i + 1}</RowExit>`).join("\n")}\n</ul>\n<!-- A script sets data-removing on a row to take it out. -->`,
+      `<ul>\n${Array.from({ length: Number(state.rows) }, (_, i) => `  <RowExit>${SAMPLE.rows[i]}</RowExit>`).join("\n")}\n</ul>\n<!-- A script sets data-removing on a row to take it out. -->`,
     note: "Remove a row to see it fade and the gap close; Reset brings them back.",
   },
   {
@@ -403,16 +424,19 @@ export const SPECS: readonly ComponentSpec[] = [
     code: (state) => {
       const stacked = state.answers === "three";
       const confirm = on(state, "danger")
-        ? '<Button variant="text" tone="danger" type="submit">Delete</Button>'
-        : '<Button variant="filled" type="submit">Save</Button>';
+        ? `<Button variant="text" tone="danger" type="submit">${SAMPLE.danger}</Button>`
+        : `<Button variant="filled" type="submit">${SAMPLE.dialog.confirm}</Button>`;
       return [
-        '<Dialog id="confirm" form={{ method: "dialog" }} aria-labelledby="confirm-title">',
-        `  <DialogTitle id="confirm-title">${on(state, "danger") ? "Delete this source?" : "Save changes?"}</DialogTitle>`,
+        '<Dialog id="sample-dialog" form={{ method: "dialog" }} aria-labelledby="sample-dialog-title">',
+        `  <DialogTitle id="sample-dialog-title">${SAMPLE.dialog.title}</DialogTitle>`,
         `  <DialogActions${stacked ? " stacked" : ""}>`,
         ...(stacked
-          ? [`    ${confirm}`, '    <Button variant="tonal" type="submit">Discard</Button>']
+          ? [
+              `    ${confirm}`,
+              `    <Button variant="tonal" type="submit">${SAMPLE.dialog.secondary}</Button>`,
+            ]
           : []),
-        '    <Button variant="text" type="submit">Cancel</Button>',
+        `    <Button variant="text" type="submit">${SAMPLE.dialog.cancel}</Button>`,
         ...(stacked ? [] : [`    ${confirm}`]),
         "  </DialogActions>",
         "</Dialog>",
@@ -447,9 +471,9 @@ export const SPECS: readonly ComponentSpec[] = [
     imports: ["Sheet", "Field", "Button"],
     code: (state) =>
       [
-        `<Sheet id="add" title="Add source" titleId="add-title" close="data-panel-close"${state.kind === "create" ? ' kind="create"' : ""}>`,
-        '  <Field placeholder="Feed address" aria-label="Feed address" />',
-        '  <Button variant="filled">Add source</Button>',
+        `<Sheet id="sample-sheet" title="${SAMPLE.sheet}" titleId="sample-sheet-title" close="data-panel-close"${state.kind === "create" ? ' kind="create"' : ""}>`,
+        `  <Field placeholder="${SAMPLE.label}" aria-label="${SAMPLE.label}" />`,
+        `  <Button variant="filled">${SAMPLE.dialog.confirm}</Button>`,
         "</Sheet>",
       ].join("\n"),
     note: "Open it with the Button: the real dialog, a panel at the side from 40rem and the whole screen on a phone.",
@@ -495,9 +519,10 @@ export const SPECS: readonly ComponentSpec[] = [
       const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       const attrs = [`tone="${tone}"`];
       if (state.variant === "strip") attrs.push('variant="strip"');
-      attrs.push(`icon="${BANNER_ICON[tone]}"`, 'title="Briefing is late"');
-      if (on(state, "body")) attrs.push('body="The next one is due tomorrow."');
-      if (on(state, "action")) attrs.push('action={{ label: "See all", href: "/briefings" }}');
+      attrs.push(`icon="${BANNER_ICON[tone]}"`, `title="${SAMPLE.banner.title}"`);
+      if (on(state, "body")) attrs.push(`body="${SAMPLE.banner.body}"`);
+      if (on(state, "action"))
+        attrs.push(`action={{ label: "${SAMPLE.banner.action}", href: "/path" }}`);
       return jsx("Banner", attrs);
     },
     note: "A strip squeezes the app down while it shows; here it sits in the stage.",
@@ -515,7 +540,7 @@ export const SPECS: readonly ComponentSpec[] = [
       ]),
     ],
     imports: ["Badge"],
-    code: (state) => jsx("Badge", [], state.content === "number" ? "12" : "Admin"),
+    code: (state) => jsx("Badge", [], state.content === "number" ? "12" : SAMPLE.badge),
   },
   {
     slug: "ripple",
@@ -525,7 +550,7 @@ export const SPECS: readonly ComponentSpec[] = [
     file: "Ripple.astro",
     controls: [],
     imports: ["Button", "Ripple"],
-    code: () => '<Button variant="tonal" data-ripple>\n  Press here\n  <Ripple />\n</Button>',
+    code: () => `<Button variant="tonal" data-ripple>\n  ${SAMPLE.label}\n  <Ripple />\n</Button>`,
     note: "Press and hold: the wave grows from the point of the press and fades on the lift. installRipple() from the library's ripple script listens for it; the bottom bar of the app is where it lives.",
   },
   {
@@ -631,8 +656,8 @@ export const SPECS: readonly ComponentSpec[] = [
     imports: ["Code"],
     code: (state) =>
       state.text === "lines"
-        ? '<Code label="Run details" text={"run 2026-11-07\\nstatus failed\\nsource example.com"} />'
-        : '<Code label="Run id" text="run_2026_11_07_0314" />',
+        ? `<Code label="${SAMPLE.label}" text={${JSON.stringify(SAMPLE.codeLines)}} />`
+        : `<Code label="${SAMPLE.label}" text="${SAMPLE.code}" />`,
     note: "Press the button on the snippet: it copies the text and says so.",
   },
 ];
