@@ -1,5 +1,6 @@
 ---
 import Icon from "@singularity/design-system/Icon.astro";
+import ComponentArt from "../components/ComponentArt.astro";
 import GuideTile from "../components/GuideTile.astro";
 import Shell from "../layouts/Shell.astro";
 import { COMPONENTS, FOUNDATIONS, OVERVIEW, PRINCIPLES } from "../lib/sections";
@@ -22,10 +23,16 @@ import { COMPONENTS, FOUNDATIONS, OVERVIEW, PRINCIPLES } from "../lib/sections";
       </div>
     </header>
 
-    <section aria-label="Pages" class="guide-tiles">
+    <section aria-label="Pages" class="guide-tiles guide-tiles-three">
       <GuideTile page={PRINCIPLES} art="principles" />
       <GuideTile page={FOUNDATIONS} art="foundations" />
-      <GuideTile page={COMPONENTS} art="components" />
+      <GuideTile page={COMPONENTS}>
+        <span slot="art" class="guide-live-row">
+          <ComponentArt slug="button" />
+          <ComponentArt slug="switch" />
+          <ComponentArt slug="badge" />
+        </span>
+      </GuideTile>
     </section>
   </div>
 </Shell>

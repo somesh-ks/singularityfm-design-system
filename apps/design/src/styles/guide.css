@@ -942,8 +942,9 @@
 
 .guide-shape-dots {
   grid-column: span 2;
-  grid-template-columns: repeat(6, auto);
-  justify-content: space-around;
+  grid-template-columns: repeat(6, var(--space-6));
+  justify-content: space-between;
+  padding-inline: var(--space-6);
   background: var(--color-success-subtle);
 }
 
@@ -953,8 +954,8 @@
 }
 
 .guide-shape-dots i {
-  inline-size: var(--space-8);
-  block-size: var(--space-8);
+  inline-size: var(--space-6);
+  block-size: var(--space-6);
 }
 
 .guide-shape-dots i:nth-child(1) {
@@ -1017,6 +1018,34 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
   gap: var(--space-4);
+}
+
+.guide-tiles-three,
+.guide-tiles-pairs,
+.guide-cards-three,
+.guide-cards-pairs {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* An even set sits two by two and a set of three in a row, never an orphan on a line of its own. */
+@media (width >= 40rem) {
+  .guide-tiles-pairs,
+  .guide-cards-pairs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Three across only where each card keeps a whole line for its words (the note never wraps). */
+@media (width >= 80rem) {
+  .guide-tiles-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 48rem) {
+  .guide-cards-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .guide-tile {
@@ -1090,10 +1119,6 @@
 
 .guide-art-tokens {
   background: var(--color-accent-subtle);
-}
-
-.guide-art-components {
-  background: var(--color-success-subtle);
 }
 
 .guide-tile-text {
@@ -1276,34 +1301,6 @@
   block-size: var(--space-12);
 }
 
-.guide-art-forms {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.guide-art-forms i {
-  display: block;
-  block-size: var(--space-8);
-  border: var(--stroke-hairline) solid var(--color-success);
-  background: var(--color-surface);
-}
-
-.guide-art-forms i:nth-child(1) {
-  inline-size: var(--space-12);
-  border-radius: var(--radius-round);
-}
-
-.guide-art-forms i:nth-child(2) {
-  inline-size: var(--space-8);
-  border-radius: var(--radius-round);
-}
-
-.guide-art-forms i:nth-child(3) {
-  inline-size: var(--space-8);
-  border-radius: var(--radius-md);
-}
-
 /* ---- motion: a page that opens, then answers the pointer. Gentler with reduced motion: none of it runs. */
 
 @keyframes guide-pop {
@@ -1375,7 +1372,6 @@
   .guide-art-dots i,
   .guide-art-chips i,
   .guide-art-scale i,
-  .guide-art-forms i,
   .guide-art-disc,
   .guide-art-disc .icon-glyph,
   .guide-art-aa,
@@ -1397,8 +1393,7 @@
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .guide-shape-aa:hover {
-    scale: 1.04;
-    rotate: -1.5deg;
+    scale: 1.02;
   }
 
   .guide-shape-play:hover {
@@ -1435,8 +1430,7 @@
 
   .guide-shape-round:hover {
     border-radius: var(--radius-xl);
-    rotate: 45deg;
-    scale: 0.85;
+    scale: 0.92;
   }
 
   .guide-tile:hover .guide-art-disc {
@@ -1478,18 +1472,6 @@
 
   .guide-tile:hover .guide-art-scale i {
     scale: 1 1.2;
-  }
-
-  .guide-tile:hover .guide-art-forms i:nth-child(1) {
-    inline-size: var(--space-8);
-  }
-
-  .guide-tile:hover .guide-art-forms i:nth-child(2) {
-    border-radius: var(--radius-md);
-  }
-
-  .guide-tile:hover .guide-art-forms i:nth-child(3) {
-    border-radius: var(--radius-round);
   }
 }
 
@@ -1604,6 +1586,7 @@
 
 .guide-live-row {
   display: flex;
+  align-items: center;
   gap: var(--space-4);
   color: var(--color-on-surface);
 }

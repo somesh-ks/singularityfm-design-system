@@ -10,7 +10,7 @@ import { href, type Section } from "../lib/sections";
 interface Props {
   page: Section;
   /** Left out where the tile's picture is its own content, passed in the "art" slot (a component's render). */
-  art?: "principles" | "foundations" | "color" | "type" | "motion" | "tokens" | "components";
+  art?: "principles" | "foundations" | "color" | "type" | "motion" | "tokens";
 }
 
 const { page, art } = Astro.props;
@@ -32,7 +32,6 @@ const { page, art } = Astro.props;
     {art === "type" && <span class="guide-art-specimen"><b>Aa</b><span>Aa</span></span>}
     {art === "motion" && <span class="guide-art-track"><i /></span>}
     {art === "tokens" && <span class="guide-art-scale"><i /><i /><i /><i /></span>}
-    {art === "components" && <span class="guide-art-forms"><i /><i /><i /></span>}
   </span>
   <span class="guide-tile-text">
     <span class="guide-tile-title">{page.label}</span>

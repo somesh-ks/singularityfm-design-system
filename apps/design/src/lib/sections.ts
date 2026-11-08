@@ -86,7 +86,7 @@ export const COMPONENTS: Section = {
   label: "Components",
   icon: "shapes",
   iconCurrent: "shapesFill",
-  note: "The parts the app imports.",
+  note: "Every part the library ships, live.",
 };
 
 /** One page per component, in the order of its group; the card's line is the registry's summary. */
