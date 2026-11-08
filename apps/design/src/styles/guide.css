@@ -880,9 +880,10 @@
 /* Six shapes made of the app's own tokens, one family of color each. They pop in one after another
    when the page opens and answer a pointer; nothing moves on its own after that. */
 .guide-hero-art {
+  --guide-shape-height: var(--space-24);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-auto-rows: var(--space-24);
+  grid-auto-rows: var(--guide-shape-height);
   gap: var(--space-2);
 }
 
@@ -901,8 +902,10 @@
   line-height: 1;
 }
 
+/* The pills are half their row tall, not 9999px: a hover eases the corner from a radius it can show,
+   where 9999px held still and then snapped (owner, 2026-11-08). shapes.test.ts guards it. */
 .guide-shape-play {
-  border-radius: var(--radius-round);
+  border-radius: min(var(--radius-round), calc(var(--guide-shape-height) / 2));
   background: var(--color-accent-container);
   color: var(--color-on-accent-container);
 }
@@ -997,7 +1000,7 @@
 }
 
 .guide-shape-round {
-  border-radius: var(--radius-round);
+  border-radius: min(var(--radius-round), calc(var(--guide-shape-height) / 2));
   background: var(--color-success);
 }
 
