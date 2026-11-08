@@ -1,0 +1,139 @@
+[
+  {
+    "area": "navigation",
+    "need": "add a switcher between the Stories and Transcript views of the same episode",
+    "part": "segmented-nav"
+  },
+  {
+    "area": "navigation",
+    "need": "add a row that opens a sub-page when tapped",
+    "part": "row-action"
+  },
+  { "area": "navigation", "need": "jump links to the sections of a long briefing", "part": "tabs" },
+  {
+    "area": "navigation",
+    "need": "a link to the original article a story came from",
+    "part": "source-link"
+  },
+  {
+    "area": "navigation",
+    "need": "an inline link inside a sentence of body text",
+    "part": "text-link"
+  },
+  {
+    "area": "inputs",
+    "need": "let the user choose a summary length: exactly one of 3, 5 or 10 minutes",
+    "part": "segmented-choice"
+  },
+  {
+    "area": "inputs",
+    "need": "let the user tick several topics to include",
+    "part": "filter-chip"
+  },
+  {
+    "area": "inputs",
+    "need": "add a compact dropdown to sort a list by date or by title",
+    "part": "select"
+  },
+  { "area": "inputs", "need": "pick an hour of the day by spinning a wheel", "part": "select" },
+  { "area": "inputs", "need": "a toggle that turns notifications on or off", "part": "switch" },
+  { "area": "inputs", "need": "a settings row with a label and a switch", "part": "settings-row" },
+  { "area": "inputs", "need": "let the user set playback volume by dragging", "part": "slider" },
+  { "area": "inputs", "need": "a text input with a label for the user's name", "part": "field" },
+  { "area": "inputs", "need": "a search box at the top of the library", "part": "search-field" },
+  {
+    "area": "actions",
+    "need": "a new form sheet needs one main Save button and a Cancel beside it",
+    "part": "button-filled"
+  },
+  {
+    "area": "actions",
+    "need": "a second action beside the main one",
+    "part": "button-tonal",
+    "why": "the phrase is under button-filled's not-when, so it must not rank button-filled first"
+  },
+  {
+    "area": "actions",
+    "need": "a low emphasis Cancel beside the Save button",
+    "part": "button-text"
+  },
+  {
+    "area": "actions",
+    "need": "remove an item permanently, the destructive action",
+    "part": "button-danger"
+  },
+  { "area": "actions", "need": "an icon-only button to close a sheet", "part": "icon-btn" },
+  {
+    "area": "actions",
+    "need": "a floating action button for the main action of a screen",
+    "part": "fab"
+  },
+  { "area": "actions", "need": "a chip that plays an episode", "part": "play-chip" },
+  {
+    "area": "overlays",
+    "need": "a new bottom sheet needs a title and a close control in its header",
+    "part": "sheet"
+  },
+  {
+    "area": "overlays",
+    "need": "a form in a side panel built as a Base UI island",
+    "part": "drawer"
+  },
+  {
+    "area": "overlays",
+    "need": "a modal that asks the user to confirm deleting an episode",
+    "part": "dialog"
+  },
+  {
+    "area": "overlays",
+    "need": "confirm before an action that cannot be undone",
+    "part": "dialog"
+  },
+  {
+    "area": "overlays",
+    "need": "show a menu of actions when the user long presses a card",
+    "part": "menu"
+  },
+  {
+    "area": "feedback",
+    "need": "a new page has nothing to list yet and must say so",
+    "part": "empty-state"
+  },
+  {
+    "area": "feedback",
+    "need": "tell the user, persistently at the top of a page, that a download failed",
+    "part": "banner"
+  },
+  {
+    "area": "feedback",
+    "need": "after the user deletes an episode, show a brief message with an Undo action",
+    "part": "toast"
+  },
+  { "area": "display", "need": "show an icon from the icon set", "part": "icon" },
+  { "area": "display", "need": "a count of unread items beside a section title", "part": "badge" },
+  { "area": "display", "need": "show an episode's cover image", "part": "cover" },
+  { "area": "display", "need": "group related cards in one container", "part": "card-group" },
+  {
+    "area": "display",
+    "need": "touch feedback ripple when a control is pressed",
+    "part": "ripple"
+  },
+  { "area": "none", "need": "xyzzy plugh", "part": null },
+  {
+    "area": "tokens",
+    "need": "quiet secondary text that still passes 4.5:1 contrast",
+    "token": "--color-on-surface-muted"
+  },
+  {
+    "area": "tokens",
+    "need": "tonal background for a control sitting on the page",
+    "token": "--color-surface-container"
+  },
+  { "area": "tokens", "need": "bottom sheet slide-in duration", "token": "--duration-sheet-in" },
+  { "area": "tokens", "need": "round the top corners of a bottom sheet", "token": "--shape-sheet" },
+  { "area": "tokens", "need": "corner radius of a card", "token": "--card-radius" },
+  { "area": "tokens", "need": "color for an error message", "token": "--color-danger" },
+  { "area": "tokens", "need": "focus ring for keyboard focus", "token": "--color-focus-ring" },
+  { "area": "tokens", "need": "haptic for an error", "token": "haptic-error" },
+  { "area": "tokens", "need": "dim the page behind a dialog", "token": "--color-scrim" }
+]

@@ -1,8 +1,10 @@
 /** Answers "which part" and "which token" from a built system, so an agent need not grep stylesheets. */
 import type { Part, System, SystemToken } from "./types.js";
 
+// "action" is a stop word: nearly every part is one, so it ranked first whichever part names it most
+// often (the side column's Catch up beat Dialog for "confirm before an action that cannot be undone").
 const STOP = new Set(
-  "a an the to of for in on at by with and or is are be it its this that new add make let want need user users page pages when where how what which should would can show use using get have has from into as".split(
+  "a an the to of for in on at by with and or is are be it its this that new add make let want need user users page pages when where how what which should would can show use using get have has from into as action actions".split(
     " ",
   ),
 );
@@ -45,6 +47,8 @@ const TOKEN_WORDS: Record<string, string[]> = {
   vibrate: ["haptic"],
   buzz: ["haptic"],
   feedback: ["haptic"],
+  error: ["danger"],
+  dim: ["scrim"],
 };
 
 export function terms(text: string): string[] {
@@ -144,10 +148,15 @@ export function describePart(part: Part): string {
   return out.join("\n");
 }
 
+/** The tokens `ds find` shows for a need: a weaker match is left out of the answer. */
+export function shownTokens(system: System, need: string): TokenHit[] {
+  return findTokens(system, need).filter((hit) => hit.score >= 5);
+}
+
 /** A short answer to a need: the best parts in a few lines each, then the tokens that fit. */
 export function answer(system: System, need: string): string {
   const parts = findParts(system, need);
-  const tokens = findTokens(system, need).filter((hit) => hit.score >= 5);
+  const tokens = shownTokens(system, need);
   const out: string[] = [];
   if (parts.length === 0 && tokens.length === 0)
     return `No part or token matches "${need}". Read packages/design-system/tokens/llms.txt; if nothing fits, ask the owner before inventing a class.`;

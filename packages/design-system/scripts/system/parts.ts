@@ -200,7 +200,7 @@ export const PARTS: PartSource[] = [
     classes: ["settings-row", "settings-label", "settings-hint"],
     when: ["a setting with a switch", "a setting with a select", "a labeled value with a hint"],
     not: [{ when: "a row that opens another page", use: "row-action" }],
-    keywords: ["preference", "toggle row", "setting"],
+    keywords: ["preference", "toggle row", "switch row", "setting"],
   },
   {
     id: "toast",

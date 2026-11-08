@@ -75,7 +75,7 @@ Components read only these (never a hex, never a primitive color).
 - --color-on-cover-accent
 - --color-focus-ring
 - --color-focus-gap: Inner ring color.
-- --color-scrim
+- --color-scrim: Dims the page behind a sheet, dialog, drawer or picker.
 - --color-on-scrim: Words on the scrim over a cover.
 - --color-accent-on-inverse: The accent on the inverse surface (a toast), the other theme's step: 5.4:1.
 - --color-image-outline: 1px outline on covers for perceived edge, per DESIGN.md.

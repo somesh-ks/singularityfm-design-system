@@ -17,6 +17,7 @@
     "flags",
     "scripts",
     "!**/*.test.ts",
+    "!**/golden.json",
     "COMPATIBILITY.md"
   ],
   "sideEffects": [
