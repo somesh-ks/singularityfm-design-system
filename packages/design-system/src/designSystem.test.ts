@@ -52,6 +52,45 @@ describe("design-system components", () => {
   );
 });
 
+// A dialog's answers hug their labels, in a row and stacked (owner, 2026-10-30, and again 2026-11-08
+// after the stacked guard's Save filled the width). The filled and tonal buttons are width: 100% by
+// default and a flex column stretches its children, so either one alone brings the bug back.
+describe("the Dialog's answers", () => {
+  const rules = readdirSync(STYLES)
+    .filter((name) => name.endsWith(".css"))
+    .flatMap((name) =>
+      [
+        ...sheet(name)
+          .replace(/\/\*[\s\S]*?\*\//g, "")
+          .matchAll(/([^{}]+)\{([^{}]*)\}/g),
+      ].map((m) => ({ where: name, selector: (m[1] ?? "").trim(), body: m[2] ?? "" })),
+    )
+    .filter((rule) => rule.selector.includes("dialog-actions"));
+
+  it("never stretches an answer to the dialog's width", () => {
+    const stretching = rules.filter((rule) =>
+      /align-items:\s*(stretch|normal)|flex(-grow)?:\s*[1-9]|width:\s*100%/.test(rule.body),
+    );
+    expect(stretching.map((rule) => `${rule.where}: ${rule.selector}`)).toEqual([]);
+    const stacked = rules.find((rule) => /\.dialog-actions-stacked\s*$/.test(rule.selector));
+    expect(stacked?.body, "a flex column stretches unless it aligns its answers").toMatch(
+      /align-items:\s*(flex-end|end)/,
+    );
+  });
+
+  it("undoes the full width of the filled and tonal buttons", () => {
+    const hug = rules.find(
+      (rule) =>
+        /\.dialog-actions\s*>\s*:is\([^)]*button-filled[^)]*button-tonal/.test(rule.selector) &&
+        /width:\s*auto/.test(rule.body),
+    );
+    expect(
+      hug,
+      "buttons.css: .dialog-actions > :is(.button-filled, .button-tonal) { width: auto }",
+    ).toBeDefined();
+  });
+});
+
 // Windows draws no flag emoji, only two letters (owner, 2026-10-25 and 2026-11-04: "the emoji doesn't
 // get read in all platforms"): every flag the app draws is the Flag's art (D367).
 describe("the Flag", () => {

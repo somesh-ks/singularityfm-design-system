@@ -122,8 +122,8 @@
   text-decoration: none;
 }
 
-/* In a row of dialog actions (.dialog-actions) the block buttons hug their label instead of filling
-   what the text button leaves (owner, 2026-10-30). Stacked, the column stretches them again. */
+/* In dialog actions (.dialog-actions), in a row or stacked, the block buttons hug their label instead
+   of filling the width (owner, 2026-10-30 and 2026-11-08). */
 .dialog-actions > :is(.button-filled, .button-tonal) {
   width: auto;
 }
