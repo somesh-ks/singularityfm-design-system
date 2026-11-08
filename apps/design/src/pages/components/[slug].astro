@@ -1,0 +1,222 @@
+---
+import Code from "@singularity/design-system/Code.astro";
+import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
+import Select from "@singularity/design-system/Select.astro";
+import Switch from "@singularity/design-system/Switch.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import PageHead from "../../components/PageHead.astro";
+import Shell from "../../layouts/Shell.astro";
+import { allStates, codeFor, initialState, SPECS, stateKey } from "../../lib/components";
+import { propsTable } from "../../lib/propsTable";
+
+export function getStaticPaths() {
+  return SPECS.map((spec) => ({ params: { slug: spec.slug }, props: { spec } }));
+}
+
+const { spec } = Astro.props;
+
+// The library's own sources, read for the props tables: the table is the Props interface, not a copy.
+const sources = import.meta.glob("../../../../../packages/design-system/src/*.{astro,tsx}", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+const sourceOf = (file: string): string =>
+  Object.entries(sources).find(([path]) => path.endsWith(`/${file}`))?.[1] ?? "";
+
+const registered = REGISTRY.find((component) => component.name === spec.registry);
+const guidance = registered ?? spec.guidance;
+const parts = Object.values(registered?.parts ?? {}) as { label?: string; summary: string }[];
+const table = spec.file ? propsTable(sourceOf(spec.file)) : undefined;
+
+const start = initialState(spec);
+const states = allStates(spec.controls);
+const startKey = stateKey(spec.controls, start);
+const hasStage = !spec.noPreview;
+// Real defaults a state is built from: an avatar's shapes and sizes are the choices the controls list.
+---
+
+<Shell title={spec.name} current={`/components/${spec.slug}`}>
+  <div class="settings-view guide-page" data-settings data-ready>
+    <PageHead title={spec.name} />
+    <p class="guide-lead">{guidance?.summary}</p>
+
+    {
+      hasStage && (
+        <section aria-label="Preview" data-playground>
+          {spec.controls.length > 0 && (
+            <div class="guide-controls" role="group" aria-label="Preview controls">
+              {spec.controls.map((control) =>
+                control.kind === "choice" ? (
+                  <div class="guide-control">
+                    <span>{control.label}</span>
+                    <Select variant="tonal" label={control.label} data-control={control.id}>
+                      {control.options.map((option) => (
+                        <option value={option.value} selected={option.value === start[control.id]}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                ) : (
+                  <label class="guide-control">
+                    <span>{control.label}</span>
+                    <Switch data-control={control.id} />
+                  </label>
+                ),
+              )}
+            </div>
+          )}
+          <div class="guide-stage">
+            {states.map((state, index) => {
+              const key = stateKey(spec.controls, state);
+              return (
+                <div
+                  class="guide-stage-item"
+                  data-combo={key}
+                  data-code={spec.code ? codeFor(spec, state) : undefined}
+                  hidden={key !== startKey}
+                >
+                  <ComponentPreview slug={spec.slug} state={state} id={`${spec.slug}-${index}`} />
+                </div>
+              );
+            })}
+          </div>
+          {spec.note && <p class="guide-note guide-stage-note">{spec.note}</p>}
+        </section>
+      )
+    }
+
+    {
+      !hasStage && (
+        <section aria-label="Preview">
+          <p class="guide-note">{spec.noPreview}</p>
+        </section>
+      )
+    }
+
+    {
+      spec.code && (
+        <section aria-labelledby="code" data-code-section>
+          <h2 class="section-head text-heading" id="code">Code</h2>
+          <Code label={`${spec.name} usage`} text={codeFor(spec, start)} />
+        </section>
+      )
+    }
+
+    {
+      guidance && (
+        <section aria-labelledby="use">
+          <h2 class="section-head text-heading" id="use">When to use it</h2>
+          <h3 class="guide-group-name">Use when</h3>
+          <ul class="guide-list">
+            {guidance.useWhen.map((line) => <li>{line}</li>)}
+          </ul>
+          {guidance.dontUseWhen.length > 0 && (
+            <>
+              <h3 class="guide-group-name">Do not use when</h3>
+              <ul class="guide-list">
+                {guidance.dontUseWhen.map((item) => (
+                  <li>
+                    {item.when}
+                    {item.instead && <> Use {item.instead.replace(".", " ")} instead.</>}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+      )
+    }
+
+    {
+      parts.length > 0 && (
+        <section aria-labelledby="variants">
+          <h2 class="section-head text-heading" id="variants">Variants</h2>
+          {Object.entries(registered?.parts ?? {}).map(([id, part]) => (
+            <div class="guide-variant">
+              <h3 class="guide-variant-name">{(part as { label?: string }).label ?? id}</h3>
+              <p class="guide-prose">{part.summary}</p>
+            </div>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      table && table.rows.length > 0 && (
+        <section aria-labelledby="props">
+          <h2 class="section-head text-heading" id="props">Props</h2>
+          <div class="guide-table-wrap">
+            <table class="guide-table">
+              <thead>
+                <tr><th>Name</th><th>Type</th><th>Default</th><th>What it does</th></tr>
+              </thead>
+              <tbody>
+                {table.rows.map((row) => (
+                  <tr>
+                    <td><code>{row.name}{row.required ? "" : "?"}</code></td>
+                    <td><code>{row.type}</code></td>
+                    <td>{row.default ? <code>{row.default}</code> : "-"}</td>
+                    <td>{row.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {table.element && <p class="guide-note guide-stage-note">Every attribute of a native {table.element} element is passed through.</p>}
+        </section>
+      )
+    }
+
+    {
+      (spec.subparts ?? []).length > 0 && (
+        <section aria-labelledby="subparts">
+          <h2 class="section-head text-heading" id="subparts">Subparts</h2>
+          {spec.subparts?.map((part) => {
+            const subtable = propsTable(sourceOf(part.file));
+            return (
+              <div class="guide-variant">
+                <h3 class="guide-variant-name">{part.name}</h3>
+                <p class="guide-prose">{part.note}</p>
+                {subtable.rows.length > 0 ? (
+                  <div class="guide-table-wrap">
+                    <table class="guide-table">
+                      <thead>
+                        <tr><th>Name</th><th>Type</th><th>Default</th><th>What it does</th></tr>
+                      </thead>
+                      <tbody>
+                        {subtable.rows.map((row) => (
+                          <tr>
+                            <td><code>{row.name}{row.required ? "" : "?"}</code></td>
+                            <td><code>{row.type}</code></td>
+                            <td>{row.default ? <code>{row.default}</code> : "-"}</td>
+                            <td>{row.description}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p class="guide-note">It takes the attributes of its element and no props of its own.</p>
+                )}
+              </div>
+            );
+          })}
+        </section>
+      )
+    }
+
+    {
+      registered && spec.noPreview && (
+        <section aria-labelledby="classes">
+          <h2 class="section-head text-heading" id="classes">Classes</h2>
+          <p class="guide-prose">{registered.classes.map((name) => `.${name}`).join(", ")}, in {registered.sheet}.</p>
+        </section>
+      )
+    }
+  </div>
+</Shell>
+<script>
+  import "../../scripts/componentPage";
+</script>

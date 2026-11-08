@@ -1,4 +1,6 @@
 import type { IconName } from "@singularity/design-system/icons";
+import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
+import { GROUPS, SPECS } from "./components";
 
 /** One page of the guide. */
 export interface Section {
@@ -87,6 +89,29 @@ export const COMPONENTS: Section = {
   note: "The parts the app imports.",
 };
 
+/** One page per component, in the order of its group; the card's line is the registry's summary. */
+const summaryOf = (registry?: string, own?: string): string =>
+  REGISTRY.find((component) => component.name === registry)?.summary ?? own ?? "";
+
+export const COMPONENT_GROUPS: readonly {
+  label: string;
+  note: string;
+  pages: readonly Section[];
+}[] = GROUPS.map((group) => ({
+  label: group.label,
+  note: group.note,
+  pages: SPECS.filter((spec) => spec.group === group.id).map((spec) => ({
+    path: `/components/${spec.slug}`,
+    label: spec.name,
+    icon: "shapes",
+    iconCurrent: "shapesFill",
+    note: summaryOf(spec.registry, spec.guidance?.summary),
+  })),
+}));
+
+/** The pages under Components. */
+export const COMPONENT_PAGES: readonly Section[] = COMPONENT_GROUPS.flatMap((group) => group.pages);
+
 /** Every page, for a page to find its own title and line by path. */
 export const SECTIONS: readonly Section[] = [
   OVERVIEW,
@@ -95,14 +120,20 @@ export const SECTIONS: readonly Section[] = [
   FOUNDATIONS,
   ...FOUNDATION_PAGES,
   COMPONENTS,
+  ...COMPONENT_PAGES,
 ];
 
-/** The navigation: top-level pages, and the one group that has pages under it. */
-export const NAV: readonly { page: Section; children?: readonly Section[] }[] = [
+/** The navigation: top-level pages, and the groups that have pages under them. */
+export const NAV: readonly {
+  page: Section;
+  children?: readonly Section[];
+  /** The children under headings, where there are many (Components). */
+  groups?: readonly { label: string; pages: readonly Section[] }[];
+}[] = [
   { page: OVERVIEW },
   { page: PRINCIPLES, children: PRINCIPLES_PAGES },
   { page: FOUNDATIONS, children: FOUNDATION_PAGES },
-  { page: COMPONENTS },
+  { page: COMPONENTS, children: COMPONENT_PAGES, groups: COMPONENT_GROUPS },
 ];
 
 /** An address under the base ("/design"), which Astro writes with or without a closing slash. */

@@ -21,7 +21,7 @@ The reader's design system as its own site, "Singularity design": `news.someshks
 ## Code
 
 - `apps/design/src` (pages, including `system.json.ts` and `llms.txt.ts`, `scripts/`, `lib/` including `taste.ts`, `styles/guide.css`), `apps/design/vercel.json`
-- `apps/design/src/lib/catalogue.ts` (the tokens, imported from the package); `components.astro` reads the package's `registry`
+- `apps/design/src/lib/catalogue.ts` (the tokens, imported from the package); `lib/components.ts` lists the component pages and their controls, `pages/components/[slug].astro` draws one from the package's `registry` and its sources
 
 ## Gotchas
 

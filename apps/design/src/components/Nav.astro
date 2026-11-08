@@ -21,9 +21,9 @@ const updated = new Intl.DateTimeFormat("en-GB", {
 ---
 
 {/* The reader's navigation, drawn by its own classes (shell.css): a bottom bar below 64rem and a side
-     column from it. The side column opens Foundations into its pages (an accordion, because it is the
-     one place with pages under it); the bottom bar has room for the four top-level pages only, so
-     Foundations there opens its own page, which lists them. The foot holds what the reader's holds,
+     column from it. The side column opens Principles, Foundations and Components into their pages (an
+     accordion; Components under a heading for each group); the bottom bar has room for the four
+     top-level pages only, so there each opens its own page, which lists them. The foot holds what the reader's holds,
      the day it was built, and the one setting. */}
 <nav class="app-nav" aria-label="Singularity design system" data-bottom-nav>
   <a class="app-nav-brand wordmark" href={href("")} aria-label="Singularity design system">
@@ -33,7 +33,7 @@ const updated = new Intl.DateTimeFormat("en-GB", {
   </a>
   <ul class="app-nav-list" role="list">
     {
-      NAV.map(({ page, children }) => {
+      NAV.map(({ page, children, groups }) => {
         const inside = children?.some((child) => child.path === current) ?? false;
         const open = inside || page.path === current;
         return (
@@ -63,14 +63,27 @@ const updated = new Intl.DateTimeFormat("en-GB", {
                   <Icon name="chevronDown" />
                 </button>
                 <ul class="guide-nav-sub" id={`nav-sub-${page.label.toLowerCase()}`} role="list" hidden={!open}>
-                  {children.map((child) => (
-                    <li>
-                      <a class="guide-nav-subitem" href={href(child.path)} aria-current={child.path === current ? "page" : undefined}>
-                        <Icon name={child.path === current ? child.iconCurrent : child.icon} size="lg" />
-                        <span>{child.label}</span>
-                      </a>
-                    </li>
-                  ))}
+                  {groups
+                    ? groups.map((group) => (
+                        <Fragment>
+                          <li class="guide-nav-group-label" role="presentation">{group.label}</li>
+                          {group.pages.map((child) => (
+                            <li>
+                              <a class="guide-nav-subitem guide-nav-subitem-plain" href={href(child.path)} aria-current={child.path === current ? "page" : undefined}>
+                                <span>{child.label}</span>
+                              </a>
+                            </li>
+                          ))}
+                        </Fragment>
+                      ))
+                    : children.map((child) => (
+                        <li>
+                          <a class="guide-nav-subitem" href={href(child.path)} aria-current={child.path === current ? "page" : undefined}>
+                            <Icon name={child.path === current ? child.iconCurrent : child.icon} size="lg" />
+                            <span>{child.label}</span>
+                          </a>
+                        </li>
+                      ))}
                 </ul>
               </>
             )}

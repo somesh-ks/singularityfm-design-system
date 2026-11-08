@@ -792,6 +792,26 @@
       color var(--duration-hover) var(--ease-hover);
   }
 
+  /* Components opens into more rows than a short window holds: the column scrolls, its foot staying at the end. */
+  .app-nav {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  /* A page with no glyph of its own (a component): its words start where a glyph row's words do. */
+  .guide-nav-subitem-plain {
+    padding-inline-start: calc(var(--space-4) + var(--size-icon-lg) + var(--space-4));
+  }
+
+  /* The heading of a group of pages under Components. */
+  .guide-nav-group-label {
+    padding: var(--space-4) var(--space-4) var(--space-1);
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-label-size);
+    letter-spacing: var(--text-label-tracking);
+  }
+
   .guide-nav-subitem:focus-visible {
     outline: var(--stroke-ring) solid var(--color-focus-ring);
     outline-offset: var(--stroke-ring-gap);
@@ -1477,4 +1497,75 @@
   .guide-hero {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
+}
+
+/* ------------------------------------------------------------------ component pages
+   A page's live preview: a controls strip over a stage. Only layout lives here; the controls are the
+   library's Select and Switch, and what the stage shows is the component itself. */
+
+.guide-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+  margin-block-end: var(--space-4);
+  /* The select chips are as tall as a field, as in the toolbar above. */
+  --chip-height: var(--field-height);
+}
+
+.guide-control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--size-touch);
+  color: var(--color-on-surface-muted);
+  font-size: var(--font-size-label);
+}
+
+.guide-stage {
+  display: grid;
+  place-items: center;
+  min-height: calc(var(--space-16) * 3);
+  padding: var(--space-8) var(--space-4);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-container);
+  overflow-x: auto;
+}
+
+.guide-stage-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  max-width: 100%;
+}
+
+.guide-stage-item > ul {
+  inline-size: min(100%, 24rem);
+  padding: 0;
+  list-style: none;
+}
+
+.guide-stage-item > ul > li {
+  padding-block: var(--space-4);
+  border-block-end: var(--stroke-hairline) solid var(--color-border-hairline);
+}
+
+.guide-stage-note {
+  margin: var(--space-2) 0 0;
+}
+
+.guide-variant {
+  margin-block-start: var(--space-4);
+}
+
+.guide-variant:first-of-type {
+  margin-block-start: 0;
+}
+
+.guide-variant-name {
+  margin: 0;
+  color: var(--color-on-surface);
+  font-size: var(--font-size-reading);
 }
