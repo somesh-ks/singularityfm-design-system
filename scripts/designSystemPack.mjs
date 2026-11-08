@@ -5,7 +5,7 @@
 // exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every other
 // check and fails only here.
 //
-// Usage: node scripts/designSystemPack.mjs  (installs offline from the pnpm store when it can)
+// Usage: pnpm run pack:check  (installs offline from the pnpm store when it can)
 import { execFileSync } from "node:child_process";
 import {
   existsSync,
@@ -33,8 +33,22 @@ const dependencies = Object.fromEntries(
 );
 
 const work = mkdtempSync(join(tmpdir(), "ds-pack-"));
+// Windows has no `pnpm` executable, only `pnpm.cmd`, which execFile cannot start without a shell (Node
+// 20.12+), and a shell with arguments is deprecated (DEP0190). Run under pnpm (`pnpm run pack:check`), the
+// script calls pnpm through the program pnpm itself was started from: its JavaScript entry with this
+// Node, or its own binary. Outside pnpm it falls back to `pnpm` on the PATH, which works on macOS and Linux.
+const pnpmEntry = process.env.npm_execpath ?? "";
+const pnpmCommand = /pnpm[^/\\]*$/i.test(pnpmEntry)
+  ? /\.[cm]?js$/i.test(pnpmEntry)
+    ? [process.execPath, [pnpmEntry]]
+    : [pnpmEntry, []]
+  : ["pnpm", []];
 const pnpm = (args, cwd) =>
-  execFileSync("pnpm", args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+  execFileSync(pnpmCommand[0], [...pnpmCommand[1], ...args], {
+    cwd,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
 
 try {
   pnpm(["pack", "--pack-destination", work], packageDir);

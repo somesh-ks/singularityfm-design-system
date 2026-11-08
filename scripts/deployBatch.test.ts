@@ -1,7 +1,7 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { delimiter, dirname, join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 // The batch skips a deploy on purpose, so a mistake in it fails silently: a fix that merged and
@@ -49,7 +49,8 @@ function repo() {
       cwd: join(root, "apps/web"),
       env: {
         ...process.env,
-        PATH: `${stubs}:${process.env.PATH}`,
+        // The list separator is `;` on Windows: a `:` there joins the stubs to the first entry.
+        PATH: `${stubs}${delimiter}${process.env.PATH}`,
         VERCEL_GIT_PREVIOUS_SHA: deployed,
         VERCEL_GIT_COMMIT_SHA: git(root, ["rev-parse", "HEAD"]),
         VERCEL_GIT_COMMIT_REF: "main",
