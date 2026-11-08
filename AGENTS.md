@@ -17,13 +17,14 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 | `packages/design-system/` | The published package: `src/` components and behaviour, `styles/`, `tokens/`, `fonts/`, `flags/`, `scripts/` (token and system generators, the `ds` CLI) |
 | `apps/design/` | The style guide (`@singularity/design`, private), its own Vercel project at news.someshks.work/design |
 | `.changeset/` | Pending release notes |
-| `scripts/` | Repository checks: the pack-and-install test, the docs check, the deploy batch rule |
+| `scripts/` | Repository checks: the pack-and-install test, the docs check, the deploy batch rule; the glyph builder |
 
 ## Commands
 
 - `pnpm install --frozen-lockfile`, then `pnpm run gate`: typecheck (tsc and `astro check`), lint, unit tests, the docs check, the token and guide build, the pack-and-install test.
 - `pnpm run ds find "<need>"`: before you write a class, token or value, find the part that already does it.
 - `pnpm run tokens`: rebuild `styles/tokens.css` from `tokens/tokens.json`. `pnpm run dev`: the guide on port 4323.
+- `pnpm run glyphs`: rebuild `src/icons.ts` from `tokens/glyphs.json` (`--fetch` first re-reads every path from Phosphor). The app builds its player registries from the published file.
 - `pnpm exec changeset`: add the release note a PR needs.
 
 ## Rules

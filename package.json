@@ -19,11 +19,13 @@
     "tokens": "tsx packages/design-system/scripts/buildTokens.ts",
     "system": "tsx packages/design-system/scripts/system/build.ts",
     "ds": "tsx packages/design-system/scripts/system/cli.ts",
+    "glyphs": "tsx scripts/buildGlyphs.ts",
     "changeset": "changeset"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.4",
     "@changesets/cli": "3.0.3",
+    "@phosphor-icons/core": "2.1.1",
     "@types/node": "^26.6.6",
     "tsx": "^4.23.15",
     "typescript": "~6.0.3",
