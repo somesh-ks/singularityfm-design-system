@@ -14,8 +14,9 @@ name: release
 # - canary: a pull request labelled `canary` publishes 0.0.0-canary-<sha> under the `canary` dist-tag,
 #   so an app pull request can try a fix before the library pull request merges.
 #
-# No NPM_TOKEN: npm trusted publishing exchanges the job's OIDC token (id-token: write) and signs
-# provenance. pnpm 10 hands the publish to the npm CLI, and the npm that ships with Node 24 (.nvmrc) does
+# No NPM_TOKEN: npm trusted publishing exchanges the job's OIDC token (id-token: write). npm adds
+# provenance on its own from a public repository and refuses it (E422) from a private one, so the
+# package does not force it. pnpm 10 hands the publish to the npm CLI, and the npm that ships with Node 24 (.nvmrc) does
 # the exchange.
 on:
   schedule:
