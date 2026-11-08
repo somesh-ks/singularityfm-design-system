@@ -1,5 +1,11 @@
 # @singularityfm/design-system
 
+## 0.1.1
+
+### Patch Changes
+
+- 8ff8f43: Dialog: stacked answers hug their labels and line up at the end, as a row of answers already did.
+
 ## 0.1.0
 
 ### Minor Changes
