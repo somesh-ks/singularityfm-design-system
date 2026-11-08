@@ -200,12 +200,28 @@ describe("color contrast", () => {
     }
   });
 
-  it("orders dark surfaces by elevation, lightest on top", () => {
+  it("orders dark surfaces by elevation, lightest on top, each a visible step apart", () => {
     const luminance = (name: string) =>
       relativeLuminance(colorOf(`semantic.color.${name}`, "dark"));
     expect(luminance("surface")).toBeLessThan(luminance("surface-sunken"));
     expect(luminance("surface-sunken")).toBeLessThan(luminance("surface-raised"));
     expect(luminance("surface-raised")).toBeLessThan(luminance("surface-overlay"));
+    // Order alone passes two surfaces a hair apart, which read as one in the dark: a card on the page
+    // loses its edge and nothing fails. Each step keeps at least one just-noticeable difference, about
+    // 0.02 in OKLab (the distance in lightness and the two colour axes).
+    const oklab = (name: string) => {
+      const literal = resolveLiteral(doc, `semantic.color.${name}`, "dark");
+      if (typeof literal !== "string") throw new Error(`${name} is not a color`);
+      const { l, c, h } = parseOklch(literal);
+      const hue = (h * Math.PI) / 180;
+      return [l, c * Math.cos(hue), c * Math.sin(hue)];
+    };
+    const steps = ["surface", "surface-sunken", "surface-raised", "surface-overlay"];
+    for (const [index, name] of steps.slice(1).entries()) {
+      const [a, b] = [oklab(steps[index] ?? ""), oklab(name)];
+      const distance = Math.hypot(...a.map((value, axis) => value - (b[axis] ?? 0)));
+      expect(distance, `${steps[index]} to ${name}`).toBeGreaterThanOrEqual(0.02 - 1e-9);
+    }
   });
 
   it("keeps the scrim dark enough to separate a sheet from the page", () => {
