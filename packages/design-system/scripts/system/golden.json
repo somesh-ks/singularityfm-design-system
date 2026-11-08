@@ -134,5 +134,6 @@
   { "area": "tokens", "need": "corner radius of a card", "token": "--card-radius" },
   { "area": "tokens", "need": "color for an error message", "token": "--color-danger" },
   { "area": "tokens", "need": "focus ring for keyboard focus", "token": "--color-focus-ring" },
-  { "area": "tokens", "need": "haptic for a failure", "token": "haptic-error" }
+  { "area": "tokens", "need": "haptic for an error", "token": "haptic-error" },
+  { "area": "tokens", "need": "dim the page behind a dialog", "token": "--color-scrim" }
 ]

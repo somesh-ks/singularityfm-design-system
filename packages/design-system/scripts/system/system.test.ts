@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildSystem, LLMS_PATH, SYSTEM_PATH, systemFiles } from "./build.js";
-import { findParts, findTokens } from "./query.js";
+import { findParts, shownTokens } from "./query.js";
 import type { System } from "./types.js";
 import { usageComment } from "./usage.js";
 
@@ -71,12 +71,12 @@ describe("the design system file", () => {
 describe("the lookup", () => {
   // Prevents a lookup that stops answering a real need: each row of golden.json is a need an agent
   // asked (the first 11 from the first lookup trial, 14 tasks given to agents with no tool) and the
-  // part an experienced person would pick, which must come first, or the token, which must be in the
-  // first five. A new case is a row, never a test; every miss is listed at once.
+  // part an experienced person would pick, which must come first, or the token, which must be among those
+  // `ds find` shows. A new case is a row, never a test; every miss is listed at once.
   it("answers every need in golden.json", () => {
     const misses = golden.flatMap((row) => {
       if ("token" in row) {
-        const names = findTokens(system, row.need, 5).map((hit) => hit.token.name);
+        const names = shownTokens(system, row.need).map((hit) => hit.token.name);
         return names.includes(row.token)
           ? []
           : [`${row.need} -> ${row.token}, got ${names.join(", ") || "nothing"}`];

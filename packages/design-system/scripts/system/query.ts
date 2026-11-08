@@ -48,6 +48,7 @@ const TOKEN_WORDS: Record<string, string[]> = {
   buzz: ["haptic"],
   feedback: ["haptic"],
   error: ["danger"],
+  dim: ["scrim"],
 };
 
 export function terms(text: string): string[] {
@@ -147,10 +148,15 @@ export function describePart(part: Part): string {
   return out.join("\n");
 }
 
+/** The tokens `ds find` shows for a need: a weaker match is left out of the answer. */
+export function shownTokens(system: System, need: string): TokenHit[] {
+  return findTokens(system, need).filter((hit) => hit.score >= 5);
+}
+
 /** A short answer to a need: the best parts in a few lines each, then the tokens that fit. */
 export function answer(system: System, need: string): string {
   const parts = findParts(system, need);
-  const tokens = findTokens(system, need).filter((hit) => hit.score >= 5);
+  const tokens = shownTokens(system, need);
   const out: string[] = [];
   if (parts.length === 0 && tokens.length === 0)
     return `No part or token matches "${need}". Read packages/design-system/tokens/llms.txt; if nothing fits, ask the owner before inventing a class.`;

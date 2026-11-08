@@ -2983,6 +2983,7 @@
       "tier": "primitive",
       "type": "duration",
       "light": "300ms",
+      "role": "How long a sheet or picker takes to slide in; the nav pill reuses it.",
       "reducedMotion": "0.01ms"
     },
     {
@@ -3902,6 +3903,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "oklch(20% 0.005 260 / 0.42)",
+      "role": "Dims the page behind a sheet, dialog, drawer or picker.",
       "dark": "oklch(8% 0.005 260 / 0.6)"
     },
     {
