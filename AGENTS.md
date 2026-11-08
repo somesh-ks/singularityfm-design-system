@@ -47,7 +47,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 ## Releases
 
 - A PR that changes what the package ships adds a changeset: patch, minor or major by [COMPATIBILITY.md](packages/design-system/COMPATIBILITY.md), one line a consumer can act on. A breaking one starts with `BREAKING:`.
-- `release.yml` runs weekly and on demand: pending changesets open or update the version PR; merging it publishes with provenance. Nothing pending, nothing published.
+- `release.yml` runs weekly and on demand: pending changesets open or update the version PR; merging it publishes (provenance once the repository is public). Nothing pending, nothing published.
 - A PR labelled `canary` publishes `0.0.0-canary-<sha>` under the `canary` tag, so an app PR can try the fix first.
 - The app's bump PR: the app thread merges green patch and minor bumps; the owner merges a breaking one.
 - Scope: one PR per task. Before a PR, `git diff --stat origin/main` lists only the task's files.

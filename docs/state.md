@@ -12,7 +12,7 @@ Rewritten, never appended. As of 2026-11-07 (DS-3).
 
 ## Unverified
 
-- The first publish of `0.1.0` (the pending `.changeset/first-release.md`). closed when: `npm view @singularityfm/design-system@0.1.0 dist.attestations` shows a provenance statement naming this repository and `release.yml`.
+- The first publish (`0.1.1`; `0.1.0` was folded into it). closed when: `npm view @singularityfm/design-system@0.1.1` lists the version. Provenance waits for the repository to go public: npm refuses it from a private one (E422).
 - The version PR starts checks. A PR opened with `GITHUB_TOKEN` starts none, so the required `check` never reports. closed when: `release.yml` opens it with the library's GitHub App token and `check` runs on it.
 - The style guide's Vercel project builds from this repository. closed when: a push to main deploys news.someshks.work/design from this repository and `ignore-build.sh` skips a docs-only push.
 - The ruleset (`.github/rulesets/main.json`) is imported. closed when: a PR without a green `check` cannot merge.
