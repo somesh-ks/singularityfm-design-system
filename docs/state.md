@@ -23,7 +23,7 @@ Rewritten, never appended. As of 2026-11-07 (DS-3).
 ## Next
 
 1. The owner: npm trusted publisher, ruleset, Vercel project, GitHub App (see DS-1's step list in the plan).
-2. Publish `0.1.0`, then the app pins it (D382 step 7), writes its usage report (DS-2), and its monorepo copy is frozen and later deleted (step 8).
+2. Publish `0.1.0`, with the React Button in it (DS#2 merged first), then the app pins it (D382 step 7) and moves its 7 `<Button class=...>` to `className`, writes its usage report (DS-2), and its monorepo copy is frozen and later deleted (step 8).
 3. Parts whose usage came from the reader's CSS (settings row, toast, empty state, multiselect, cover) read empty in `system.json`: give each its comment in the library's stylesheet, or move it to the app's report.
 4. Rename the workspace alias `@singularity/design-system` and `@singularity/design` to `@singularityfm/*` with the app's step 9.
 5. The rest of DS-3, one family per pull request, each trimming `ASTRO_LEFT` in `designSystem.test.ts` and proving pixel identity as the Button did. Static first (plain React, no script), since the others draw them:
