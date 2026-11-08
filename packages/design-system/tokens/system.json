@@ -924,6 +924,7 @@
         "Motion uses --duration-sheet-in, --duration-sheet-out and --ease-drawer."
       ],
       "styles": [
+        "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/drawer.css",
         "packages/design-system/styles/foundations.css"
       ],
@@ -938,7 +939,10 @@
         "--sheet-bg",
         "--sheet-bg-hover",
         "--sheet-bg-pressed",
-        "--sheet-shadow"
+        "--sheet-shadow",
+        "--sheet-tile-bg",
+        "--sheet-tile-bg-hover",
+        "--sheet-tile-bg-pressed"
       ]
     },
     {
