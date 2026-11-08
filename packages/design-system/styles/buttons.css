@@ -170,6 +170,22 @@
   background: var(--color-surface-container-pressed);
 }
 
+/* On a dialog or sheet the tonal button takes the sheet's tile tone, as a menu tile there does: in dark
+   the raised surface and the container are one colour, so the fill vanished (owner, 2026-11-08). */
+:is(dialog, .drawer-popup) .button-tonal {
+  background: var(--sheet-tile-bg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(dialog, .drawer-popup) .button-tonal:where(:not(:disabled, [aria-disabled="true"])):hover {
+    background: var(--sheet-tile-bg-hover);
+  }
+}
+
+:is(dialog, .drawer-popup) .button-tonal:where(:not(:disabled, [aria-disabled="true"])):active {
+  background: var(--sheet-tile-bg-pressed);
+}
+
 /* Button, small size (size="small" on any variant): a shorter pill with less padding and label-size
    words, for a dense row or a popover where the full pill crowds the text around it (owner,
    2026-11-04: Listen now in the queue). The pill is button.height-small; its target stays the touch
