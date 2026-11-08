@@ -42,15 +42,22 @@ jobs:
     concurrency:
       group: release
       cancel-in-progress: false
-    # Version pull request and its branch, the release tags and GitHub releases, and the OIDC token.
-    # A pull request opened with GITHUB_TOKEN starts no checks; step 6 swaps in the library's GitHub App
-    # token here (and turns on "Allow GitHub Actions to create and approve pull requests").
+    # The OIDC token for npm. The version pull request, its branch, the tags and the GitHub releases use
+    # the library's GitHub App token instead of GITHUB_TOKEN: GitHub holds the checks on a pull request
+    # GITHUB_TOKEN opens until a person approves them; one the App opens runs CI at once (owner,
+    # 2026-11-08). The App needs Contents and Pull requests (read and write) on this repository only.
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
       id-token: write
     steps:
+      - id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -62,6 +69,7 @@ jobs:
       - run: node scripts/designSystemPack.mjs
       - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
+          github-token: ${{ steps.app-token.outputs.token }}
           publish-script: pnpm exec changeset publish
           commit-message: "chore(release): version the design system"
           pr-title: "chore(release): version the design system"
