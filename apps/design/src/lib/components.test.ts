@@ -13,6 +13,8 @@ describe("the guide's component pages", () => {
       SPECS.flatMap((spec) => [spec.file, ...(spec.subparts ?? []).map((part) => part.file)]),
     );
     expect(files.filter((file) => !shown.has(file))).toEqual([]);
+    // A renamed file a spec still names would drop that page's props table without failing the build.
+    expect([...shown].filter((file) => file !== undefined && !files.includes(file))).toEqual([]);
     expect(
       COMPONENTS.map((component) => component.name).filter(
         (name) => !SPECS.some((spec) => spec.registry === name),

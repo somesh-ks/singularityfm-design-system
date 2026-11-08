@@ -175,7 +175,11 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
         <DialogActions stacked={state.answers === "three"}>
           {state.answers === "three" && (
             <>
-              <Button variant="filled" type="submit">Save</Button>
+              {on("danger") ? (
+                <Button variant="text" tone="danger" type="submit">Delete</Button>
+              ) : (
+                <Button variant="filled" type="submit">Save</Button>
+              )}
               <Button variant="tonal" type="submit">Discard</Button>
             </>
           )}
