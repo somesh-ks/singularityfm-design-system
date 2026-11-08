@@ -1,0 +1,124 @@
+---
+import Avatar from "@singularity/design-system/Avatar.astro";
+import Badge from "@singularity/design-system/Badge.astro";
+import Banner from "@singularity/design-system/Banner.astro";
+import BrandMark from "@singularity/design-system/BrandMark.astro";
+import Button from "@singularity/design-system/Button";
+import { codeSnippetHtml } from "@singularity/design-system/code";
+import "@singularity/design-system/styles/code.css";
+import Field from "@singularity/design-system/Field.astro";
+import Flag from "@singularity/design-system/Flag.astro";
+import Icon from "@singularity/design-system/Icon.astro";
+import MenuItem from "@singularity/design-system/MenuItem.astro";
+import { menuBodyClass } from "@singularity/design-system/menu";
+import Select from "@singularity/design-system/Select.astro";
+import SheetHeader from "@singularity/design-system/SheetHeader.astro";
+import Slider from "@singularity/design-system/Slider.astro";
+import Switch from "@singularity/design-system/Switch.astro";
+
+/**
+ * A component's picture on its card in the index: the component itself in its default state, drawn
+ * by the library and not touched (inert, no script). Where the library has nothing to draw (the
+ * Wheel, the Drawer, the Glow, the lists) the picture is made of tokens, plainly. The picture sits
+ * inside a link, so nothing here may be a link.
+ */
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<span class="guide-live" inert>
+  {slug === "button" && <Button variant="filled">Save</Button>}
+  {
+    slug === "menu" && (
+      <span class:list={[menuBodyClass(), "guide-live-menu"]}>
+        <MenuItem><Icon name="share" /> Share</MenuItem>
+        <MenuItem><Icon name="download" /> Download</MenuItem>
+      </span>
+    )
+  }
+  {slug === "field" && <Field placeholder="Feed address" aria-label="Feed address" tabindex="-1" />}
+  {slug === "switch" && <Switch checked aria-label="On" tabindex="-1" />}
+  {
+    slug === "slider" && (
+      <span class="guide-live-slider" style="--range-fill: 40%">
+        <Slider min="0" max="100" value="40" aria-label="Value" tabindex="-1" />
+      </span>
+    )
+  }
+  {
+    slug === "select" && (
+      <Select variant="outlined" label="Sort by" tabindex="-1">
+        <option>Newest</option>
+      </Select>
+    )
+  }
+  {
+    slug === "wheel" && (
+      <span class="guide-live-wheel">
+        <span>7</span><span>8</span><b>9</b><span>10</span><span>11</span>
+      </span>
+    )
+  }
+  {
+    slug === "section-tabs" && (
+      <span class="guide-live-tabs"><b>Top</b><span>Design</span><span>Tools</span></span>
+    )
+  }
+  {
+    slug === "chapter-aside" && (
+      <span class="guide-live-contents"><span>Contents</span><b>Top stories</b><span>Design</span><span>Tools</span></span>
+    )
+  }
+  {
+    slug === "row-exit" && (
+      <span class="guide-live-rows"><span>Source one</span><span>Source two</span><i>Source three</i></span>
+    )
+  }
+  {
+    slug === "dialog" && (
+      <span class="guide-live-surface">
+        <b>Delete this source?</b>
+        <span class="guide-live-actions">
+          <Button variant="text" size="small">Cancel</Button>
+          <Button variant="filled" size="small">Delete</Button>
+        </span>
+      </span>
+    )
+  }
+  {
+    slug === "sheet" && (
+      <span class="guide-live-surface guide-live-side">
+        <SheetHeader title="Add source" titleId="art-sheet-title" close="data-panel-close" />
+      </span>
+    )
+  }
+  {
+    slug === "drawer" && (
+      <span class="guide-live-surface guide-live-side">
+        <span class="guide-live-line"></span><span class="guide-live-line"></span><span class="guide-live-line"></span>
+      </span>
+    )
+  }
+  {
+    slug === "banner" && (
+      <span class="guide-live-wide">
+        <Banner tone="warning" variant="strip" icon="wifiOff" title="Offline" />
+      </span>
+    )
+  }
+  {slug === "badge" && <Badge>Admin</Badge>}
+  {slug === "ripple" && <span class="guide-live-ripple"><Button variant="tonal">Press</Button></span>}
+  {slug === "glow" && <span class="guide-live-glow"><Icon name="heartOutline" size="lg" /></span>}
+  {
+    slug === "icon" && (
+      <span class="guide-live-row"><Icon name="house" size="lg" /><Icon name="search" size="lg" /><Icon name="settings" size="lg" /></span>
+    )
+  }
+  {slug === "avatar" && <Avatar shape="cookie" size="lg" />}
+  {slug === "flag" && <Flag region="SE" />}
+  {slug === "brand-mark" && <BrandMark class="guide-live-mark" />}
+  {slug === "code" && <Fragment set:html={codeSnippetHtml("run_2026_11_07_0314", { label: "Run id" })} />}
+</span>

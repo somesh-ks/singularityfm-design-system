@@ -1569,3 +1569,175 @@
   color: var(--color-on-surface);
   font-size: var(--font-size-reading);
 }
+
+/* ---- the index's pictures: each card shows its component, still. The tile's own tint steps aside; the
+   picture sits on the page's surface, and what is drawn here from tokens (the Wheel, the Drawer, the
+   lists) is plain on purpose. */
+
+.guide-art-live {
+  background: var(--color-surface);
+}
+
+.guide-live {
+  display: grid;
+  place-items: center;
+  max-inline-size: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.guide-live-wide,
+.guide-live-slider,
+.guide-live-menu {
+  inline-size: min(100%, 13rem);
+}
+
+.guide-live-slider {
+  display: grid;
+}
+
+.guide-live-mark {
+  inline-size: var(--space-12);
+  block-size: var(--space-12);
+  color: var(--color-accent);
+}
+
+.guide-live-row {
+  display: flex;
+  gap: var(--space-4);
+  color: var(--color-on-surface);
+}
+
+.guide-live-glow {
+  display: grid;
+  place-items: center;
+  inline-size: var(--space-16);
+  block-size: var(--space-16);
+  border-radius: var(--radius-round);
+  background: radial-gradient(var(--color-favorite-glow), transparent 70%);
+  color: var(--color-favorite);
+}
+
+.guide-live-surface {
+  display: grid;
+  gap: var(--space-4);
+  inline-size: 12rem;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-container);
+  color: var(--color-on-surface);
+  font-size: var(--font-size-label);
+}
+
+.guide-live-side {
+  inline-size: 14rem;
+  align-content: start;
+  block-size: 6rem;
+  padding: var(--space-2) var(--space-4);
+}
+
+.guide-live-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.guide-live-line {
+  display: block;
+  block-size: var(--space-2);
+  border-radius: var(--radius-round);
+  background: var(--color-track);
+}
+
+.guide-live-line:nth-child(2) {
+  inline-size: 70%;
+}
+
+.guide-live-line:nth-child(3) {
+  inline-size: 40%;
+}
+
+.guide-live-wheel,
+.guide-live-contents,
+.guide-live-rows,
+.guide-live-tabs {
+  display: grid;
+  color: var(--color-on-surface-muted);
+  font-size: var(--font-size-label);
+}
+
+.guide-live-wheel {
+  gap: var(--space-1);
+  text-align: center;
+}
+
+.guide-live-wheel > :nth-child(1),
+.guide-live-wheel > :nth-child(5) {
+  opacity: 0.3;
+}
+
+.guide-live-wheel > :nth-child(2),
+.guide-live-wheel > :nth-child(4) {
+  opacity: 0.6;
+}
+
+.guide-live-wheel > b,
+.guide-live-contents > b,
+.guide-live-tabs > b {
+  color: var(--color-on-surface);
+  font-weight: var(--font-weight-regular);
+}
+
+.guide-live-wheel > b {
+  font-size: var(--font-size-reading);
+}
+
+.guide-live-contents {
+  gap: var(--space-2);
+  padding-inline-start: var(--space-4);
+  border-inline-start: var(--stroke-hairline) solid var(--color-border-hairline);
+}
+
+.guide-live-contents > :first-child {
+  font-size: var(--font-size-meta);
+}
+
+.guide-live-contents > b {
+  margin-inline-start: calc(var(--space-4) * -1 - var(--stroke-hairline));
+  padding-inline-start: calc(var(--space-4) - var(--stroke-hairline));
+  border-inline-start: var(--space-1) solid var(--color-accent);
+}
+
+.guide-live-tabs {
+  grid-auto-flow: column;
+  gap: var(--space-2);
+}
+
+.guide-live-tabs > * {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-round);
+}
+
+.guide-live-tabs > b {
+  background: var(--color-accent-container);
+  color: var(--color-on-accent-container);
+}
+
+.guide-live-rows {
+  inline-size: 12rem;
+}
+
+.guide-live-rows > * {
+  padding-block: var(--space-2);
+  border-block-end: var(--stroke-hairline) solid var(--color-border-hairline);
+}
+
+.guide-live-rows > i {
+  font-style: normal;
+  opacity: 0.35;
+}
+
+.guide-live-ripple {
+  display: grid;
+  place-items: center;
+}

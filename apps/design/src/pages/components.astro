@@ -1,4 +1,5 @@
 ---
+import ComponentArt from "../components/ComponentArt.astro";
 import GuideTile from "../components/GuideTile.astro";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
@@ -14,7 +15,7 @@ import { COMPONENT_GROUPS } from "../lib/sections";
         <h2 class="section-head text-heading" id={`group-${group.label.toLowerCase()}`}>{group.label}</h2>
         <p class="guide-note">{group.note}</p>
         <div class="guide-tiles">
-          {group.pages.map((page) => <GuideTile page={page} art="components" />)}
+          {group.pages.map((page) => <GuideTile page={page}><ComponentArt slot="art" slug={page.path.split("/").pop() ?? ""} /></GuideTile>)}
         </div>
       </section>
     ))}

@@ -1,6 +1,6 @@
 import type { IconName } from "@singularity/design-system/icons";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
-import { GROUPS, SPECS } from "./components";
+import { GROUPS, labelOf, SPECS } from "./components";
 
 /** One page of the guide. */
 export interface Section {
@@ -102,7 +102,7 @@ export const COMPONENT_GROUPS: readonly {
   note: group.note,
   pages: SPECS.filter((spec) => spec.group === group.id).map((spec) => ({
     path: `/components/${spec.slug}`,
-    label: spec.name,
+    label: labelOf(spec),
     icon: "shapes",
     iconCurrent: "shapesFill",
     note: summaryOf(spec.registry, spec.guidance?.summary),

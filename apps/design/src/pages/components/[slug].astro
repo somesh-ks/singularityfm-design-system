@@ -6,7 +6,7 @@ import Switch from "@singularity/design-system/Switch.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import PageHead from "../../components/PageHead.astro";
 import Shell from "../../layouts/Shell.astro";
-import { allStates, codeFor, initialState, SPECS, stateKey } from "../../lib/components";
+import { allStates, codeFor, initialState, labelOf, SPECS, stateKey } from "../../lib/components";
 import { propsTable } from "../../lib/propsTable";
 
 export function getStaticPaths() {
@@ -36,9 +36,9 @@ const hasStage = !spec.noPreview;
 // Real defaults a state is built from: an avatar's shapes and sizes are the choices the controls list.
 ---
 
-<Shell title={spec.name} current={`/components/${spec.slug}`}>
+<Shell title={labelOf(spec)} current={`/components/${spec.slug}`}>
   <div class="settings-view guide-page" data-settings data-ready>
-    <PageHead title={spec.name} />
+    <PageHead title={labelOf(spec)} />
     <p class="guide-lead">{guidance?.summary}</p>
 
     {

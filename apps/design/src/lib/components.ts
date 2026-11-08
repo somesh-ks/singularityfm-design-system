@@ -40,7 +40,10 @@ export interface Subpart {
 
 export interface ComponentSpec {
   slug: string;
+  /** The code name: what the Code snippet and the props table call it. */
   name: string;
+  /** What the nav, the cards and the page title call it, when that is not the code name. */
+  label?: string;
   group: GroupId;
   /** The name the registry lists it under, when it is listed. */
   registry?: string;
@@ -310,6 +313,7 @@ export const SPECS: readonly ComponentSpec[] = [
   {
     slug: "section-tabs",
     name: "SectionTabs",
+    label: "Tabs",
     group: "navigation",
     file: "SectionTabs.astro",
     guidance: {
@@ -319,7 +323,7 @@ export const SPECS: readonly ComponentSpec[] = [
       ],
       dontUseWhen: [
         { when: "There is one section: it would only repeat the heading under it." },
-        { when: "The page is wide enough for the contents list.", instead: "ChapterAside" },
+        { when: "The page is wide enough for the contents list.", instead: "Chapter list" },
       ],
     },
     controls: [
@@ -343,6 +347,7 @@ export const SPECS: readonly ComponentSpec[] = [
   {
     slug: "chapter-aside",
     name: "ChapterAside",
+    label: "Chapter list",
     group: "navigation",
     file: "ChapterAside.astro",
     guidance: {
@@ -352,7 +357,7 @@ export const SPECS: readonly ComponentSpec[] = [
         "A briefing has sections and the window is 80rem or wider, where it replaces SectionTabs.",
       ],
       dontUseWhen: [
-        { when: "The window is narrower than 80rem.", instead: "SectionTabs" },
+        { when: "The window is narrower than 80rem.", instead: "Tabs" },
         { when: "The page has one section." },
       ],
     },
@@ -366,6 +371,7 @@ export const SPECS: readonly ComponentSpec[] = [
   {
     slug: "row-exit",
     name: "RowExit",
+    label: "Row exit",
     group: "navigation",
     registry: "Row exit",
     file: "RowExit.astro",
@@ -598,6 +604,7 @@ export const SPECS: readonly ComponentSpec[] = [
   {
     slug: "brand-mark",
     name: "BrandMark",
+    label: "Brand mark",
     group: "display",
     file: "BrandMark.astro",
     guidance: {
@@ -680,6 +687,9 @@ export function codeFor(spec: ComponentSpec, state: State): string {
   );
   return `${imports.join("\n")}\n\n${spec.code?.(state) ?? ""}`;
 }
+
+/** The name a person reads: the nav, the cards and the page title. */
+export const labelOf = (spec: ComponentSpec): string => spec.label ?? spec.name;
 
 export const specBySlug = (slug: string): ComponentSpec | undefined =>
   SPECS.find((spec) => spec.slug === slug);

@@ -9,14 +9,16 @@ import { href, type Section } from "../lib/sections";
  */
 interface Props {
   page: Section;
-  art: "principles" | "foundations" | "color" | "type" | "motion" | "tokens" | "components";
+  /** Left out where the tile's picture is its own content, passed in the "art" slot (a component's render). */
+  art?: "principles" | "foundations" | "color" | "type" | "motion" | "tokens" | "components";
 }
 
 const { page, art } = Astro.props;
 ---
 
 <a class="guide-tile" href={href(page.path)}>
-  <span class={`guide-tile-art guide-art-${art}`} aria-hidden="true">
+  <span class:list={["guide-tile-art", art ? `guide-art-${art}` : "guide-art-live"]} aria-hidden="true">
+    {Astro.slots.has("art") && <slot name="art" />}
     {art === "principles" && <span class="guide-art-disc"><Icon name="compass" size="lg" /></span>}
     {
       art === "foundations" && (
