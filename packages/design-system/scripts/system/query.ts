@@ -1,8 +1,10 @@
 /** Answers "which part" and "which token" from a built system, so an agent need not grep stylesheets. */
 import type { Part, System, SystemToken } from "./types.js";
 
+// "action" is a stop word: nearly every part is one, so it ranked first whichever part names it most
+// often (the side column's Catch up beat Dialog for "confirm before an action that cannot be undone").
 const STOP = new Set(
-  "a an the to of for in on at by with and or is are be it its this that new add make let want need user users page pages when where how what which should would can show use using get have has from into as".split(
+  "a an the to of for in on at by with and or is are be it its this that new add make let want need user users page pages when where how what which should would can show use using get have has from into as action actions".split(
     " ",
   ),
 );
@@ -45,6 +47,7 @@ const TOKEN_WORDS: Record<string, string[]> = {
   vibrate: ["haptic"],
   buzz: ["haptic"],
   feedback: ["haptic"],
+  error: ["danger"],
 };
 
 export function terms(text: string): string[] {

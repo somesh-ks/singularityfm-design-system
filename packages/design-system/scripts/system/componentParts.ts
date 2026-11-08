@@ -257,6 +257,7 @@ export const componentParts = (): PartSource[] => [
       "picker",
       "choose one",
       "filter",
+      "wheel",
     ],
     markup:
       '<Select variant="tonal" label="Sort" data-library-sort><option value="newest">Newest first</option></Select>',
@@ -280,6 +281,7 @@ export const componentParts = (): PartSource[] => [
       "popover",
       "dots menu",
       "context menu",
+      "long press",
       "action sheet",
       "more menu",
       "overflow menu",
