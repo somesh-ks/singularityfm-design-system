@@ -109,14 +109,11 @@ const ASTRO_LEFT = [
   "Dialog.astro",
   "DialogActions.astro",
   "DialogTitle.astro",
-  "Field.astro",
   "Menu.astro",
   "MenuItem.astro",
   "Select.astro",
   "Sheet.astro",
   "SheetHeader.astro",
-  "Slider.astro",
-  "Switch.astro",
 ];
 
 // A migrated component whose .astro path the apps still import, `class` and all, keeps that path as a
@@ -127,11 +124,14 @@ const ASTRO_SHIMS = [
   "Banner.astro",
   "BrandMark.astro",
   "ChapterAside.astro",
+  "Field.astro",
   "Flag.astro",
   "Icon.astro",
   "Ripple.astro",
   "RowExit.astro",
   "SectionTabs.astro",
+  "Slider.astro",
+  "Switch.astro",
 ];
 
 describe("the component framework", () => {
@@ -159,6 +159,9 @@ describe("the component framework", () => {
     );
     const statements = frontmatter
       .replace(/\/\*[\s\S]*?\*\//g, "")
+      // The Props type is no logic, on one line or as the formatter wraps it: an object type's members
+      // end in semicolons of their own.
+      .replace(/^type Props = (?:[^{};]|\{[^{}]*\})+;$/m, "type Props = ...;")
       .split("\n")
       .map((line) => line.trim())
       .filter(Boolean);
@@ -174,11 +177,12 @@ describe("the component framework", () => {
     );
     expect(own, `${shim} has logic of its own`).toEqual([]);
     // One element, the component, with only {expressions} for props and no literal attribute of its
-    // own. It closes itself, or, for a component that holds content (the Badge's words, the Row exit's
+    // own but client:visible, the one directive a component that answers a press hydrates with (DS-7).
+    // It closes itself, or, for a component that holds content (the Badge's words, the Row exit's
     // row), holds the shim's slot and nothing else: the slot reaches the .tsx as its children.
     expect(template.trim(), `${shim} draws markup of its own`).toMatch(
       new RegExp(
-        `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}))*\\s*(?:/>|><slot /></${name}>)$`,
+        `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}|client:visible))*\\s*(?:/>|><slot /></${name}>)$`,
       ),
     );
   });

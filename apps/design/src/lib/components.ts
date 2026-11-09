@@ -283,7 +283,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Field",
     group: "inputs",
     registry: "Field",
-    file: "Field.astro",
+    file: "Field.tsx",
     controls: [
       choice("lines", "Lines", [
         ["single", "One line"],
@@ -296,7 +296,7 @@ export const SPECS: readonly ComponentSpec[] = [
     code: (state) => {
       const attrs: string[] = [];
       if (state.lines === "multi") attrs.push("multiline");
-      if (on(state, "filled")) attrs.push(`value="${SAMPLE.value}"`);
+      if (on(state, "filled")) attrs.push(`defaultValue="${SAMPLE.value}"`);
       else attrs.push(`placeholder="${SAMPLE.label}"`);
       attrs.push(`aria-label="${SAMPLE.label}"`);
       if (on(state, "disabled")) attrs.push("disabled");
@@ -308,7 +308,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Switch",
     group: "inputs",
     registry: "Switch",
-    file: "Switch.astro",
+    file: "Switch.tsx",
     controls: [
       choice("state", "State", [
         ["off", "Off"],
@@ -319,14 +319,12 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Switch"],
     code: (state) => {
-      const attrs: string[] = [];
-      if (state.state === "on") attrs.push("checked");
+      const attrs = ["client:visible"];
+      if (state.state === "on") attrs.push("defaultChecked");
+      if (state.state === "mixed") attrs.push("indeterminate");
       attrs.push(`aria-label="${SAMPLE.label}"`);
       if (on(state, "disabled")) attrs.push("disabled");
-      const tag = jsx("Switch", attrs);
-      return state.state === "mixed"
-        ? `${tag}\n<!-- Mixed is the input's indeterminate property: a script sets it while only some of a group are on. -->`
-        : tag;
+      return jsx("Switch", attrs);
     },
   },
   {
@@ -334,7 +332,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Slider",
     group: "inputs",
     registry: "Slider",
-    file: "Slider.astro",
+    file: "Slider.tsx",
     controls: [
       choice("variant", "Variant", [
         ["default", "Default"],
@@ -345,12 +343,13 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Slider"],
     code: (state) => {
-      const attrs = ['min="0"', 'max="100"', 'value="40"', `aria-label="${SAMPLE.label}"`];
+      const attrs = ["min={0}", "max={100}", "defaultValue={40}", `aria-label="${SAMPLE.label}"`];
       if (state.variant !== "default") attrs.unshift(state.variant ?? "");
+      attrs.unshift("client:visible");
       if (on(state, "disabled")) attrs.push("disabled");
       return jsx("Slider", attrs);
     },
-    note: "The fill up to the thumb is a custom property the page keeps; a short script on this page does it.",
+    note: "It keeps the fill up to the thumb from its own value.",
   },
   {
     slug: "select",

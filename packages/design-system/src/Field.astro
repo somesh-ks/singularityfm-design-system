@@ -1,32 +1,22 @@
 ---
+/**
+ * @deprecated Import Field from "@singularityfm/design-system/Field" and pass className (DS-5). This
+ * path stays until a breaking release: it renders that React Field, `class` passed on as className and
+ * `value` as defaultValue (a page cannot hold a value React controls), and draws nothing of its own
+ * (designSystem.test.ts holds it to that). Its attributes stay as open as the Astro field's were. It
+ * takes no client directive: the Field is a native input, which types and submits unhydrated (DS-7).
+ */
 import type { HTMLAttributes } from "astro/types";
-import { fieldClass } from "./field";
-import "../styles/field.css";
+import Field from "./Field.tsx";
 
-interface FieldProps {
-  /** Several lines that grow with the text; the corner arc is a pill's, shortened. */
-  multiline?: boolean;
-  /** How many lines a multiline field grows to before it scrolls inside; 6 when left out. */
-  maxLines?: number;
-  /** For placing the field where it stands (a width, a margin). Never its look. */
-  class?: string;
-}
+type Props = Omit<HTMLAttributes<"input">, "class"> &
+  Pick<HTMLAttributes<"textarea">, "rows" | "cols" | "wrap"> & {
+    class?: string;
+    multiline?: boolean;
+    maxLines?: number;
+  };
 
-type Props = FieldProps &
-  Omit<HTMLAttributes<"input">, keyof FieldProps> &
-  Pick<HTMLAttributes<"textarea">, "rows" | "cols" | "wrap">;
-
-const { multiline = false, maxLines, class: placement, value, ...rest } = Astro.props;
+const { class: className, value: defaultValue, ...props } = Astro.props;
 ---
 
-{
-  multiline ? (
-    <textarea
-      class:list={[fieldClass(), placement]}
-      style={maxLines ? `--field-max-lines: ${maxLines}` : undefined}
-      {...rest}
-    >{value}</textarea>
-  ) : (
-    <input class:list={[fieldClass(), placement]} value={value} {...rest} />
-  )
-}
+<Field defaultValue={defaultValue} {...props} className={className} />

@@ -48,6 +48,7 @@
     "./BrandMark": "./src/BrandMark.tsx",
     "./ChapterAside": "./src/ChapterAside.tsx",
     "./Fab": "./src/Fab.tsx",
+    "./Field": "./src/Field.tsx",
     "./Flag": "./src/Flag.tsx",
     "./Icon": "./src/Icon.tsx",
     "./IconButton": "./src/IconButton.tsx",
@@ -55,6 +56,8 @@
     "./Ripple": "./src/Ripple.tsx",
     "./RowExit": "./src/RowExit.tsx",
     "./SectionTabs": "./src/SectionTabs.tsx",
+    "./Slider": "./src/Slider.tsx",
+    "./Switch": "./src/Switch.tsx",
     "./*.astro": "./src/*.astro",
     "./*": "./src/*.ts"
   },
@@ -63,11 +66,6 @@
     "astro": "^7.4.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
-  },
-  "peerDependenciesMeta": {
-    "@base-ui/react": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@base-ui/react": "^1.9.0",

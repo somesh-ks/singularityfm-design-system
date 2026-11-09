@@ -101,6 +101,6 @@ export function propsTable(source: string): PropsTable {
   }
   const element =
     /HTMLAttributes<"(\w+)">/.exec(frontmatter)?.[1] ??
-    (/ButtonHTMLAttributes/.test(frontmatter) ? "button" : undefined);
+    /(Button|Input)HTMLAttributes/.exec(frontmatter)?.[1]?.toLowerCase();
   return { rows, ...(element ? { element } : {}) };
 }

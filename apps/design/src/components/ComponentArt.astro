@@ -7,7 +7,7 @@ import Button from "@singularity/design-system/Button";
 import { codeSnippetHtml } from "@singularity/design-system/code";
 import "@singularity/design-system/styles/code.css";
 import Fab from "@singularity/design-system/Fab";
-import Field from "@singularity/design-system/Field.astro";
+import Field from "@singularity/design-system/Field";
 import Flag from "@singularity/design-system/Flag";
 import Icon from "@singularity/design-system/Icon";
 import IconButton from "@singularity/design-system/IconButton";
@@ -15,8 +15,8 @@ import MenuItem from "@singularity/design-system/MenuItem.astro";
 import { menuBodyClass } from "@singularity/design-system/menu";
 import Select from "@singularity/design-system/Select.astro";
 import SheetHeader from "@singularity/design-system/SheetHeader.astro";
-import Slider from "@singularity/design-system/Slider.astro";
-import Switch from "@singularity/design-system/Switch.astro";
+import Slider from "@singularity/design-system/Slider";
+import Switch from "@singularity/design-system/Switch";
 import { SAMPLE } from "../lib/components";
 
 /**
@@ -52,12 +52,12 @@ const { slug } = Astro.props;
       </span>
     )
   }
-  {slug === "field" && <Field placeholder={SAMPLE.label} aria-label={SAMPLE.label} tabindex="-1" />}
-  {slug === "switch" && <Switch checked aria-label={SAMPLE.label} tabindex="-1" />}
+  {slug === "field" && <Field placeholder={SAMPLE.label} aria-label={SAMPLE.label} tabIndex={-1} />}
+  {slug === "switch" && <Switch defaultChecked aria-label={SAMPLE.label} tabIndex={-1} />}
   {
     slug === "slider" && (
-      <span class="guide-live-slider" style="--range-fill: 40%">
-        <Slider min="0" max="100" value="40" aria-label={SAMPLE.label} tabindex="-1" />
+      <span class="guide-live-slider">
+        <Slider min={0} max={100} defaultValue={40} aria-label={SAMPLE.label} tabIndex={-1} />
       </span>
     )
   }

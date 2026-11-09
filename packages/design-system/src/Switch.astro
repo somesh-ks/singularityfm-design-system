@@ -1,16 +1,20 @@
 ---
+/**
+ * @deprecated Import Switch from "@singularityfm/design-system/Switch", pass className and draw it
+ * with client:visible (DS-5, DS-7). This path stays until a breaking release: it renders that React
+ * Switch, `class` passed on as className and `checked` as defaultChecked (a page cannot hold the
+ * state), hydrated where it is drawn so it still answers a press, and draws nothing of its own
+ * (designSystem.test.ts holds it to that).
+ */
 import type { HTMLAttributes } from "astro/types";
-import { switchClass } from "./switch";
-import "../styles/switch.css";
+import Switch from "./Switch.tsx";
 
-interface SwitchProps {
-  /** For placing the switch where it stands (a margin, a grid area). Never its look. */
+type Props = Omit<HTMLAttributes<"input">, "class" | "type" | "role"> & {
   class?: string;
-}
+  indeterminate?: boolean;
+};
 
-type Props = SwitchProps & Omit<HTMLAttributes<"input">, keyof SwitchProps | "type" | "role">;
-
-const { class: placement, ...rest } = Astro.props;
+const { class: className, checked: defaultChecked, ...props } = Astro.props;
 ---
 
-<input class:list={[switchClass(), placement]} type="checkbox" role="switch" {...rest} />
+<Switch defaultChecked={defaultChecked} {...props} className={className} client:visible />

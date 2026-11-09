@@ -1,8 +1,8 @@
 /**
  * A component page's preview. The page draws every state of the controls (the library's own markup,
  * hidden but the first); this shows the one the controls name and puts its code in the snippet. The
- * rest is the little a stage needs to be touched: opening an overlay, keeping a slider's fill, moving
- * a section tab, taking a row out.
+ * rest is the little a stage needs to be touched: opening an overlay, moving a section tab, taking a
+ * row out.
  */
 export {};
 
@@ -10,15 +10,18 @@ const root = document.querySelector<HTMLElement>("[data-playground]");
 const snippet = document.querySelector<HTMLElement>("[data-code-section] .code-snippet-text");
 
 if (root) {
-  const controls = Array.from(
-    root.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-control]"),
-  );
+  // A choice is a native select; a toggle is the Switch, whose state is its aria-checked.
+  const controls = Array.from(root.querySelectorAll<HTMLElement>("[data-control]"));
   const states = Array.from(root.querySelectorAll<HTMLElement>("[data-combo]"));
 
   const show = (): void => {
     const key = controls
       .map((control) =>
-        control instanceof HTMLInputElement ? (control.checked ? "on" : "off") : control.value,
+        control instanceof HTMLSelectElement
+          ? control.value
+          : control.getAttribute("aria-checked") === "true"
+            ? "on"
+            : "off",
       )
       .join("|");
     for (const state of states) {
@@ -29,7 +32,9 @@ if (root) {
   // A reload keeps what the controls last said; the page draws the first state.
   if (controls.length) {
     show();
-    root.addEventListener("change", show);
+    // A Switch's hidden checkbox fires change before React writes the new aria-checked, which it does
+    // once the press's handlers return; the microtask reads it after.
+    root.addEventListener("change", () => queueMicrotask(show));
   }
 
   root.addEventListener("click", (event) => {
@@ -61,22 +66,6 @@ if (root) {
     if (remove) remove.closest<HTMLElement>(".row-exit")?.setAttribute("data-removing", "");
     if (target.closest("[data-row-reset]"))
       for (const row of root.querySelectorAll(".row-exit")) row.removeAttribute("data-removing");
-  });
-
-  // The mixed switch is a property, not an attribute.
-  for (const mixed of root.querySelectorAll<HTMLInputElement>("input[data-mixed]"))
-    mixed.indeterminate = true;
-
-  // A slider's fill is the share of its range up to the thumb, kept on the field it sits in.
-  const fill = (input: HTMLInputElement): void => {
-    const share = ((+input.value - +input.min) / (+input.max - +input.min)) * 100;
-    (
-      input.closest<HTMLElement>(".slider-hue-field, .slider-wave-field") ?? input
-    ).style.setProperty("--range-fill", `${share}%`);
-  };
-  for (const slider of root.querySelectorAll<HTMLInputElement>(".slider-input")) fill(slider);
-  root.addEventListener("input", (event) => {
-    if ((event.target as Element).matches(".slider-input")) fill(event.target as HTMLInputElement);
   });
 
   if (root.querySelector(".ripple-area"))

@@ -2,7 +2,7 @@
 import Code from "@singularity/design-system/Code.astro";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
 import Select from "@singularity/design-system/Select.astro";
-import Switch from "@singularity/design-system/Switch.astro";
+import Switch from "@singularity/design-system/Switch";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import PageHead from "../../components/PageHead.astro";
 import Shell from "../../layouts/Shell.astro";
@@ -61,7 +61,7 @@ const hasStage = !spec.noPreview;
                 ) : (
                   <label class="guide-control">
                     <span>{control.label}</span>
-                    <Switch data-control={control.id} />
+                    <Switch client:visible data-control={control.id} />
                   </label>
                 ),
               )}

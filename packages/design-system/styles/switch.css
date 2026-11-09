@@ -1,15 +1,19 @@
 /*
- * The Switch (design-system/Switch.astro): a checkbox with role="switch" drawn as a track and a
- * thumb. Its classes are written in design-system/switch.ts and nowhere else.
+ * The Switch (design-system/Switch.tsx): Base UI's <button role="switch"> drawn as a track and a
+ * thumb, its state in data-checked and data-indeterminate (DS-4). Its classes are written in
+ * design-system/switch.ts and nowhere else.
  */
 
-/* One setting that is on or off, a checkbox with role="switch" drawn as a track; its ::before is the thumb. */
+/* One setting that is on or off, a <button role="switch"> drawn as a track; its ::before is the thumb. */
 .switch-input {
   position: relative;
   flex: none;
   width: var(--switch-width);
   height: var(--switch-height);
   margin: 0;
+  /* A button's own padding and edge would move the thumb off the track; the checkbox had neither. */
+  padding: 0;
+  border: 0;
   appearance: none;
   border-radius: var(--switch-radius);
   /* Off, the track is the control's whole outline, and the thumb's place on it is the state. The
@@ -50,13 +54,13 @@
     opacity var(--duration-state) var(--ease-out);
 }
 
-.switch-input:checked {
+.switch-input[data-checked] {
   background: var(--color-accent);
 }
 
 /* On the accent the thumb takes the on-accent colour: in dark mode the idle thumb is nearly as light
    as the accent, and its position would be hard to see. */
-.switch-input:checked::before {
+.switch-input[data-checked]::before {
   background: var(--color-on-accent);
   transform: translateX(
     calc(var(--switch-width) - var(--switch-thumb) - var(--switch-padding) * 2)
@@ -64,15 +68,15 @@
   transform-origin: 100% 50%;
 }
 
-/* Mixed (a master over a group of which only some are on): the script sets `indeterminate` and unchecks
-   it. No new colour: the track sits halfway between the off grey and the accent, and the idle thumb
-   halfway along it, so it reads as between the two states (owner, 2026-10-31: the first draw, a tonal
+/* Mixed (a master over a group of which only some are on): the `indeterminate` prop, unchecked, which
+   Switch.tsx draws as data-indeterminate. No new colour: the track sits halfway between the off grey
+   and the accent, and the idle thumb halfway along it, so it reads as between the two states (owner, 2026-10-31: the first draw, a tonal
    track with an accent ring and thumb, "looks weird in color"). After the checked rules. */
-.switch-input:indeterminate {
+.switch-input[data-indeterminate] {
   background: var(--switch-track-mixed);
 }
 
-.switch-input:indeterminate::before {
+.switch-input[data-indeterminate]::before {
   transform: translateX(
     calc((var(--switch-width) - var(--switch-thumb) - var(--switch-padding) * 2) / 2)
   );
@@ -92,7 +96,7 @@
     background: var(--switch-track-hover);
   }
 
-  .switch-input:enabled:checked:hover {
+  .switch-input:enabled[data-checked]:hover {
     background: var(--color-accent-hover);
   }
 }
@@ -102,7 +106,7 @@
   background: var(--switch-track-hover);
 }
 
-.switch-input:enabled:checked:active {
+.switch-input:enabled[data-checked]:active {
   background: var(--color-accent-pressed);
 }
 
@@ -128,15 +132,15 @@
     background: ButtonText;
   }
 
-  .switch-input:checked {
+  .switch-input[data-checked] {
     border-color: Highlight;
   }
 
-  .switch-input:checked::before {
+  .switch-input[data-checked]::before {
     background: Highlight;
   }
 
-  .switch-input:indeterminate {
+  .switch-input[data-indeterminate] {
     border-color: Highlight;
   }
 }

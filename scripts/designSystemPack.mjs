@@ -5,7 +5,8 @@
 // row and its attributes (the Row exit, by both paths), a stylesheet (fonts.css, which pulls the font
 // files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
 // and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
-// stylesheet). The workspace link serves every file in the folder, so a path missing from `files`, a
+// stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
+// the Switch and the Slider hydrated where they are drawn (DS-7). The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -33,7 +34,10 @@ const guideVersion = (dependency) =>
     readFileSync(join(root, "apps/design/node_modules", dependency, "package.json"), "utf8"),
   ).version;
 const dependencies = Object.fromEntries(
-  ["astro", "@astrojs/react", "react", "react-dom"].map((name) => [name, guideVersion(name)]),
+  ["astro", "@astrojs/react", "react", "react-dom", "@base-ui/react"].map((name) => [
+    name,
+    guideVersion(name),
+  ]),
 );
 dependencies["@biomejs/biome"] = JSON.parse(
   readFileSync(join(root, "node_modules/@biomejs/biome/package.json"), "utf8"),
@@ -117,6 +121,23 @@ try {
       "",
     ].join("\n"),
   );
+  // A Switch and a Slider answer a press only once hydrated, so a page draws them with client:visible
+  // and each shim carries it; the Field is a native input and draws no island.
+  writeFileSync(
+    join(app, "src/pages/inputs.astro"),
+    [
+      "---",
+      `import Field from "${name}/Field";`,
+      `import OldField from "${name}/Field.astro";`,
+      `import Slider from "${name}/Slider";`,
+      `import OldSlider from "${name}/Slider.astro";`,
+      `import Switch from "${name}/Switch";`,
+      `import OldSwitch from "${name}/Switch.astro";`,
+      "---",
+      '<html lang="en"><body><form><Field className="placed-field" data-id="f1" defaultValue="Words" /><OldField class="placed-field" data-id="f1" value="Words" style="order: 1" /><Switch client:visible className="placed-switch" data-id="s1" name="s1" defaultChecked /><OldSwitch class="placed-switch" data-id="s1" name="s1" checked /><Slider client:visible className="placed-slider" data-id="v1" name="v1" min={0} max={100} defaultValue={30} /><OldSlider class="placed-slider" data-id="v1" name="v1" min="0" max="100" value="30" /></form></body></html>',
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -134,6 +155,7 @@ try {
   pnpm(["exec", "astro", "build"], app);
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
+  const inputs = readFileSync(join(app, "dist/inputs/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
@@ -165,6 +187,50 @@ try {
   )
     problems.push("the page drew no placed Row exit with its attributes and content by each path");
   if (!html.includes('data-findings="1"')) problems.push("the rules module found no raw colour");
+  // Each path keeps the test's own class and data-id on the component's root, and its value: the
+  // Field's in its input, the Switch's in its hidden checkbox (checked, named), the Slider's in its
+  // hidden range. A shim that loses `class`, an attribute or `value`/`checked` fails here.
+  const roots = (part) =>
+    [...inputs.matchAll(new RegExp(`<(?!astro-island)\\w+[^>]*\\b${part}\\b[^>]*>`, "g"))].map(
+      (tag) => tag[0],
+    );
+  const fields = roots("placed-field");
+  if (
+    fields.length !== 2 ||
+    fields.some((tag) => !/data-id="f1"/.test(tag) || !/value="Words"/.test(tag))
+  )
+    problems.push("the page drew no placed Field with its attribute and value by each path");
+  if (!fields.some((tag) => /style="order:\s*1"/.test(tag)))
+    problems.push("the Field shim lost a style string");
+  const switches = roots("placed-switch");
+  const checkboxes = inputs.match(/<input[^>]*type="checkbox"[^>]*>/g) ?? [];
+  if (
+    switches.length !== 2 ||
+    switches.some((tag) => !/data-id="s1"/.test(tag) || !/data-checked=""/.test(tag)) ||
+    checkboxes.filter((tag) => /name="s1"/.test(tag) && /checked=""/.test(tag)).length !== 2
+  )
+    problems.push("the page drew no placed, checked Switch with its attribute by each path");
+  const sliders = roots("placed-slider");
+  const ranges = inputs.match(/<input[^>]*type="range"[^>]*>/g) ?? [];
+  if (
+    sliders.length !== 2 ||
+    sliders.some((tag) => !/data-id="v1"/.test(tag) || !/--range-fill:\s*30%/.test(tag)) ||
+    ranges.filter((tag) => /name="v1"/.test(tag) && /value="30"/.test(tag)).length !== 2
+  )
+    problems.push("the page drew no placed Slider with its attribute and value by each path");
+  // Hydration (DS-7): the Switch and the Slider by each path are islands that load when seen, each
+  // naming a component module and a renderer the build emitted; the Field is none, and no other page
+  // carries the renderer.
+  const islands = [...inputs.matchAll(/<astro-island\b[^>]*>/g)].map((tag) => tag[0]);
+  if (islands.length !== 4 || islands.some((tag) => !/client="visible"/.test(tag)))
+    problems.push(
+      `the inputs page drew ${islands.length} islands, not the four Switch and Slider ones`,
+    );
+  for (const tag of islands)
+    for (const [, url] of tag.matchAll(/(?:component|renderer)-url="([^"]+)"/g))
+      if (!existsSync(join(app, "dist", url))) problems.push(`an island names ${url}, not built`);
+  if (/<astro-island/.test(html) || /<astro-island/.test(actions))
+    problems.push("a page that draws no Switch or Slider hydrates");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
   let lint = "";
   try {
@@ -183,6 +249,9 @@ try {
     problems.push("the Icon's stylesheet did not reach the page");
   if (![actions, ...styles].some((text) => text.includes(".create-fab{")))
     problems.push("the Fab's stylesheet did not reach the page");
+  for (const rule of [".field-input{", ".switch-input[data-checked]{", ".slider-input{"])
+    if (![inputs, ...styles].some((text) => text.includes(rule)))
+      problems.push(`${rule.slice(0, -1)} did not reach the page`);
   if (!assets.some((file) => file.endsWith(".woff2")))
     problems.push("the build emitted no font file");
   if (problems.length > 0) throw new Error(problems.join("; "));

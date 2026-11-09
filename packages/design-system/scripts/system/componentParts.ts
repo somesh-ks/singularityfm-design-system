@@ -321,21 +321,29 @@ export const componentParts = (): PartSource[] => [
       "master",
     ],
     markup:
-      '<div class="settings-row"><label class="settings-label" for="autoplay">Autoplay</label><Switch id="autoplay" name="autoplay" /></div>',
+      '<div class="settings-row"><label class="settings-label" for="autoplay">Autoplay</label><Switch client:visible id="autoplay" name="autoplay" /></div>',
+    files: ["packages/design-system/src/Switch.tsx", "packages/design-system/src/switch.ts"],
+    rules: [
+      "In an Astro page it hydrates where it is drawn (client:visible) and starts from defaultChecked; in a React island it is controlled by checked and onCheckedChange (DS-7).",
+    ],
   }),
   control("slider", "Slider", SLIDER, {
     keywords: ["slider", "range", "volume", "speed", "scrub"],
     markup:
-      '<Slider aria-label="Volume" min="0" max="1" step="0.05" value="0.7" style="--range-fill: 70%" />',
+      '<Slider client:visible aria-labelledby="volume-label" min={0} max={1} step={0.05} defaultValue={0.7} />',
+    files: ["packages/design-system/src/Slider.tsx", "packages/design-system/src/slider.ts"],
     rules: [
-      "WebKit paints the filled track from --range-fill, which starts at 0%: set it to (value - min) / (max - min) as a percentage and update it on input.",
+      "In an Astro page it hydrates where it is drawn (client:visible) and starts from defaultValue; in a React island it is controlled by value and onValueChange (DS-7).",
+      "It keeps --range-fill from its own value; a row's label names it with aria-labelledby, since a <label for> cannot reach its hidden input.",
     ],
   }),
   control("field", "Field", FIELD, {
     keywords: ["field", "input", "text field", "textarea", "select", "dropdown", "form"],
     markup:
       '<div class="manage-field"><label for="title">Title</label><Field id="title" name="title" type="text" /></div>',
+    files: ["packages/design-system/src/Field.tsx", "packages/design-system/src/field.ts"],
     rules: [
+      "It needs no client directive: it is a native input, and types and submits before any script (DS-7).",
       "Draw it with <Field> (multiline for a textarea); a select or a script takes the class from fieldClass().",
       "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element.",
     ],

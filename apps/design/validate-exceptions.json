@@ -68,18 +68,6 @@
     {
       "file": "apps/design/src/scripts/componentPage.ts",
       "rule": "class-on-component",
-      "text": "\".slider-hue-field, .slider-wave-field\"",
-      "reason": "the preview script finds the Slider field it keeps --range-fill on, the caller's part slider.ts documents"
-    },
-    {
-      "file": "apps/design/src/scripts/componentPage.ts",
-      "rule": "class-on-component",
-      "text": "(\".slider-input\")",
-      "reason": "the preview script finds the Slider inputs whose fill it keeps"
-    },
-    {
-      "file": "apps/design/src/scripts/componentPage.ts",
-      "rule": "class-on-component",
       "text": "(\".ripple-area\")",
       "reason": "the preview script loads the ripple's script only when the page draws a Ripple"
     },
