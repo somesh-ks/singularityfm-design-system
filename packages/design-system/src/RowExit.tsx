@@ -1,5 +1,5 @@
 import type { CSSProperties, LiHTMLAttributes, ReactNode } from "react";
-import { rowExitClass } from "./rowExit";
+import { rowExitClass } from "./rowExit.ts";
 import "../styles/row-exit.css";
 
 interface RowExitProps {

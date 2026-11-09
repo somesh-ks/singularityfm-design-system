@@ -5,7 +5,7 @@
  * dialogActionsClass(), and a script that finds one reads DIALOG_SELECTOR; the style guide lists DIALOG.
  * The rules are in styles/dialog.css. A form in a panel that slides in is a Sheet, not a Dialog.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const DIALOG: Guidance = {
   summary: "A small centred box with a heading and a row of buttons: one question, one tap.",

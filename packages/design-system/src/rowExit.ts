@@ -2,7 +2,7 @@
  * The Row exit: how a row leaves a list the reader removes it from. The one place its class is
  * written. RowExit.tsx renders the <li> from it; the style guide lists ROW_EXIT. The rules are in styles/row-exit.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const ROW_EXIT: Guidance = {
   summary:

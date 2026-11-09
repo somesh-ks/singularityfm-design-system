@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { passedAttributes } from "./attributes";
-import { type IconButtonVariant, iconButtonClass } from "./iconButton";
+import { passedAttributes } from "./attributes.ts";
+import { type IconButtonVariant, iconButtonClass } from "./iconButton.ts";
 
 interface IconButtonProps {
   /** What a press does, for a screen reader: the glyph has no words ("Close", "Share"). */

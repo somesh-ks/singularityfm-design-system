@@ -6,7 +6,7 @@
  * system's own tick; a click on the input itself gives nothing). The one place either call is made.
  * The Haptics choice in Settings and the cue pipeline that decides when are the app's.
  */
-import { HAPTIC_INTENTS, HAPTIC_PATTERNS, type HapticIntent } from "./hapticTokens";
+import { HAPTIC_INTENTS, HAPTIC_PATTERNS, type HapticIntent } from "./hapticTokens.ts";
 
 export type HapticSupport = "android" | "ios" | "none";
 

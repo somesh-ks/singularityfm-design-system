@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
-import { passedAttributes } from "./attributes";
-import { type LinkVariant, linkClass } from "./link";
+import { passedAttributes } from "./attributes.ts";
+import { type LinkVariant, linkClass } from "./link.ts";
 
 interface LinkProps {
   /** Where it goes. A link always has an address; an action on this page is a Button. */

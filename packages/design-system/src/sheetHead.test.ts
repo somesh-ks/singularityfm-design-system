@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { escapeHtml, iconHtml, sheetHeadHtml } from "./sheetHead";
+import { escapeHtml, iconHtml, sheetHeadHtml } from "./sheetHead.ts";
 
 describe("sheetHead helpers", () => {
   it("escapes html characters safely", () => {

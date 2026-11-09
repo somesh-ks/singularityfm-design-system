@@ -8,12 +8,12 @@
  * dialog (a modal dialog makes everything outside it inert).
  */
 
-import { buttonClass } from "./button";
-import { dialogActionsClass } from "./dialog";
-import { menuBodyClass, menuItemClass, menuListClass } from "./menu";
-import { pullToDismiss } from "./pullDismiss";
-import { escapeHtml, sheetHeadHtml } from "./sheetHead";
-import { mountWheel, type Wheel, wheelFrameClass, wheelHtml, wheelListClass } from "./wheel";
+import { buttonClass } from "./button.ts";
+import { dialogActionsClass } from "./dialog.ts";
+import { menuBodyClass, menuItemClass, menuListClass } from "./menu.ts";
+import { pullToDismiss } from "./pullDismiss.ts";
+import { escapeHtml, sheetHeadHtml } from "./sheetHead.ts";
+import { mountWheel, type Wheel, wheelFrameClass, wheelHtml, wheelListClass } from "./wheel.ts";
 
 let uid = 0;
 /** The wheel turning in each open sheet, which Save reads. */

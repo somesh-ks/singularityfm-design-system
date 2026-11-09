@@ -17,7 +17,7 @@
  * tap while an earlier wave is fading, never ends or restarts another. The pressed state is the
  * attribute `data-ripple-pressed`, which only the press that set it clears.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const RIPPLE: Guidance = {
   summary: "A wave from the touch point that fills a control's touch area, then fades.",

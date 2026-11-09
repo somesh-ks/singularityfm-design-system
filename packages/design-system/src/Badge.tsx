@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { badgeClass } from "./badge";
+import { badgeClass } from "./badge.ts";
 import "../styles/badge.css";
 
 interface Props {

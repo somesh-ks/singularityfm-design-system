@@ -4,7 +4,7 @@
  * (a Base UI Close, a string-built row) calls iconButtonClass(); the style guide lists ICON_BUTTON.
  * The rules are in styles/buttons.css; the press is the .press utility in foundations.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export type IconButtonVariant = "standard" | "tonal";
 

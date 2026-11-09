@@ -1,8 +1,8 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { flagParts } from "./flag";
-import { COMPONENTS } from "./registry";
+import { flagParts } from "./flag.ts";
+import { COMPONENTS } from "./registry.ts";
 
 /**
  * Each component's own stylesheet and guidance. That no app writes its classes by hand, and the
@@ -190,5 +190,24 @@ describe("the component framework", () => {
     for (const file of files.filter((name) => name.endsWith(".tsx"))) {
       expect(pkg.exports[`./${file.replace(/\.tsx$/, "")}`], file).toBe(`./src/${file}`);
     }
+  });
+
+  // A component and its module share a name but its case (Banner.tsx, banner.ts). esbuild, and a
+  // case-blind disk, resolve an extensionless "./banner" to Banner.tsx first: the component then
+  // imports itself, and a consumer's bundle fails with "No matching export" (seen 2026-11-09).
+  it("names the file of every relative import, so a case twin is never picked", () => {
+    const loose = files
+      .filter((name) => /\.(?:ts|tsx|astro)$/.test(name))
+      .flatMap((name) =>
+        [
+          ...readFileSync(join(import.meta.dirname, name), "utf8").matchAll(
+            /(?:from |import |import\()"(\.\.?\/[^"]+)"/g,
+          ),
+        ]
+          .map((match) => match[1] ?? "")
+          .filter((spec) => !/\.(?:ts|tsx|css|js|json|astro|svg)$/.test(spec))
+          .map((spec) => `${name}: ${spec}`),
+      );
+    expect(loose).toEqual([]);
   });
 });
