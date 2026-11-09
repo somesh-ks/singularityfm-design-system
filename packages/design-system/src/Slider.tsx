@@ -1,6 +1,6 @@
 import type { CSSProperties, InputHTMLAttributes } from "react";
-import { passedAttributes, styleObject } from "./attributes";
-import { sliderClass, sliderWaveFieldClass } from "./slider";
+import { passedAttributes, styleObject } from "./attributes.ts";
+import { sliderClass, sliderWaveFieldClass } from "./slider.ts";
 import "../styles/slider.css";
 
 interface SliderProps {

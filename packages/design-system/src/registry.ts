@@ -4,38 +4,38 @@
  * scripts/systemUse.test.ts (at the repository root) holds the apps to them. A new component is added here in the PR that adds it;
  * a class not listed here is not part of the system.
  */
-import { AVATAR, AVATAR_CLASSES, AVATAR_RETIRED } from "./avatar";
-import { BADGE, BADGE_CLASSES, BADGE_RETIRED } from "./badge";
-import { BANNER, BANNER_CLASSES, BANNER_RETIRED } from "./banner";
-import { BUTTON, BUTTON_CLASSES, BUTTON_RETIRED } from "./button";
-import { CHIP, CHIP_CLASSES, CHIP_RETIRED } from "./chip";
-import { CODE, CODE_CLASSES, CODE_RETIRED } from "./code";
-import { DIALOG, DIALOG_CLASSES, DIALOG_RETIRED } from "./dialog";
-import { DRAWER, DRAWER_CLASSES, DRAWER_RETIRED } from "./drawer";
-import { FAB, FAB_CLASSES, FAB_RETIRED } from "./fab";
-import { FIELD, FIELD_CLASSES, FIELD_RETIRED } from "./field";
-import { FLAG, FLAG_CLASSES, FLAG_RETIRED } from "./flag";
-import { GLOW, GLOW_CLASSES, GLOW_RETIRED } from "./glow";
-import type { Guidance } from "./guidance";
-import { ICON, ICON_CLASSES, ICON_RETIRED } from "./icon";
-import { ICON_BUTTON, ICON_BUTTON_CLASSES, ICON_BUTTON_RETIRED } from "./iconButton";
-import { LINK, LINK_CLASSES, LINK_RETIRED } from "./link";
-import { MENU, MENU_CLASSES, MENU_RETIRED } from "./menu";
-import { PLAY_CHIP, PLAY_CHIP_CLASSES, PLAY_CHIP_RETIRED } from "./playChip";
-import { RIPPLE, RIPPLE_CLASSES, RIPPLE_RETIRED } from "./ripple";
-import { ROW_EXIT, ROW_EXIT_CLASSES, ROW_EXIT_RETIRED } from "./rowExit";
-import { SEARCH_FIELD, SEARCH_FIELD_CLASSES, SEARCH_FIELD_RETIRED } from "./searchField";
+import { AVATAR, AVATAR_CLASSES, AVATAR_RETIRED } from "./avatar.ts";
+import { BADGE, BADGE_CLASSES, BADGE_RETIRED } from "./badge.ts";
+import { BANNER, BANNER_CLASSES, BANNER_RETIRED } from "./banner.ts";
+import { BUTTON, BUTTON_CLASSES, BUTTON_RETIRED } from "./button.ts";
+import { CHIP, CHIP_CLASSES, CHIP_RETIRED } from "./chip.ts";
+import { CODE, CODE_CLASSES, CODE_RETIRED } from "./code.ts";
+import { DIALOG, DIALOG_CLASSES, DIALOG_RETIRED } from "./dialog.ts";
+import { DRAWER, DRAWER_CLASSES, DRAWER_RETIRED } from "./drawer.ts";
+import { FAB, FAB_CLASSES, FAB_RETIRED } from "./fab.ts";
+import { FIELD, FIELD_CLASSES, FIELD_RETIRED } from "./field.ts";
+import { FLAG, FLAG_CLASSES, FLAG_RETIRED } from "./flag.ts";
+import { GLOW, GLOW_CLASSES, GLOW_RETIRED } from "./glow.ts";
+import type { Guidance } from "./guidance.ts";
+import { ICON, ICON_CLASSES, ICON_RETIRED } from "./icon.ts";
+import { ICON_BUTTON, ICON_BUTTON_CLASSES, ICON_BUTTON_RETIRED } from "./iconButton.ts";
+import { LINK, LINK_CLASSES, LINK_RETIRED } from "./link.ts";
+import { MENU, MENU_CLASSES, MENU_RETIRED } from "./menu.ts";
+import { PLAY_CHIP, PLAY_CHIP_CLASSES, PLAY_CHIP_RETIRED } from "./playChip.ts";
+import { RIPPLE, RIPPLE_CLASSES, RIPPLE_RETIRED } from "./ripple.ts";
+import { ROW_EXIT, ROW_EXIT_CLASSES, ROW_EXIT_RETIRED } from "./rowExit.ts";
+import { SEARCH_FIELD, SEARCH_FIELD_CLASSES, SEARCH_FIELD_RETIRED } from "./searchField.ts";
 import {
   SEGMENTED_CHOICE,
   SEGMENTED_CHOICE_CLASSES,
   SEGMENTED_CHOICE_RETIRED,
-} from "./segmentedChoice";
-import { SEGMENTED_NAV, SEGMENTED_NAV_CLASSES, SEGMENTED_NAV_RETIRED } from "./segmentedNav";
-import { SELECT, SELECT_CLASSES, SELECT_RETIRED } from "./select";
-import { SHEET, SHEET_CLASSES, SHEET_RETIRED } from "./sheet";
-import { SLIDER, SLIDER_CLASSES, SLIDER_RETIRED, SLIDER_VARIANTS } from "./slider";
-import { SWITCH, SWITCH_CLASSES, SWITCH_RETIRED } from "./switch";
-import { WHEEL, WHEEL_CLASSES, WHEEL_RETIRED } from "./wheel";
+} from "./segmentedChoice.ts";
+import { SEGMENTED_NAV, SEGMENTED_NAV_CLASSES, SEGMENTED_NAV_RETIRED } from "./segmentedNav.ts";
+import { SELECT, SELECT_CLASSES, SELECT_RETIRED } from "./select.ts";
+import { SHEET, SHEET_CLASSES, SHEET_RETIRED } from "./sheet.ts";
+import { SLIDER, SLIDER_CLASSES, SLIDER_RETIRED, SLIDER_VARIANTS } from "./slider.ts";
+import { SWITCH, SWITCH_CLASSES, SWITCH_RETIRED } from "./switch.ts";
+import { WHEEL, WHEEL_CLASSES, WHEEL_RETIRED } from "./wheel.ts";
 
 export interface DesignSystemComponent extends Guidance {
   name: string;

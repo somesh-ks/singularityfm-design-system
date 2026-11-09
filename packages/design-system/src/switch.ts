@@ -3,7 +3,7 @@
  * class is written. Switch.tsx renders from it; a script or a React island that draws a switch
  * calls switchClass(); the style guide lists SWITCH. The rules are in styles/switch.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const SWITCH: Guidance = {
   summary: "A track and a thumb for one setting that is on or off.",

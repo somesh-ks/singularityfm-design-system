@@ -5,7 +5,7 @@
  * heart already filled when a page loads, show nothing. Times, curves and colour are the
  * stylesheet's (glow.css), on the project's motion tokens; reduced motion shows no glow.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const GLOW: Guidance = {
   summary: "A pink halo from the heart as Favorite turns on.",

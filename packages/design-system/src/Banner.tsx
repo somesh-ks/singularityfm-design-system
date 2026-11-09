@@ -1,7 +1,7 @@
 import Button from "./Button.tsx";
-import { type BannerTone, type BannerVariant, bannerClass, bannerText } from "./banner";
+import { type BannerTone, type BannerVariant, bannerClass, bannerText } from "./banner.ts";
 import Icon from "./Icon.tsx";
-import type { IconName } from "./icons";
+import type { IconName } from "./icons.ts";
 import "../styles/banner.css";
 
 interface Props {

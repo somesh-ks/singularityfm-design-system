@@ -4,7 +4,7 @@
  * from it; a script that clones a chip reads CHIP_SELECTOR; the style guide lists CHIP. The rules are
  * in styles/primitives.css (and, on a drawer, styles/drawer.css).
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const CHIP: Guidance = {
   summary: "A checkbox drawn as a pill; ticked it takes the accent container.",

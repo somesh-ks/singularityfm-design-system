@@ -1,4 +1,4 @@
-import type { SectionRef } from "./section";
+import type { SectionRef } from "./section.ts";
 
 interface Props {
   sections: readonly SectionRef[];

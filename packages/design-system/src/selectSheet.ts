@@ -11,10 +11,10 @@
  * sheet's code was about 20 KB of every page's first load). The browser's list is stopped here at
  * once, before anything is fetched, so it never shows while the sheet's code is on its way.
  */
-import { warmWhenIdle } from "./idle";
-import { installSheetTapGuard } from "./sheetTap";
+import { warmWhenIdle } from "./idle.ts";
+import { installSheetTapGuard } from "./sheetTap.ts";
 
-type View = typeof import("./selectSheetView");
+type View = typeof import("./selectSheetView.ts");
 
 const PHONE = "(width < 40rem)";
 /** How far a finger may travel and still be a tap, in px. */
@@ -33,7 +33,7 @@ let unavailable = false;
 
 /** The sheet's code, fetched once. */
 function loadView(): Promise<View> {
-  loading ??= import("./selectSheetView").then(
+  loading ??= import("./selectSheetView.ts").then(
     (module) => {
       view = module;
       return module;

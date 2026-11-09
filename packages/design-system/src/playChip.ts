@@ -4,7 +4,7 @@
  * state (data-state, data-playing and the label's words) on the element it finds by
  * PLAY_CHIP_SELECTOR; the style guide lists PLAY_CHIP. The rules are in styles/buttons.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export type PlayChipState = "idle" | "current" | "played" | "preparing" | "error" | "unavailable";
 

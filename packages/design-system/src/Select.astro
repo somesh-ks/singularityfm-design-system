@@ -1,8 +1,8 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import { fieldClass } from "./field";
+import { fieldClass } from "./field.ts";
 import Icon from "./Icon.tsx";
-import { type SelectVariant, selectClass } from "./select";
+import { type SelectVariant, selectClass } from "./select.ts";
 import "../styles/field.css";
 import "../styles/select.css";
 import "../styles/wheel.css";
@@ -31,7 +31,7 @@ const own = variant === "outlined" ? fieldClass() : undefined;
 </Wrapper>
 
 <script>
-  import { installSelectSheet } from "./selectSheet";
+  import { installSelectSheet } from "./selectSheet.ts";
 
   installSelectSheet();
 </script>

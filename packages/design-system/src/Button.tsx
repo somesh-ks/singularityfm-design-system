@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { passedAttributes } from "./attributes";
-import { type ButtonSize, type ButtonTone, type ButtonVariant, buttonClass } from "./button";
+import { passedAttributes } from "./attributes.ts";
+import { type ButtonSize, type ButtonTone, type ButtonVariant, buttonClass } from "./button.ts";
 
 interface ButtonProps {
   /** Filled, tonal or text (button.ts says what each is for). */

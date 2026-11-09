@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
-import { passedAttributes } from "./attributes";
+import { passedAttributes } from "./attributes.ts";
 import Icon from "./Icon.tsx";
-import type { PlayChipState } from "./playChip";
+import type { PlayChipState } from "./playChip.ts";
 
 interface PlayChipProps {
   /** The visible words: a length such as "1:24", or a state such as "Playing". */

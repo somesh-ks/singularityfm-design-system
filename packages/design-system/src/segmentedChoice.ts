@@ -3,7 +3,7 @@
  * place its classes are written. SegmentedChoice.tsx renders from it; the style guide lists
  * SEGMENTED_CHOICE. The rules are in styles/primitives.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const SEGMENTED_CHOICE: Guidance = {
   summary: "One pill of radio items: pick exactly one value.",

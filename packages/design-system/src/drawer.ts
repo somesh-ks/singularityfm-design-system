@@ -4,7 +4,7 @@
  * classes are written; sheets/SheetFrame.tsx draws from it. The rules are in styles/drawer.css. A
  * panel drawn by Astro or a script is a Sheet. There is no bottom-sheet Drawer (2026-11-02).
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const DRAWER: Guidance = {
   summary:

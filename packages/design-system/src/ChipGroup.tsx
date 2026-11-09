@@ -1,5 +1,5 @@
 import type { FieldsetHTMLAttributes, ReactNode } from "react";
-import { passedAttributes } from "./attributes";
+import { passedAttributes } from "./attributes.ts";
 
 interface ChipGroupProps {
   /** One row that scrolls sideways when the chips do not fit, as the Library's Show chips do. */

@@ -9,7 +9,7 @@
  * Tab order. `onSelect` hears the chosen tab's data-value after the tabs show it. Kept small: the topic
  * pages load it first. A page that draws a SegmentedNav calls mountSegmentedNav() once for each list.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export type SegmentedNavSize = "default" | "compact";
 

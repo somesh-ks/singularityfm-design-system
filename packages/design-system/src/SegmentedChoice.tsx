@@ -1,5 +1,5 @@
 import type { FieldsetHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
-import { passedAttributes } from "./attributes";
+import { passedAttributes } from "./attributes.ts";
 
 export type SegmentedChoiceOption = {
   value: string;

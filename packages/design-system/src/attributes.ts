@@ -1,6 +1,34 @@
 import type { CSSProperties } from "react";
 
 /**
+ * The HTML names a deprecated .astro path takes whose React name differs. React drops a boolean under
+ * the HTML name (`<Field readonly />` would come out editable) and warns on the rest, so each one
+ * reaches the element under React's name.
+ */
+const REACT_NAMES: Record<string, string> = {
+  accesskey: "accessKey",
+  autocapitalize: "autoCapitalize",
+  autocomplete: "autoComplete",
+  autofocus: "autoFocus",
+  enterkeyhint: "enterKeyHint",
+  formaction: "formAction",
+  formenctype: "formEncType",
+  formmethod: "formMethod",
+  formnovalidate: "formNoValidate",
+  formtarget: "formTarget",
+  hreflang: "hrefLang",
+  inputmode: "inputMode",
+  maxlength: "maxLength",
+  minlength: "minLength",
+  popovertarget: "popoverTarget",
+  popovertargetaction: "popoverTargetAction",
+  readonly: "readOnly",
+  referrerpolicy: "referrerPolicy",
+  spellcheck: "spellCheck",
+  tabindex: "tabIndex",
+};
+
+/**
  * The attributes a component passes on to its element, as a plain element would print them. A bare
  * data attribute (data-submit) reaches a React component as true and would print as
  * data-submit="true"; on a plain element it is empty. Scripts read both, so the element keeps the
@@ -9,7 +37,7 @@ import type { CSSProperties } from "react";
 export const passedAttributes = (passed: Record<string, unknown>): Record<string, unknown> =>
   Object.fromEntries(
     Object.entries(passed).map(([name, value]) => [
-      name,
+      REACT_NAMES[name] ?? name,
       value === true && name.startsWith("data-") ? "" : value,
     ]),
   );

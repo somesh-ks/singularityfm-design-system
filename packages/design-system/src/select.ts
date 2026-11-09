@@ -5,7 +5,7 @@
  * styles/select.css. The wrapper carries `data-select`, so a script finds it with
  * `closest("[data-select]")`, and `data-active` on a tonal one says its value is not the default.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export type SelectVariant = "outlined" | "tonal";
 

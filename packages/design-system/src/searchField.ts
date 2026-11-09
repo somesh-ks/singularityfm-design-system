@@ -4,7 +4,7 @@
  * place its class is written. SearchField.tsx renders from it; the style guide lists SEARCH_FIELD.
  * The rules are in styles/search-field.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const SEARCH_FIELD: Guidance = {
   summary: "The rounded search pill, on the container tone, with its glyph.",

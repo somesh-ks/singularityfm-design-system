@@ -6,7 +6,7 @@
  * topic's emoji, a toast's words), goes through this file. The one place its classes are written;
  * Flag.tsx renders from it and the rules are in styles/flag.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const FLAG: Guidance = {
   summary: "A country's flag, the same art on every system.",

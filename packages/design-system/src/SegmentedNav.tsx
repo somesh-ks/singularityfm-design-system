@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from "react";
-import { passedAttributes } from "./attributes";
+import { passedAttributes } from "./attributes.ts";
 import Icon from "./Icon.tsx";
-import type { IconName } from "./icons";
+import type { IconName } from "./icons.ts";
 
 export interface SegmentedNavTab {
   value: string;

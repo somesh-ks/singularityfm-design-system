@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes } from "react";
-import { passedAttributes } from "./attributes";
+import { passedAttributes } from "./attributes.ts";
 import Icon from "./Icon.tsx";
 import "../styles/search-field.css";
 

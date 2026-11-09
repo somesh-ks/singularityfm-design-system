@@ -1,7 +1,7 @@
 import { Field as BaseField } from "@base-ui/react/field";
 import type { CSSProperties, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
-import { passedAttributes, styleObject } from "./attributes";
-import { fieldClass } from "./field";
+import { passedAttributes, styleObject } from "./attributes.ts";
+import { fieldClass } from "./field.ts";
 import "../styles/field.css";
 
 interface FieldProps {

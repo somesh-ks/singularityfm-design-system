@@ -5,7 +5,7 @@
  * finds a sheet reads SHEET_SELECTOR. The rules are in styles/sheet.css. A yes-or-no box is a Dialog;
  * the bottom sheet of the Base UI islands is the Drawer.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const SHEET: Guidance = {
   summary:
