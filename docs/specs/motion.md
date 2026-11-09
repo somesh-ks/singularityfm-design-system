@@ -44,7 +44,7 @@ The owner asked for a conservative start. Where a component has a choice, take t
 
 ## Hero moments (proposed, not in the app)
 
-Shown on the design site's Motion page beside what the app does today. Each lands in its own design-system PR the owner merges by hand.
+Shown on the design site's Motion page beside what the app does today. Each lands in its own design-system PR, after his OK on its stills.
 
 - **Play and pause:** the button is round while paused and a rounded square while playing, squarer under a finger; the glyph morphs from triangle to bars on a spatial spring.
 - **Wavy progress:** the played part ripples while audio plays and flattens on pause; the thumb is a pill that narrows when held. It moves only while playback runs.
