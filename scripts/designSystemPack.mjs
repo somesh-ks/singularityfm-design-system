@@ -3,10 +3,11 @@
 // its name, and by the deprecated .astro path), a component that imports its own stylesheet (the Icon, by
 // its name and by its .astro shim), one that holds words (the Badge, by both paths), one that holds a
 // row and its attributes (the Row exit, by both paths), a stylesheet (fonts.css, which pulls the font
-// files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config.
-// The workspace link serves every file in the folder, so a path missing from `files`, a broken exports
-// entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every other check and
-// fails only here.
+// files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
+// and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
+// stylesheet). The workspace link serves every file in the folder, so a path missing from `files`, a
+// broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
+// other check and fails only here.
 //
 // Usage: pnpm run pack:check  (installs offline from the pnpm store when it can)
 import { execFileSync } from "node:child_process";
@@ -101,6 +102,21 @@ try {
     JSON.stringify({ extends: [`${name}/rules/biome-config.json`] }),
   );
   writeFileSync(join(app, "src/raw.css"), ".a { color: #fff; }\n");
+  // An exports entry lost from the map sends `<pkg>/IconButton` to "./*", src/IconButton.ts, which does
+  // not exist: the build fails here, where the workspace link would have served the .tsx.
+  writeFileSync(
+    join(app, "src/pages/actions.astro"),
+    [
+      "---",
+      `import Fab from "${name}/Fab";`,
+      `import Icon from "${name}/Icon";`,
+      `import IconButton from "${name}/IconButton";`,
+      `import Link from "${name}/Link";`,
+      "---",
+      '<html lang="en"><body><Link href="/">Link words</Link><IconButton label="Icon name"><Icon name="close" /></IconButton><Fab icon="plus" label="Fab name">Fab word</Fab></body></html>',
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -117,9 +133,15 @@ try {
   if (!existsSync(join(installed, "flags/se.svg"))) problems.push("the tarball has no flags");
   pnpm(["exec", "astro", "build"], app);
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
+  const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
+  if (actions.includes("<script")) problems.push("the actions page ships a script");
+  // The test's own words and names, not the parts' markup: an empty component, or one that drops its
+  // label, still builds.
+  for (const text of ["Link words", 'aria-label="Icon name"', 'aria-label="Fab name"', "Fab word"])
+    if (!actions.includes(text)) problems.push(`the actions page lost ${text}`);
   // The shim passes `class` on as className; lost, the old path draws the glyph where nothing places it.
   if (html.match(/class="icon-glyph placed"/g)?.length !== 2)
     problems.push("the page drew no placed Icon by each path");
@@ -158,6 +180,8 @@ try {
     .map((file) => readFileSync(join(app, "dist/_astro", file), "utf8"));
   if (![html, ...styles].some((text) => text.includes(".icon-glyph{")))
     problems.push("the Icon's stylesheet did not reach the page");
+  if (![actions, ...styles].some((text) => text.includes(".create-fab{")))
+    problems.push("the Fab's stylesheet did not reach the page");
   if (!assets.some((file) => file.endsWith(".woff2")))
     problems.push("the build emitted no font file");
   if (problems.length > 0) throw new Error(problems.join("; "));

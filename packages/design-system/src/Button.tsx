@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { passedAttributes } from "./attributes";
 import { type ButtonSize, type ButtonTone, type ButtonVariant, buttonClass } from "./button";
 
 interface ButtonProps {
@@ -39,14 +40,7 @@ export default function Button({
   children,
   ...passed
 }: Props) {
-  // A bare data attribute (data-submit) is true on a component and would print as data-submit="true";
-  // on a plain element it is empty. Scripts read both, so the button keeps the empty form.
-  const rest = Object.fromEntries(
-    Object.entries(passed).map(([name, value]) => [
-      name,
-      value === true && name.startsWith("data-") ? "" : value,
-    ]),
-  );
+  const rest = passedAttributes(passed);
   const classes = [buttonClass(variant, tone, size), className].filter(Boolean).join(" ");
   return href ? (
     <a className={classes} href={href} {...rest}>

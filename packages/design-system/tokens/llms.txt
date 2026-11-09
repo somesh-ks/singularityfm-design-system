@@ -11,6 +11,11 @@ Detail of one: `npm run ds -- part <id>`. Search by need: `npm run ds -- find "<
 - `button-text` .button-text: An accent label with no container until it is hovered or pressed; the quietest button. Use: It dismisses, backs out or repeats: Cancel, Clear, Try again, Hide this; It sits beside a Filled button as the lesser choice. Not: The action must be found at a glance on its own → button-filled.
 - `button-danger` .button-danger: A Text button in the danger colour. Use: It is the confirm of a delete, in a dialog that asks first: Delete, Delete source. Not: The action is not destructive, or nobody has been asked to confirm → button-text.
 - `button-small` .button-small: A shorter pill, same touch target. Use: It sits in a dense row or a popover. Not: It commits a sheet → button-filled.
+- `icon-btn` .icon-btn .press: A glyph in a round 44px target, quiet until used. Use: One glyph says what it does: Close, Back, More, Share; A row's dots menu, or the Close of a sheet. Not: It is the companion of a primary action: Share beside Play → icon-btn-tonal.
+- `icon-btn-tonal` .icon-btn-tonal: A circle on the container fill, beside a primary action. Use: The companion of a primary action in one row: Share beside Play. Not: A lone toolbar glyph, or one in every row → icon-btn.
+- `fab` .create-fab .create-fab-label: The page's one primary action below 64rem: a glyph and a word, floating. Use: One creating action a phone needs in reach: Catch up, Add a source. Not: The action sits in a form or a sheet → button-filled.
+- `text-link` .text-link: A link inside a line of small text; the words stay inline, the target is 44px. Use: A link inside a hint, a sentence or a breadcrumb. Not: It stands alone as an action → button-text.
+- `source-link` .source-link: The one link out of a story: the publisher's name, underlined on hover. Use: Name the publisher a story or a highlight came from. Not: It sits inside a sentence → text-link.
 - `icon` .icon-glyph .icon-glyph-lg: A filled Phosphor glyph in the colour of the text beside it. Use: A mark beside a label or alone in a button: a chevron, a plus, a check, Play. Not: The glyph must act when pressed → icon-btn.
 - `badge` .badge-label: A grey label holding one word or one number beside a name. Use: A short label names what the thing beside it is: Admin beside the wordmark; A count of what a section holds. Not: The state is good, worth a look or wrong → banner.
 - `switch` .switch-input: A track and a thumb for one setting that is on or off. Use: A setting is on or off and applies as soon as it is flipped: Sounds, Autoplay, a podcast's Enabled; It sits at the end of a settings row, with the row's label as its name. Not: The choice is one of several values, or needs a Save to apply → filter-chip.
@@ -24,8 +29,6 @@ Detail of one: `npm run ds -- part <id>`. Search by need: `npm run ds -- find "<
 - `drawer` .drawer-scrim .drawer-viewport: The island modal for a form: the whole screen on a phone, a panel at the right from 40rem, with Close in the header. Use: A React island opens a form over the page, as Regenerate does. Not: The sheet is drawn by Astro or a script → sheet.
 - `ripple` .ripple-area .ripple-wave: A wave from the touch point that fills a control's touch area, then fades. Use: A large touch target on a phone must show where it was pressed: a bottom bar tab. Not: A small control needs a press state → icon-btn.
 - `btn-action-tonal` .btn-action-tonal: The one creating action in the side column (Catch up), on the action tone. Use: the Catch up action in the side column. Not: any other button → button-tonal.
-- `icon-btn` .icon-btn .press: A glyph in a round 44px target, quiet until used. Use: close a sheet or dialog; a row's more menu (the dots). Not: an action that needs a word → button-text.
-- `icon-btn-tonal` .icon-btn-tonal: The secondary icon button: an icon button on the container fill, a circle. Use: the companion of a primary action when it needs only a glyph, such as Share beside Play. Not: a quiet toolbar glyph → icon-btn.
 - `play-chip` .chip: The tonal pill that plays a briefing or one story, with its state. Use: play an episode or a story and show idle, current, played, error or preparing; episode duration with a play mark. Not: a choice the user ticks → filter-chip.
 - `filter-chip` .filter-chip .filter-chips: A checkbox drawn as a pill; ticked it takes the accent container. Use: tick several topics or categories to include; filter a list by one or more kinds. Not: exactly one of a few values → segmented-choice.
 - `segmented-choice` .segmented-choice .segmented-choice-item: One pill of radio items: pick exactly one value. Use: choose one of a few discrete values, such as 3, 5 or 10 minutes; a setting with two to four options. Not: switching between views or tabs → segmented-nav.
@@ -38,13 +41,10 @@ Detail of one: `npm run ds -- part <id>`. Search by need: `npm run ds -- find "<
 - `empty-state` .empty .empty-actions: A spot illustration, a title, one line and at most two actions, for a page with nothing in it. Use: a page or section with nothing to list yet; no results, offline, not found. Not: a list that has items → card-group.
 - `multiselect` .multiselect-trigger: A field-like trigger that opens a list of checkable choices. Use: choose several from a long list; pick sources or topics in a field. Not: a few choices that fit on screen → filter-chip.
 - `search-field` .search-field .search-clear: The Library's rounded search pill, on the container tone. Use: search or filter a list by text. Not: a text field in a form → field.
-- `source-link` .source-link: The one link out of a story: the publisher's name and an opens-elsewhere mark. Use: link out to a publisher from a story or highlight. Not: a link inside a line of small text → text-link.
-- `text-link` .text-link: A link inside a line of small text; the words stay inline, the target is 44px. Use: a link inside a hint or a sentence. Not: a standalone action → button-text.
 - `stat-tiles` .stat-tiles: A tile per figure: the value large over its word in muted ink. Use: figures on a dashboard; costs and spend totals. Not: a list of rows → card-group.
 - `section-head` .section-head: A section header with more room above than below, so it belongs to what follows. Use: title a group of rows or cards on a page.
 - `meta` .meta: One quiet line of facts, separated by centered dots. Use: date, duration and source under a title.
 - `cover` .cover: A generated cover image, drawn once per theme. Use: show an episode or briefing cover.
-- `fab` .create-fab .add-fab: Floating triggers above the bottom bar: create, add, play. Use: the page's one creating action on a phone; play a story from its cover. Not: an action in a form → button-filled.
 
 ## Color roles
 Components read only these (never a hex, never a primitive color).

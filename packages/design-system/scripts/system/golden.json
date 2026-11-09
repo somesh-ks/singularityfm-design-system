@@ -63,6 +63,9 @@
     "part": "button-danger"
   },
   { "area": "actions", "need": "an icon-only button to close a sheet", "part": "icon-btn" },
+  { "area": "actions", "need": "a back arrow button in the app bar", "part": "icon-btn" },
+  { "area": "actions", "need": "the floating Add button on a phone", "part": "fab" },
+  { "area": "navigation", "need": "a plain link to another page", "part": "text-link" },
   {
     "area": "actions",
     "need": "a floating action button for the main action of a screen",

@@ -1541,6 +1541,13 @@
   margin: var(--space-2) 0 0;
 }
 
+/* The FAB floats over the app below 64rem and is not drawn from 64rem (fab.css); on its page and its
+   card it sits in place at every width, so its look can be seen (the page's note says so). */
+:is(.guide-stage, .guide-live) .create-fab {
+  position: static;
+  display: flex;
+}
+
 .guide-variant {
   margin-block-start: var(--space-4);
 }
@@ -1721,6 +1728,14 @@
 .guide-live-rows > i {
   font-style: normal;
   opacity: 0.35;
+}
+
+/* The Link's picture: its words underlined in the ink around them, as a text link is, drawn plainly
+   since a card is a link already. */
+.guide-live-link {
+  color: var(--color-on-surface);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .guide-live-ripple {

@@ -107,7 +107,7 @@ describe("the rules", () => {
       '<Button variant="text" className="button-small">Listen</Button>',
       '<Button variant="text" className="queue-listen">Listen</Button>',
       'el.className = "btn-primary";',
-      '<div class="settings-row icon-btn">',
+      '<div class="settings-row digest-intro">',
       '<!-- class="button-text" -->',
     ].join("\n");
     expect(lines(classOnComponent(page, "src/pages/index.astro"))).toEqual([2, 3, 5]);
