@@ -1,5 +1,5 @@
 /*
- * The Slider (design-system/Slider.astro): a native range. Where it stands (a width, a flex basis)
+ * The Slider (design-system/Slider.tsx): a native range. Where it stands (a width, a flex basis)
  * is its place's rule; how it looks is here. The page or sheet it sits on sets --slider-ring to
  * that surface's colour when it is not the page's own.
  */
@@ -220,7 +220,7 @@
  * Expressive. Halloween draws the same part as a sharp zigzag (owner, 2026-11-04). Each mood with a shaped
  * track sets only its mask and period; Default draws the plain Slider. The wave is a masked layer on the field, as wide as the
  * fill (a mask on the input itself would cut the thumb too); the input's own track is clear up to the fill,
- * so only the straight remainder shows. The caller keeps --range-fill on the field and on the input. Still
+ * so only the straight remainder shows. The caller keeps --range-fill on the field; the input follows it. Still
  * under reduced motion.
  */
 .slider-wave-field {
@@ -268,8 +268,9 @@
   pointer-events: none;
 }
 
-/* The input's own default (0%) would hide the field's fill; it follows the field. */
-:root:is([data-mood="expressive"], [data-mood="halloween"]) .slider-wave-field > .slider-input {
+/* The input's own default (0%) would hide the field's fill; it follows the field, in Default too, where
+   the input's own track draws the fill the caller keeps on the field. */
+.slider-wave-field > .slider-input {
   --range-fill: inherit;
 }
 

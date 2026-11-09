@@ -1,16 +1,16 @@
 ---
+/**
+ * @deprecated Import Switch from "@singularityfm/design-system/Switch" and pass className (DS-5,
+ * DS-8). This path stays until a breaking release: it renders that React Switch, the same native
+ * checkbox, `class` passed on as className and `checked` as defaultChecked (React's starting state),
+ * and draws nothing of its own (designSystem.test.ts holds it to that).
+ */
 import type { HTMLAttributes } from "astro/types";
-import { switchClass } from "./switch.ts";
-import "../styles/switch.css";
+import Switch from "./Switch.tsx";
 
-interface SwitchProps {
-  /** For placing the switch where it stands (a margin, a grid area). Never its look. */
-  class?: string;
-}
+type Props = Omit<HTMLAttributes<"input">, "class" | "type" | "role"> & { class?: string };
 
-type Props = SwitchProps & Omit<HTMLAttributes<"input">, keyof SwitchProps | "type" | "role">;
-
-const { class: placement, ...rest } = Astro.props;
+const { class: className, checked: defaultChecked, ...props } = Astro.props;
 ---
 
-<input class:list={[switchClass(), placement]} type="checkbox" role="switch" {...rest} />
+<Switch defaultChecked={defaultChecked} {...props} className={className} />

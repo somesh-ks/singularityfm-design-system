@@ -48,6 +48,7 @@
     "./BrandMark": "./src/BrandMark.tsx",
     "./ChapterAside": "./src/ChapterAside.tsx",
     "./Fab": "./src/Fab.tsx",
+    "./Field": "./src/Field.tsx",
     "./Flag": "./src/Flag.tsx",
     "./Icon": "./src/Icon.tsx",
     "./IconButton": "./src/IconButton.tsx",
@@ -55,6 +56,8 @@
     "./Ripple": "./src/Ripple.tsx",
     "./RowExit": "./src/RowExit.tsx",
     "./SectionTabs": "./src/SectionTabs.tsx",
+    "./Slider": "./src/Slider.tsx",
+    "./Switch": "./src/Switch.tsx",
     "./*.astro": "./src/*.astro",
     "./*": "./src/*.ts"
   },

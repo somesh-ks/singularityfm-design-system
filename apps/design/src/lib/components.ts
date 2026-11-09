@@ -283,7 +283,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Field",
     group: "inputs",
     registry: "Field",
-    file: "Field.astro",
+    file: "Field.tsx",
     controls: [
       choice("lines", "Lines", [
         ["single", "One line"],
@@ -296,7 +296,7 @@ export const SPECS: readonly ComponentSpec[] = [
     code: (state) => {
       const attrs: string[] = [];
       if (state.lines === "multi") attrs.push("multiline");
-      if (on(state, "filled")) attrs.push(`value="${SAMPLE.value}"`);
+      if (on(state, "filled")) attrs.push(`defaultValue="${SAMPLE.value}"`);
       else attrs.push(`placeholder="${SAMPLE.label}"`);
       attrs.push(`aria-label="${SAMPLE.label}"`);
       if (on(state, "disabled")) attrs.push("disabled");
@@ -308,7 +308,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Switch",
     group: "inputs",
     registry: "Switch",
-    file: "Switch.astro",
+    file: "Switch.tsx",
     controls: [
       choice("state", "State", [
         ["off", "Off"],
@@ -320,7 +320,7 @@ export const SPECS: readonly ComponentSpec[] = [
     imports: ["Switch"],
     code: (state) => {
       const attrs: string[] = [];
-      if (state.state === "on") attrs.push("checked");
+      if (state.state === "on") attrs.push("defaultChecked");
       attrs.push(`aria-label="${SAMPLE.label}"`);
       if (on(state, "disabled")) attrs.push("disabled");
       const tag = jsx("Switch", attrs);
@@ -334,7 +334,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Slider",
     group: "inputs",
     registry: "Slider",
-    file: "Slider.astro",
+    file: "Slider.tsx",
     controls: [
       choice("variant", "Variant", [
         ["default", "Default"],
@@ -345,7 +345,7 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Slider"],
     code: (state) => {
-      const attrs = ['min="0"', 'max="100"', 'value="40"', `aria-label="${SAMPLE.label}"`];
+      const attrs = ['min="0"', 'max="100"', 'defaultValue="40"', `aria-label="${SAMPLE.label}"`];
       if (state.variant !== "default") attrs.unshift(state.variant ?? "");
       if (on(state, "disabled")) attrs.push("disabled");
       return jsx("Slider", attrs);

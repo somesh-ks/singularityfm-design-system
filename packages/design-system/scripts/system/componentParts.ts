@@ -322,12 +322,18 @@ export const componentParts = (): PartSource[] => [
     ],
     markup:
       '<div class="settings-row"><label class="settings-label" for="autoplay">Autoplay</label><Switch id="autoplay" name="autoplay" /></div>',
+    files: ["packages/design-system/src/Switch.tsx", "packages/design-system/src/switch.ts"],
+    rules: [
+      'It is the native checkbox (role="switch") and takes no client directive (DS-8): an Astro page starts it with defaultChecked, a React island passes checked with onChange.',
+    ],
   }),
   control("slider", "Slider", SLIDER, {
     keywords: ["slider", "range", "volume", "speed", "scrub"],
     markup:
-      '<Slider aria-label="Volume" min="0" max="1" step="0.05" value="0.7" style="--range-fill: 70%" />',
+      '<Slider aria-label="Volume" min={0} max={1} step={0.05} defaultValue={0.7} style="--range-fill: 70%" />',
+    files: ["packages/design-system/src/Slider.tsx", "packages/design-system/src/slider.ts"],
     rules: [
+      "It is the native range and takes no client directive (DS-8): an Astro page starts it with defaultValue, a React island passes value with onChange.",
       "WebKit paints the filled track from --range-fill, which starts at 0%: set it to (value - min) / (max - min) as a percentage and update it on input.",
     ],
   }),
@@ -335,7 +341,9 @@ export const componentParts = (): PartSource[] => [
     keywords: ["field", "input", "text field", "textarea", "select", "dropdown", "form"],
     markup:
       '<div class="manage-field"><label for="title">Title</label><Field id="title" name="title" type="text" /></div>',
+    files: ["packages/design-system/src/Field.tsx", "packages/design-system/src/field.ts"],
     rules: [
+      "It needs no client directive: it is a native input, and types and submits before any script (DS-8).",
       "Draw it with <Field> (multiline for a textarea); a select or a script takes the class from fieldClass().",
       "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element.",
     ],

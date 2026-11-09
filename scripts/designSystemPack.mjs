@@ -5,7 +5,8 @@
 // row and its attributes (the Row exit, by both paths), a stylesheet (fonts.css, which pulls the font
 // files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
 // and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
-// stylesheet). The workspace link serves every file in the folder, so a path missing from `files`, a
+// stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
+// each a native element that hydrates nowhere (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -33,7 +34,10 @@ const guideVersion = (dependency) =>
     readFileSync(join(root, "apps/design/node_modules", dependency, "package.json"), "utf8"),
   ).version;
 const dependencies = Object.fromEntries(
-  ["astro", "@astrojs/react", "react", "react-dom"].map((name) => [name, guideVersion(name)]),
+  ["astro", "@astrojs/react", "react", "react-dom", "@base-ui/react"].map((name) => [
+    name,
+    guideVersion(name),
+  ]),
 );
 dependencies["@biomejs/biome"] = JSON.parse(
   readFileSync(join(root, "node_modules/@biomejs/biome/package.json"), "utf8"),
@@ -93,7 +97,7 @@ try {
       `import { validate } from "${name}/rules";`,
       'const findings = validate(".a { color: #fff; }", "page.css").length;',
       "---",
-      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed-icon" /><OldIcon name="play" class="placed-icon" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><ul><RowExit className="placed-row" data-id="s1">Row</RowExit><OldRowExit class="placed-row" data-id="s1" style="order: 1; background-image: url(data:image/gif;base64,R0lGOD)">Row</OldRowExit></ul><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
+      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text" style="order: 2">Stop</OldButton><Icon name="play" className="placed-icon" /><OldIcon name="play" class="placed-icon" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><ul><RowExit className="placed-row" data-id="s1">Row</RowExit><OldRowExit class="placed-row" data-id="s1" style="order: 1; background-image: url(data:image/gif;base64,R0lGOD)">Row</OldRowExit></ul><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
       "",
     ].join("\n"),
   );
@@ -117,6 +121,22 @@ try {
       "",
     ].join("\n"),
   );
+  // Each is a native element that works before any script (DS-8): the page draws them with no directive.
+  writeFileSync(
+    join(app, "src/pages/inputs.astro"),
+    [
+      "---",
+      `import Field from "${name}/Field";`,
+      `import OldField from "${name}/Field.astro";`,
+      `import Slider from "${name}/Slider";`,
+      `import OldSlider from "${name}/Slider.astro";`,
+      `import Switch from "${name}/Switch";`,
+      `import OldSwitch from "${name}/Switch.astro";`,
+      "---",
+      '<html lang="en"><body><form><Field className="placed-field" data-id="f1" defaultValue="Words" /><OldField class="placed-field" data-id="f1" value="Words" style="order: 1" readonly maxlength="60" /><Switch className="placed-switch" data-id="s1" name="s1" defaultChecked /><OldSwitch class="placed-switch" data-id="s1" name="s1" checked /><Slider className="placed-slider" data-id="v1" name="v1" min={0} max={100} defaultValue={30} /><OldSlider class="placed-slider" data-id="v1" name="v1" min="0" max="100" value="30" /></form></body></html>',
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -134,6 +154,7 @@ try {
   pnpm(["exec", "astro", "build"], app);
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
+  const inputs = readFileSync(join(app, "dist/inputs/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
@@ -165,6 +186,56 @@ try {
   )
     problems.push("the page drew no placed Row exit with its attributes and content by each path");
   if (!html.includes('data-findings="1"')) problems.push("the rules module found no raw colour");
+  // React throws on a style string: an old-path Button with one fails the build, or loses it here.
+  if (!/<button[^>]*style="order:\s*2"/.test(html))
+    problems.push("the Button shim lost a style string");
+  // Each path keeps the test's own class, data-id, name and value or checked on the native element. A
+  // shim that loses `class`, an attribute or `value`/`checked` fails here.
+  const roots = (part) =>
+    [...inputs.matchAll(new RegExp(`<\\w+[^>]*\\b${part}\\b[^>]*>`, "g"))].map((tag) => tag[0]);
+  const fields = roots("placed-field");
+  if (
+    fields.length !== 2 ||
+    fields.some((tag) => !/data-id="f1"/.test(tag) || !/value="Words"/.test(tag))
+  )
+    problems.push("the page drew no placed Field with its attribute and value by each path");
+  if (!fields.some((tag) => /style="order:\s*1"/.test(tag)))
+    problems.push("the Field shim lost a style string");
+  // React drops a boolean under its HTML name: the old path's `readonly` field would come out editable.
+  // React prints readOnly="" and maxLength; HTML reads attribute names in any case.
+  if (!fields.some((tag) => /\breadonly=""/i.test(tag) && /\bmaxlength="60"/i.test(tag)))
+    problems.push("the Field shim lost an HTML-named attribute (readonly, maxlength)");
+  const switches = roots("placed-switch");
+  if (
+    switches.length !== 2 ||
+    switches.some(
+      (tag) =>
+        !/^<input/.test(tag) ||
+        !/type="checkbox"/.test(tag) ||
+        !/role="switch"/.test(tag) ||
+        !/data-id="s1"/.test(tag) ||
+        !/name="s1"/.test(tag) ||
+        !/checked=""/.test(tag),
+    )
+  )
+    problems.push("the page drew no placed, checked Switch with its attribute by each path");
+  const sliders = roots("placed-slider");
+  if (
+    sliders.length !== 2 ||
+    sliders.some(
+      (tag) =>
+        !/^<input/.test(tag) ||
+        !/type="range"/.test(tag) ||
+        !/data-id="v1"/.test(tag) ||
+        !/name="v1"/.test(tag) ||
+        !/value="30"/.test(tag),
+    )
+  )
+    problems.push("the page drew no placed Slider with its attribute and value by each path");
+  // No island and no renderer (DS-8): a shim that grows a client directive ships React to every page
+  // that draws a Switch or a Slider.
+  if (/<astro-island|<script/.test(inputs))
+    problems.push("the inputs page hydrates or ships a script");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
   let lint = "";
   try {
@@ -183,6 +254,9 @@ try {
     problems.push("the Icon's stylesheet did not reach the page");
   if (![actions, ...styles].some((text) => text.includes(".create-fab{")))
     problems.push("the Fab's stylesheet did not reach the page");
+  for (const rule of [".field-input{", ".switch-input:checked{", ".slider-input{"])
+    if (![inputs, ...styles].some((text) => text.includes(rule)))
+      problems.push(`${rule.slice(0, -1)} did not reach the page`);
   if (!assets.some((file) => file.endsWith(".woff2")))
     problems.push("the build emitted no font file");
   if (problems.length > 0) throw new Error(problems.join("; "));
