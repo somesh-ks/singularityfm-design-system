@@ -6,9 +6,10 @@
 // files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
 // and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
 // stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
-// each a native element that hydrates nowhere (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
-// broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
-// other check and fails only here.
+// each a native element that hydrates nowhere (DS-8); and a fourth that draws Avatar and Code by their
+// names and shims, the Code hydrated. The workspace link serves every file in the folder, so a path
+// missing from `files`, a broken exports entry or a lost astro peer (Astro then leaves the .astro source
+// to Node) passes every other check and fails only here.
 //
 // Usage: pnpm run pack:check  (installs offline from the pnpm store when it can)
 import { execFileSync } from "node:child_process";
@@ -137,6 +138,21 @@ try {
       "",
     ].join("\n"),
   );
+  // The Code copies only once hydrated, so it is an island by each path; the Avatar's shape is static
+  // markup a script redraws in place, so it is none.
+  writeFileSync(
+    join(app, "src/pages/display.astro"),
+    [
+      "---",
+      `import Avatar from "${name}/Avatar";`,
+      `import OldAvatar from "${name}/Avatar.astro";`,
+      `import Code from "${name}/Code";`,
+      `import OldCode from "${name}/Code.astro";`,
+      "---",
+      '<html lang="en"><body><Avatar className="placed-avatar" shape="ghost" size="lg" /><OldAvatar class="placed-avatar" shape="ghost" size="lg" /><Code client:load className="placed-code" label="Code name" text="Code words" /><OldCode class="placed-code" label="Code name" text="Code words" /></body></html>',
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -155,6 +171,7 @@ try {
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
   const inputs = readFileSync(join(app, "dist/inputs/index.html"), "utf8");
+  const display = readFileSync(join(app, "dist/display/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
@@ -233,6 +250,30 @@ try {
   // that draws a Switch or a Slider.
   if (/<astro-island|<script/.test(inputs))
     problems.push("the inputs page hydrates or ships a script");
+  // Each path keeps the test's class, shape and size on the Avatar's root and draws the shape in it,
+  // and keeps the Code's class on its root and its name and words on its text.
+  const avatars = [
+    ...display.matchAll(
+      /<span\b[^>]*\bplaced-avatar\b[^>]*>\s*<svg\b[^>]*>\s*<g class="avatar-rig">/g,
+    ),
+  ].map((tag) => tag[0]);
+  if (
+    avatars.length !== 2 ||
+    avatars.some((tag) => !/data-tone="ink"/.test(tag) || !/\bavatar-lg\b/.test(tag))
+  )
+    problems.push("the page drew no placed ghost Avatar, large, by each path");
+  const codes = [
+    ...display.matchAll(
+      /<div\b[^>]*\bplaced-code\b[^>]*>\s*<pre\b[^>]*aria-label="Code name"[^>]*>Code words<\/pre>/g,
+    ),
+  ];
+  if (codes.length !== 2) problems.push("the page drew no placed Code with its words by each path");
+  const codeIslands = [...display.matchAll(/<astro-island\b[^>]*>/g)].map((tag) => tag[0]);
+  if (codeIslands.length !== 2 || codeIslands.some((tag) => !/client="load"/.test(tag)))
+    problems.push(`the display page drew ${codeIslands.length} islands, not the two Code ones`);
+  for (const tag of codeIslands)
+    for (const [, url] of tag.matchAll(/(?:component|renderer)-url="([^"]+)"/g))
+      if (!existsSync(join(app, "dist", url))) problems.push(`an island names ${url}, not built`);
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
   let lint = "";
   try {
@@ -251,9 +292,13 @@ try {
     problems.push("the Icon's stylesheet did not reach the page");
   if (![actions, ...styles].some((text) => text.includes(".create-fab{")))
     problems.push("the Fab's stylesheet did not reach the page");
-  for (const rule of [".field-input{", ".switch-input:checked{", ".slider-input{"])
-    if (![inputs, ...styles].some((text) => text.includes(rule)))
-      problems.push(`${rule.slice(0, -1)} did not reach the page`);
+  for (const [page, rules] of [
+    [inputs, [".field-input{", ".switch-input:checked{", ".slider-input{"]],
+    [display, [".avatar{", ".code-snippet{"]],
+  ])
+    for (const rule of rules)
+      if (![page, ...styles].some((text) => text.includes(rule)))
+        problems.push(`${rule.slice(0, -1)} did not reach the page`);
   if (!assets.some((file) => file.endsWith(".woff2")))
     problems.push("the build emitted no font file");
   if (problems.length > 0) throw new Error(problems.join("; "));

@@ -2,11 +2,12 @@
  * The Code snippet: text a person copies exactly as it is (a failed run's details, a prompt, an
  * error), in the monospace family, on a tonal box with a Copy button at its top end (owner,
  * 2026-11-05: the queue's failure details and the admin's prompts each drew their own). The one place
- * its classes are written; Code.astro renders from it, codeSnippetHtml builds it for a script, and
- * the rules are in styles/code.css. The text wraps, so a long line never scrolls sideways.
+ * its classes are written; Code.tsx renders from it, codeSnippetHtml builds it for a script, and the
+ * rules are in styles/code.css. The text wraps, so a long line never scrolls sideways.
  */
 
 import type { Guidance } from "./guidance.ts";
+import { iconButtonClass } from "./iconButton.ts";
 import { escapeHtml, iconHtml } from "./sheetHead.ts";
 
 export const CODE: Guidance = {
@@ -37,7 +38,7 @@ export const CODE_CLASSES: string[] = ["code-snippet", "code-snippet-text", "cod
 export const CODE_RETIRED: string[] = [];
 
 /** How long the button shows its check before it offers the copy again. */
-const COPIED_MS = 2000;
+export const COPIED_MS = 2000;
 
 /** The words a snippet says; a page passes its own where it has them. */
 export interface CodeWords {
@@ -47,13 +48,16 @@ export interface CodeWords {
   copied?: string;
 }
 
-/** A snippet's markup, for a script that builds a surface from a string (queueDetails.ts). */
+/**
+ * A snippet's markup, for a script that builds a surface from a string (queueDetails.ts); its button
+ * copies once wireCodeCopy() runs. A page or a React island draws the Code component instead.
+ */
 export function codeSnippetHtml(text: string, words: CodeWords): string {
   const copy = escapeHtml(words.copy ?? "Copy");
   return (
     `<div class="code-snippet" data-code data-copied-word="${escapeHtml(words.copied ?? "Copied")}">` +
     `<pre class="code-snippet-text" tabindex="0" aria-label="${escapeHtml(words.label)}">${escapeHtml(text)}</pre>` +
-    `<button class="icon-btn code-snippet-copy" type="button" aria-label="${copy}" title="${copy}" data-code-copy>` +
+    `<button class="${iconButtonClass()} code-snippet-copy" type="button" aria-label="${copy}" title="${copy}" data-code-copy>` +
     `${iconHtml("copy", "lg")}${iconHtml("check", "lg")}</button>` +
     `<span class="sr-only" role="status" data-code-said></span></div>`
   );
@@ -68,13 +72,29 @@ function selectText(text: HTMLElement): void {
   selection?.addRange(range);
 }
 
+/**
+ * Copies a snippet's text as the page shows it now, with the success sound. Where the clipboard is
+ * refused (an insecure origin, a denied permission) it selects the text instead, so a person can copy
+ * it by hand, and says false. Code.tsx and wireCodeCopy() both copy through it.
+ */
+export async function copySnippetText(text: HTMLElement): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text.textContent ?? "");
+  } catch {
+    selectText(text);
+    return false;
+  }
+  document.dispatchEvent(new CustomEvent("singularity:sound", { detail: "success" }));
+  return true;
+}
+
 let wired = false;
 
 /**
- * Copies a snippet's text when its button is pressed, for every snippet on the page now or later
- * (one listener on the document). The button shows a check and the status says Copied for two
- * seconds, with the success sound; with no clipboard (an insecure origin, a refused permission) the
- * text is selected instead.
+ * Copies a snippet's text when its button is pressed, for every snippet codeSnippetHtml built on the
+ * page now or later (one listener on the document). The button shows a check and the status says
+ * Copied for two seconds, with the success sound; with no clipboard the text is selected instead. The
+ * Code component copies by itself and carries none of the hooks this listens for.
  */
 export function wireCodeCopy(): void {
   if (wired) return;
@@ -83,17 +103,10 @@ export function wireCodeCopy(): void {
     const button = (event.target as Element | null)?.closest<HTMLButtonElement>("[data-code-copy]");
     const snippet = button?.closest<HTMLElement>("[data-code]");
     const text = snippet?.querySelector<HTMLElement>(".code-snippet-text");
-    if (!button || !snippet || !text) return;
-    try {
-      await navigator.clipboard.writeText(text.textContent ?? "");
-    } catch {
-      selectText(text);
-      return;
-    }
+    if (!button || !snippet || !text || !(await copySnippetText(text))) return;
     const said = snippet.querySelector<HTMLElement>("[data-code-said]");
     snippet.dataset.copied = "";
     if (said) said.textContent = snippet.dataset.copiedWord ?? "Copied";
-    document.dispatchEvent(new CustomEvent("singularity:sound", { detail: "success" }));
     clearTimeout(Number(snippet.dataset.copyTimer));
     snippet.dataset.copyTimer = String(
       setTimeout(() => {
