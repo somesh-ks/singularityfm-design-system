@@ -5,6 +5,10 @@
  * a section tab, choosing a segmented nav's view, taking a row out.
  */
 import { mountSegmentedNav } from "@singularity/design-system/segmentedNav";
+import { installSelectSheet } from "@singularity/design-system/selectSheet";
+
+// A phone opens a Select's list as the standard bottom sheet (selectSheet.ts): the page installs it once.
+installSelectSheet();
 
 const root = document.querySelector<HTMLElement>("[data-playground]");
 const snippet = document.querySelector<HTMLElement>("[data-code-section] .code-snippet-text");

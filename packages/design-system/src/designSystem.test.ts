@@ -103,7 +103,7 @@ describe("the Flag", () => {
 
 // The library's one component framework is React (DS-3). Each family PR moves its .astro files to .tsx
 // and trims this list; nothing joins it.
-const ASTRO_LEFT = ["Avatar.astro", "Code.astro", "Menu.astro", "MenuItem.astro", "Select.astro"];
+const ASTRO_LEFT = ["Avatar.astro", "Code.astro"];
 
 // A migrated component whose .astro path the apps still import, `class` and all, keeps that path as a
 // deprecated shim: dropping it, or the `class` it takes, is a breaking change (COMPATIBILITY.md). The
@@ -119,9 +119,12 @@ const ASTRO_SHIMS = [
   "Field.astro",
   "Flag.astro",
   "Icon.astro",
+  "Menu.astro",
+  "MenuItem.astro",
   "Ripple.astro",
   "RowExit.astro",
   "SectionTabs.astro",
+  "Select.astro",
   "Sheet.astro",
   "SheetHeader.astro",
   "Slider.astro",
@@ -174,7 +177,13 @@ describe("the component framework", () => {
     // own. It closes itself, or, for a component that holds content (the Badge's words, the Row exit's
     // row), holds the shim's slot and nothing else: the slot reaches the .tsx as its children. A named
     // slot (the Dialog's and the Sheet's `after`) passes on under its own name, as the prop of that name.
-    expect(template.trim(), `${shim} draws markup of its own`).toMatch(
+    // The one script a shim may keep is its old path's own install call from the package's module (the
+    // Select's phone sheet): a page on the old path keeps that behaviour; a script is no markup.
+    const markup = template.replace(
+      /\s*<script>\s*import \{ (install\w+) \} from "\.\/\w+\.ts";\s*\1\(\);\s*<\/script>\s*$/,
+      "",
+    );
+    expect(markup.trim(), `${shim} draws markup of its own`).toMatch(
       new RegExp(
         `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}))*\\s*(?:/>|><slot />(?:<slot name="([\\w-]+)" slot="\\1" />)?</${name}>)$`,
       ),

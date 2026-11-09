@@ -1,7 +1,7 @@
 /**
  * The Menu: a popover list of actions, a small menu under its button from 40rem and a bottom sheet on
- * a phone, with a row for each action. The one place its classes are written. Menu.astro and
- * MenuItem.astro render from it; a script, a React island or a string builder that draws one calls
+ * a phone, with a row for each action. The one place its classes are written. Menu.tsx and
+ * MenuItem.tsx render from it; a script, a React island or a string builder that draws one calls
  * menuListClass() and menuItemClass(), and a script that finds one reads MENU_SELECTORS; the style
  * guide lists MENU. The rules are in styles/menu.css.
  */
