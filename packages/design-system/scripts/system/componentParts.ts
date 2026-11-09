@@ -298,6 +298,7 @@ export const componentParts = (): PartSource[] => [
   control("banner", "Banner", BANNER, {
     kind: "feedback",
     classes: ["banner-notice", "banner-text", "banner-title", "banner-body"],
+    files: ["packages/design-system/src/Banner.tsx", "packages/design-system/src/banner.ts"],
     keywords: ["alert", "notice", "warning", "error message", "persistent"],
     not: [
       { when: "a message that clears itself", use: "toast" },

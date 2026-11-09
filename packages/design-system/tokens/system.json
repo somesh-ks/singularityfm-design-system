@@ -709,7 +709,7 @@
         "banner-body"
       ],
       "files": [
-        "packages/design-system/src/Banner.astro",
+        "packages/design-system/src/Banner.tsx",
         "packages/design-system/src/banner.ts"
       ],
       "when": [

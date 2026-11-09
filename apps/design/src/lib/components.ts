@@ -500,7 +500,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Banner",
     group: "feedback",
     registry: "Banner",
-    file: "Banner.astro",
+    file: "Banner.tsx",
     controls: [
       choice("tone", "Tone", [
         ["warning", "Warning"],
