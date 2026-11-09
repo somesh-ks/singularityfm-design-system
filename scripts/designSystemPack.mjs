@@ -151,7 +151,7 @@ try {
       `import Select from "${name}/Select";`,
       `import OldSelect from "${name}/Select.astro";`,
       "---",
-      '<html lang="en"><body><button popovertarget="m1">More</button><Menu id="m1" title="Row" className="placed-menu"><MenuItem className="placed-item" data-id="i1" data-block>Row words</MenuItem></Menu><button popovertarget="m2">More</button><OldMenu id="m2" title="Row" class="placed-menu"><OldMenuItem class="placed-item" data-id="i1" data-block>Row words</OldMenuItem></OldMenu><Select className="placed-select" label="Sort" name="sort" data-id="x1"><option value="a">Newest</option><option value="b" selected>Oldest</option></Select><OldSelect class="placed-select" label="Sort" name="sort" data-id="x1"><option value="a">Newest</option><option value="b" selected>Oldest</option></OldSelect></body></html>',
+      '<html lang="en"><body><button popovertarget="m1">More</button><Menu id="m1" title="Row" className="placed-menu"><MenuItem className="placed-item" data-id="i1" data-block>Row words</MenuItem></Menu><button popovertarget="m2">More</button><OldMenu id="m2" title="Row" class="placed-menu"><OldMenuItem class="placed-item" data-id="i1" data-block style="order: 1">Row words</OldMenuItem></OldMenu><Select className="placed-select" label="Sort" name="sort" data-id="x1"><option value="a">Newest</option><option value="b" selected>Oldest</option></Select><OldSelect class="placed-select" label="Sort" name="sort" data-id="x1"><option value="a">Newest</option><option value="b" selected>Oldest</option></OldSelect></body></html>',
       "",
     ].join("\n"),
   );
@@ -277,6 +277,13 @@ try {
     )
   )
     problems.push("the page drew no placed Menu holding its placed row by each path");
+  // React throws on a style string: the old path's styled row fails the build, or loses it here.
+  if (
+    !menuLists.some(([list]) =>
+      /\bplaced-item\b[^>]*style="order:\s*1"|style="order:\s*1"[^>]*\bplaced-item\b/.test(list),
+    )
+  )
+    problems.push("the MenuItem shim lost a style string");
   const selects = [
     ...menus.matchAll(/<(?:label|span)[^>]*\bplaced-select\b[^>]*>([\s\S]*?)<\/select>/g),
   ];
