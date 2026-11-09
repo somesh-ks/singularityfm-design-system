@@ -4,7 +4,7 @@
  * message at the label size, at most one text action in the accent and, only while it stays until
  * used, a close button. A top-layer popover above whatever is docked at the bottom.
  *
- * Where it sits is the page's to say, by custom properties set on the root (never on .toast-popover, so the
+ * Where it sits is the page's to say, by custom properties set on the root (never on .toast, so the
  * component's rules stay the only ones that draw it):
  *   --toast-nav           the navigation bar at the bottom; else --bottom-nav-height, else the safe area
  *   --toast-dock          a docked bar above the navigation (the reader's mini player); 0 by default
@@ -12,7 +12,7 @@
  *   --toast-inline-start  the start inset it centres from; else --side-nav-width, else 0
  *   --toast-inline-end    the end inset; 0 by default
  */
-.toast-popover {
+.toast {
   /* Above the bars while Safari plays the exit outside the top layer (the sheets and dialogs). */
   z-index: var(--z-toast);
   /* The page accent is tuned for the page; on the inverse surface the role takes the other theme's step. */
@@ -62,13 +62,13 @@
 
 /* The ring takes the toast's ink on its dark fill, after keys only: a tap clears the ring below the
    root (foundations.css, data-input), and a colour set here would beat that and stay after a touch. */
-:root:not([data-input="pointer"]) .toast-popover {
+:root:not([data-input="pointer"]) .toast {
   --color-focus-ring: var(--toast-fg);
 }
 
 /* A toast that asks to stay on one line (oneLine, toastStore.ts; the reader's time zone offer, D239) keeps
    its words whole and ends them with an ellipsis rather than wrap. Its copy is written to fit. */
-.toast-popover[data-one-line] .toast-text {
+.toast[data-one-line] .toast-text {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -76,7 +76,7 @@
 }
 
 /* Under the finger the toast follows at once; the spring back and the leave run on the transition. */
-.toast-popover[data-dragging] {
+.toast[data-dragging] {
   transition: none;
 }
 
@@ -84,7 +84,7 @@
    words, it jumped from 105 to 358px between Saving and what came of it. The words take the room,
    so a button stays at its end. */
 @media (width < 40rem) {
-  .toast-popover {
+  .toast {
     width: min(calc(100% - var(--page-gutter) * 2), var(--layout-dialog));
   }
 
@@ -95,7 +95,7 @@
   /* A one-line toast gives its close button's room to its words on a phone, where a swipe takes it
      away (Toast.tsx), so "You're in Johannesburg" and its action fit without an ellipsis. The
      button stays for a keyboard and a screen reader, as a sheet's Close does (D144). */
-  .toast-popover[data-one-line] .toast-dismiss {
+  .toast[data-one-line] .toast-dismiss {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -107,7 +107,7 @@
   }
 }
 
-.toast-popover:popover-open {
+.toast:popover-open {
   display: flex;
   opacity: 1;
   transform: none;
@@ -115,7 +115,7 @@
 }
 
 @starting-style {
-  .toast-popover:popover-open {
+  .toast:popover-open {
     opacity: 0;
     transform: translateY(var(--distance-medium));
   }
@@ -123,7 +123,7 @@
 
 /* With no button at its end, the text has the same room on both sides. A toast may keep its buttons
    in the markup and hide them by its state (the reader's settings toast). */
-.toast-popover:not(:has(button:not([hidden]))) {
+.toast:not(:has(button:not([hidden]))) {
   padding-inline-end: var(--space-4);
 }
 
@@ -186,8 +186,8 @@
 
 /* No slide under reduced motion; the fade stays, and the zero durations of the token set do the rest. */
 @media (prefers-reduced-motion: reduce) {
-  .toast-popover,
-  .toast-popover:popover-open {
+  .toast,
+  .toast:popover-open {
     transform: none;
   }
 }

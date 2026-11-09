@@ -502,7 +502,7 @@ export const componentParts = (): PartSource[] => [
   }),
   control("toast", "Toast", TOAST, {
     kind: "feedback",
-    classes: ["toast-popover", "toast-action", "toast-dismiss"],
+    classes: ["toast", "toast-action", "toast-dismiss"],
     files: [
       "packages/design-system/src/Toast.tsx",
       "packages/design-system/src/toast.ts",
@@ -513,7 +513,7 @@ export const componentParts = (): PartSource[] => [
     markup: 'showToast({ message: "Deleted", actionLabel: "Undo", onAction })',
     rules: [
       "Mount <Toast client:idle /> once per page; call showToast() from toastStore, or sendToast() from toastEvent in code that must not load the store.",
-      "The page says where it sits with --toast-nav, --toast-dock, --toast-lift and --toast-inline-start/-end on the root, never with a rule on .toast-popover.",
+      "The page says where it sits with --toast-nav, --toast-dock, --toast-lift and --toast-inline-start/-end on the root, never with a rule on .toast.",
     ],
   }),
   control("dialog", "Dialog", DIALOG, {

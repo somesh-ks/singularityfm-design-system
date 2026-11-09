@@ -20,9 +20,14 @@ export const TOAST: Guidance = {
   ],
 };
 
-/** Every class the Toast draws, for the registry and its test. */
+/**
+ * The classes the Toast draws, for the registry and its test. Its root, `toast`, is drawn too (and
+ * system.json lists it, so it stays: COMPATIBILITY.md) but is left out here: the registry's classes
+ * are what the class-on-component rule reads in any string, and the bare word would flag "toast" in
+ * prose, keys and event names.
+ * shortcut: a page that types class="toast" by hand is not caught; rename the root in the next major.
+ */
 export const TOAST_CLASSES: string[] = [
-  "toast-popover",
   "toast-icon",
   "toast-text",
   "toast-action",

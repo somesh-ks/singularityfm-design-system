@@ -128,7 +128,7 @@ export default function Toast() {
   return (
     <div
       ref={ref}
-      className="toast-popover"
+      className="toast"
       popover="manual"
       role={shown?.kind === "error" ? "alert" : "status"}
       data-one-line={shown?.oneLine ? "" : undefined}
