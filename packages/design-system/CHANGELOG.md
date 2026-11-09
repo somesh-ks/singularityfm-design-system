@@ -1,5 +1,16 @@
 # @singularityfm/design-system
 
+## 0.5.0
+
+### Minor Changes
+
+- c73eee7: PlayingBars is a component: import it as `@singularityfm/design-system/PlayingBars` to draw the three moving bars that show something playing (the Play chip's mark), on any play control, with `className` to place it, instead of typing `chip-bars`. The Play chip draws it; its markup is the same but for `aria-hidden="true"` on the bars, inside a glyph that was already hidden. `.chip-bars` now lays itself out (`display: flex`), so the bars show wherever they are drawn; in the chip they still show only while it plays.
+- 8c159c2: Toast is a component (D237, D253): import `@singularityfm/design-system/Toast` and mount `<Toast client:idle />` once per page; `showToast`, `dismissToast`, `getToast` and `subscribeToast` come from `/toastStore`, and `sendToast` (with `TOAST_EVENT` and `TOAST_READY`) from `/toastEvent` for code that must not load the store. It is the reader's Toaster moved unchanged, popover, swipe, one-line mode, flags and all, with its rules in `styles/toast.css`. Where it sits is the page's to say with `--toast-nav`, `--toast-dock`, `--toast-lift`, `--toast-inline-start` and `--toast-inline-end` set on the root; with none set it sits above `--bottom-nav-height` or the safe area, centred past `--side-nav-width`, as before. Also new: `/swipe` (the swipe-away rule and velocity tracker the toast and the app's rows share) and `/pageLeaving` (`endedByLeaving()`, whether a request ended because the page was going away). The registry now lists `toast-icon`, `toast-text`, `toast-action` and `toast-dismiss`, so the app's `systemUse.test.ts` fails a page that types them, from the bump that takes this release.
+
+### Patch Changes
+
+- d4cb176: Toast keeps a visible edge in high-contrast (forced colors) mode.
+
 ## 0.4.0
 
 ### Minor Changes
