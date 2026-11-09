@@ -86,13 +86,17 @@ const nest = (parents: string[], children: string[]): string[] =>
         ),
       );
 
-/** The stylesheet with each brace and semicolon inside a quoted string (escapes kept) made a space. */
+/**
+ * The stylesheet with each brace and semicolon inside a quoted string made a space, reading quotes and
+ * backslash escapes as CSS's tokenizer does.
+ */
 function quotedStructure(css: string): string {
   let out = "";
   let quote = "";
   for (let at = 0; at < css.length; at += 1) {
     const character = css[at] ?? "";
-    if (quote && character === "\\") {
+    // An escape is two characters wherever it stands: `url(it\'s.svg)` opens no string.
+    if (character === "\\") {
       out += css.slice(at, at + 2).replace(/[{};]/g, " ");
       at += 1;
       continue;

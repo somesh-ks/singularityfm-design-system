@@ -34,6 +34,8 @@ describe("the rules", () => {
     // A brace or semicolon in a quoted value does not end the rule early.
     const quoted = '.a::before {\n  content: "};";\n  color: #fff;\n}';
     expect(lines(rawColour(quoted, "a.css"))).toEqual([3]);
+    const escaped = ".a { background: url(it\\'s.svg); }\n.b { color: #fff; }";
+    expect(lines(rawColour(escaped, "a.css"))).toEqual([2]);
     // A link, an id, a selector or a url() holds a reference, never a colour.
     const markup = [
       '<a href="#abc">Top</a>',
