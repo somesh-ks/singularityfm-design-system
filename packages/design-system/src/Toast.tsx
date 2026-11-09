@@ -3,6 +3,8 @@ import { flagBadgeClass, flagClass, flagParts, flagSrc, hasFlagArt } from "./fla
 import Icon from "./Icon.tsx";
 import { createVelocityTracker, swipeLeaves, TAP_SLOP_PX } from "./swipe.ts";
 import { dismissToast, getToast, subscribeToast, type ToastContent } from "./toastStore.ts";
+// A message that names a place draws the Flag's art, so the Toast brings the Flag's rules too.
+import "../styles/flag.css";
 import "../styles/toast.css";
 
 /**
@@ -54,10 +56,25 @@ export default function Toast() {
     const element = ref.current;
     if (!element) return;
     const tracker = createVelocityTracker();
-    let press: { id: number; x: number; y: number; swiping: boolean; dx: number } | null = null;
+    // The toast a press began on: a newer message that replaced it is never what the swipe takes.
+    let press: {
+      id: number;
+      toast: number | undefined;
+      x: number;
+      y: number;
+      swiping: boolean;
+      dx: number;
+    } | null = null;
     const onDown = (event: PointerEvent): void => {
       if (event.pointerType === "mouse" || (event.target as Element).closest("button")) return;
-      press = { id: event.pointerId, x: event.clientX, y: event.clientY, swiping: false, dx: 0 };
+      press = {
+        id: event.pointerId,
+        toast: getToast()?.id,
+        x: event.clientX,
+        y: event.clientY,
+        swiping: false,
+        dx: 0,
+      };
       tracker.reset({ value: event.clientX, t: event.timeStamp });
     };
     const onMove = (event: PointerEvent): void => {
@@ -76,14 +93,23 @@ export default function Toast() {
     };
     const onUp = (event: PointerEvent): void => {
       if (!press || event.pointerId !== press.id) return;
-      const { swiping, dx } = press;
+      const { swiping, dx, toast } = press;
       press = null;
       if (!swiping) return;
       delete element.dataset.dragging;
+      // The lift is a sample too: a drag that stopped before it is not a flick.
+      tracker.push(event.clientX, event.timeStamp);
+      const current = getToast();
+      // A cancelled touch (the browser took the gesture) or a message that replaced the pressed
+      // one springs back; only a released swipe of the same toast takes it away.
       // Leaving, it keeps sliding the way it went while the popover's own exit fades it.
-      if (swipeLeaves(dx, element.offsetWidth, tracker.velocity())) {
+      if (
+        event.type === "pointerup" &&
+        current?.id === toast &&
+        swipeLeaves(dx, element.offsetWidth, tracker.velocity())
+      ) {
         element.style.translate = `${Math.sign(dx) * element.offsetWidth * 1.5}px 0`;
-        getToast()?.onDismiss?.();
+        current?.onDismiss?.();
         dismissToast();
       } else element.style.translate = "";
     };
@@ -110,7 +136,9 @@ export default function Toast() {
       {shown?.kind ? (
         <Icon className="toast-icon" name={shown.kind === "error" ? "alert" : "check"} />
       ) : null}
-      <span className="toast-text">
+      {/* Keyed by the message's id, so the same words shown again are new text the live region
+          speaks again. */}
+      <span key={shown?.id} className="toast-text">
         {/* A place's flag is the Flag's art, never the emoji Windows draws as two letters (D367). */}
         {flagParts(shown?.message ?? "").map((part, index) =>
           typeof part === "string" ? (

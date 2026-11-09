@@ -759,12 +759,20 @@ export const SPECS: readonly ComponentSpec[] = [
       ]),
       toggle("action", "Action"),
     ],
-    imports: [],
+    imports: ["Toast"],
     code: (state) => {
       const fields = [`message: "${SAMPLE.toast.message}"`];
       if (state.kind === "success" || state.kind === "error") fields.push(`kind: "${state.kind}"`);
       if (on(state, "action")) fields.push(`actionLabel: "${SAMPLE.toast.action}"`, "onAction");
-      return `showToast({ ${fields.join(", ")} });`;
+      return [
+        'import { showToast } from "@singularityfm/design-system/toastStore";',
+        "",
+        "// Once per page:",
+        "<Toast client:idle />",
+        "",
+        "// Wherever a message is due:",
+        `showToast({ ${fields.join(", ")} });`,
+      ].join("\n");
     },
     note: "The page mounts <Toast client:idle /> once; here it sits above the bottom of the window.",
   },
