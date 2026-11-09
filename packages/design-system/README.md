@@ -18,6 +18,9 @@ or later.
 
 An Astro page passes `className`, not `class`, to a React component: `@astrojs/react` drops `class`.
 
+The source imports its own files with their `.ts` extension, so a `tsc` that type-checks your app needs
+`"allowImportingTsExtensions": true` beside `"noEmit": true` in its `tsconfig.json`.
+
 ## Imports
 
 ```astro
