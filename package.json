@@ -28,6 +28,7 @@
     "@changesets/cli": "3.0.3",
     "@phosphor-icons/core": "2.1.1",
     "@types/node": "^26.6.6",
+    "playwright-core": "1.65.0",
     "tsx": "^4.23.15",
     "typescript": "~6.0.3",
     "vitest": "^5.0.5"

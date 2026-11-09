@@ -20,6 +20,11 @@ interface ButtonProps {
   className?: string;
   /** Astro places the button in its parent's slot with it; it is not an attribute of the button. */
   slot?: string;
+  /**
+   * The widest words the button may swap to ("Saving…"). It is as wide as these and its own words
+   * in every state, so a button that hugs its words never changes width when they change (DS-9).
+   */
+  reserve?: string;
   children?: ReactNode;
 }
 
@@ -37,18 +42,26 @@ export default function Button({
   className,
   type = "button",
   slot: _slot,
+  reserve,
   children,
   ...passed
 }: Props) {
   const rest = passedAttributes(passed);
+  const face = reserve ? (
+    <span className="button-label" data-reserve={reserve}>
+      <span>{children}</span>
+    </span>
+  ) : (
+    children
+  );
   const classes = [buttonClass(variant, tone, size), className].filter(Boolean).join(" ");
   return href ? (
     <a className={classes} href={href} {...rest}>
-      {children}
+      {face}
     </a>
   ) : (
     <button className={classes} type={type} {...rest}>
-      {children}
+      {face}
     </button>
   );
 }
