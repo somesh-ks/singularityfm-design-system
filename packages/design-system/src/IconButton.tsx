@@ -11,6 +11,8 @@ interface IconButtonProps {
   rowEnd?: boolean;
   /** Draws a link instead of a button, for a glyph that goes to an address (Back). */
   href?: string;
+  target?: string;
+  rel?: string;
   /**
    * For placing the button where it stands, or a hook a page's rule or script finds it by. Never its
    * look. An Astro page passes className too: @astrojs/react drops a `class` prop.

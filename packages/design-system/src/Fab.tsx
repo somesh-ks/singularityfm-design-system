@@ -15,6 +15,8 @@ interface FabProps {
   icon: IconName;
   /** Draws a link instead of a button, so the action works before any script (/create). */
   href?: string;
+  target?: string;
+  rel?: string;
   /**
    * For a hook a page's rule or script finds it by. Never its look or its place: it floats where
    * fab.css puts it. An Astro page passes className too: @astrojs/react drops a `class` prop.

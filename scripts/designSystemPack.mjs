@@ -113,7 +113,7 @@ try {
       `import IconButton from "${name}/IconButton";`,
       `import Link from "${name}/Link";`,
       "---",
-      '<html lang="en"><body><Link href="/">Home</Link><IconButton label="Close"><Icon name="close" /></IconButton><Fab icon="plus" label="Add">Add</Fab></body></html>',
+      '<html lang="en"><body><Link href="/">Link words</Link><IconButton label="Icon name"><Icon name="close" /></IconButton><Fab icon="plus" label="Fab name">Fab word</Fab></body></html>',
       "",
     ].join("\n"),
   );
@@ -138,6 +138,10 @@ try {
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
   if (actions.includes("<script")) problems.push("the actions page ships a script");
+  // The test's own words and names, not the parts' markup: an empty component, or one that drops its
+  // label, still builds.
+  for (const text of ["Link words", 'aria-label="Icon name"', 'aria-label="Fab name"', "Fab word"])
+    if (!actions.includes(text)) problems.push(`the actions page lost ${text}`);
   // The shim passes `class` on as className; lost, the old path draws the glyph where nothing places it.
   if (html.match(/class="icon-glyph placed"/g)?.length !== 2)
     problems.push("the page drew no placed Icon by each path");
