@@ -19,5 +19,5 @@ Any shared stylesheet (`primitives.css`, `buttons.css`, `tokens.css`) or token i
 
 ## Review
 
-The tier (0, 1 or 2, AGENTS.md); the `cr review` pass, or why it did not run; CodeRabbit's last reviewed
-commit, or why none.
+The tier (0, 1 or 2, AGENTS.md); for Tier 2, the review pass you ran with your tool's review command, or
+why it did not run; Greptile's last reviewed commit, or why none.
