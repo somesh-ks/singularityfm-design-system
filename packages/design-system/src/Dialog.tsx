@@ -34,8 +34,6 @@ type Props = DialogProps &
  * does the same.
  */
 export default function Dialog({ form, className, children, after, style, ...passed }: Props) {
-  // React prints no lowercase boolean it knows by another name, so `novalidate` would be lost.
-  const { novalidate, ...formAttributes } = form ?? {};
   const body = { className: dialogBodyClass(), children };
   return (
     <dialog
@@ -45,11 +43,8 @@ export default function Dialog({ form, className, children, after, style, ...pas
       style={typeof style === "string" ? styleObject(style) : style}
     >
       {form ? (
-        <form
-          {...body}
-          {...passedAttributes(formAttributes)}
-          noValidate={novalidate === undefined ? undefined : novalidate !== false}
-        />
+        // passedAttributes names `novalidate` noValidate: React drops the lowercase boolean.
+        <form {...body} {...passedAttributes(form)} />
       ) : (
         <div {...body} />
       )}

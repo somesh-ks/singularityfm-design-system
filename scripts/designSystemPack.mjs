@@ -157,8 +157,8 @@ try {
       `import OldSheetHeader from "${name}/SheetHeader.astro";`,
       "---",
       '<html lang="en"><body>' +
-        '<Dialog className="placed-dialog" data-confirm aria-labelledby="d1" form={{ "data-form": "", novalidate: true }}><DialogTitle id="d1" data-confirm-title>Question</DialogTitle><DialogActions stacked><b>Answer</b></DialogActions><p slot="after" data-copy>After</p></Dialog>' +
-        '<OldDialog class="placed-dialog" data-confirm aria-labelledby="d1" form={{ "data-form": "", novalidate: true }}><OldDialogTitle id="d1" data-confirm-title>Question</OldDialogTitle><OldDialogActions stacked><b>Answer</b></OldDialogActions><p slot="after" data-copy>After</p></OldDialog>' +
+        '<Dialog className="placed-dialog" data-confirm aria-labelledby="d1" form={{ "data-form": "", noValidate: true, style: { order: 1 } }}><DialogTitle id="d1" data-confirm-title style={{ order: 2 }}>Question</DialogTitle><DialogActions stacked><b>Answer</b></DialogActions><p slot="after" data-copy>After</p></Dialog>' +
+        '<OldDialog class="placed-dialog" data-confirm aria-labelledby="d1" form={{ "data-form": "", novalidate: true, style: "order: 1" }}><OldDialogTitle id="d1" data-confirm-title style="order: 2">Question</OldDialogTitle><OldDialogActions stacked><b>Answer</b></OldDialogActions><p slot="after" data-copy>After</p></OldDialog>' +
         '<Sheet className="placed-sheet" title="Sheet words" titleId="s1" close="data-panel-close" titleData={{ "data-panel-title": true }} data-health-sheet><i>Body</i><p slot="after" data-foot>Foot</p></Sheet>' +
         '<OldSheet class="placed-sheet" title="Sheet words" titleId="s1" close="data-panel-close" titleData={{ "data-panel-title": true }} data-health-sheet><i>Body</i><Fragment slot="after"><p data-foot>Foot</p></Fragment></OldSheet>' +
         '<SheetHeader title="Head words" titleId="h1" close="data-menu-close" subtitle="Sub words" /><OldSheetHeader title="Head words" titleId="h1" close="data-menu-close" subtitle="Sub words" />' +
@@ -266,37 +266,43 @@ try {
   // that draws a Switch or a Slider.
   if (/<astro-island|<script/.test(inputs))
     problems.push("the inputs page hydrates or ships a script");
-  // Each path draws the dialog with the test's class and the data attribute its script finds it by,
-  // empty as on a plain element; the body a form that keeps `novalidate` (React drops the lowercase
-  // name, and prints its own as noValidate); the title, the answers in a column and the `after` slot after the form, in that order. The
-  // Sheet keeps its kind, its label, its data attribute, its header (title data, Close), its body and
-  // its `after` slot; the header alone keeps its subtitle.
-  const dialogs = [...overlays.matchAll(/<dialog[^>]*\bplaced-dialog\b[\s\S]*?<\/dialog>/g)].map(
-    (match) => match[0],
-  );
-  const dialogParts = [
-    /^<dialog[^>]*\bdata-dialog=""[^>]*\bdata-confirm=""[^>]*aria-labelledby="d1"/,
-    /<form class="dialog-body"[^>]*data-form=""[^>]*novalidate=""/i,
-    /<h2 class="text-heading" id="d1" data-confirm-title="">Question<\/h2>/,
-    /<div class="dialog-actions dialog-actions-stacked"><b>Answer<\/b><\/div><\/form>\s*<p data-copy(?:="")?>After<\/p>\s*<\/dialog>$/,
-  ];
-  if (dialogs.length !== 2 || dialogs.some((tag) => dialogParts.some((part) => !part.test(tag))))
+  // Each path draws the same dialog, found by the test's class: the attributes its script finds it by;
+  // a form body that keeps `novalidate` by either spelling (React drops the lowercase one) and a style
+  // string; the title with its id, data attribute and style; the answers inside the form and the
+  // `after` slot after it. The Sheet keeps its kind, its label, its data attribute, its title data,
+  // its Close, its body and its `after` slot; the header alone keeps its subtitle. The test's own
+  // words and attributes only: never the library's classes or the order it prints attributes in.
+  const placed = (name) =>
+    [...overlays.matchAll(new RegExp(`<dialog[^>]*\\b${name}\\b[\\s\\S]*?</dialog>`, "g"))].map(
+      (match) => match[0],
+    );
+  const drawn = (found, parts) =>
+    found.length === 2 && found[0] === found[1] && parts.every((part) => part.test(found[0]));
+  const tag = (name, ...attributes) =>
+    new RegExp(`<${name}\\b${attributes.map((a) => `(?=[^>]*\\s${a})`).join("")}[^>]*>`, "i");
+  if (
+    !drawn(placed("placed-dialog"), [
+      tag("dialog", 'data-dialog=""', 'data-confirm=""', 'aria-labelledby="d1"'),
+      tag("form", 'data-form=""', "novalidate", 'style="order:\\s*1"'),
+      /<(h[1-6])\b(?=[^>]*\sid="d1")(?=[^>]*\sdata-confirm-title)(?=[^>]*\sstyle="order:\s*2")[^>]*>Question<\/\1>/,
+      /<b>Answer<\/b>(?:<\/\w+>)*<\/form>\s*<p data-copy(?:="")?>After<\/p>\s*<\/dialog>$/,
+    ])
+  )
     problems.push(
       "the page drew no placed Dialog with its parts, attributes and slots by each path",
     );
-  const sheets = [...overlays.matchAll(/<dialog[^>]*\bplaced-sheet\b[\s\S]*?<\/dialog>/g)].map(
-    (match) => match[0],
-  );
-  const sheetParts = [
-    /^<dialog[^>]*\bdata-sheet="panel"[^>]*aria-labelledby="s1"[^>]*data-health-sheet=""/,
-    /<div class="sheet-head"><h2 class="sheet-title text-heading" id="s1" data-panel-title>Sheet words<\/h2><button[^>]*aria-label="Close" data-panel-close>/,
-    /<div class="sheet-body"><i>Body<\/i><\/div>\s*<p data-foot(?:="")?>Foot<\/p>\s*<\/dialog>$/,
-  ];
-  if (sheets.length !== 2 || sheets.some((tag) => sheetParts.some((part) => !part.test(tag))))
+  if (
+    !drawn(placed("placed-sheet"), [
+      tag("dialog", 'data-sheet="panel"', 'aria-labelledby="s1"', 'data-health-sheet=""'),
+      /<(h[1-6])\b(?=[^>]*\sid="s1")(?=[^>]*\sdata-panel-title)[^>]*>Sheet words<\/\1>/,
+      tag("button", 'aria-label="Close"', "data-panel-close"),
+      /<i>Body<\/i>(?:<\/\w+>)*\s*<p data-foot(?:="")?>Foot<\/p>\s*<\/dialog>$/,
+    ])
+  )
     problems.push(
       "the page drew no placed Sheet with its parts, attributes and slots by each path",
     );
-  if (overlays.match(/<p class="sheet-subtitle text-meta">Sub words<\/p>/g)?.length !== 2)
+  if (overlays.match(/>Sub words</g)?.length !== 2)
     problems.push("the page drew no SheetHeader with its subtitle by each path");
   if (/<astro-island|<script/.test(overlays))
     problems.push("the overlays page hydrates or ships a script");
