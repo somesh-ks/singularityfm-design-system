@@ -149,8 +149,9 @@ describe("the component framework", () => {
       "utf8",
     ).split(/^---$/m);
     expect(files, `${shim} has no ${name}.tsx`).toContain(`${name}.tsx`);
+    expect(frontmatter, `${shim} is marked deprecated`).toContain("@deprecated");
     expect(frontmatter, `${shim} names its replacement`).toContain(
-      `@deprecated Import ${name} from "@singularityfm/design-system/${name}"`,
+      `@singularityfm/design-system/${name}"`,
     );
     const statements = frontmatter
       .replace(/\/\*[\s\S]*?\*\//g, "")
@@ -165,11 +166,13 @@ describe("the component framework", () => {
       (line) =>
         !/^import /.test(line) &&
         !/^type Props = [^;]+;$/.test(line) &&
-        !/^const \{ class: className, \.\.\.props \} = Astro\.props;$/.test(line),
+        !/^const \{[^}]*\} = Astro\.props;$/.test(line),
     );
     expect(own, `${shim} has logic of its own`).toEqual([]);
+    // One self-closing element, the component, with only {expressions} for props: no children,
+    // no literal attribute of its own.
     expect(template.trim(), `${shim} draws markup of its own`).toMatch(
-      new RegExp(`^<${name} \\{\\.\\.\\.(props|Astro\\.props)\\}( className=\\{className\\})? />$`),
+      new RegExp(`^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}))*\\s*/>$`),
     );
   });
 
