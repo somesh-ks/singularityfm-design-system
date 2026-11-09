@@ -482,25 +482,23 @@ try {
   )
     problems.push("the page drew no placed Select with its attributes and options by each path");
   if (/<astro-island/.test(menus)) problems.push("the menus page hydrates");
-  // Each path keeps the test's class, shape and size on the Avatar's root and draws the shape in it,
-  // and keeps the Code's class on its root and its name and words on its text, and the hooks the
-  // Astro snippet carried (a script or rule that finds it by them fails silently without them).
-  const avatars = [
-    ...display.matchAll(
-      /<span\b[^>]*\bplaced-avatar\b[^>]*>\s*<svg\b[^>]*>\s*<g class="avatar-rig">/g,
-    ),
-  ].map((tag) => tag[0]);
+  // Each path draws the same Avatar, found by the test's class, with its shape drawn in it (the clip
+  // id aside, which React makes per instance): a shim that drops the shape or the size draws another.
+  // Each Code keeps the test's class, its name and its words, and the hooks the Astro snippet carried
+  // (a script or rule that finds it by them fails silently without them). The test's own class,
+  // attributes and words only, never the library's markup.
+  const avatars = [...display.matchAll(/<(\w+)\b[^>]*\bplaced-avatar\b[\s\S]*?<\/svg>/g)].map(
+    (match) => match[0].replace(/(?<=id="|#)[^")]+/g, "id"),
+  );
+  if (avatars.length !== 2 || avatars[0] !== avatars[1])
+    problems.push("the page drew no placed Avatar, the same by each path");
+  const count = (pattern) => display.match(pattern)?.length ?? 0;
   if (
-    avatars.length !== 2 ||
-    avatars.some((tag) => !/data-tone="ink"/.test(tag) || !/\bavatar-lg\b/.test(tag))
+    count(/class="[^"]*\bplaced-code\b/g) !== 2 ||
+    count(/aria-label="Code name"/g) !== 2 ||
+    count(/>Code words</g) !== 2
   )
-    problems.push("the page drew no placed ghost Avatar, large, by each path");
-  const codes = [
-    ...display.matchAll(
-      /<div\b[^>]*\bplaced-code\b[^>]*>\s*<pre\b[^>]*aria-label="Code name"[^>]*>Code words<\/pre>/g,
-    ),
-  ];
-  if (codes.length !== 2) problems.push("the page drew no placed Code with its words by each path");
+    problems.push("the page drew no placed Code with its name and words by each path");
   const hooks = display.match(
     /data-code=""|data-copied-word="Copied"|data-code-copy=""|data-code-said=""/g,
   );
