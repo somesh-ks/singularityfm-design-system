@@ -89,7 +89,7 @@ try {
       `import { validate } from "${name}/rules";`,
       'const findings = validate(".a { color: #fff; }", "page.css").length;',
       "---",
-      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><Badge className="placed">Admin</Badge><OldBadge class="placed">Admin</OldBadge><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
+      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
       "",
     ].join("\n"),
   );
@@ -122,7 +122,10 @@ try {
     problems.push("the page drew no placed Icon by each path");
   // The Badge shim hands its slot to React as children: lost, or left in a wrapper, the app's Admin tag
   // is an empty pill or carries markup the badge's rules never met.
-  if (html.match(/<span class="badge-label placed">Admin<\/span>/g)?.length !== 2)
+  // The test's own class and words, not the Badge's markup: each path's element carries both, the
+  // words as its direct text.
+  const badges = [...html.matchAll(/<(\w+)[^>]*\bplaced-badge\b[^>]*>([^<]*)<\/\1>/g)];
+  if (badges.length !== 2 || badges.some((badge) => badge[2] !== "Words"))
     problems.push("the page drew no placed Badge with its words by each path");
   if (!html.includes('data-findings="1"')) problems.push("the rules module found no raw colour");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
