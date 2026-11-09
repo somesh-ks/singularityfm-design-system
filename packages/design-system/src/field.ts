@@ -1,8 +1,8 @@
 /**
  * The Field: a text input or a textarea whose value a person types, outlined on the page's own
- * surface. The one place its class is written. Field.tsx renders from it (Base UI's Field control, a
- * native input); the outlined Select calls fieldClass() for its native select; the style guide lists
- * FIELD. The rules are in styles/field.css.
+ * surface. The one place its class is written. Field.astro renders from it; a script or a React island
+ * that draws a field calls fieldClass(), as the outlined Select does for its native select; the style
+ * guide lists FIELD. The rules are in styles/field.css.
  */
 import type { Guidance } from "./guidance";
 
