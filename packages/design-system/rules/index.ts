@@ -305,31 +305,51 @@ const LIBRARY_PROPERTIES = new Set([
   ...system.properties,
 ]);
 
+const withoutComments = (text: string, file: string): string =>
+  isCss(file) ? withoutCssComments(text) : withoutCodeComments(text);
+
 /**
- * Prevents a read of a property nothing defines: `var(--space-5)` with no --space-5 is no error to
- * the browser, which drops the whole declaration silently. A read with a fallback is an input that a
- * script or a caller may set, so it passes, as does any name the file itself declares, sets with
- * setProperty, or keys in a style object.
+ * The custom properties a file declares, sets with setProperty, or keys in a style object (a markup
+ * file's `style` attribute declares too).
  */
-export function unknownProperty(text: string, file: string): Finding[] {
-  if (isTokenFile(file) || !(isCss(file) || isCode(file))) return [];
-  const source = isCss(file) ? withoutCssComments(text) : withoutCodeComments(text);
-  const declared = new Set(
+export function declaredProperties(text: string, file: string): Set<string> {
+  if (!(isCss(file) || isCode(file))) return new Set();
+  const source = withoutComments(text, file);
+  return new Set(
     [
       ...source.matchAll(/(--[\w-]+)\s*:/g),
       ...source.matchAll(/@property\s+(--[\w-]+)/g),
       // A script's write and a style object's key; a getPropertyValue read declares nothing.
       ...source.matchAll(/setProperty\(\s*["'`](--[\w-]+)["'`]/g),
       ...source.matchAll(/["'`](--[\w-]+)["'`]\s*:/g),
-    ].map((match) => match[1]),
+    ].map((match) => match[1] ?? ""),
   );
+}
+
+/**
+ * Prevents a read of a property nothing defines: `var(--space-5)` with no --space-5 is no error to
+ * the browser, which drops the whole declaration silently. A read with a fallback is an input that a
+ * script or a caller may set, so it passes, as does any name the file itself declares, sets with
+ * setProperty, or keys in a style object, and any name in `declared`: what the other files validated
+ * with it declare (a page's style attribute sets what its stylesheet reads).
+ */
+export function unknownProperty(
+  text: string,
+  file: string,
+  declared: ReadonlySet<string> = new Set(),
+): Finding[] {
+  if (isTokenFile(file) || !(isCss(file) || isCode(file))) return [];
+  const source = withoutComments(text, file);
+  const own = declaredProperties(text, file);
   return [...source.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)]
-    .filter(([, name = ""]) => !LIBRARY_PROPERTIES.has(name) && !declared.has(name))
+    .filter(
+      ([, name = ""]) => !LIBRARY_PROPERTIES.has(name) && !own.has(name) && !declared.has(name),
+    )
     .map((match) => ({
       rule: "unknown-property",
       file,
       line: lineAt(text, match.index ?? 0),
-      message: `${match[1]} is neither a library property nor declared in this file`,
+      message: `${match[1]} is neither a library property nor declared in the files validated`,
       severity: "error",
     }));
 }
@@ -433,7 +453,22 @@ export function retiredPath(text: string, file: string): Finding[] {
 
 export const RULES = [rawColour, offGrid, unknownProperty, classOnComponent, retiredPath];
 
+export interface ValidateOptions {
+  /** The caller's own 4px cases, as offGrid takes them. */
+  gridExceptions?: readonly [selector: string, reason: string][];
+  /** Properties the other files validated with this one declare (declaredProperties of each). */
+  declared?: ReadonlySet<string>;
+}
+
 /** Every rule's findings for one file, in line order. */
-export function validate(text: string, file: string): Finding[] {
-  return RULES.flatMap((rule) => rule(text, file)).sort((a, b) => a.line - b.line);
+export function validate(text: string, file: string, options: ValidateOptions = {}): Finding[] {
+  return [
+    rawColour(text, file),
+    offGrid(text, file, options.gridExceptions),
+    unknownProperty(text, file, options.declared),
+    classOnComponent(text, file),
+    retiredPath(text, file),
+  ]
+    .flat()
+    .sort((a, b) => a.line - b.line);
 }
