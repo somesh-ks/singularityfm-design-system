@@ -1,5 +1,0 @@
----
-"@singularityfm/design-system": minor
----
-
-Dialog, DialogTitle, DialogActions, Sheet and SheetHeader are React components (DS-3). Import them as `@singularityfm/design-system/Dialog`, `/DialogTitle`, `/DialogActions`, `/Sheet` and `/SheetHeader` and pass `className`; what a page puts in the `after` slot becomes the `after` prop. Each still draws a native `<dialog>` closed, on the server, with no client directive and no script: a page's script finds it by `DIALOG_SELECTOR` or `SHEET_SELECTOR`, opens it with `showModal()` and gives it `sheetGestures()` as before, and a React island passes `ref` (the speed offer can draw `<Dialog ref={ref}>` instead of `dialogClass()`). The markup, the classes and the stylesheets are unchanged; the whitespace between the dialog's own elements is gone. Their `.astro` paths are deprecated shims that keep `class`, every attribute, `form` (`novalidate` included), the slot and the `after` slot; `ds validate` warns on them. `sheetHeadContentHtml()` is new: the header row's content without the row, which SheetHeader draws inside its own element.

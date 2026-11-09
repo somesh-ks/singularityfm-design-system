@@ -1,5 +1,0 @@
----
-"@singularityfm/design-system": minor
----
-
-Field, Switch and Slider are React components (DS-8): import them as `@singularityfm/design-system/Field`, `/Switch` and `/Slider` and pass `className`. An Astro page starts them with `defaultValue` or `defaultChecked`; a React island passes `value` or `checked` with `onChange`. None takes a client directive, and none ships a script. The Switch and the Slider draw the same native checkbox (`role="switch"`) and range as before, and the Field draws the same input or textarea, now on Base UI's Field control, which adds an `id` when none is passed and `data-disabled` when disabled. The Field, by either path, imports `@base-ui/react` (^1.9.0, still an optional peer), so a consumer that draws a Field installs it. Deprecated: `Field.astro`, `Switch.astro` and `Slider.astro`, shims that keep `class`, every attribute and `value` or `checked`, and that `ds validate` warns on. Looks different: a wavy Slider in Default now draws the fill its caller keeps in `--range-fill` on the field; before, only the Expressive and Halloween waves read it.
