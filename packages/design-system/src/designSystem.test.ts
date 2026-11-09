@@ -201,7 +201,7 @@ describe("the component framework", () => {
       .flatMap((name) =>
         [
           ...readFileSync(join(import.meta.dirname, name), "utf8").matchAll(
-            /(?:from|import) "(\.\.?\/[^"]+)"/g,
+            /(?:from |import |import\()"(\.\.?\/[^"]+)"/g,
           ),
         ]
           .map((match) => match[1] ?? "")
