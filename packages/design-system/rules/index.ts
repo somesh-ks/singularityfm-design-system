@@ -155,17 +155,24 @@ function terms(value: string): string[] {
 /**
  * Prevents spacing off the 8pt grid: a 12px gap beside a 16px one, or a 4px one between two rows,
  * reads as rows touching. A raw length or a token (followed to pixels) must land on 8, 16, 24 and
- * up; 4px only in a rule GRID_EXCEPTIONS names.
+ * up; 4px only in a rule GRID_EXCEPTIONS, or the caller's own `exceptions`, names. A 1px offset is
+ * a hairline's (a border overlap, the visually hidden pattern's -1px margin), not spacing.
  */
-export function offGrid(text: string, file: string): Finding[] {
+export function offGrid(
+  text: string,
+  file: string,
+  exceptions: readonly [selector: string, reason: string][] = [],
+): Finding[] {
   if (!isCss(file) || isTokenFile(file)) return [];
   return declarations(withoutCssComments(text))
     .filter(({ property }) => SPACING.test(property))
     .flatMap(({ selector, property, value, index }) =>
       terms(value).flatMap((term) => {
         const resolved = pixels(term);
-        if (resolved === null || resolved % 8 === 0) return [];
-        const named = GRID_EXCEPTIONS.some(([allowed]) => wholeName(allowed).test(selector));
+        if (resolved === null || resolved % 8 === 0 || Math.abs(resolved) === 1) return [];
+        const named = [...GRID_EXCEPTIONS, ...exceptions].some(([allowed]) =>
+          wholeName(allowed).test(selector),
+        );
         if (Math.abs(resolved) === 4 && named) return [];
         return [
           {

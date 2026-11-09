@@ -41,6 +41,10 @@ describe("the rules", () => {
       ".e { padding: var(--touch-target); }",
     ].join("\n");
     expect(lines(offGrid(css, "page.css"))).toEqual([1, 2, 3]);
+    // An app page's own 4px case is the app's to name, and passes once it does.
+    const page = ".hero-text { gap: var(--space-1); }";
+    expect(lines(offGrid(page, "page.css"))).toEqual([1]);
+    expect(offGrid(page, "page.css", [[".hero-text", "title onto its subtitle"]])).toEqual([]);
   });
 
   // Prevents a declaration the browser drops silently: a read of a property nothing defines.
