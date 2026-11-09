@@ -8,7 +8,7 @@
  * in a field the same way and draws the part of the track up to the thumb as a wave in Expressive and a
  * zigzag in Halloween.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const SLIDER: Guidance = {
   summary: "A track with a thumb: a value between two ends, set by dragging or by the arrow keys.",

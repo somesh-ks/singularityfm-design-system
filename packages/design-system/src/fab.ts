@@ -3,7 +3,7 @@
  * classes are written. Fab.tsx renders from it; a script that folds it or keeps clear of it reads FAB_SELECTOR;
  * the style guide lists FAB. The rules are in styles/fab.css, which Fab.tsx imports.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const FAB: Guidance = {
   summary: "The page's one primary action below 64rem: a glyph and a word, floating.",

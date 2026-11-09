@@ -1,6 +1,6 @@
 import type { LiHTMLAttributes, ReactNode } from "react";
-import { styleObject } from "./attributes";
-import { rowExitClass } from "./rowExit";
+import { styleObject } from "./attributes.ts";
+import { rowExitClass } from "./rowExit.ts";
 import "../styles/row-exit.css";
 
 interface RowExitProps {

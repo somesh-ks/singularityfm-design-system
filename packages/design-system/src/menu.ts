@@ -5,7 +5,7 @@
  * menuListClass() and menuItemClass(), and a script that finds one reads MENU_SELECTORS; the style
  * guide lists MENU. The rules are in styles/menu.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export type MenuItemTone = "danger";
 

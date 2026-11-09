@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createHaptics } from "./haptics";
-import { HAPTIC_INTENTS, HAPTIC_PATTERNS } from "./hapticTokens";
+import { createHaptics } from "./haptics.ts";
+import { HAPTIC_INTENTS, HAPTIC_PATTERNS } from "./hapticTokens.ts";
 
 describe("haptics", () => {
   beforeEach(() => vi.useFakeTimers());

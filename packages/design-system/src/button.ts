@@ -3,7 +3,7 @@
  * class is written. Button.tsx renders from it; a script or a React island that draws a button
  * calls buttonClass(); the style guide lists BUTTON. The rules are in styles/buttons.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export type ButtonVariant = "filled" | "tonal" | "text";
 export type ButtonTone = "danger";

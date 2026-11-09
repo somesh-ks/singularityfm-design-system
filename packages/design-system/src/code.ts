@@ -6,8 +6,8 @@
  * the rules are in styles/code.css. The text wraps, so a long line never scrolls sideways.
  */
 
-import type { Guidance } from "./guidance";
-import { escapeHtml, iconHtml } from "./sheetHead";
+import type { Guidance } from "./guidance.ts";
+import { escapeHtml, iconHtml } from "./sheetHead.ts";
 
 export const CODE: Guidance = {
   summary:

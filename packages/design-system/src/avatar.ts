@@ -14,7 +14,7 @@
  * reduced motion. data-face (open, frown, flat, sleep) changes the mouth. A tap picks its reaction from
  * the mood's --av-plays (D353); avatarFace.ts plays it on the face (cheeks, a moving mouth) and morphs the outline.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const AVATAR: Guidance = {
   summary:

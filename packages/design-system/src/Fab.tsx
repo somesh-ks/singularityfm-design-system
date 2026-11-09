@@ -1,8 +1,8 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { passedAttributes } from "./attributes";
-import { FAB_CLASSES } from "./fab";
+import { passedAttributes } from "./attributes.ts";
+import { FAB_CLASSES } from "./fab.ts";
 import Icon from "./Icon.tsx";
-import type { IconName } from "./icons";
+import type { IconName } from "./icons.ts";
 import "../styles/fab.css";
 
 interface FabProps {

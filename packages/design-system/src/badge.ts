@@ -3,7 +3,7 @@
  * written. Badge.tsx renders from it; the style guide lists BADGE. The rules are in
  * styles/badge.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const BADGE: Guidance = {
   summary: "A grey label holding one word or one number beside a name.",

@@ -1,5 +1,5 @@
-import { type IconSize, iconClass } from "./icon";
-import { ICON_BOLD_PATHS, ICON_PATHS, ICON_VIEW_BOX, type IconName } from "./icons";
+import { type IconSize, iconClass } from "./icon.ts";
+import { ICON_BOLD_PATHS, ICON_PATHS, ICON_VIEW_BOX, type IconName } from "./icons.ts";
 import "../styles/icon.css";
 import "../styles/glow.css";
 

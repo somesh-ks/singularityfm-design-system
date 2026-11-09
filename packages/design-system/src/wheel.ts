@@ -12,7 +12,7 @@
  * cue pipeline maps it). The
  * wheel holds no value of its own: whoever mounts it reads `at()` when the person confirms.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const WHEEL: Guidance = {
   summary:

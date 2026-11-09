@@ -1,9 +1,9 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import SheetHeader from "./SheetHeader.astro";
-import type { SheetClose } from "./sheetHead";
+import type { SheetClose } from "./sheetHead.ts";
 import "../styles/sheet.css";
-import { sheetBodyClass, sheetClass } from "./sheet";
+import { sheetBodyClass, sheetClass } from "./sheet.ts";
 
 interface SheetProps {
   /** The sheet's name: an h2 whose id the dialog's aria-labelledby names. */

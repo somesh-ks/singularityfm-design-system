@@ -3,7 +3,7 @@
  * classes are written. Link.tsx renders from it; a script or a React island that draws one calls
  * linkClass(); the style guide lists LINK. The rules are in styles/primitives.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export type LinkVariant = "text" | "source";
 

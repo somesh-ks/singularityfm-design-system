@@ -1,6 +1,6 @@
 import type { CSSProperties, InputHTMLAttributes } from "react";
-import { passedAttributes, styleObject } from "./attributes";
-import { switchClass } from "./switch";
+import { passedAttributes, styleObject } from "./attributes.ts";
+import { switchClass } from "./switch.ts";
 import "../styles/switch.css";
 
 interface SwitchProps {

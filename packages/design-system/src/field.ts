@@ -4,7 +4,7 @@
  * that draws a field calls fieldClass(), as the outlined Select does for its native select; the style
  * guide lists FIELD. The rules are in styles/field.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export const FIELD: Guidance = {
   summary: "An outlined box for text a person types: one line, or several lines (multiline).",

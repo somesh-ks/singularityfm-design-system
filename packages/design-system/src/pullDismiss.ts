@@ -11,10 +11,10 @@
  * (`dismissOnScrim`); a popover has light dismiss of its own.
  */
 
-import { drawerPanelClass } from "./drawer";
-import { quietNextClose } from "./gestureQuiet";
-import { MENU_SELECTORS } from "./menu";
-import { sheetBodyClass, sheetHeadClass } from "./sheet";
+import { drawerPanelClass } from "./drawer.ts";
+import { quietNextClose } from "./gestureQuiet.ts";
+import { MENU_SELECTORS } from "./menu.ts";
+import { sheetBodyClass, sheetHeadClass } from "./sheet.ts";
 
 const HEAD = `.${sheetHeadClass()}`;
 const BODY = `.${sheetBodyClass()}, ${MENU_SELECTORS.body}, .${drawerPanelClass()}, .emoji-body, .gen-body`;

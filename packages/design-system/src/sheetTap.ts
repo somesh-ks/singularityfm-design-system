@@ -5,7 +5,7 @@
  * when the finger lifts; the click that follows is then hit-tested against the page behind it. This
  * swallows that one click. A dialog sheet already does the same (dismissOnScrim, pullDismiss.ts).
  */
-import { MENU_SELECTORS } from "./menu";
+import { MENU_SELECTORS } from "./menu.ts";
 
 /** Matches menu.css: the sheet and its scrim exist below this width only. */
 const PHONE = "(width < 40rem)";

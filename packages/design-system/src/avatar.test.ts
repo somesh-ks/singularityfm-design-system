@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { AVATAR_SHAPES, avatarMarkup, moodShapes } from "./avatar";
+import { AVATAR_SHAPES, avatarMarkup, moodShapes } from "./avatar.ts";
 
 const css = readFileSync(join(import.meta.dirname, "..", "styles", "avatar.css"), "utf8");
 
