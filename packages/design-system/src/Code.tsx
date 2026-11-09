@@ -1,4 +1,3 @@
-import { Button as BaseButton } from "@base-ui/react/button";
 import { useEffect, useRef, useState } from "react";
 import { COPIED_MS, copySnippetText } from "./code";
 import Icon from "./Icon";
@@ -20,7 +19,7 @@ interface Props {
 }
 
 /**
- * The Code snippet (DS-4, DS-7): the text, and a Copy button, the Icon button on Base UI's Button. It
+ * The Code snippet (DS-4, DS-7): the text, and a Copy button, the Icon button (DS-8: a native button). It
  * renders its whole look on the server; the button copies once it hydrates, so an Astro page draws
  * it with client:load and a React island draws it as it is. It copies the text the page shows when
  * pressed, so a page script that rewrites `.code-snippet-text` (the style guide's) copies its own.
@@ -53,15 +52,10 @@ export default function Code({ text, label, copy = "Copy", copied = "Copied", cl
       >
         {text}
       </pre>
-      <BaseButton
-        render={
-          <IconButton label={copy} title={copy} className="code-snippet-copy">
-            <Icon name="copy" size="lg" />
-            <Icon name="check" size="lg" />
-          </IconButton>
-        }
-        onClick={onCopy}
-      />
+      <IconButton label={copy} title={copy} className="code-snippet-copy" onClick={onCopy}>
+        <Icon name="copy" size="lg" />
+        <Icon name="check" size="lg" />
+      </IconButton>
       <span className="sr-only" role="status">
         {done ? copied : ""}
       </span>
