@@ -1,0 +1,5 @@
+---
+"@singularityfm/design-system": minor
+---
+
+Menu, MenuItem and Select are React components on native elements (DS-8): import them as `@singularityfm/design-system/Menu`, `/MenuItem` and `/Select` and pass `className`. They render whole on the server and take no client directive: the Menu is the same native popover its button opens with `popoverTarget` before any script (keys and focus stay the page's script, `:popover-open` and `toggle` hold), and the Select is the same native select with its drawn list. The Select ships no script of its own: a page that draws one calls `installSelectSheet()` from `@singularityfm/design-system/selectSheet` once, for the phone's bottom sheet and Wheel; until it does, a phone opens the browser's own list. Their `.astro` paths are deprecated shims that keep `class`, every attribute and their slot (the rows, the options), and `Select.astro` still installs the sheet; `ds validate` warns on them. The markup is the same but for two attribute forms a selector matching either still matches: the Menu's `popover="auto"` (was `popover`) and the Select wrapper's `data-select=""` (was `data-select="true"`).

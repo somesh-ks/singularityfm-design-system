@@ -7,8 +7,7 @@
 // and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
 // stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
 // the Switch and the Slider hydrated where they are drawn (DS-7); and a fourth that draws a Menu, its
-// trigger and its rows as one island of the consumer's own (DS-7), a MenuItem by its name and by its shim,
-// and the deprecated Menu.astro. The workspace link serves every file in the folder, so a path missing from `files`, a
+// rows and a Select, by their names and by their .astro shims, native and with no island (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -140,30 +139,20 @@ try {
       "",
     ].join("\n"),
   );
-  // A Menu's rows reach Base UI only inside one React tree, so the consumer composes it in a component of
-  // its own and draws that with client:load; a row by itself, or in the deprecated Menu.astro, is static.
-  mkdirSync(join(app, "src/components"));
-  writeFileSync(
-    join(app, "src/components/RowMenu.tsx"),
-    [
-      `import Icon from "${name}/Icon";`,
-      `import IconButton from "${name}/IconButton";`,
-      `import Menu from "${name}/Menu";`,
-      `import MenuItem from "${name}/MenuItem";`,
-      'export default () => <Menu id="m1" title="Row" className="placed-menu" trigger={<IconButton label="Row actions"><Icon name="moreVert" /></IconButton>}><MenuItem data-id="i1">Share</MenuItem><MenuItem tone="danger">Delete</MenuItem></Menu>;',
-      "",
-    ].join("\n"),
-  );
+  // The Menu and the Select are native (DS-8): drawn on the server, no directive, no island. Each path
+  // keeps the test's class and attributes on its root, the Menu its rows and the Select its options.
   writeFileSync(
     join(app, "src/pages/menus.astro"),
     [
       "---",
-      'import RowMenu from "../components/RowMenu";',
+      `import Menu from "${name}/Menu";`,
+      `import OldMenu from "${name}/Menu.astro";`,
       `import MenuItem from "${name}/MenuItem";`,
       `import OldMenuItem from "${name}/MenuItem.astro";`,
-      `import OldMenu from "${name}/Menu.astro";`,
+      `import Select from "${name}/Select";`,
+      `import OldSelect from "${name}/Select.astro";`,
       "---",
-      '<html lang="en"><body><RowMenu client:load /><MenuItem className="placed-item" data-id="i2" data-block>Row words</MenuItem><OldMenuItem class="placed-item" data-id="i2" data-block>Row words</OldMenuItem><button popovertarget="m2">Old</button><OldMenu id="m2" title="Old"><OldMenuItem>Old row</OldMenuItem></OldMenu></body></html>',
+      '<html lang="en"><body><button popovertarget="m1">More</button><Menu id="m1" title="Row" className="placed-menu"><MenuItem className="placed-item" data-id="i1" data-block>Row words</MenuItem></Menu><button popovertarget="m2">More</button><OldMenu id="m2" title="Row" class="placed-menu"><OldMenuItem class="placed-item" data-id="i1" data-block>Row words</OldMenuItem></OldMenu><Select className="placed-select" label="Sort" name="sort" data-id="x1"><option value="a">Newest</option><option value="b" selected>Oldest</option></Select><OldSelect class="placed-select" label="Sort" name="sort" data-id="x1"><option value="a">Newest</option><option value="b" selected>Oldest</option></OldSelect></body></html>',
       "",
     ].join("\n"),
   );
@@ -259,35 +248,42 @@ try {
   for (const tag of islands)
     for (const [, url] of tag.matchAll(/(?:component|renderer)-url="([^"]+)"/g))
       if (!existsSync(join(app, "dist", url))) problems.push(`an island names ${url}, not built`);
-  // The Menu: one island that loads with the page, its trigger drawn on the server (Base UI portals the
-  // list, so it is drawn only once hydrated); a row by each path keeps the test's class, attributes and
-  // words; the old Menu still draws its popover and row.
-  const menuIslands = [...menus.matchAll(/<astro-island\b[^>]*>/g)].map((tag) => tag[0]);
-  if (menuIslands.length !== 1 || !/client="load"/.test(menuIslands[0] ?? ""))
-    problems.push(`the menus page drew ${menuIslands.length} islands, not the one Menu`);
-  for (const tag of menuIslands)
-    for (const [, url] of tag.matchAll(/(?:component|renderer)-url="([^"]+)"/g))
-      if (!existsSync(join(app, "dist", url))) problems.push(`an island names ${url}, not built`);
+  // Native: each Menu is a popover holding its row whole, each Select a select holding its options,
+  // and nothing hydrates. The deprecated Select still loads the phone's sheet; the named one leaves it
+  // to the page (installSelectSheet).
+  const menuLists = [
+    ...menus.matchAll(
+      /<div[^>]*\bplaced-menu\b[^>]*>[\s\S]*?<button[^>]*\bplaced-item\b[^>]*>([^<]*)<\/button>/g,
+    ),
+  ];
   if (
-    !/<button[^>]*aria-label="Row actions"[^>]*aria-haspopup="menu"|<button[^>]*aria-haspopup="menu"[^>]*aria-label="Row actions"/.test(
-      menus,
-    )
-  )
-    problems.push("the Menu's trigger was not drawn on the server");
-  const menuRows = [...menus.matchAll(/<button[^>]*\bplaced-item\b[^>]*>([^<]*)<\/button>/g)];
-  if (
-    menuRows.length !== 2 ||
-    menuRows.some(
-      ([tag, words]) =>
-        !/data-id="i2"/.test(tag) ||
-        !/data-block=""/.test(tag) ||
-        !/role="menuitem"/.test(tag) ||
+    menuLists.length !== 2 ||
+    menuLists.some(
+      ([list, words]) =>
+        !/\bpopover="(?:auto)?"/.test(list) ||
+        !/role="menu"/.test(list) ||
+        !/<button[^>]*\bplaced-item\b[^>]*data-id="i1"[^>]*data-block=""|<button[^>]*data-id="i1"[^>]*data-block=""[^>]*\bplaced-item\b/.test(
+          list,
+        ) ||
+        !/role="menuitem"/.test(list) ||
         words !== "Row words",
     )
   )
-    problems.push("the page drew no placed MenuItem with its attributes and words by each path");
-  if (!/<div[^>]*id="m2"[^>]*popover[^>]*>[\s\S]*Old row/.test(menus))
-    problems.push("the deprecated Menu.astro drew no popover with its row");
+    problems.push("the page drew no placed Menu holding its placed row by each path");
+  const selects = [
+    ...menus.matchAll(/<(?:label|span)[^>]*\bplaced-select\b[^>]*>([\s\S]*?)<\/select>/g),
+  ];
+  if (
+    selects.length !== 2 ||
+    selects.some(
+      ([, inside]) =>
+        !/<select[^>]*name="sort"[^>]*data-id="x1"|<select[^>]*data-id="x1"[^>]*name="sort"/.test(
+          inside,
+        ) || !/<option value="b" selected(?:="")?>Oldest<\/option>/.test(inside),
+    )
+  )
+    problems.push("the page drew no placed Select with its attributes and options by each path");
+  if (/<astro-island/.test(menus)) problems.push("the menus page hydrates");
   if (/<astro-island/.test(html) || /<astro-island/.test(actions))
     problems.push("a page that draws no Switch or Slider hydrates");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
@@ -313,6 +309,7 @@ try {
     [inputs, ".switch-input[data-checked]{"],
     [inputs, ".slider-input{"],
     [menus, ".menu-list{"],
+    [menus, ".select-outlined{"],
   ])
     if (![page, ...styles].some((text) => text.includes(rule)))
       problems.push(`${rule.slice(0, -1)} did not reach the page`);

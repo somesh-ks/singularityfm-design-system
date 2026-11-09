@@ -64,6 +64,7 @@ export const RETIRED_PATHS: RetiredPath[] = [
     "Slider",
     "Menu",
     "MenuItem",
+    "Select",
   ].map(
     (name): RetiredPath => ({
       path: `@singularityfm/design-system/${name}.astro`,

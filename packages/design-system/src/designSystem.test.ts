@@ -109,8 +109,6 @@ const ASTRO_LEFT = [
   "Dialog.astro",
   "DialogActions.astro",
   "DialogTitle.astro",
-  "Menu.astro",
-  "Select.astro",
   "Sheet.astro",
   "SheetHeader.astro",
 ];
@@ -126,10 +124,12 @@ const ASTRO_SHIMS = [
   "Field.astro",
   "Flag.astro",
   "Icon.astro",
+  "Menu.astro",
   "MenuItem.astro",
   "Ripple.astro",
   "RowExit.astro",
   "SectionTabs.astro",
+  "Select.astro",
   "Slider.astro",
   "Switch.astro",
 ];
@@ -180,7 +180,13 @@ describe("the component framework", () => {
     // own but client:load, the one directive a component that answers a press hydrates with (DS-7).
     // It closes itself, or, for a component that holds content (the Badge's words, the Row exit's
     // row), holds the shim's slot and nothing else: the slot reaches the .tsx as its children.
-    expect(template.trim(), `${shim} draws markup of its own`).toMatch(
+    // The one script a shim may keep is its old path's own install call from the package's module (the
+    // Select's phone sheet): a page on the old path keeps that behaviour; a script is no markup.
+    const markup = template.replace(
+      /\s*<script>\s*import \{ (install\w+) \} from "\.\/\w+";\s*\1\(\);\s*<\/script>\s*$/,
+      "",
+    );
+    expect(markup.trim(), `${shim} draws markup of its own`).toMatch(
       new RegExp(
         `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}|client:load))*\\s*(?:/>|><slot /></${name}>)$`,
       ),

@@ -1,36 +1,15 @@
 ---
 /**
- * @deprecated Import Menu from "@singularityfm/design-system/Menu" and draw it, its trigger and its
- * rows as one React component with client:load (DS-4, DS-7). This path stays as it was until a
- * breaking release, the native popover a page's own button opens with popovertarget and a page's
- * script gives keys and focus: it cannot render the React Menu, since an Astro slot reaches an island
- * as static markup, outside Base UI's tree, and its trigger is the page's. Its look is menu.css, the
- * React Menu's too, and its rows are MenuItem, so the two cannot drift apart in how they are drawn.
+ * @deprecated Import Menu from "@singularityfm/design-system/Menu" and pass className (DS-5, DS-8).
+ * This path stays until a breaking release: it renders that React Menu, `class` passed on as className
+ * and its slot as the rows, and draws nothing of its own (designSystem.test.ts holds it to that). The
+ * Menu is a native popover and takes no client directive.
  */
-import { menuBodyClass, menuListClass } from "./menu";
-import SheetHeader from "./SheetHeader.astro";
-import "../styles/menu.css";
+import Menu from "./Menu.tsx";
 
-interface Props {
-  id: string;
-  /** The sheet's header on a phone, and the menu's name for a screen reader. */
-  title: string;
-  /** A quiet line under the title on a phone's sheet, such as a card's facts. */
-  subtitle?: string;
-  /** For placing the popover under its own button (the anchor of a row or a story). Never its look. */
-  class?: string;
-}
+type Props = { id: string; title: string; subtitle?: string; class?: string };
 
-const { id, title, subtitle, class: placement } = Astro.props;
+const { class: className, ...props } = Astro.props;
 ---
 
-{/* Every ⋮ menu (2026-10-21): the header More menu's popover, which a phone shows as a bottom sheet
-     with this header and a scrim, and from 40rem as the small menu under its button (menu.css). The
-     items are <MenuItem> buttons, each with its icon at the start; the keys, focus and Close are
-     scripts/heroMenu.ts. */}
-<div class:list={[menuListClass(), placement]} id={id} popover>
-  <SheetHeader title={title} titleId={`${id}-title`} close="data-menu-close" subtitle={subtitle} />
-  <div class={menuBodyClass()} role="menu" aria-label={title}>
-    <slot />
-  </div>
-</div>
+<Menu {...props} className={className}><slot /></Menu>

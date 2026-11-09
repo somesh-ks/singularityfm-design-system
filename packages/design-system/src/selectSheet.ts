@@ -4,7 +4,8 @@
  * native list from 40rem, where it opens under the field; on a phone the browser's own list is
  * stopped and this opens instead (owner, 2026-10-31: one kind of bottom sheet everywhere). The
  * select stays in the page and holds the value: a choice sets it and fires its `input` and `change`,
- * so whatever listens for a select hears it as it always did. Loaded by Select.astro.
+ * so whatever listens for a select hears it as it always did. A page that draws a Select calls
+ * installSelectSheet() once (Select.tsx renders no script, DS-8); the deprecated Select.astro still does.
  *
  * This file is only the listener, on every page with a Select. The sheet itself is selectSheetView.ts,
  * fetched when the browser is idle or on the first open, whichever comes first (2026-11-03: the

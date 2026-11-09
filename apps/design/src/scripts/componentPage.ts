@@ -4,7 +4,10 @@
  * rest is the little a stage needs to be touched: opening an overlay, moving a section tab, taking a
  * row out.
  */
-export {};
+import { installSelectSheet } from "@singularity/design-system/selectSheet";
+
+// A phone opens a Select's list as the standard bottom sheet (selectSheet.ts): the page installs it once.
+installSelectSheet();
 
 const root = document.querySelector<HTMLElement>("[data-playground]");
 const snippet = document.querySelector<HTMLElement>("[data-code-section] .code-snippet-text");

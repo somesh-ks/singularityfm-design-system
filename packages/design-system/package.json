@@ -58,6 +58,7 @@
     "./Ripple": "./src/Ripple.tsx",
     "./RowExit": "./src/RowExit.tsx",
     "./SectionTabs": "./src/SectionTabs.tsx",
+    "./Select": "./src/Select.tsx",
     "./Slider": "./src/Slider.tsx",
     "./Switch": "./src/Switch.tsx",
     "./*.astro": "./src/*.astro",

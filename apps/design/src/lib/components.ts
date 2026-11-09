@@ -263,12 +263,13 @@ export const SPECS: readonly ComponentSpec[] = [
         lines.push(`  <MenuItem tone="danger"><Icon name="trash" /> ${SAMPLE.danger}</MenuItem>`);
       const sub = on(state, "subtitle") ? ` subtitle="${SAMPLE.menu.subtitle}"` : "";
       return [
-        `<Menu id="sample-menu" title="${SAMPLE.menu.title}"${sub} trigger={<Button variant="tonal">${SAMPLE.menu.trigger}</Button>}>`,
+        `<Button variant="tonal" popoverTarget="sample-menu">${SAMPLE.menu.trigger}</Button>`,
+        `<Menu id="sample-menu" title="${SAMPLE.menu.title}"${sub}>`,
         ...lines,
         "</Menu>",
       ].join("\n");
     },
-    note: "The Button opens the real popover: a small menu under the button from 40rem, a bottom sheet on a phone; Base UI adds the keys. In an Astro page the menu, its trigger and its rows are one React component, drawn with client:load.",
+    note: "The Button opens the real popover: a small menu under the button from 40rem, a bottom sheet on a phone. The app's script adds the arrow keys.",
     subparts: [
       {
         file: "MenuItem.tsx",
@@ -355,7 +356,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Select",
     group: "inputs",
     registry: "Select",
-    file: "Select.astro",
+    file: "Select.tsx",
     controls: [
       choice("variant", "Variant", [
         ["outlined", "Outlined"],
@@ -373,7 +374,7 @@ export const SPECS: readonly ComponentSpec[] = [
         "</Select>",
       ].join("\n");
     },
-    note: "On a phone it opens as a bottom sheet.",
+    note: "On a phone it opens as a bottom sheet, which a page installs once with installSelectSheet() (selectSheet.ts).",
   },
   {
     slug: "wheel",

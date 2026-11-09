@@ -355,7 +355,7 @@ export const componentParts = (): PartSource[] => [
     ],
     classes: ["select-outlined", "select-tonal"],
     files: [
-      "packages/design-system/src/Select.astro",
+      "packages/design-system/src/Select.tsx",
       "packages/design-system/src/select.ts",
       "packages/design-system/src/selectSheet.ts",
       "packages/design-system/src/wheel.ts",
@@ -374,6 +374,7 @@ export const componentParts = (): PartSource[] => [
     markup:
       '<Select variant="tonal" label="Sort" data-library-sort><option value="newest">Newest first</option></Select>',
     rules: [
+      "A native select with no client directive (DS-8); a page that draws one calls installSelectSheet() once for the phone's sheet.",
       'Outlined (the default) is a value in a form; tonal is a sort or a filter and takes data-active on its wrapper (find it with closest("[data-select]")) once its value is not the default.',
       'A select inside a settings row takes class="value-select" from settings.css, which draws it as the row\'s value.',
       "data-wheel on a short ordered run (the hours of a day) opens its phone sheet as a Wheel (design-system/wheel.ts), not as rows.",
@@ -399,14 +400,14 @@ export const componentParts = (): PartSource[] => [
       "overflow menu",
     ],
     markup:
-      '<Menu id="row-menu-3" title="Daily" trigger={<IconButton label="More"><Icon name="moreVert" /></IconButton>}><MenuItem><Icon name="pencilSimple" />Edit</MenuItem><MenuItem tone="danger"><Icon name="trash" />Delete</MenuItem></Menu>',
+      '<Menu id="row-menu-3" title="Daily"><MenuItem><Icon name="pencilSimple" />Edit</MenuItem><MenuItem tone="danger"><Icon name="trash" />Delete</MenuItem></Menu>',
     files: [
       "packages/design-system/src/Menu.tsx",
       "packages/design-system/src/MenuItem.tsx",
       "packages/design-system/src/menu.ts",
     ],
     rules: [
-      "In an Astro page the Menu, its trigger and its rows are one React component drawn with client:load (DS-7).",
+      "A native popover with no client directive: its button opens it with popoverTarget (DS-8).",
       "Under 40rem a menu is a sheet, never a small popover.",
       "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass().",
     ],

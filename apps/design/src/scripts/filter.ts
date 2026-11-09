@@ -4,7 +4,10 @@
  * sections of that [data-tier]. The query is not kept; the page is small enough to start again from
  * the top.
  */
-export {};
+import { installSelectSheet } from "@singularity/design-system/selectSheet";
+
+// A phone opens a Select's list as the standard bottom sheet (selectSheet.ts): the page installs it once.
+installSelectSheet();
 
 const field = document.querySelector<HTMLInputElement>("[data-filter]");
 const items = Array.from(document.querySelectorAll<HTMLElement>("[data-filter-item]"));
