@@ -93,7 +93,7 @@ try {
       `import { validate } from "${name}/rules";`,
       'const findings = validate(".a { color: #fff; }", "page.css").length;',
       "---",
-      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><ul><RowExit className="placed-row" data-id="s1">Row</RowExit><OldRowExit class="placed-row" data-id="s1" style="order: 1; background-image: url(data:image/gif;base64,R0lGOD)">Row</OldRowExit></ul><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
+      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed-icon" /><OldIcon name="play" class="placed-icon" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><ul><RowExit className="placed-row" data-id="s1">Row</RowExit><OldRowExit class="placed-row" data-id="s1" style="order: 1; background-image: url(data:image/gif;base64,R0lGOD)">Row</OldRowExit></ul><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
       "",
     ].join("\n"),
   );
@@ -143,7 +143,8 @@ try {
   for (const text of ["Link words", 'aria-label="Icon name"', 'aria-label="Fab name"', "Fab word"])
     if (!actions.includes(text)) problems.push(`the actions page lost ${text}`);
   // The shim passes `class` on as className; lost, the old path draws the glyph where nothing places it.
-  if (html.match(/class="icon-glyph placed"/g)?.length !== 2)
+  // The test's own class, wherever the Icon's own classes put it.
+  if (html.match(/class="[^"]*(?<![\w-])placed-icon(?![\w-])[^"]*"/g)?.length !== 2)
     problems.push("the page drew no placed Icon by each path");
   // The Badge shim hands its slot to React as children: lost, or left in a wrapper, the app's Admin tag
   // is an empty pill or carries markup the badge's rules never met.
