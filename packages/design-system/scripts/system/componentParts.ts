@@ -26,6 +26,7 @@ import { SELECT } from "../../src/select.js";
 import { SHEET } from "../../src/sheet.js";
 import { SLIDER } from "../../src/slider.js";
 import { SWITCH } from "../../src/switch.js";
+import { TOAST } from "../../src/toast.js";
 import type { PartSource } from "./types.js";
 
 /** The part a `dontUseWhen` points at. A family not yet a component keeps its hand-written id. */
@@ -46,6 +47,7 @@ const PART_OF: Record<string, string> = {
   Menu: "menu",
   Badge: "badge",
   Banner: "banner",
+  Toast: "toast",
   Dialog: "dialog",
   Sheet: "sheet",
   Drawer: "drawer",
@@ -496,6 +498,22 @@ export const componentParts = (): PartSource[] => [
     rules: [
       "Only the icon takes the tone.",
       "An island draws one with bannerClass() and bannerText.",
+    ],
+  }),
+  control("toast", "Toast", TOAST, {
+    kind: "feedback",
+    classes: ["toast", "toast-action", "toast-dismiss"],
+    files: [
+      "packages/design-system/src/Toast.tsx",
+      "packages/design-system/src/toast.ts",
+      "packages/design-system/src/toastStore.ts",
+      "packages/design-system/src/toastEvent.ts",
+    ],
+    keywords: ["snackbar", "undo", "flash message", "notification"],
+    markup: 'showToast({ message: "Deleted", actionLabel: "Undo", onAction })',
+    rules: [
+      "Mount <Toast client:idle /> once per page; call showToast() from toastStore, or sendToast() from toastEvent in code that must not load the store.",
+      "The page says where it sits with --toast-nav, --toast-dock, --toast-lift and --toast-inline-start/-end on the root, never with a rule on .toast.",
     ],
   }),
   control("dialog", "Dialog", DIALOG, {

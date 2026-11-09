@@ -84,28 +84,6 @@ export const PARTS: PartSource[] = [
     keywords: ["preference", "toggle row", "switch row", "setting"],
   },
   {
-    id: "toast",
-    name: "Toast",
-    kind: "feedback",
-    summary: "One quiet message at a time on the inverse surface, with an optional action.",
-    classes: ["toast", "toast-action", "toast-dismiss"],
-    when: [
-      "a brief message with an Undo after a delete",
-      "a failure that clears itself",
-      "a partial save",
-    ],
-    not: [
-      { when: "a notice that must stay", use: "banner" },
-      {
-        when: "a success or Saved confirmation",
-        use: "nothing; D115 allows only failures, Undo and partial saves",
-      },
-    ],
-    keywords: ["snackbar", "undo", "flash message", "notification"],
-    markup: 'showToast({ message: "Deleted", actionLabel: "Undo", onAction })',
-    rules: ["From a script outside the sheets chunk, use `sendToast`."],
-  },
-  {
     id: "empty-state",
     name: "Empty state",
     kind: "feedback",

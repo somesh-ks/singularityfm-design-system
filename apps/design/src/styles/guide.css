@@ -1621,6 +1621,18 @@
   font-size: var(--font-size-label);
 }
 
+/* The Toast's card: its inverse surface and ink, a glyph and the words (the real one is a popover). */
+.guide-live-inverse {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--shape-md);
+  background: var(--toast-bg);
+  color: var(--toast-fg);
+  font-size: var(--font-size-label);
+}
+
 .guide-live-side {
   inline-size: 14rem;
   align-content: start;

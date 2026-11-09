@@ -20,6 +20,7 @@ export type ComponentName =
   | "Badge"
   | "Flag"
   | "Banner"
+  | "Toast"
   | "Dialog"
   | "Sheet"
   | "Drawer"

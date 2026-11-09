@@ -6,6 +6,7 @@
  */
 import { mountSegmentedNav } from "@singularity/design-system/segmentedNav";
 import { installSelectSheet } from "@singularity/design-system/selectSheet";
+import { showToast } from "@singularity/design-system/toastStore";
 
 // A phone opens a Select's list as the standard bottom sheet (selectSheet.ts): the page installs it once.
 installSelectSheet();
@@ -42,6 +43,17 @@ if (root) {
   root.addEventListener("click", (event) => {
     const target = event.target as Element;
     // The real overlays are modal or popovers; their own scripts live in the app, so close and open are here.
+    const toast = target.closest<HTMLElement>("[data-preview-toast]");
+    if (toast) {
+      const kind = toast.dataset.previewToast;
+      showToast({
+        message: "Message",
+        kind: kind === "success" || kind === "error" ? kind : undefined,
+        actionLabel: toast.dataset.previewToastAction === undefined ? undefined : "Action",
+        onAction: () => {},
+      });
+      return;
+    }
     const open = target.closest<HTMLElement>("[data-preview-open]");
     if (open) {
       (

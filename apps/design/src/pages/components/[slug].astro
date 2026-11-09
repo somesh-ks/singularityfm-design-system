@@ -3,6 +3,7 @@ import Code from "@singularity/design-system/Code";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
 import Select from "@singularity/design-system/Select";
 import Switch from "@singularity/design-system/Switch";
+import Toast from "@singularity/design-system/Toast";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import PageHead from "../../components/PageHead.astro";
 import Shell from "../../layouts/Shell.astro";
@@ -86,6 +87,9 @@ const hasStage = !spec.noPreview;
         </section>
       )
     }
+
+    {/* The Toast is one per page, as in an app; the stage's button shows it (componentPage.ts). */}
+    {spec.slug === "toast" && <Toast client:load />}
 
     {
       !hasStage && (

@@ -1343,6 +1343,68 @@
       ]
     },
     {
+      "id": "toast",
+      "name": "Toast",
+      "kind": "feedback",
+      "summary": "One quiet message at a time on the inverse surface, with an optional action.",
+      "classes": [
+        "toast",
+        "toast-action",
+        "toast-dismiss"
+      ],
+      "files": [
+        "packages/design-system/src/Toast.tsx",
+        "packages/design-system/src/toast.ts",
+        "packages/design-system/src/toastStore.ts",
+        "packages/design-system/src/toastEvent.ts"
+      ],
+      "when": [
+        "A brief message with Undo after a delete",
+        "A failure that clears itself, or a partial save",
+        "A run that finished while its sheet was closed"
+      ],
+      "not": [
+        {
+          "when": "A notice that must stay",
+          "use": "banner"
+        },
+        {
+          "when": "A person must decide before going on",
+          "use": "dialog"
+        }
+      ],
+      "keywords": [
+        "snackbar",
+        "undo",
+        "flash message",
+        "notification"
+      ],
+      "markup": "showToast({ message: \"Deleted\", actionLabel: \"Undo\", onAction })",
+      "rules": [
+        "Mount <Toast client:idle /> once per page; call showToast() from toastStore, or sendToast() from toastEvent in code that must not load the store.",
+        "The page says where it sits with --toast-nav, --toast-dock, --toast-lift and --toast-inline-start/-end on the root, never with a rule on .toast."
+      ],
+      "styles": [
+        "packages/design-system/styles/buttons.css",
+        "packages/design-system/styles/toast.css"
+      ],
+      "usage": "The Toast (Toast.tsx). One quiet message at a time: a flat, inverse surface with a hairline radius, an optional leading icon (a check or an alert, so the outcome is not told by colour alone), the message at the label size, at most one text action in the accent and, only while it stays until used, a close button. A top-layer popover above whatever is docked at the bottom. Where it sits is the page's to say, by custom properties set on the root (never on .toast, so the component's rules stay the only ones that draw it): --toast-nav the navigation bar at the bottom; else --bottom-nav-height, else the safe area --toast-dock a docked bar above the navigation (the reader's mini player); 0 by default --toast-lift more room under it (the reader's run line); 0 by default --toast-inline-start the start inset it centres from; else --side-nav-width, else 0 --toast-inline-end the end inset; 0 by default",
+      "tokens": [
+        "--color-accent-on-inverse",
+        "--color-surface-inverse",
+        "--color-surface-inverse-action-hover",
+        "--color-surface-inverse-action-pressed",
+        "--color-surface-inverse-hover",
+        "--color-surface-inverse-pressed",
+        "--layout-dialog",
+        "--shape-md",
+        "--shape-round",
+        "--size-touch",
+        "--toast-bg",
+        "--toast-fg"
+      ]
+    },
+    {
       "id": "dialog",
       "name": "Dialog",
       "kind": "container",
@@ -1795,47 +1857,6 @@
         "--field-chevron-gap",
         "--size-icon"
       ]
-    },
-    {
-      "id": "toast",
-      "name": "Toast",
-      "kind": "feedback",
-      "summary": "One quiet message at a time on the inverse surface, with an optional action.",
-      "classes": [
-        "toast",
-        "toast-action",
-        "toast-dismiss"
-      ],
-      "when": [
-        "a brief message with an Undo after a delete",
-        "a failure that clears itself",
-        "a partial save"
-      ],
-      "not": [
-        {
-          "when": "a notice that must stay",
-          "use": "banner"
-        },
-        {
-          "when": "a success or Saved confirmation",
-          "use": "nothing; D115 allows only failures, Undo and partial saves"
-        }
-      ],
-      "keywords": [
-        "snackbar",
-        "undo",
-        "flash message",
-        "notification"
-      ],
-      "markup": "showToast({ message: \"Deleted\", actionLabel: \"Undo\", onAction })",
-      "rules": [
-        "From a script outside the sheets chunk, use `sendToast`."
-      ],
-      "styles": [
-        "packages/design-system/styles/buttons.css"
-      ],
-      "usage": "",
-      "tokens": []
     },
     {
       "id": "empty-state",
@@ -6112,6 +6133,7 @@
     "--tile-fill",
     "--tile-fill-hover",
     "--tile-fill-press",
+    "--toast-accent",
     "--tone",
     "--tone-bg",
     "--tone-strip",
