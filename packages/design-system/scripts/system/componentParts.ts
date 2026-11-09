@@ -321,19 +321,19 @@ export const componentParts = (): PartSource[] => [
       "master",
     ],
     markup:
-      '<div class="settings-row"><label class="settings-label" for="autoplay">Autoplay</label><Switch client:visible id="autoplay" name="autoplay" /></div>',
+      '<div class="settings-row"><label class="settings-label" for="autoplay">Autoplay</label><Switch client:load id="autoplay" name="autoplay" /></div>',
     files: ["packages/design-system/src/Switch.tsx", "packages/design-system/src/switch.ts"],
     rules: [
-      "In an Astro page it hydrates where it is drawn (client:visible) and starts from defaultChecked; in a React island it is controlled by checked and onCheckedChange (DS-7).",
+      "In an Astro page it hydrates where it is drawn (client:load) and starts from defaultChecked; in a React island it is controlled by checked and onCheckedChange (DS-7).",
     ],
   }),
   control("slider", "Slider", SLIDER, {
     keywords: ["slider", "range", "volume", "speed", "scrub"],
     markup:
-      '<Slider client:visible aria-labelledby="volume-label" min={0} max={1} step={0.05} defaultValue={0.7} />',
+      '<Slider client:load aria-labelledby="volume-label" min={0} max={1} step={0.05} defaultValue={0.7} />',
     files: ["packages/design-system/src/Slider.tsx", "packages/design-system/src/slider.ts"],
     rules: [
-      "In an Astro page it hydrates where it is drawn (client:visible) and starts from defaultValue; in a React island it is controlled by value and onValueChange (DS-7).",
+      "In an Astro page it hydrates where it is drawn (client:load) and starts from defaultValue; in a React island it is controlled by value and onValueChange (DS-7).",
       "It keeps --range-fill from its own value; a row's label names it with aria-labelledby, since a <label for> cannot reach its hidden input.",
     ],
   }),

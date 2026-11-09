@@ -136,7 +136,7 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
 {
   slug === "switch" && (
     <Switch
-      client:visible
+      client:load
       defaultChecked={state.state === "on"}
       indeterminate={state.state === "mixed"}
       aria-label={SAMPLE.label}
@@ -148,7 +148,7 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
 {
   slug === "slider" && (
     <Slider
-      client:visible
+      client:load
       hue={state.variant === "hue"}
       wavy={state.variant === "wavy"}
       min={0}

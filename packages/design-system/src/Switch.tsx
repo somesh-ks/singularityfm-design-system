@@ -31,7 +31,7 @@ type Props = SwitchProps &
  * The Switch (DS-4, DS-7) on Base UI's Switch: a `<button role="switch">` that carries the state as
  * data-checked or data-unchecked, and a hidden checkbox beside it that carries `name` and the value
  * to a form. It renders its whole look on the server; it answers a press once it hydrates, so an
- * Astro page draws it with `client:visible` and a React island draws it as it is. `id` names the
+ * Astro page draws it with `client:load` and a React island draws it as it is. `id` names the
  * button, so a `<label for>` names and presses it.
  */
 export default function Switch({

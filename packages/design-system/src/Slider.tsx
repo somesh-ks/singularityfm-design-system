@@ -63,7 +63,7 @@ type Props = SliderProps &
  * thumb's travel, and the thumb holds the hidden range input that takes focus, the arrow keys and
  * `name`. It keeps --range-fill from its own value, on the root and on a hue or wavy field, so no
  * caller does. It renders its whole look on the server; it answers a drag once it hydrates, so an
- * Astro page draws it with `client:visible` and a React island draws it as it is. `id` is the root's;
+ * Astro page draws it with `client:load` and a React island draws it as it is. `id` is the root's;
  * a row's label names it through aria-labelledby, since a `<label for>` cannot reach the hidden input.
  */
 export default function Slider({

@@ -121,7 +121,7 @@ try {
       "",
     ].join("\n"),
   );
-  // A Switch and a Slider answer a press only once hydrated, so a page draws them with client:visible
+  // A Switch and a Slider answer a press only once hydrated, so a page draws them with client:load
   // and each shim carries it; the Field is a native input and draws no island.
   writeFileSync(
     join(app, "src/pages/inputs.astro"),
@@ -134,7 +134,7 @@ try {
       `import Switch from "${name}/Switch";`,
       `import OldSwitch from "${name}/Switch.astro";`,
       "---",
-      '<html lang="en"><body><form><Field className="placed-field" data-id="f1" defaultValue="Words" /><OldField class="placed-field" data-id="f1" value="Words" style="order: 1" /><Switch client:visible className="placed-switch" data-id="s1" name="s1" defaultChecked /><OldSwitch class="placed-switch" data-id="s1" name="s1" checked /><Slider client:visible className="placed-slider" data-id="v1" name="v1" min={0} max={100} defaultValue={30} /><OldSlider class="placed-slider" data-id="v1" name="v1" min="0" max="100" value="30" /></form></body></html>',
+      '<html lang="en"><body><form><Field className="placed-field" data-id="f1" defaultValue="Words" /><OldField class="placed-field" data-id="f1" value="Words" style="order: 1" /><Switch client:load className="placed-switch" data-id="s1" name="s1" defaultChecked /><OldSwitch class="placed-switch" data-id="s1" name="s1" checked /><Slider client:load className="placed-slider" data-id="v1" name="v1" min={0} max={100} defaultValue={30} /><OldSlider class="placed-slider" data-id="v1" name="v1" min="0" max="100" value="30" /></form></body></html>',
       "",
     ].join("\n"),
   );
@@ -218,11 +218,11 @@ try {
     ranges.filter((tag) => /name="v1"/.test(tag) && /value="30"/.test(tag)).length !== 2
   )
     problems.push("the page drew no placed Slider with its attribute and value by each path");
-  // Hydration (DS-7): the Switch and the Slider by each path are islands that load when seen, each
+  // Hydration (DS-7): the Switch and the Slider by each path are islands that load with the page, each
   // naming a component module and a renderer the build emitted; the Field is none, and no other page
   // carries the renderer.
   const islands = [...inputs.matchAll(/<astro-island\b[^>]*>/g)].map((tag) => tag[0]);
-  if (islands.length !== 4 || islands.some((tag) => !/client="visible"/.test(tag)))
+  if (islands.length !== 4 || islands.some((tag) => !/client="load"/.test(tag)))
     problems.push(
       `the inputs page drew ${islands.length} islands, not the four Switch and Slider ones`,
     );

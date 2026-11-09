@@ -1,7 +1,7 @@
 ---
 /**
  * @deprecated Import Slider from "@singularityfm/design-system/Slider", pass className and draw it
- * with client:visible (DS-5, DS-7). This path stays until a breaking release: it renders that React
+ * with client:load (DS-5, DS-7). This path stays until a breaking release: it renders that React
  * Slider, `class` passed on as className and `value` as defaultValue (a page cannot hold a value React
  * controls), hydrated where it is drawn so it still answers a drag, and draws nothing of its own
  * (designSystem.test.ts holds it to that). The Slider keeps --range-fill itself.
@@ -18,4 +18,4 @@ type Props = Omit<HTMLAttributes<"input">, "class" | "type"> & {
 const { class: className, value: defaultValue, ...props } = Astro.props;
 ---
 
-<Slider defaultValue={defaultValue} {...props} className={className} client:visible />
+<Slider defaultValue={defaultValue} {...props} className={className} client:load />

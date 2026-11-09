@@ -1,7 +1,7 @@
 ---
 /**
  * @deprecated Import Switch from "@singularityfm/design-system/Switch", pass className and draw it
- * with client:visible (DS-5, DS-7). This path stays until a breaking release: it renders that React
+ * with client:load (DS-5, DS-7). This path stays until a breaking release: it renders that React
  * Switch, `class` passed on as className and `checked` as defaultChecked (a page cannot hold the
  * state), hydrated where it is drawn so it still answers a press, and draws nothing of its own
  * (designSystem.test.ts holds it to that).
@@ -17,4 +17,4 @@ type Props = Omit<HTMLAttributes<"input">, "class" | "type" | "role"> & {
 const { class: className, checked: defaultChecked, ...props } = Astro.props;
 ---
 
-<Switch defaultChecked={defaultChecked} {...props} className={className} client:visible />
+<Switch defaultChecked={defaultChecked} {...props} className={className} client:load />

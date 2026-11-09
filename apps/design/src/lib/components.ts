@@ -319,7 +319,7 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Switch"],
     code: (state) => {
-      const attrs = ["client:visible"];
+      const attrs = ["client:load"];
       if (state.state === "on") attrs.push("defaultChecked");
       if (state.state === "mixed") attrs.push("indeterminate");
       attrs.push(`aria-label="${SAMPLE.label}"`);
@@ -345,7 +345,7 @@ export const SPECS: readonly ComponentSpec[] = [
     code: (state) => {
       const attrs = ["min={0}", "max={100}", "defaultValue={40}", `aria-label="${SAMPLE.label}"`];
       if (state.variant !== "default") attrs.unshift(state.variant ?? "");
-      attrs.unshift("client:visible");
+      attrs.unshift("client:load");
       if (on(state, "disabled")) attrs.push("disabled");
       return jsx("Slider", attrs);
     },

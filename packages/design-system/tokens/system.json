@@ -663,9 +663,9 @@
         "indeterminate",
         "master"
       ],
-      "markup": "<div class=\"settings-row\"><label class=\"settings-label\" for=\"autoplay\">Autoplay</label><Switch client:visible id=\"autoplay\" name=\"autoplay\" /></div>",
+      "markup": "<div class=\"settings-row\"><label class=\"settings-label\" for=\"autoplay\">Autoplay</label><Switch client:load id=\"autoplay\" name=\"autoplay\" /></div>",
       "rules": [
-        "In an Astro page it hydrates where it is drawn (client:visible) and starts from defaultChecked; in a React island it is controlled by checked and onCheckedChange (DS-7)."
+        "In an Astro page it hydrates where it is drawn (client:load) and starts from defaultChecked; in a React island it is controlled by checked and onCheckedChange (DS-7)."
       ],
       "styles": [
         "packages/design-system/styles/switch.css"
@@ -721,9 +721,9 @@
         "speed",
         "scrub"
       ],
-      "markup": "<Slider client:visible aria-labelledby=\"volume-label\" min={0} max={1} step={0.05} defaultValue={0.7} />",
+      "markup": "<Slider client:load aria-labelledby=\"volume-label\" min={0} max={1} step={0.05} defaultValue={0.7} />",
       "rules": [
-        "In an Astro page it hydrates where it is drawn (client:visible) and starts from defaultValue; in a React island it is controlled by value and onValueChange (DS-7).",
+        "In an Astro page it hydrates where it is drawn (client:load) and starts from defaultValue; in a React island it is controlled by value and onValueChange (DS-7).",
         "It keeps --range-fill from its own value; a row's label names it with aria-labelledby, since a <label for> cannot reach its hidden input."
       ],
       "styles": [
