@@ -2,7 +2,7 @@
  * npm run ds -- find "<what you need>" | part <id> | token <words> | list | validate <files or globs>
  * Reads tokens/system.json, so it answers in milliseconds and never greps a stylesheet.
  */
-import { existsSync, globSync, readFileSync } from "node:fs";
+import { existsSync, globSync, readFileSync, statSync } from "node:fs";
 import { validate } from "../../rules/index.js";
 import { SYSTEM_PATH } from "./build.js";
 import { answer, describePart, describeTokenLine, findTokens } from "./query.js";
@@ -50,10 +50,24 @@ switch (command) {
     for (const part of system.parts) console.log(`${part.id}: ${part.summary}`);
     break;
   case "validate": {
-    // Tests hold violations on purpose, as fixtures.
+    // A pattern that matches nothing, or no pattern, is a typo, not a clean bill: it fails.
+    if (rest.length === 0) {
+      console.error("Usage: npm run ds -- validate <files or globs>");
+      process.exit(1);
+    }
+    const unmatched = rest.filter((pattern) => globSync(pattern).length === 0);
+    if (unmatched.length > 0) {
+      console.error(`No file matches ${unmatched.map((pattern) => `"${pattern}"`).join(", ")}`);
+      process.exit(1);
+    }
+    // A glob matches folders too; tests hold violations on purpose, as fixtures.
     const files = [...new Set(rest.flatMap((pattern) => globSync(pattern)))].filter(
-      (file) => !/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file),
+      (file) => statSync(file).isFile() && !/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file),
     );
+    if (files.length === 0) {
+      console.error("The patterns match no file to validate (folders and tests are skipped)");
+      process.exit(1);
+    }
     const findings = files.flatMap((file) => validate(readFileSync(file, "utf8"), file));
     for (const { file, line, severity, rule, message } of findings)
       console.log(`${file}:${line} ${severity} ${rule}: ${message}`);

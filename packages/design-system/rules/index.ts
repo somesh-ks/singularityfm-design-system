@@ -51,25 +51,82 @@ const escapeRegex = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g
 const wholeName = (fragment: string): RegExp => new RegExp(`${escapeRegex(fragment)}(?![\\w-])`);
 
 interface Declaration {
+  /** The rule's selector as written, for a message. */
   selector: string;
+  /** Each selector the declaration applies to, nesting resolved: `.a, .b { &:hover {} }` is two. */
+  selectors: string[];
   property: string;
   value: string;
   /** Where the property starts in the stylesheet. */
   index: number;
 }
 
-/** Every declaration of every innermost rule, with its selector. */
+/** A selector list's members, split on the commas outside parentheses. */
+function selectorList(text: string): string[] {
+  const out = [""];
+  let depth = 0;
+  for (const character of text) {
+    depth += character === "(" ? 1 : character === ")" ? -1 : 0;
+    if (character === "," && depth === 0) out.push("");
+    else out[out.length - 1] += character;
+  }
+  return out.map((selector) => selector.trim()).filter(Boolean);
+}
+
+/** A nested list under its parents: `&` takes each parent's place, else the rule is a descendant. */
+const nest = (parents: string[], children: string[]): string[] =>
+  parents.length === 0
+    ? children
+    : parents.flatMap((parent) =>
+        children.map((child) =>
+          child.includes("&") ? child.split("&").join(parent) : `${parent} ${child}`,
+        ),
+      );
+
+/**
+ * Every declaration at every nesting level, with the selectors it applies to: a parent keeps its own
+ * declarations beside a nested rule, and an at-rule (`@media`) passes its parent's selectors through.
+ */
 function declarations(css: string): Declaration[] {
-  return [...css.matchAll(/([^{}]*)\{([^{}]*)\}/g)].flatMap((rule) => {
-    const [, selector = "", body = ""] = rule;
-    const bodyStart = (rule.index ?? 0) + selector.length + 1;
-    return [...body.matchAll(/(^|;)(\s*)([\w-]+)\s*:\s*([^;]+)/g)].map((match) => ({
-      selector: selector.trim(),
-      property: match[3] ?? "",
-      value: (match[4] ?? "").trim(),
-      index: bodyStart + (match.index ?? 0) + (match[1]?.length ?? 0) + (match[2]?.length ?? 0),
-    }));
-  });
+  const out: Declaration[] = [];
+  const stack: { written: string; selectors: string[] }[] = [];
+  const read = (from: number, to: number) => {
+    const rule = stack.at(-1);
+    if (!rule) return;
+    for (const match of css.slice(from, to).matchAll(/(^|;)(\s*)([\w-]+)\s*:\s*([^;]+)/g))
+      out.push({
+        selector: rule.written,
+        selectors: rule.selectors,
+        property: match[3] ?? "",
+        value: (match[4] ?? "").trim(),
+        index: from + (match.index ?? 0) + (match[1]?.length ?? 0) + (match[2]?.length ?? 0),
+      });
+  };
+  let start = 0;
+  for (let at = 0; at < css.length; at += 1) {
+    if (css[at] === "{") {
+      // Declarations end at the last semicolon; what follows it is the nested rule's prelude.
+      const end = css.lastIndexOf(";", at - 1) + 1;
+      if (end > start) read(start, end);
+      const prelude = css.slice(Math.max(start, end), at).trim();
+      const parents = stack.at(-1)?.selectors ?? [];
+      const selectors = prelude.startsWith("@")
+        ? parents.length > 0
+          ? parents
+          : [prelude]
+        : nest(parents, selectorList(prelude));
+      stack.push({
+        written: prelude.startsWith("@") ? (stack.at(-1)?.written ?? prelude) : prelude,
+        selectors,
+      });
+      start = at + 1;
+    } else if (css[at] === "}") {
+      read(start, at);
+      stack.pop();
+      start = at + 1;
+    }
+  }
+  return out;
 }
 
 /** The text inside the parentheses that open at `open`. */
@@ -85,14 +142,31 @@ function argumentsAt(text: string, open: number): string {
 const HEX = /(?<![\w&-])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})(?![\w-])/g;
 const COLOUR_FUNCTION = /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi;
 
-/** Raw colours in a piece of text, as [index, literal]. A colour function that reads var() is a token's. */
-function rawColours(text: string): [number, string][] {
+/**
+ * Raw colours in a piece of text, as [index, literal]. A colour function that reads var() is a
+ * token's; a url() names a resource (`url(#gradient)`), never a colour.
+ */
+function rawColours(source: string): [number, string][] {
+  const text = blank(source, /url\([^)]*\)/gi);
   const hex = [...text.matchAll(HEX)].map((m): [number, string] => [m.index ?? 0, m[0]]);
   const functions = [...text.matchAll(COLOUR_FUNCTION)]
     .filter((m) => !/var\(/.test(argumentsAt(text, (m.index ?? 0) + m[0].length - 1)))
     .map((m): [number, string] => [m.index ?? 0, m[0]]);
   return [...hex, ...functions].sort((a, b) => a[0] - b[0]);
 }
+
+/**
+ * Strings in markup and script that hold a reference, never a colour: a link or an id
+ * (`href="#abc"`), and a selector or a hash a script reads (`querySelector("#face")`).
+ */
+const withoutReferences = (code: string): string =>
+  blank(
+    blank(
+      code,
+      /\b(?:href|src|srcset|action|formaction|for|id|list|form|usemap|poster|xlink:href|aria-[\w-]+)\s*=\s*\{?\s*(["'`])[^"'`\n]*\1/gi,
+    ),
+    /\b(?:querySelector(?:All)?|getElementById|closest|matches|hash\s*(?:[!=]==?|=))\s*\(?\s*(["'`])[^"'`\n]*\1/g,
+  );
 
 /**
  * Prevents colour drifting out of the token files: a hex or a literal rgb(), hsl() or oklch() ships a
@@ -108,7 +182,9 @@ export function rawColour(text: string, file: string): Finding[] {
     severity: "error",
   });
   if (isCode(file))
-    return rawColours(withoutCodeComments(text)).map(([at, literal]) => finding(at, literal));
+    return rawColours(withoutReferences(withoutCodeComments(text))).map(([at, literal]) =>
+      finding(at, literal),
+    );
   return declarations(withoutCssComments(text)).flatMap(({ value, index, property }) =>
     rawColours(value).map(([, literal]) => finding(index + property.length, literal)),
   );
@@ -166,13 +242,13 @@ export function offGrid(
   if (!isCss(file) || isTokenFile(file)) return [];
   return declarations(withoutCssComments(text))
     .filter(({ property }) => SPACING.test(property))
-    .flatMap(({ selector, property, value, index }) =>
+    .flatMap(({ selector, selectors, property, value, index }) =>
       terms(value).flatMap((term) => {
         const resolved = pixels(term);
         if (resolved === null || resolved % 8 === 0 || Math.abs(resolved) === 1) return [];
-        const named = [...GRID_EXCEPTIONS, ...exceptions].some(([allowed]) =>
-          wholeName(allowed).test(selector),
-        );
+        // Each selector in the list must be named: an exception covers its rule, not a neighbour.
+        const allowed = [...GRID_EXCEPTIONS, ...exceptions].map(([name]) => wholeName(name));
+        const named = selectors.every((one) => allowed.some((name) => name.test(one)));
         if (Math.abs(resolved) === 4 && named) return [];
         return [
           {
@@ -196,7 +272,8 @@ const LIBRARY_PROPERTIES = new Set([
 /**
  * Prevents a read of a property nothing defines: `var(--space-5)` with no --space-5 is no error to
  * the browser, which drops the whole declaration silently. A read with a fallback is an input that a
- * script or a caller may set, so it passes, as does any name the file itself declares or sets.
+ * script or a caller may set, so it passes, as does any name the file itself declares, sets with
+ * setProperty, or keys in a style object.
  */
 export function unknownProperty(text: string, file: string): Finding[] {
   if (isTokenFile(file) || !(isCss(file) || isCode(file))) return [];
@@ -205,7 +282,9 @@ export function unknownProperty(text: string, file: string): Finding[] {
     [
       ...source.matchAll(/(--[\w-]+)\s*:/g),
       ...source.matchAll(/@property\s+(--[\w-]+)/g),
-      ...source.matchAll(/["'`](--[\w-]+)["'`]/g),
+      // A script's write and a style object's key; a getPropertyValue read declares nothing.
+      ...source.matchAll(/setProperty\(\s*["'`](--[\w-]+)["'`]/g),
+      ...source.matchAll(/["'`](--[\w-]+)["'`]\s*:/g),
     ].map((match) => match[1]),
   );
   return [...source.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)]

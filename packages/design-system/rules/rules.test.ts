@@ -27,6 +27,20 @@ describe("the rules", () => {
     expect(lines(rawColour(css, "page.css"))).toEqual([1, 2, 3]);
     expect(rawColour(css, "packages/design-system/styles/tokens.css")).toEqual([]);
     expect(lines(rawColour('const tint = "#ff0000";\n// #fff\n', "glow.ts"))).toEqual([1]);
+    // A nested rule's parent keeps its own declarations.
+    expect(
+      lines(rawColour(".card {\n  color: #fff;\n  &:hover { opacity: 0.8; }\n}", "a.css")),
+    ).toEqual([2]);
+    // A link, an id, a selector or a url() holds a reference, never a colour.
+    const markup = [
+      '<a href="#abc">Top</a>',
+      '<svg><use href="#fade" /><rect fill="url(#bad)" /></svg>',
+      'document.querySelector("#face");',
+      '<circle fill="#fff" />',
+      '<div style="color: #0f0">',
+      "<style>.a { color: #123; }</style>",
+    ].join("\n");
+    expect(lines(rawColour(markup, "Page.astro"))).toEqual([4, 5, 6]);
   });
 
   // Prevents a 12px gap beside a 16px one: spacing lands on 8, 16, 24; 4px only where named.
@@ -45,6 +59,14 @@ describe("the rules", () => {
     const page = ".hero-text { gap: var(--space-1); }";
     expect(lines(offGrid(page, "page.css"))).toEqual([1]);
     expect(offGrid(page, "page.css", [[".hero-text", "title onto its subtitle"]])).toEqual([]);
+    // An exception names one selector, so a list that adds another stays checked; nesting reads
+    // the parent's name, and a parent keeps its own declarations beside a nested rule.
+    const nested = [
+      ".banner-body, .hero-text { gap: var(--space-1); }",
+      ".sheet-head { &:hover { margin: var(--space-1); } }",
+      ".f { gap: 12px; &:hover { opacity: 0.8; } }",
+    ].join("\n");
+    expect(lines(offGrid(nested, "page.css"))).toEqual([1, 3]);
   });
 
   // Prevents a declaration the browser drops silently: a read of a property nothing defines.
@@ -59,6 +81,11 @@ describe("the rules", () => {
     const script =
       'el.style.setProperty("--progress", "1");\nconst a = "var(--progress) var(--nope)";';
     expect(lines(unknownProperty(script, "bar.ts"))).toEqual([2]);
+    // A read through getPropertyValue declares nothing; a style object's key does.
+    const read = 'getComputedStyle(el).getPropertyValue("--gone");\nconst a = "var(--gone)";';
+    expect(lines(unknownProperty(read, "bar.ts"))).toEqual([2]);
+    const keyed = 'const style = { "--fill": 1 };\nconst a = "var(--fill)";';
+    expect(unknownProperty(keyed, "bar.tsx")).toEqual([]);
   });
 
   // Prevents a page drawing a component by its class (D237), on a raw element or through the

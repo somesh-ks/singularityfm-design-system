@@ -126,7 +126,8 @@ try {
   } catch (error) {
     lint = `${error.stdout}${error.stderr}`;
   }
-  if (!/plugin/.test(lint)) problems.push("the Biome plugin did not fire on a raw colour");
+  if (!/A raw colour: read a colour token/.test(lint))
+    problems.push("the Biome plugin did not fire on a raw colour");
   const assets = readdirSync(join(app, "dist/_astro"));
   // A .tsx in node_modules carries its stylesheet only if the consumer's build follows the import.
   const styles = assets
