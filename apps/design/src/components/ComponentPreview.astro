@@ -334,6 +334,18 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
   )
 }
 
+{
+  slug === "toast" && (
+    <Button
+      variant="tonal"
+      data-preview-toast={state.kind ?? "plain"}
+      data-preview-toast-action={on("action") ? "" : undefined}
+    >
+      Show toast
+    </Button>
+  )
+}
+
 {slug === "badge" && <Badge>{state.content === "number" ? "12" : SAMPLE.badge}</Badge>}
 
 {

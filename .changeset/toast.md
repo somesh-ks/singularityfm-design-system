@@ -1,0 +1,5 @@
+---
+"@singularityfm/design-system": minor
+---
+
+Toast is a component (D237, D253): import `@singularityfm/design-system/Toast` and mount `<Toast client:idle />` once per page; `showToast`, `dismissToast`, `getToast` and `subscribeToast` come from `/toastStore`, and `sendToast` (with `TOAST_EVENT` and `TOAST_READY`) from `/toastEvent` for code that must not load the store. It is the reader's Toaster moved unchanged, popover, swipe, one-line mode, flags and all, with its rules in `styles/toast.css`. Where it sits is the page's to say with `--toast-nav`, `--toast-dock`, `--toast-lift`, `--toast-inline-start` and `--toast-inline-end` set on the root; with none set it sits above `--bottom-nav-height` or the safe area, centred past `--side-nav-width`, as before. Also new: `/swipe` (the swipe-away rule and velocity tracker the toast and the app's rows share) and `/pageLeaving` (`endedByLeaving()`, whether a request ended because the page was going away). The registry now lists `toast-icon`, `toast-text`, `toast-action` and `toast-dismiss`, so the app's `systemUse.test.ts` fails a page that types them, from the bump that takes this release.
