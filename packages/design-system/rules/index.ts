@@ -61,13 +61,16 @@ interface Declaration {
   index: number;
 }
 
-/** A selector list's members, split on the commas outside parentheses. */
+/** A selector list's members, split on the commas outside parentheses, brackets and quotes. */
 function selectorList(text: string): string[] {
   const out = [""];
   let depth = 0;
+  let quote = "";
   for (const character of text) {
-    depth += character === "(" ? 1 : character === ")" ? -1 : 0;
-    if (character === "," && depth === 0) out.push("");
+    if (quote) quote = character === quote ? "" : quote;
+    else if (character === '"' || character === "'") quote = character;
+    else depth += "([".includes(character) ? 1 : ")]".includes(character) ? -1 : 0;
+    if (character === "," && depth === 0 && !quote) out.push("");
     else out[out.length - 1] += character;
   }
   return out.map((selector) => selector.trim()).filter(Boolean);

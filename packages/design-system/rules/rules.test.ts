@@ -67,6 +67,9 @@ describe("the rules", () => {
       ".f { gap: 12px; &:hover { opacity: 0.8; } }",
     ].join("\n");
     expect(lines(offGrid(nested, "page.css"))).toEqual([1, 3]);
+    // A comma inside an attribute value or :is() does not split the selector.
+    const quoted = '[data-tags="news,local"] { gap: var(--space-1); }';
+    expect(offGrid(quoted, "page.css", [['[data-tags="news,local"]', "a tag row"]])).toEqual([]);
   });
 
   // Prevents a declaration the browser drops silently: a read of a property nothing defines.
