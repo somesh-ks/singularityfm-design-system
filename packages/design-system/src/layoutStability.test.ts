@@ -80,6 +80,10 @@ interface Case {
    * hiding the words), and these must be cut.
    */
   words?: { selector: string; cut?: string[] };
+  /** Measure again with the pointer over the component after each state (a hover that swaps words). */
+  hover?: boolean;
+  /** The reader's setting the case runs under. */
+  reducedMotion?: boolean;
 }
 
 const label = (words: string) =>
@@ -131,10 +135,23 @@ const cases: Case[] = [
     words: { selector: "[data-chip-label]", cut: ["a long reason"] },
   },
   {
+    name: "PlayChip: Played turns to Play again under a pointer, with a narrower reserve",
+    el: h(PlayChip, { label: "Played", reserve: "Played" }),
+    states: [["played", dataState("played")]],
+    hover: true,
+  },
+  {
     name: "Button: its words swap, with a reserve",
     el: h(Button, { variant: "tonal", reserve: "Saving…", style: { width: "auto" } }, "Save"),
-    states: [["Saving…", "el.querySelector('.button-label > span').textContent='Saving…'"]],
+    states: [
+      ["Saving…", "el.querySelector('.button-label > span').textContent='Saving…'"],
+      [
+        "a long reason",
+        "el.querySelector('.button-label > span').textContent='Saving your changes failed'",
+      ],
+    ],
     watch: [".button-label"],
+    words: { selector: ".button-label > span", cut: ["a long reason"] },
   },
   {
     name: "Button: a spinner runs beside its words",
@@ -178,6 +195,15 @@ const cases: Case[] = [
         ] as [string, string],
     ),
     words: { selector: ".create-fab-label > span", cut: ["A very long reason it cannot play"] },
+  },
+  {
+    name: "Fab: folded while reading, with reduced motion it stays extended",
+    el: draw(Fab, { label: "Play", icon: "play", reserve: "Resume · 88 min left" }, "Play"),
+    states: [["folded", "el.dataset.folded=''"]],
+    // The words' own place holds only if their margin and opacity come back with the reserve.
+    watch: [".create-fab-label"],
+    words: { selector: ".create-fab-label > span" },
+    reducedMotion: true,
   },
   {
     name: "SegmentedNav: another tab",
@@ -304,7 +330,8 @@ describe.skipIf(!browser)("a control's box never depends on its state (DS-9)", (
           await page?.close();
         });
 
-        it.each(cases)("$name", async ({ el, states, watch = [], words }) => {
+        it.each(cases)("$name", async ({ el, states, watch = [], words, hover, reducedMotion }) => {
+          await page.emulateMedia({ reducedMotion: reducedMotion ? "reduce" : "no-preference" });
           await stage(page, mood, theme, renderToStaticMarkup(el));
           const rest = await measure(page, watch);
           for (const [state, script] of states) {
@@ -312,6 +339,19 @@ describe.skipIf(!browser)("a control's box never depends on its state (DS-9)", (
               `(() => { const el = document.querySelector('#w > *'); ${script} })()`,
             );
             expect(await measure(page, watch), `${state}`).toEqual(rest);
+            if (hover) {
+              await page.hover("#w > *");
+              expect(await measure(page, watch), `${state}, hovered`).toEqual(rest);
+              await page.mouse.move(0, 0);
+            }
+            if (reducedMotion) {
+              const shown = await page.evaluate(
+                () =>
+                  getComputedStyle(document.querySelector("#w > * .create-fab-label") as Element)
+                    .opacity,
+              );
+              expect(shown, `${state}: words shown`).toBe("1");
+            }
             if (words) {
               const cut = await page.evaluate((selector) => {
                 const words = document.querySelector(

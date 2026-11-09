@@ -208,7 +208,10 @@
 /* Busy and changing words (DS-9). A worded button's box and the place of its words never depend on its
    state. A spinner child (`.spinner`) stands in the start padding, hidden until aria-busy or data-busy
    says "working", so the words stay where they were; and the words it may swap to are reserved (the Button's
-   `reserve`: .button-label), so a button that hugs its words keeps its width. */
+   `reserve`: .button-label), so a button that hugs its words keeps its width.
+   shortcut: the spinner is wider than the default mood's padding, so in a button that hugs its words
+   (a dialog action) it would stand over the first letters; busy spinners are for buttons that fill their
+   row, where the words are centred. Upgrade when a hugging button needs one: give it a spinner slot. */
 :is(.button-filled, .button-tonal) > .spinner {
   position: absolute;
   inset-block: 0;
@@ -227,6 +230,18 @@
 
 .button-label > * {
   grid-area: 1 / 1;
+}
+
+/* The live words add nothing to the width: the reserve sets it, and words longer than it end in an
+   ellipsis. Centred, so a shorter word sits mid-button, not at the start of the reserved room. */
+.button-label > span {
+  display: block;
+  inline-size: 0;
+  min-inline-size: 100%;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .button-label::after {
@@ -542,7 +557,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.chip-text[data-reserve] > .chip-label {
+.chip-text[data-reserve] > :is(.chip-label, .chip-again) {
   inline-size: 0;
   min-inline-size: 100%;
   overflow: hidden;

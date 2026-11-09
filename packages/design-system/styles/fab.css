@@ -165,14 +165,18 @@ html[data-dialog-open] .create-fab {
 
 /* Folding is a change of size, so with reduced motion the button stays extended. */
 @media (prefers-reduced-motion: reduce) {
+  .create-fab[data-folded] .create-fab-label,
   .create-fab[data-folded] .create-fab-label[data-reserve] {
-    max-width: none;
+    margin-inline: var(--space-2) var(--space-1);
+    opacity: 1;
   }
 
   .create-fab[data-folded] .create-fab-label {
     max-width: 6rem;
-    margin-inline: var(--space-2) var(--space-1);
-    opacity: 1;
+  }
+
+  .create-fab[data-folded] .create-fab-label[data-reserve] {
+    max-width: none;
   }
 }
 

@@ -18,7 +18,7 @@ interface SelectProps {
    */
   className?: string;
   /**
-   * A tonal select's longest option text ("Longest first"). Where the browser draws the closed select
+   * A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select
    * as its chosen option (appearance: base-select) it is as wide as that option, so it grows and
    * shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9).
    */
@@ -53,7 +53,7 @@ export default function Select({
     <Wrapper
       className={[selectClass(variant), className].filter(Boolean).join(" ")}
       data-select=""
-      data-reserve={reserve}
+      data-reserve={variant === "tonal" ? reserve : undefined}
     >
       {label && <span className="sr-only">{label}</span>}
       <select

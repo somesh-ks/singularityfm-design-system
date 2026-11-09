@@ -6069,6 +6069,8 @@
     "--select-bg",
     "--select-bg-hover",
     "--select-bg-pressed",
+    "--select-pad-end",
+    "--select-pad-start",
     "--settings-control-width",
     "--sheet-foot",
     "--sheet-foot-mask",

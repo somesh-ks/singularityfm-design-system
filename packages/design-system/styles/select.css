@@ -71,12 +71,18 @@
   outline-offset: var(--stroke-ring-gap);
 }
 
+/* The select's own padding, one place, so the reserve below holds the room the select does. */
+.select-tonal {
+  --select-pad-start: var(--space-4);
+  --select-pad-end: calc(var(--space-4) + var(--space-4) + var(--field-chevron-gap));
+}
+
 /* The select is 44px tall and the box around it 36px: negative margins let it reach past the border
    for a full-size target. The row's padding holds room for the overhang. */
 .select-tonal > select {
   height: var(--size-touch);
   margin-block: calc((var(--chip-height) - var(--size-touch)) / 2 - var(--stroke-hairline));
-  padding-inline: var(--space-4) calc(var(--space-4) + var(--space-4) + var(--field-chevron-gap));
+  padding-inline: var(--select-pad-start) var(--select-pad-end);
   border: 0;
   border-radius: inherit;
   background: none;
@@ -99,7 +105,7 @@
 .select-tonal[data-reserve]::before {
   content: attr(data-reserve);
   grid-area: 1 / 1;
-  padding-inline: var(--space-4) calc(var(--space-4) + var(--space-4) + var(--field-chevron-gap));
+  padding-inline: var(--select-pad-start) var(--select-pad-end);
   visibility: hidden;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
