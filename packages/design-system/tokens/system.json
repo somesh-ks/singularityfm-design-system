@@ -957,7 +957,7 @@
         "ripple-wave"
       ],
       "files": [
-        "packages/design-system/src/Ripple.astro",
+        "packages/design-system/src/Ripple.tsx",
         "packages/design-system/src/ripple.ts"
       ],
       "when": [
@@ -1346,7 +1346,7 @@
         "tabs-in-card"
       ],
       "files": [
-        "packages/design-system/src/SectionTabs.astro"
+        "packages/design-system/src/SectionTabs.tsx"
       ],
       "when": [
         "jump to the sections of a briefing or an episode",

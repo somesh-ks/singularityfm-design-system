@@ -32,7 +32,7 @@ import tokens from "@singularityfm/design-system/tokens/tokens.json";
 | Path | Resolves to |
 | --- | --- |
 | `<Name>` | a React component in `src/<Name>.tsx` (each has its own entry in the exports map) |
-| `<Name>.astro` | an Astro component in `src/`; for a migrated one, deprecated (use `<Name>`): `Button.astro` is the React Button itself, `Banner.astro` renders the React Banner, and `Badge.astro`, `Icon.astro`, `BrandMark.astro` and `Flag.astro` render their React component and still take `class` |
+| `<Name>.astro` | an Astro component in `src/`; for a migrated one, deprecated (use `<Name>`): `Button.astro` is the React Button itself; `Badge.astro`, `Banner.astro`, `Icon.astro`, `BrandMark.astro`, `Flag.astro`, `ChapterAside.astro`, `Ripple.astro`, `RowExit.astro` and `SectionTabs.astro` render their React component, and those that took `class` still do |
 | `<module>` | a helper in `src/<module>.ts` |
 | `styles/*` | a stylesheet; `tokens.css` defines the custom properties the others read |
 | `tokens/*` | the token, glyph, cover and system JSON, and `llms.txt` |

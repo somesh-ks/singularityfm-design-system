@@ -1,5 +1,10 @@
 ---
-import "../styles/ripple.css";
+/**
+ * @deprecated Import Ripple from "@singularityfm/design-system/Ripple" (DS-5). This path stays until
+ * a breaking release: it renders that React Ripple and draws nothing of its own (designSystem.test.ts
+ * holds it to that).
+ */
+import Ripple from "./Ripple.tsx";
 ---
 
-<span class="ripple-area" aria-hidden="true"></span>
+<Ripple />

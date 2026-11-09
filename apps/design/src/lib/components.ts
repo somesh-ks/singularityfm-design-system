@@ -339,7 +339,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "SectionTabs",
     label: "Tabs",
     group: "navigation",
-    file: "SectionTabs.astro",
+    file: "SectionTabs.tsx",
     guidance: {
       summary: "A bar of links to the sections of one page, with a mark on the one in view.",
       useWhen: [
@@ -370,7 +370,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "ChapterAside",
     label: "Chapter list",
     group: "navigation",
-    file: "ChapterAside.astro",
+    file: "ChapterAside.tsx",
     guidance: {
       summary:
         "The contents list beside the reading column: a link to each section, the one in view marked.",
@@ -395,7 +395,7 @@ export const SPECS: readonly ComponentSpec[] = [
     label: "Row exit",
     group: "navigation",
     registry: "Row exit",
-    file: "RowExit.astro",
+    file: "RowExit.tsx",
     controls: [
       choice("rows", "Rows", [
         ["3", "Three"],
@@ -547,7 +547,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Ripple",
     group: "feedback",
     registry: "Ripple",
-    file: "Ripple.astro",
+    file: "Ripple.tsx",
     controls: [],
     imports: ["Button", "Ripple"],
     code: () => `<Button variant="tonal" data-ripple>\n  ${SAMPLE.label}\n  <Ripple />\n</Button>`,
