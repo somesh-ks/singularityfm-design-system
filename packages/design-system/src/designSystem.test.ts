@@ -109,9 +109,6 @@ const ASTRO_LEFT = [
   "Dialog.astro",
   "DialogActions.astro",
   "DialogTitle.astro",
-  "Menu.astro",
-  "MenuItem.astro",
-  "Select.astro",
   "Sheet.astro",
   "SheetHeader.astro",
 ];
@@ -127,9 +124,12 @@ const ASTRO_SHIMS = [
   "Field.astro",
   "Flag.astro",
   "Icon.astro",
+  "Menu.astro",
+  "MenuItem.astro",
   "Ripple.astro",
   "RowExit.astro",
   "SectionTabs.astro",
+  "Select.astro",
   "Slider.astro",
   "Switch.astro",
 ];
@@ -179,7 +179,13 @@ describe("the component framework", () => {
     // One element, the component, with only {expressions} for props and no literal attribute of its
     // own. It closes itself, or, for a component that holds content (the Badge's words, the Row exit's
     // row), holds the shim's slot and nothing else: the slot reaches the .tsx as its children.
-    expect(template.trim(), `${shim} draws markup of its own`).toMatch(
+    // The one script a shim may keep is its old path's own install call from the package's module (the
+    // Select's phone sheet): a page on the old path keeps that behaviour; a script is no markup.
+    const markup = template.replace(
+      /\s*<script>\s*import \{ (install\w+) \} from "\.\/\w+\.ts";\s*\1\(\);\s*<\/script>\s*$/,
+      "",
+    );
+    expect(markup.trim(), `${shim} draws markup of its own`).toMatch(
       new RegExp(
         `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}))*\\s*(?:/>|><slot /></${name}>)$`,
       ),

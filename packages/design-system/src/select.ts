@@ -1,6 +1,6 @@
 /**
  * The Select: a native select that draws its own chevron and opens a list the page styles, in two
- * variants. The one place its classes are written. Select.astro renders from it; a script or a React
+ * variants. The one place its classes are written. Select.tsx renders from it; a script or a React
  * island that draws one calls selectClass(); the style guide lists SELECT. The rules are in
  * styles/select.css. The wrapper carries `data-select`, so a script finds it with
  * `closest("[data-select]")`, and `data-active` on a tonal one says its value is not the default.

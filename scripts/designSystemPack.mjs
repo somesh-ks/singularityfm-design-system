@@ -6,7 +6,8 @@
 // files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
 // and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
 // stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
-// each a native element that hydrates nowhere (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
+// each a native element that hydrates nowhere (DS-8); and a fourth that draws a Menu, its rows and a
+// Select, by their names and by their .astro shims, native and with no island (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -137,6 +138,23 @@ try {
       "",
     ].join("\n"),
   );
+  // The Menu and the Select are native (DS-8): drawn on the server, no directive, no island. Each path
+  // keeps the test's class and attributes on its root, the Menu its rows and the Select its options.
+  writeFileSync(
+    join(app, "src/pages/menus.astro"),
+    [
+      "---",
+      `import Menu from "${name}/Menu";`,
+      `import OldMenu from "${name}/Menu.astro";`,
+      `import MenuItem from "${name}/MenuItem";`,
+      `import OldMenuItem from "${name}/MenuItem.astro";`,
+      `import Select from "${name}/Select";`,
+      `import OldSelect from "${name}/Select.astro";`,
+      "---",
+      '<html lang="en"><body><button popovertarget="m1">More</button><Menu id="m1" title="Row" className="placed-menu"><MenuItem className="placed-item" data-id="i1" data-block>Row words</MenuItem></Menu><button popovertarget="m2">More</button><OldMenu id="m2" title="Row" class="placed-menu"><OldMenuItem class="placed-item" data-id="i1" data-block>Row words</OldMenuItem></OldMenu><Select className="placed-select" label="Sort" name="sort" data-id="x1"><option value="a">Newest</option><option value="b" selected>Oldest</option></Select><OldSelect class="placed-select" label="Sort" name="sort" data-id="x1"><option value="a">Newest</option><option value="b" selected>Oldest</option></OldSelect></body></html>',
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -155,6 +173,7 @@ try {
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
   const inputs = readFileSync(join(app, "dist/inputs/index.html"), "utf8");
+  const menus = readFileSync(join(app, "dist/menus/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
@@ -233,6 +252,42 @@ try {
   // that draws a Switch or a Slider.
   if (/<astro-island|<script/.test(inputs))
     problems.push("the inputs page hydrates or ships a script");
+  // Native: each Menu is a popover holding its row whole, each Select a select holding its options,
+  // and nothing hydrates. The deprecated Select still loads the phone's sheet; the named one leaves it
+  // to the page (installSelectSheet).
+  const menuLists = [
+    ...menus.matchAll(
+      /<div[^>]*\bplaced-menu\b[^>]*>[\s\S]*?<button[^>]*\bplaced-item\b[^>]*>([^<]*)<\/button>/g,
+    ),
+  ];
+  if (
+    menuLists.length !== 2 ||
+    menuLists.some(
+      ([list, words]) =>
+        !/\bpopover="(?:auto)?"/.test(list) ||
+        !/role="menu"/.test(list) ||
+        !/<button[^>]*\bplaced-item\b[^>]*data-id="i1"[^>]*data-block=""|<button[^>]*data-id="i1"[^>]*data-block=""[^>]*\bplaced-item\b/.test(
+          list,
+        ) ||
+        !/role="menuitem"/.test(list) ||
+        words !== "Row words",
+    )
+  )
+    problems.push("the page drew no placed Menu holding its placed row by each path");
+  const selects = [
+    ...menus.matchAll(/<(?:label|span)[^>]*\bplaced-select\b[^>]*>([\s\S]*?)<\/select>/g),
+  ];
+  if (
+    selects.length !== 2 ||
+    selects.some(
+      ([, inside]) =>
+        !/<select[^>]*name="sort"[^>]*data-id="x1"|<select[^>]*data-id="x1"[^>]*name="sort"/.test(
+          inside,
+        ) || !/<option value="b" selected(?:="")?>Oldest<\/option>/.test(inside),
+    )
+  )
+    problems.push("the page drew no placed Select with its attributes and options by each path");
+  if (/<astro-island/.test(menus)) problems.push("the menus page hydrates");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
   let lint = "";
   try {
@@ -251,8 +306,14 @@ try {
     problems.push("the Icon's stylesheet did not reach the page");
   if (![actions, ...styles].some((text) => text.includes(".create-fab{")))
     problems.push("the Fab's stylesheet did not reach the page");
-  for (const rule of [".field-input{", ".switch-input:checked{", ".slider-input{"])
-    if (![inputs, ...styles].some((text) => text.includes(rule)))
+  for (const [page, rule] of [
+    [inputs, ".field-input{"],
+    [inputs, ".switch-input:checked{"],
+    [inputs, ".slider-input{"],
+    [menus, ".menu-list{"],
+    [menus, ".select-outlined{"],
+  ])
+    if (![page, ...styles].some((text) => text.includes(rule)))
       problems.push(`${rule.slice(0, -1)} did not reach the page`);
   if (!assets.some((file) => file.endsWith(".woff2")))
     problems.push("the build emitted no font file");

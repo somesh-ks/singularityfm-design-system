@@ -241,7 +241,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Menu",
     group: "actions",
     registry: "Menu",
-    file: "Menu.astro",
+    file: "Menu.tsx",
     controls: [
       choice("items", "Actions", [
         ["3", "Three"],
@@ -272,7 +272,7 @@ export const SPECS: readonly ComponentSpec[] = [
     note: "The Button opens the real popover: a small menu under the button from 40rem, a bottom sheet on a phone. The app's script adds the arrow keys.",
     subparts: [
       {
-        file: "MenuItem.astro",
+        file: "MenuItem.tsx",
         name: "MenuItem",
         note: 'One row: its glyph first, then the words. tone="danger" for the one row that destroys.',
       },
@@ -357,7 +357,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Select",
     group: "inputs",
     registry: "Select",
-    file: "Select.astro",
+    file: "Select.tsx",
     controls: [
       choice("variant", "Variant", [
         ["outlined", "Outlined"],
@@ -375,7 +375,7 @@ export const SPECS: readonly ComponentSpec[] = [
         "</Select>",
       ].join("\n");
     },
-    note: "On a phone it opens as a bottom sheet.",
+    note: "On a phone it opens as a bottom sheet, which a page installs once with installSelectSheet() (selectSheet.ts).",
   },
   {
     slug: "wheel",
@@ -789,7 +789,9 @@ export const stateKey = (controls: readonly Control[], state: State): string =>
  */
 export function codeFor(spec: ComponentSpec, state: State): string {
   const imports = spec.imports.map((name) =>
-    SPECS.find((other) => other.name === name)?.file?.endsWith(".tsx")
+    [...SPECS, ...SPECS.flatMap((other) => other.subparts ?? [])]
+      .find((other) => other.name === name)
+      ?.file?.endsWith(".tsx")
       ? `import ${name} from "@singularityfm/design-system/${name}";`
       : `import ${name} from "@singularityfm/design-system/${name}.astro";`,
   );
