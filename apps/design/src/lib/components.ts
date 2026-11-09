@@ -532,7 +532,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Badge",
     group: "feedback",
     registry: "Badge",
-    file: "Badge.astro",
+    file: "Badge.tsx",
     controls: [
       choice("content", "Content", [
         ["word", "A word"],

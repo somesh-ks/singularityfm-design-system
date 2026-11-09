@@ -105,7 +105,6 @@ describe("the Flag", () => {
 // and trims this list; nothing joins it.
 const ASTRO_LEFT = [
   "Avatar.astro",
-  "Badge.astro",
   "Banner.astro",
   "ChapterAside.astro",
   "Code.astro",
@@ -128,7 +127,7 @@ const ASTRO_LEFT = [
 // A migrated component whose .astro path the apps still import, `class` and all, keeps that path as a
 // deprecated shim: dropping it, or the `class` it takes, is a breaking change (COMPATIBILITY.md). The
 // breaking release that ends the .astro paths empties this list.
-const ASTRO_SHIMS = ["BrandMark.astro", "Flag.astro", "Icon.astro"];
+const ASTRO_SHIMS = ["Badge.astro", "BrandMark.astro", "Flag.astro", "Icon.astro"];
 
 describe("the component framework", () => {
   const files = readdirSync(import.meta.dirname, { recursive: true }).map(String);
@@ -169,10 +168,13 @@ describe("the component framework", () => {
         !/^const \{[^}]*\} = Astro\.props;$/.test(line),
     );
     expect(own, `${shim} has logic of its own`).toEqual([]);
-    // One self-closing element, the component, with only {expressions} for props: no children,
-    // no literal attribute of its own.
+    // One element, the component, with only {expressions} for props and no literal attribute of its
+    // own. It closes itself, or, for a component that holds words (the Badge), holds the shim's slot
+    // and nothing else: the slot reaches the .tsx as its children.
     expect(template.trim(), `${shim} draws markup of its own`).toMatch(
-      new RegExp(`^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}))*\\s*/>$`),
+      new RegExp(
+        `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}))*\\s*(?:/>|><slot /></${name}>)$`,
+      ),
     );
   });
 

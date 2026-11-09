@@ -43,6 +43,7 @@
     "./rules/biome-config.json": "./rules/biome-config.json",
     "./Button": "./src/Button.tsx",
     "./Button.astro": "./src/Button.tsx",
+    "./Badge": "./src/Badge.tsx",
     "./BrandMark": "./src/BrandMark.tsx",
     "./Flag": "./src/Flag.tsx",
     "./Icon": "./src/Icon.tsx",

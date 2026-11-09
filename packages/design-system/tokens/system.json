@@ -312,7 +312,7 @@
         "badge-label"
       ],
       "files": [
-        "packages/design-system/src/Badge.astro",
+        "packages/design-system/src/Badge.tsx",
         "packages/design-system/src/badge.ts"
       ],
       "when": [
@@ -347,7 +347,7 @@
       "styles": [
         "packages/design-system/styles/badge.css"
       ],
-      "usage": "The Badge (design-system/Badge.astro): a grey pill that holds one word or one number. One size, one fill. It is as wide as its words and no narrower than it is high, so a single digit stays round. Grey, so the blue stays with the controls (owner, 2026-10-30).",
+      "usage": "The Badge (design-system/Badge.tsx): a grey pill that holds one word or one number. One size, one fill. It is as wide as its words and no narrower than it is high, so a single digit stays round. Grey, so the blue stays with the controls (owner, 2026-10-30).",
       "tokens": [
         "--color-on-surface-muted",
         "--color-surface-container"

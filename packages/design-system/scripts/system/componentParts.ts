@@ -201,6 +201,7 @@ export const componentParts = (): PartSource[] => [
   control("badge", "Badge", BADGE, {
     kind: "display",
     classes: ["badge-label"],
+    files: ["packages/design-system/src/Badge.tsx", "packages/design-system/src/badge.ts"],
     not: [{ when: "the pill can be pressed or ticked", use: "filter-chip" }],
     markup: "<Badge>Admin</Badge>",
     keywords: ["badge", "tag", "pill", "count", "label"],
