@@ -45,9 +45,9 @@ Rewritten, never appended. As of 2026-11-09: 0.3.0 is on npm (the static familie
 
 The order is the design system master plan's (owner, 2026-11-08). DS-8 drew every family on its native markup, so none of them broke a consumer and each shipped as a minor; no pre-release line is needed for them.
 
-1. The owner merges app #774 (0.3.0).
-2. `release.yml` opens the 0.4.0 version pull request from the pending changesets; the owner merges it and it publishes.
+1. App #774 (0.3.0) merges once green (owner's OK on stills first).
+2. `release.yml` opens the 0.4.0 version pull request from the pending changesets; it merges once green and publishes.
 3. The app's bump to 0.4.0 draws the families by name (Field, Switch, Slider, the chips, the segmented controls, Search field, the overlays, Menu, MenuItem, Select, Avatar, Code), calls `installSelectSheet()` once in its shell and imports `<pkg>/segmentedNav`; its design-check then calls the rules with its own 4px list instead of its own copies.
 4. Open for the owner: the Play button as a Fab variant, and the chips' padding.
-5. 1.0.0 retires the `.astro` shims once COMPATIBILITY.md's window has passed (a major; the owner merges it).
+5. 1.0.0 retires the `.astro` shims once COMPATIBILITY.md's window has passed (a major; it merges like any PR once green).
 6. After 1.0.0: a remote MCP on the style guide's project (a DS record first, amending D236), local evals through the editors' headless modes, and one agent plugin for Claude Code, Codex and Antigravity.
