@@ -151,6 +151,14 @@ const { slug } = Astro.props;
       </span>
     )
   }
+  {
+    slug === "toast" && (
+      <span class="guide-live-inverse">
+        <Icon name="check" />
+        <span>{SAMPLE.toast.message}</span>
+      </span>
+    )
+  }
   {slug === "badge" && <Badge>{SAMPLE.badge}</Badge>}
   {slug === "ripple" && <span class="guide-live-ripple"><Button variant="tonal">{SAMPLE.label}</Button></span>}
   {slug === "glow" && <span class="guide-live-glow"><Icon name="heartOutline" size="lg" /></span>}

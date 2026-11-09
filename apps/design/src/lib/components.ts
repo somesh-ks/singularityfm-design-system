@@ -133,6 +133,7 @@ export const SAMPLE = {
   chapters: ["Section one", "Section two", "Section three"],
   rows: ["Item one", "Item two", "Item three", "Item four", "Item five"],
   banner: { title: "Title", body: "Supporting text", action: "Action" },
+  toast: { message: "Message", action: "Action" },
   badge: "Label",
   sheet: "Sheet title",
   glyph: "share",
@@ -743,6 +744,29 @@ export const SPECS: readonly ComponentSpec[] = [
       return jsx("Banner", attrs);
     },
     note: "A strip squeezes the app down while it shows; here it sits in the stage.",
+  },
+  {
+    slug: "toast",
+    name: "Toast",
+    group: "feedback",
+    registry: "Toast",
+    file: "Toast.tsx",
+    controls: [
+      choice("kind", "Kind", [
+        ["plain", "Plain"],
+        ["success", "Success"],
+        ["error", "Error"],
+      ]),
+      toggle("action", "Action"),
+    ],
+    imports: [],
+    code: (state) => {
+      const fields = [`message: "${SAMPLE.toast.message}"`];
+      if (state.kind === "success" || state.kind === "error") fields.push(`kind: "${state.kind}"`);
+      if (on(state, "action")) fields.push(`actionLabel: "${SAMPLE.toast.action}"`, "onAction");
+      return `showToast({ ${fields.join(", ")} });`;
+    },
+    note: "The page mounts <Toast client:idle /> once; here it sits above the bottom of the window.",
   },
   {
     slug: "badge",

@@ -35,6 +35,7 @@ import { SELECT, SELECT_CLASSES, SELECT_RETIRED } from "./select.ts";
 import { SHEET, SHEET_CLASSES, SHEET_RETIRED } from "./sheet.ts";
 import { SLIDER, SLIDER_CLASSES, SLIDER_RETIRED, SLIDER_VARIANTS } from "./slider.ts";
 import { SWITCH, SWITCH_CLASSES, SWITCH_RETIRED } from "./switch.ts";
+import { TOAST, TOAST_CLASSES, TOAST_RETIRED } from "./toast.ts";
 import { WHEEL, WHEEL_CLASSES, WHEEL_RETIRED } from "./wheel.ts";
 
 export interface DesignSystemComponent extends Guidance {
@@ -283,6 +284,17 @@ export const COMPONENTS: DesignSystemComponent[] = [
     useWhen: BANNER.useWhen,
     dontUseWhen: BANNER.dontUseWhen,
     parts: { ...BANNER.variants, ...BANNER.tones },
+  },
+  {
+    name: "Toast",
+    sheet: "toast.css",
+    prefix: "toast-",
+    classes: TOAST_CLASSES,
+    retired: TOAST_RETIRED,
+    summary: TOAST.summary,
+    useWhen: TOAST.useWhen,
+    dontUseWhen: TOAST.dontUseWhen,
+    parts: {},
   },
   {
     name: "Dialog",
