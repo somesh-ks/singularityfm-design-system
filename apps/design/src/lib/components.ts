@@ -568,7 +568,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Icon",
     group: "display",
     registry: "Icon",
-    file: "Icon.astro",
+    file: "Icon.tsx",
     controls: [
       choice(
         "name",
@@ -610,7 +610,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Flag",
     group: "display",
     registry: "Flag",
-    file: "Flag.astro",
+    file: "Flag.tsx",
     controls: [
       choice("region", "Region", FLAG_CHOICES),
       choice("mode", "Draws", [
@@ -631,7 +631,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "BrandMark",
     label: "Brand mark",
     group: "display",
-    file: "BrandMark.astro",
+    file: "BrandMark.tsx",
     guidance: {
       summary: "The ringed dot: the app's mark, in the wordmark and beside the app's name.",
       useWhen: ["The app's name is written out, as in the navigation's wordmark."],
@@ -703,11 +703,14 @@ export function allStates(controls: readonly Control[]): State[] {
 export const stateKey = (controls: readonly Control[], state: State): string =>
   controls.map((control) => state[control.id] ?? "").join("|");
 
-/** The import lines and the usage of a state, as a page prints them. */
+/**
+ * The import lines and the usage of a state, as a page prints them. A React component is imported by
+ * its name (DS-3); its old .astro path is deprecated, so the guide never prints it.
+ */
 export function codeFor(spec: ComponentSpec, state: State): string {
   const imports = spec.imports.map((name) =>
-    name === "Button"
-      ? `import Button from "@singularityfm/design-system/Button";`
+    SPECS.find((other) => other.name === name)?.file?.endsWith(".tsx")
+      ? `import ${name} from "@singularityfm/design-system/${name}";`
       : `import ${name} from "@singularityfm/design-system/${name}.astro";`,
   );
   return `${imports.join("\n")}\n\n${spec.code?.(state) ?? ""}`;

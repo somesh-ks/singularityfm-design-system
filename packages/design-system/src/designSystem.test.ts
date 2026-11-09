@@ -107,15 +107,12 @@ const ASTRO_LEFT = [
   "Avatar.astro",
   "Badge.astro",
   "Banner.astro",
-  "BrandMark.astro",
   "ChapterAside.astro",
   "Code.astro",
   "Dialog.astro",
   "DialogActions.astro",
   "DialogTitle.astro",
   "Field.astro",
-  "Flag.astro",
-  "Icon.astro",
   "Menu.astro",
   "MenuItem.astro",
   "Ripple.astro",
@@ -128,11 +125,55 @@ const ASTRO_LEFT = [
   "Switch.astro",
 ];
 
+// A migrated component whose .astro path the apps still import, `class` and all, keeps that path as a
+// deprecated shim: dropping it, or the `class` it takes, is a breaking change (COMPATIBILITY.md). The
+// breaking release that ends the .astro paths empties this list.
+const ASTRO_SHIMS = ["BrandMark.astro", "Flag.astro", "Icon.astro"];
+
 describe("the component framework", () => {
   const files = readdirSync(import.meta.dirname, { recursive: true }).map(String);
 
   it("adds no Astro component, and drops a migrated one from the list", () => {
-    expect(files.filter((file) => file.endsWith(".astro")).sort()).toEqual(ASTRO_LEFT);
+    expect(files.filter((file) => file.endsWith(".astro")).sort()).toEqual(
+      [...ASTRO_LEFT, ...ASTRO_SHIMS].sort(),
+    );
+  });
+
+  // A shim that grows markup, a class, a stylesheet or a computed prop of its own is a second source
+  // for the component: a fix made in the .tsx then misses every page on the old path, the drift DS-3
+  // rejects twins for. A shim imports its own .tsx, passes `class` on as className, and renders it.
+  it.each(ASTRO_SHIMS)("%s only renders its own React component", (shim) => {
+    const name = shim.replace(/\.astro$/, "");
+    const [, frontmatter = "", template = ""] = readFileSync(
+      join(import.meta.dirname, shim),
+      "utf8",
+    ).split(/^---$/m);
+    expect(files, `${shim} has no ${name}.tsx`).toContain(`${name}.tsx`);
+    expect(frontmatter, `${shim} is marked deprecated`).toContain("@deprecated");
+    expect(frontmatter, `${shim} names its replacement`).toContain(
+      `@singularityfm/design-system/${name}"`,
+    );
+    const statements = frontmatter
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+    expect(
+      statements.filter((line) => /^import (?!type )/.test(line)),
+      `${shim} imports only its own .tsx`,
+    ).toEqual([`import ${name} from "./${name}.tsx";`]);
+    const own = statements.filter(
+      (line) =>
+        !/^import /.test(line) &&
+        !/^type Props = [^;]+;$/.test(line) &&
+        !/^const \{[^}]*\} = Astro\.props;$/.test(line),
+    );
+    expect(own, `${shim} has logic of its own`).toEqual([]);
+    // One self-closing element, the component, with only {expressions} for props: no children,
+    // no literal attribute of its own.
+    expect(template.trim(), `${shim} draws markup of its own`).toMatch(
+      new RegExp(`^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}))*\\s*/>$`),
+    );
   });
 
   // Without its own entry, `<pkg>/Button` falls to the "./*" pattern, src/Button.ts, which a

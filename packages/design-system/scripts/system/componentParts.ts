@@ -189,6 +189,7 @@ export const componentParts = (): PartSource[] => [
   control("icon", "Icon", ICON, {
     kind: "display",
     classes: ["icon-glyph", "icon-glyph-lg"],
+    files: ["packages/design-system/src/Icon.tsx", "packages/design-system/src/icon.ts"],
     not: [{ when: "the glyph must act when pressed", use: "icon-btn" }],
     markup: '<Icon name="plus" size="lg" />',
     keywords: ["icon", "glyph", "phosphor", "symbol", "chevron", "plus", "check"],

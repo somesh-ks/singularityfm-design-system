@@ -1,6 +1,7 @@
 // The package as a customer gets it (D382 step 5): `pnpm pack` the design system, install the tarball into
 // a throwaway Astro project with React outside the workspace, and build a page that imports a component (by
-// its name, and by the deprecated .astro path), a stylesheet (fonts.css, which pulls the font files) and a
+// its name, and by the deprecated .astro path), a component that imports its own stylesheet (the Icon, by
+// its name and by its .astro shim), a stylesheet (fonts.css, which pulls the font files) and a
 // token file. The workspace link serves every file in the folder, so a path missing from `files`, a broken
 // exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every other
 // check and fails only here.
@@ -74,11 +75,13 @@ try {
       "---",
       `import Button from "${name}/Button";`,
       `import OldButton from "${name}/Button.astro";`,
+      `import Icon from "${name}/Icon";`,
+      `import OldIcon from "${name}/Icon.astro";`,
       `import "${name}/styles/tokens.css";`,
       `import "${name}/styles/fonts.css";`,
       `import tokens from "${name}/tokens/tokens.json";`,
       "---",
-      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><p data-tokens={Object.keys(tokens).length}></p></body></html>',
+      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><p data-tokens={Object.keys(tokens).length}></p></body></html>',
       "",
     ].join("\n"),
   );
@@ -101,7 +104,16 @@ try {
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
+  // The shim passes `class` on as className; lost, the old path draws the glyph where nothing places it.
+  if (html.match(/class="icon-glyph placed"/g)?.length !== 2)
+    problems.push("the page drew no placed Icon by each path");
   const assets = readdirSync(join(app, "dist/_astro"));
+  // A .tsx in node_modules carries its stylesheet only if the consumer's build follows the import.
+  const styles = assets
+    .filter((file) => file.endsWith(".css"))
+    .map((file) => readFileSync(join(app, "dist/_astro", file), "utf8"));
+  if (![html, ...styles].some((text) => text.includes(".icon-glyph{")))
+    problems.push("the Icon's stylesheet did not reach the page");
   if (!assets.some((file) => file.endsWith(".woff2")))
     problems.push("the build emitted no font file");
   if (problems.length > 0) throw new Error(problems.join("; "));

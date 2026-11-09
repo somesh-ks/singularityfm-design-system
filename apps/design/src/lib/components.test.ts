@@ -8,7 +8,13 @@ describe("the guide's component pages", () => {
   // guide: nothing else fails.
   it("has a page for every registry component and every component file", () => {
     const src = new URL("../../../../packages/design-system/src/", import.meta.url);
-    const files = readdirSync(src).filter((file) => /\.(astro|tsx)$/.test(file));
+    const all = readdirSync(src);
+    // An .astro file beside its .tsx is that component's deprecated path (DS-3), not a page of its own.
+    const files = all.filter(
+      (file) =>
+        file.endsWith(".tsx") ||
+        (file.endsWith(".astro") && !all.includes(file.replace(/\.astro$/, ".tsx"))),
+    );
     const shown = new Set(
       SPECS.flatMap((spec) => [spec.file, ...(spec.subparts ?? []).map((part) => part.file)]),
     );

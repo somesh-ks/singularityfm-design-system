@@ -1,5 +1,5 @@
 /*
- * The Icon (design-system/Icon.astro): one Phosphor glyph. Its size is the Icon's size prop; a
+ * The Icon (design-system/Icon.tsx): one Phosphor glyph. Its size is the Icon's size prop; a
  * control that holds a glyph sizes it by its own rule (the dock, the transport, the chip).
  */
 

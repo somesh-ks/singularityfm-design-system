@@ -4,7 +4,7 @@
  * only two letters ("country flags are not rendered well on windows", owner, 2026-10-25), so a flag
  * is never left to the system's emoji font (D367): a region code, or text that holds a flag emoji (a
  * topic's emoji, a toast's words), goes through this file. The one place its classes are written;
- * Flag.astro renders from it and the rules are in styles/flag.css.
+ * Flag.tsx renders from it and the rules are in styles/flag.css.
  */
 import type { Guidance } from "./guidance";
 

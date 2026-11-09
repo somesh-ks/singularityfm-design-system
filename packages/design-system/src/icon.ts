@@ -1,6 +1,6 @@
 /**
  * The Icon: one Phosphor glyph, a single filled path that takes its colour from the text around it.
- * The one place its classes are written. Icon.astro renders from it; a script or a React island that
+ * The one place its classes are written. Icon.tsx renders from it; a script or a React island that
  * draws one calls iconClass(); the style guide lists ICON. The rules are in styles/icon.css.
  */
 import type { Guidance } from "./guidance";

@@ -1,6 +1,6 @@
 ---
 import Badge from "@singularity/design-system/Badge.astro";
-import Icon from "@singularity/design-system/Icon.astro";
+import Icon from "@singularity/design-system/Icon";
 import Select from "@singularity/design-system/Select.astro";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
@@ -35,7 +35,7 @@ const next = (): string => `--n: ${index++}`;
             <summary>
               <h2 class="section-head text-heading" id={group.id}>{group.label}</h2>
               <Badge class="guide-fold-count">{group.values.length}</Badge>
-              <Icon name="chevronDown" class="guide-fold-chevron" />
+              <Icon name="chevronDown" className="guide-fold-chevron" />
             </summary>
             {group.note && <p class="guide-note">{group.note}</p>}
             <ol class="guide-cards guide-cards-read" role="list">

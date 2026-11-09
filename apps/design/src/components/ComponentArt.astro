@@ -2,13 +2,13 @@
 import Avatar from "@singularity/design-system/Avatar.astro";
 import Badge from "@singularity/design-system/Badge.astro";
 import Banner from "@singularity/design-system/Banner.astro";
-import BrandMark from "@singularity/design-system/BrandMark.astro";
+import BrandMark from "@singularity/design-system/BrandMark";
 import Button from "@singularity/design-system/Button";
 import { codeSnippetHtml } from "@singularity/design-system/code";
 import "@singularity/design-system/styles/code.css";
 import Field from "@singularity/design-system/Field.astro";
-import Flag from "@singularity/design-system/Flag.astro";
-import Icon from "@singularity/design-system/Icon.astro";
+import Flag from "@singularity/design-system/Flag";
+import Icon from "@singularity/design-system/Icon";
 import MenuItem from "@singularity/design-system/MenuItem.astro";
 import { menuBodyClass } from "@singularity/design-system/menu";
 import Select from "@singularity/design-system/Select.astro";
@@ -120,6 +120,6 @@ const { slug } = Astro.props;
   }
   {slug === "avatar" && <Avatar shape="cookie" size="lg" />}
   {slug === "flag" && <Flag region="SE" />}
-  {slug === "brand-mark" && <BrandMark class="guide-live-mark" />}
+  {slug === "brand-mark" && <BrandMark className="guide-live-mark" />}
   {slug === "code" && <Fragment set:html={codeSnippetHtml(SAMPLE.code, { label: SAMPLE.label })} />}
 </span>
