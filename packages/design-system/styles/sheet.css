@@ -1,6 +1,6 @@
 /*
  * The Sheet: a form or a list in a panel that slides over the page. A phone: the whole screen, sliding
- * up. From 40rem: a panel on the right, sliding in, over a scrim. Drawn by design-system/Sheet.astro;
+ * up. From 40rem: a panel on the right, sliding in, over a scrim. Drawn by design-system/Sheet.tsx;
  * a script finds one by SHEET_SELECTOR (sheet.ts). The header row (sheet-head, with sheet-title) is
  * also the menu sheets', the emoji picker's and the share dialog's. The bottom sheet and centred
  * dialog of the Base UI islands is the Drawer (drawer.css); a yes-or-no box is a Dialog (dialog.css).

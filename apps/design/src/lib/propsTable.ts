@@ -100,7 +100,7 @@ export function propsTable(source: string): PropsTable {
     }
   }
   const element =
-    /HTMLAttributes<"(\w+)">/.exec(frontmatter)?.[1] ??
+    /(?:HTMLAttributes|ComponentProps)<"(\w+)">/.exec(frontmatter)?.[1] ??
     /(Button|Input)HTMLAttributes/.exec(frontmatter)?.[1]?.toLowerCase();
   return { rows, ...(element ? { element } : {}) };
 }

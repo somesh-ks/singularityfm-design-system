@@ -1,6 +1,6 @@
 /*
  * The Dialog: the small yes or no box (Delete, the speed offer, Save changes?). Drawn by
- * design-system/Dialog.astro and DialogActions.astro; islands and scripts use dialog.ts. The
+ * design-system/Dialog.tsx and DialogActions.tsx; islands and scripts use dialog.ts. The
  * stylesheet is global (BaseLayout) because a script builds one on first use.
  */
 

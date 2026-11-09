@@ -425,9 +425,9 @@ export const componentParts = (): PartSource[] => [
     classes: ["dialog-panel", "dialog-body", "dialog-actions", "dialog-actions-stacked"],
     not: [{ when: "a form that slides in, with fields", use: "sheet" }],
     files: [
-      "packages/design-system/src/Dialog.astro",
-      "packages/design-system/src/DialogActions.astro",
-      "packages/design-system/src/DialogTitle.astro",
+      "packages/design-system/src/Dialog.tsx",
+      "packages/design-system/src/DialogActions.tsx",
+      "packages/design-system/src/DialogTitle.tsx",
       "packages/design-system/src/dialog.ts",
     ],
     keywords: ["confirm", "modal", "yes or no", "are you sure", "delete confirm"],
@@ -435,16 +435,16 @@ export const componentParts = (): PartSource[] => [
       '<Dialog aria-labelledby="t"><DialogTitle id="t">Delete?</DialogTitle><DialogActions><Button variant="text">Cancel</Button></DialogActions></Dialog>',
     rules: [
       "A script finds one with DIALOG_SELECTOR; one it builds uses dialogClass(), dialogBodyClass() and dialogActionsClass().",
-      "It renders closed: the script opens it with dialog.showModal() and closes it with dialog.close() from the Cancel button's click.",
+      "It renders closed, with no client directive: a script opens it with dialog.showModal() (an island through ref) and closes it with dialog.close() from the Cancel button's click.",
     ],
   }),
   control("sheet", "Sheet", SHEET, {
     kind: "container",
     classes: ["sheet-side", "sheet-head", "sheet-body", "sheet-title"],
     files: [
-      "packages/design-system/src/Sheet.astro",
+      "packages/design-system/src/Sheet.tsx",
       "packages/design-system/src/sheet.ts",
-      "packages/design-system/src/SheetHeader.astro",
+      "packages/design-system/src/SheetHeader.tsx",
       "packages/design-system/src/sheetHead.ts",
     ],
     keywords: [
@@ -460,7 +460,7 @@ export const componentParts = (): PartSource[] => [
     markup:
       '<Sheet title="Regenerate" titleId="regen-title" close="data-dialog-close"><form>...</form></Sheet>',
     rules: [
-      'A script finds one with SHEET_SELECTOR (design-system/sheet.ts); kind="create" is the New episode sheet, every other is a "panel".',
+      'A native dialog with no client directive: a script finds one with SHEET_SELECTOR (design-system/sheet.ts) and opens it with showModal(); kind="create" is the New episode sheet, every other is a "panel".',
       "A header a script builds is sheetHeadHtml() (design-system/sheetHead.ts); never write the row or its Close by hand.",
       "`sheet-field*`, `sheet-form` and `sheet-actions` are form layout in sheets.css, not the shell.",
     ],
