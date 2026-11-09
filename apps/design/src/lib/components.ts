@@ -491,7 +491,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Dialog",
     group: "overlays",
     registry: "Dialog",
-    file: "Dialog.astro",
+    file: "Dialog.tsx",
     controls: [
       choice("answers", "Answers", [
         ["two", "Two, in a row"],
@@ -524,12 +524,12 @@ export const SPECS: readonly ComponentSpec[] = [
     note: "Open it with the Button: the real dialog, modal, over the whole window.",
     subparts: [
       {
-        file: "DialogTitle.astro",
+        file: "DialogTitle.tsx",
         name: "DialogTitle",
         note: "The heading, an h2 the dialog names itself by.",
       },
       {
-        file: "DialogActions.astro",
+        file: "DialogActions.tsx",
         name: "DialogActions",
         note: "The row of answers. stacked puts three in a column, the committing one first.",
       },
@@ -540,7 +540,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Sheet",
     group: "overlays",
     registry: "Sheet",
-    file: "Sheet.astro",
+    file: "Sheet.tsx",
     controls: [
       choice("kind", "Kind", [
         ["panel", "Panel"],
@@ -558,7 +558,7 @@ export const SPECS: readonly ComponentSpec[] = [
     note: "Open it with the Button: the real dialog, a panel at the side from 40rem and the whole screen on a phone.",
     subparts: [
       {
-        file: "SheetHeader.astro",
+        file: "SheetHeader.tsx",
         name: "SheetHeader",
         note: "Drawn by Sheet and by Menu: the title at the start and Close at the end.",
       },
@@ -787,8 +787,12 @@ export const stateKey = (controls: readonly Control[], state: State): string =>
  * its name (DS-3); its old .astro path is deprecated, so the guide never prints it.
  */
 export function codeFor(spec: ComponentSpec, state: State): string {
+  // A subpart (DialogTitle) is found by its parent's list.
+  const file = (name: string): string | undefined =>
+    SPECS.flatMap((other) => [other, ...(other.subparts ?? [])]).find((part) => part.name === name)
+      ?.file;
   const imports = spec.imports.map((name) =>
-    SPECS.find((other) => other.name === name)?.file?.endsWith(".tsx")
+    file(name)?.endsWith(".tsx")
       ? `import ${name} from "@singularityfm/design-system/${name}";`
       : `import ${name} from "@singularityfm/design-system/${name}.astro";`,
   );
