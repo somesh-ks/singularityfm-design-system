@@ -86,30 +86,53 @@ const nest = (parents: string[], children: string[]): string[] =>
         ),
       );
 
+/** The stylesheet with each brace and semicolon inside a quoted string (escapes kept) made a space. */
+function quotedStructure(css: string): string {
+  let out = "";
+  let quote = "";
+  for (let at = 0; at < css.length; at += 1) {
+    const character = css[at] ?? "";
+    if (quote && character === "\\") {
+      out += css.slice(at, at + 2).replace(/[{};]/g, " ");
+      at += 1;
+      continue;
+    }
+    if (quote) quote = character === quote ? "" : quote;
+    else if (character === '"' || character === "'") quote = character;
+    out += quote && "{};".includes(character) ? " " : character;
+  }
+  return out;
+}
+
 /**
  * Every declaration at every nesting level, with the selectors it applies to: a parent keeps its own
  * declarations beside a nested rule, and an at-rule (`@media`) passes its parent's selectors through.
  */
 function declarations(css: string): Declaration[] {
+  // The walk reads `mask`, where a brace or semicolon inside a quoted value (`content: "}"`) is a
+  // space; the selectors and values come from `css` at the same indices.
+  const mask = quotedStructure(css);
   const out: Declaration[] = [];
   const stack: { written: string; selectors: string[] }[] = [];
   const read = (from: number, to: number) => {
     const rule = stack.at(-1);
     if (!rule) return;
-    for (const match of css.slice(from, to).matchAll(/(^|;)(\s*)([\w-]+)\s*:\s*([^;]+)/g))
+    for (const match of mask.slice(from, to).matchAll(/(^|;)(\s*)([\w-]+)\s*:\s*([^;]+)/g)) {
+      const end = from + (match.index ?? 0) + match[0].length;
       out.push({
         selector: rule.written,
         selectors: rule.selectors,
         property: match[3] ?? "",
-        value: (match[4] ?? "").trim(),
+        value: css.slice(end - (match[4]?.length ?? 0), end).trim(),
         index: from + (match.index ?? 0) + (match[1]?.length ?? 0) + (match[2]?.length ?? 0),
       });
+    }
   };
   let start = 0;
-  for (let at = 0; at < css.length; at += 1) {
-    if (css[at] === "{") {
+  for (let at = 0; at < mask.length; at += 1) {
+    if (mask[at] === "{") {
       // Declarations end at the last semicolon; what follows it is the nested rule's prelude.
-      const end = css.lastIndexOf(";", at - 1) + 1;
+      const end = mask.lastIndexOf(";", at - 1) + 1;
       if (end > start) read(start, end);
       const prelude = css.slice(Math.max(start, end), at).trim();
       const parents = stack.at(-1)?.selectors ?? [];
@@ -123,7 +146,7 @@ function declarations(css: string): Declaration[] {
         selectors,
       });
       start = at + 1;
-    } else if (css[at] === "}") {
+    } else if (mask[at] === "}") {
       read(start, at);
       stack.pop();
       start = at + 1;
@@ -213,10 +236,16 @@ function pixels(term: string, depth = 0): number | null {
     })
     .replace(/calc\(/g, "(")
     .replace(/(-?\d*\.?\d+)rem\b/g, (_, n: string) => `(${Number(n) * 16})`)
-    .replace(/(-?\d*\.?\d+)px\b/g, "($1)");
+    // Through Number, so a leading zero (08px) is 8 and never strict mode's octal error.
+    .replace(/(-?\d*\.?\d+)(?:px\b)?/g, (_, n: string) => `(${Number(n)})`);
   if (failed || !/^[\d\s.+\-*/()]+$/.test(numeric)) return null;
-  const value = Number(Function(`"use strict"; return (${numeric});`)());
-  return Number.isFinite(value) ? Math.round(value * 100) / 100 : null;
+  try {
+    const value = Number(Function(`"use strict"; return (${numeric});`)());
+    return Number.isFinite(value) ? Math.round(value * 100) / 100 : null;
+  } catch {
+    // An expression that is not arithmetic (a stray operator) is no fixed length.
+    return null;
+  }
 }
 
 /** A value's space-separated terms, keeping a calc() whole. */

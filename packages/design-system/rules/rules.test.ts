@@ -31,6 +31,9 @@ describe("the rules", () => {
     expect(
       lines(rawColour(".card {\n  color: #fff;\n  &:hover { opacity: 0.8; }\n}", "a.css")),
     ).toEqual([2]);
+    // A brace or semicolon in a quoted value does not end the rule early.
+    const quoted = '.a::before {\n  content: "};";\n  color: #fff;\n}';
+    expect(lines(rawColour(quoted, "a.css"))).toEqual([3]);
     // A link, an id, a selector or a url() holds a reference, never a colour.
     const markup = [
       '<a href="#abc">Top</a>',
@@ -70,6 +73,8 @@ describe("the rules", () => {
     // A comma inside an attribute value or :is() does not split the selector.
     const quoted = '[data-tags="news,local"] { gap: var(--space-1); }';
     expect(offGrid(quoted, "page.css", [['[data-tags="news,local"]', "a tag row"]])).toEqual([]);
+    // A leading zero is a valid length, never a crash: 08px is 8px.
+    expect(offGrid(".g { padding: 08px; margin: 012px; }", "page.css").length).toBe(1);
   });
 
   // Prevents a declaration the browser drops silently: a read of a property nothing defines.
