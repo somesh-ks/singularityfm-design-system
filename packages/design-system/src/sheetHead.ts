@@ -1,6 +1,6 @@
 /**
  * The markup of a sheet's header row and of an icon, written once for the components
- * (SheetHeader.astro, Icon.tsx) and for the sheets a script builds, so a sheet a script builds
+ * (SheetHeader.tsx, Icon.tsx) and for the sheets a script builds, so a sheet a script builds
  * is the same sheet a page builds (the design-system audit, 2026-10-25).
  */
 import { type IconSize, iconClass } from "./icon.ts";
@@ -44,6 +44,25 @@ export function sheetHeadHtml(
   subtitle?: string,
   back = false,
 ): string {
+  return (
+    `<div class="${sheetHeadClass()}"${back ? " data-has-back" : ""}>` +
+    sheetHeadContentHtml(title, titleId, close, titleData, subtitle, back) +
+    "</div>"
+  );
+}
+
+/**
+ * What the header row holds, without the row: SheetHeader.tsx draws the row as its element and this
+ * inside it, so the component and the scripts still draw one markup.
+ */
+export function sheetHeadContentHtml(
+  title: string,
+  titleId: string,
+  close: SheetClose,
+  titleData: Record<`data-${string}`, string | boolean> = {},
+  subtitle?: string,
+  back = false,
+): string {
   const data = Object.entries(titleData)
     .filter(([, value]) => value !== false)
     .map(([name, value]) =>
@@ -52,13 +71,12 @@ export function sheetHeadHtml(
     .join("");
   const heading = `<h2 class="${sheetTitleClass()}" id="${titleId}"${data}>${escapeHtml(title)}</h2>`;
   return (
-    `<div class="${sheetHeadClass()}"${back ? " data-has-back" : ""}>` +
     (back
       ? `<button class="icon-btn press" type="button" aria-label="Back" ${MENU_BACK}>${iconHtml("chevronLeft", "lg")}</button>`
       : "") +
     (!subtitle
       ? heading
       : `<div class="${sheetHeadingClass()}">${heading}<p class="${sheetSubtitleClass()}">${escapeHtml(subtitle)}</p></div>`) +
-    `<button class="icon-btn press" type="button" aria-label="Close" ${close}>${iconHtml("close", "lg")}</button></div>`
+    `<button class="icon-btn press" type="button" aria-label="Close" ${close}>${iconHtml("close", "lg")}</button>`
   );
 }

@@ -1,6 +1,6 @@
 /**
  * The Dialog: the small yes-or-no box that opens over the page, centred at every width, for one
- * question and its answers. The one place its classes are written. Dialog.astro and DialogActions.astro
+ * question and its answers. The one place its classes are written. Dialog.tsx and DialogActions.tsx
  * render from it; a script or a React island that draws one calls dialogClass(), dialogBodyClass() and
  * dialogActionsClass(), and a script that finds one reads DIALOG_SELECTOR; the style guide lists DIALOG.
  * The rules are in styles/dialog.css. A form in a panel that slides in is a Sheet, not a Dialog.

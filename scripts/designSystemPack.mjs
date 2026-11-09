@@ -8,7 +8,9 @@
 // stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
 // each a native element that hydrates nowhere (DS-8); and a fourth that draws the chips, the segmented
 // controls and the Search field by their names, none hydrated, and installs the segmented nav's script
-// from its export (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
+// from its export (DS-8); and a fifth that draws Dialog,
+// DialogTitle, DialogActions, Sheet and SheetHeader by their names and by their .astro shims, native
+// dialogs with no island (DS-3). The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -139,6 +141,33 @@ try {
       "",
     ].join("\n"),
   );
+  // The overlays are native dialogs a page's script opens: they render whole on the server and draw
+  // no island, and each path keeps what the app's scripts find them by.
+  writeFileSync(
+    join(app, "src/pages/overlays.astro"),
+    [
+      "---",
+      `import Dialog from "${name}/Dialog";`,
+      `import OldDialog from "${name}/Dialog.astro";`,
+      `import DialogActions from "${name}/DialogActions";`,
+      `import OldDialogActions from "${name}/DialogActions.astro";`,
+      `import DialogTitle from "${name}/DialogTitle";`,
+      `import OldDialogTitle from "${name}/DialogTitle.astro";`,
+      `import Sheet from "${name}/Sheet";`,
+      `import OldSheet from "${name}/Sheet.astro";`,
+      `import SheetHeader from "${name}/SheetHeader";`,
+      `import OldSheetHeader from "${name}/SheetHeader.astro";`,
+      "---",
+      '<html lang="en"><body>' +
+        '<Dialog className="placed-dialog" data-confirm aria-labelledby="d1" form={{ "data-form": "", noValidate: true, style: { order: 1 } }}><DialogTitle id="d1" data-confirm-title style={{ order: 2 }}>Question</DialogTitle><DialogActions stacked><b>Answer</b></DialogActions><p slot="after" data-copy>After</p></Dialog>' +
+        '<OldDialog class="placed-dialog" data-confirm aria-labelledby="d1" form={{ "data-form": "", novalidate: true, style: "order: 1" }}><OldDialogTitle id="d1" data-confirm-title style="order: 2">Question</OldDialogTitle><OldDialogActions stacked><b>Answer</b></OldDialogActions><p slot="after" data-copy>After</p></OldDialog>' +
+        '<Sheet className="placed-sheet" title="Sheet words" titleId="s1" close="data-panel-close" titleData={{ "data-panel-title": true }} data-health-sheet><i>Body</i><p slot="after" data-foot>Foot</p></Sheet>' +
+        '<OldSheet class="placed-sheet" title="Sheet words" titleId="s1" close="data-panel-close" titleData={{ "data-panel-title": true }} data-health-sheet><i>Body</i><Fragment slot="after"><p data-foot>Foot</p></Fragment></OldSheet>' +
+        '<SheetHeader title="Head words" titleId="h1" close="data-menu-close" subtitle="Sub words" /><OldSheetHeader title="Head words" titleId="h1" close="data-menu-close" subtitle="Sub words" />' +
+        "</body></html>",
+      "",
+    ].join("\n"),
+  );
   // The chips, the segmented choice and the Search field are native inputs and the Play chip a
   // native button and the Segmented navigation the app's tablist, all React-rendered with no directive
   // (DS-8); the page mounts the nav's script from its export, so a lost `./*` entry fails the build.
@@ -177,6 +206,7 @@ try {
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
   const inputs = readFileSync(join(app, "dist/inputs/index.html"), "utf8");
+  const overlays = readFileSync(join(app, "dist/overlays/index.html"), "utf8");
   const chips = readFileSync(join(app, "dist/chips/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
@@ -259,6 +289,46 @@ try {
   // that draws a Switch or a Slider.
   if (/<astro-island|<script/.test(inputs))
     problems.push("the inputs page hydrates or ships a script");
+  // Each path draws the same dialog, found by the test's class: the attributes its script finds it by;
+  // a form body that keeps `novalidate` by either spelling (React drops the lowercase one) and a style
+  // string; the title with its id, data attribute and style; the answers inside the form and the
+  // `after` slot after it. The Sheet keeps its kind, its label, its data attribute, its title data,
+  // its Close, its body and its `after` slot; the header alone keeps its subtitle. The test's own
+  // words and attributes only: never the library's classes or the order it prints attributes in.
+  const placed = (name) =>
+    [...overlays.matchAll(new RegExp(`<dialog[^>]*\\b${name}\\b[\\s\\S]*?</dialog>`, "g"))].map(
+      (match) => match[0],
+    );
+  const drawn = (found, parts) =>
+    found.length === 2 && found[0] === found[1] && parts.every((part) => part.test(found[0]));
+  const opening = (name, ...attributes) =>
+    new RegExp(`<${name}\\b${attributes.map((a) => `(?=[^>]*\\s${a})`).join("")}[^>]*>`, "i");
+  if (
+    !drawn(placed("placed-dialog"), [
+      opening("dialog", 'data-dialog=""', 'data-confirm=""', 'aria-labelledby="d1"'),
+      opening("form", 'data-form=""', "novalidate", 'style="order:\\s*1"'),
+      /<(h[1-6])\b(?=[^>]*\sid="d1")(?=[^>]*\sdata-confirm-title)(?=[^>]*\sstyle="order:\s*2")[^>]*>Question<\/\1>/,
+      /<b>Answer<\/b>(?:<\/\w+>)*<\/form>\s*<p data-copy(?:="")?>After<\/p>\s*<\/dialog>$/,
+    ])
+  )
+    problems.push(
+      "the page drew no placed Dialog with its parts, attributes and slots by each path",
+    );
+  if (
+    !drawn(placed("placed-sheet"), [
+      opening("dialog", 'data-sheet="panel"', 'aria-labelledby="s1"', 'data-health-sheet=""'),
+      /<(h[1-6])\b(?=[^>]*\sid="s1")(?=[^>]*\sdata-panel-title)[^>]*>Sheet words<\/\1>/,
+      opening("button", 'aria-label="Close"', "data-panel-close"),
+      /<i>Body<\/i>(?:<\/\w+>)*\s*<p data-foot(?:="")?>Foot<\/p>\s*<\/dialog>$/,
+    ])
+  )
+    problems.push(
+      "the page drew no placed Sheet with its parts, attributes and slots by each path",
+    );
+  if (overlays.match(/>Sub words</g)?.length !== 2)
+    problems.push("the page drew no SheetHeader with its subtitle by each path");
+  if (/<astro-island|<script/.test(overlays))
+    problems.push("the overlays page hydrates or ships a script");
   // Each keeps the test's own class, attributes and words on the element the app's scripts and rules
   // find, found by the test's own class and never by the part's classes or wrapper markup: a native checkbox, ticked and named, in its chip; a radio group whose chosen radio is
   // checked; a native search input; a button the player writes; a tablist whose chosen tab is
@@ -353,8 +423,14 @@ try {
     problems.push("the Fab's stylesheet did not reach the page");
   if (![chips, ...styles].some((text) => text.includes(".search-field{")))
     problems.push("the Search field's stylesheet did not reach the page");
-  for (const rule of [".field-input{", ".switch-input:checked{", ".slider-input{"])
-    if (![inputs, ...styles].some((text) => text.includes(rule)))
+  for (const [page, rule] of [
+    [inputs, ".field-input{"],
+    [inputs, ".switch-input:checked{"],
+    [inputs, ".slider-input{"],
+    [overlays, "dialog.dialog-panel{"],
+    [overlays, "dialog.sheet-side{"],
+  ])
+    if (![page, ...styles].some((text) => text.includes(rule)))
       problems.push(`${rule.slice(0, -1)} did not reach the page`);
   if (!assets.some((file) => file.endsWith(".woff2")))
     problems.push("the build emitted no font file");

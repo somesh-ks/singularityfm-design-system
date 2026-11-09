@@ -20,6 +20,7 @@ const REACT_NAMES: Record<string, string> = {
   inputmode: "inputMode",
   maxlength: "maxLength",
   minlength: "minLength",
+  novalidate: "noValidate",
   popovertarget: "popoverTarget",
   popovertargetaction: "popoverTargetAction",
   readonly: "readOnly",
