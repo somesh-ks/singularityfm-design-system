@@ -103,16 +103,7 @@ describe("the Flag", () => {
 
 // The library's one component framework is React (DS-3). Each family PR moves its .astro files to .tsx
 // and trims this list; nothing joins it.
-const ASTRO_LEFT = [
-  "Dialog.astro",
-  "DialogActions.astro",
-  "DialogTitle.astro",
-  "Menu.astro",
-  "MenuItem.astro",
-  "Select.astro",
-  "Sheet.astro",
-  "SheetHeader.astro",
-];
+const ASTRO_LEFT: string[] = [];
 
 // A migrated component whose .astro path the apps still import, `class` and all, keeps that path as a
 // deprecated shim: dropping it, or the `class` it takes, is a breaking change (COMPATIBILITY.md). The
@@ -124,12 +115,20 @@ const ASTRO_SHIMS = [
   "BrandMark.astro",
   "ChapterAside.astro",
   "Code.astro",
+  "Dialog.astro",
+  "DialogActions.astro",
+  "DialogTitle.astro",
   "Field.astro",
   "Flag.astro",
   "Icon.astro",
+  "Menu.astro",
+  "MenuItem.astro",
   "Ripple.astro",
   "RowExit.astro",
   "SectionTabs.astro",
+  "Select.astro",
+  "Sheet.astro",
+  "SheetHeader.astro",
   "Slider.astro",
   "Switch.astro",
 ];
@@ -179,10 +178,17 @@ describe("the component framework", () => {
     // One element, the component, with only {expressions} for props and no literal attribute of its
     // own but client:load, the directive a component that needs a script hydrates with (DS-7: Code's
     // copy). It closes itself, or, for a component that holds content (the Badge's words, the Row
-    // exit's row), holds the shim's slot and nothing else: the slot reaches the .tsx as its children.
-    expect(template.trim(), `${shim} draws markup of its own`).toMatch(
+    // exit's row), holds the shim's slot and nothing else: the slot reaches the .tsx as its children. A named
+    // slot (the Dialog's and the Sheet's `after`) passes on under its own name, as the prop of that name.
+    // The one script a shim may keep is its old path's own install call from the package's module (the
+    // Select's phone sheet): a page on the old path keeps that behaviour; a script is no markup.
+    const markup = template.replace(
+      /\s*<script>\s*import \{ (install\w+) \} from "\.\/\w+\.ts";\s*\1\(\);\s*<\/script>\s*$/,
+      "",
+    );
+    expect(markup.trim(), `${shim} draws markup of its own`).toMatch(
       new RegExp(
-        `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}|client:load))*\\s*(?:/>|><slot /></${name}>)$`,
+        `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}|client:load))*\\s*(?:/>|><slot />(?:<slot name="([\\w-]+)" slot="\\1" />)?</${name}>)$`,
       ),
     );
   });

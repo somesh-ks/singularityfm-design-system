@@ -521,6 +521,311 @@
       ]
     },
     {
+      "id": "play-chip",
+      "name": "Play chip",
+      "kind": "action",
+      "summary": "The tonal pill that plays a briefing or one story, with its state.",
+      "classes": [
+        "chip",
+        "chip-glyph",
+        "chip-label"
+      ],
+      "files": [
+        "packages/design-system/src/PlayChip.tsx",
+        "packages/design-system/src/playChip.ts"
+      ],
+      "when": [
+        "Play an episode or a story and show idle, current, played, error or preparing"
+      ],
+      "not": [
+        {
+          "when": "A person ticks a choice",
+          "use": "filter-chip"
+        },
+        {
+          "when": "The page's one main Play floats over it on a phone",
+          "use": "fab"
+        },
+        {
+          "when": "The action is not playing something",
+          "use": "button-tonal"
+        }
+      ],
+      "keywords": [
+        "duration",
+        "play pill",
+        "status pill",
+        "now playing"
+      ],
+      "markup": "<PlayChip label=\"5 min\" aria-label=\"Play the briefing\" data-play-item={0} />",
+      "rules": [
+        "A native button with no client directive (DS-8): the player writes data-state, data-playing and [data-chip-label]."
+      ],
+      "styles": [
+        "packages/design-system/styles/buttons.css"
+      ],
+      "usage": "The tonal pill that plays a briefing or one story: a play mark and a short label on the container fill, with no outline.",
+      "tokens": [
+        "--chip-bg",
+        "--chip-bg-current",
+        "--chip-bg-current-hover",
+        "--chip-bg-current-pressed",
+        "--chip-bg-hover",
+        "--chip-bg-pressed",
+        "--chip-fg",
+        "--chip-fg-current",
+        "--chip-gap",
+        "--chip-glyph",
+        "--chip-height",
+        "--chip-icon",
+        "--chip-padding-end",
+        "--chip-padding-start",
+        "--chip-radius",
+        "--color-accent-pressed",
+        "--color-on-surface-disabled",
+        "--color-on-surface-muted",
+        "--color-success",
+        "--color-surface-sunken",
+        "--size-touch"
+      ]
+    },
+    {
+      "id": "filter-chip",
+      "name": "Chip",
+      "kind": "selection",
+      "summary": "A checkbox drawn as a pill; ticked it takes the accent container.",
+      "classes": [
+        "filter-chip",
+        "filter-chips",
+        "filter-chips-scroll"
+      ],
+      "files": [
+        "packages/design-system/src/Chip.tsx",
+        "packages/design-system/src/ChipGroup.tsx",
+        "packages/design-system/src/chip.ts"
+      ],
+      "when": [
+        "Tick several topics or categories to include",
+        "Filter a list by one or more kinds: the Library's Show chips"
+      ],
+      "not": [
+        {
+          "when": "Exactly one of a few values",
+          "use": "segmented-choice"
+        },
+        {
+          "when": "The control switches the view of the same content",
+          "use": "segmented-nav"
+        },
+        {
+          "when": "The choices are many, or long: they go in a list",
+          "use": "select"
+        },
+        {
+          "when": "The pill plays a briefing or a story",
+          "use": "play-chip"
+        },
+        {
+          "when": "a long list of options",
+          "use": "multiselect"
+        }
+      ],
+      "keywords": [
+        "multi select",
+        "tick",
+        "checkbox pill",
+        "tags",
+        "toggle chip",
+        "filter chip"
+      ],
+      "markup": "<ChipGroup aria-label=\"Show\"><Chip name=\"show\" value=\"daily\" defaultChecked>Daily</Chip></ChipGroup>",
+      "rules": [
+        "A native checkbox with no client directive (DS-8); scroll on the group for one sideways row."
+      ],
+      "styles": [
+        "packages/design-system/styles/primitives.css"
+      ],
+      "usage": "The filter chip: a checkbox drawn as a pill that takes the accent container when checked, its check taking no room (D95), in a row that scrolls sideways (the Library's Show filters).",
+      "tokens": [
+        "--chip-height",
+        "--chip-radius",
+        "--chip-radius-selected",
+        "--color-accent-container",
+        "--color-accent-container-hover",
+        "--color-accent-container-pressed",
+        "--color-focus-ring",
+        "--color-on-accent-container",
+        "--color-on-surface",
+        "--color-surface-container",
+        "--color-surface-container-hover",
+        "--color-surface-container-pressed",
+        "--size-icon-sm",
+        "--size-touch"
+      ]
+    },
+    {
+      "id": "segmented-choice",
+      "name": "Segmented choice",
+      "kind": "selection",
+      "summary": "One pill of radio items: pick exactly one value.",
+      "classes": [
+        "segmented-choice",
+        "segmented-choice-item"
+      ],
+      "files": [
+        "packages/design-system/src/SegmentedChoice.tsx",
+        "packages/design-system/src/segmentedChoice.ts"
+      ],
+      "when": [
+        "Choose one of two to four short values: Length, Format, Tone"
+      ],
+      "not": [
+        {
+          "when": "Switching between views",
+          "use": "segmented-nav"
+        },
+        {
+          "when": "Several may be ticked together",
+          "use": "filter-chip"
+        },
+        {
+          "when": "The values are more than four, or long",
+          "use": "select"
+        }
+      ],
+      "keywords": [
+        "radio",
+        "length",
+        "one of",
+        "option group",
+        "pick one"
+      ],
+      "markup": "<SegmentedChoice name=\"length\" aria-labelledby=\"len\" defaultValue=\"3\" options={[{ value: \"3\", label: \"3 min\" }]} />",
+      "rules": [
+        "Native radios with no client directive (DS-8)."
+      ],
+      "styles": [
+        "packages/design-system/styles/primitives.css"
+      ],
+      "usage": "Selection duty (2026-10-20), as Material 3's segmented button: one pill outlined with a hairline, hairline dividers between the segments, the chosen one filled with the accent container and a check before its words, the others transparent. Radios in a fieldset, so the arrow keys, the group and its name come from the browser. Told apart from .segmented-nav at a glance: an outline, not a track, and a check, not a raised pill.",
+      "tokens": [
+        "--chip-height",
+        "--color-accent-container",
+        "--color-accent-container-hover",
+        "--color-accent-container-pressed",
+        "--color-border-control",
+        "--color-focus-ring",
+        "--color-on-accent-container",
+        "--color-on-surface",
+        "--size-icon-sm",
+        "--size-touch"
+      ]
+    },
+    {
+      "id": "segmented-nav",
+      "name": "Segmented navigation",
+      "kind": "navigation",
+      "summary": "A tonal track with one sliding pill: switch between views of the same content.",
+      "classes": [
+        "segmented-nav",
+        "segmented-nav-tab",
+        "segmented-nav-compact"
+      ],
+      "files": [
+        "packages/design-system/src/SegmentedNav.tsx",
+        "packages/design-system/src/segmentedNav.ts"
+      ],
+      "when": [
+        "Switch the view of one page or panel without leaving it: a topic's Sources and Preferences"
+      ],
+      "not": [
+        {
+          "when": "Choosing the value of a setting",
+          "use": "segmented-choice"
+        },
+        {
+          "when": "jumping to sections of a long page",
+          "use": "tabs"
+        }
+      ],
+      "keywords": [
+        "tablist",
+        "view switcher",
+        "toggle views",
+        "stories transcript"
+      ],
+      "markup": "<SegmentedNav aria-label=\"View\" tabs={[{ value: \"stories\", label: \"Stories\" }]} />",
+      "rules": [
+        "A native tablist with no client directive (DS-8): the page calls mountSegmentedNav(list, onSelect) from design-system/segmentedNav once for each, and draws the panels (each tab's controls)."
+      ],
+      "styles": [
+        "packages/design-system/styles/primitives.css"
+      ],
+      "usage": "Navigation, used like tabs (2026-10-20): a tonal track with no outline and no check, and one pill in the accent container that slides under the active label, by transform alone. The design is flat, so the pill is told apart by colour, not by a shadow (2026-10-21); the choice control is told apart by its outline and check. The active label takes the pill's text colour, the others stay muted. Buttons in a tablist: segmentedNav.ts moves aria-selected and the roving tabindex, and answers Left, Right, Home and End.",
+      "tokens": [
+        "--chip-height",
+        "--color-accent-container",
+        "--color-accent-container-pressed",
+        "--color-focus-ring",
+        "--color-on-accent-container",
+        "--color-on-surface",
+        "--color-on-surface-muted",
+        "--color-surface-container",
+        "--segmented-height",
+        "--segmented-padding",
+        "--size-touch"
+      ]
+    },
+    {
+      "id": "search-field",
+      "name": "Search field",
+      "kind": "field",
+      "summary": "The rounded search pill, on the container tone, with its glyph.",
+      "classes": [
+        "search-field"
+      ],
+      "files": [
+        "packages/design-system/src/SearchField.tsx",
+        "packages/design-system/src/searchField.ts"
+      ],
+      "when": [
+        "Search or filter a list by text: the Library, Sources, Downloads"
+      ],
+      "not": [
+        {
+          "when": "A text field in a form",
+          "use": "field"
+        },
+        {
+          "when": "A person picks one of a known list",
+          "use": "select"
+        }
+      ],
+      "keywords": [
+        "search bar",
+        "filter input",
+        "text filter"
+      ],
+      "markup": "<SearchField label=\"Search your library\" name=\"q\" placeholder=\"Search your library\" />",
+      "rules": [
+        "A native input with no client directive (DS-8)."
+      ],
+      "styles": [
+        "packages/design-system/styles/search-field.css"
+      ],
+      "usage": "The search field: a filled pill with the glyph inside it, as a search bar is in every Google app. The glyph and the placeholder say what it is. Focus lifts it (the overlay fill and a hairline; the design is flat, so no shadow); the ring is the keyboard's only (data-input, app.ts), so a tap, a click or typing never draws it. Library, Sources and every topic's page share this one field (2026-10-21; styles.test.ts holds them to it).",
+      "tokens": [
+        "--color-border-control",
+        "--color-on-surface",
+        "--color-on-surface-muted",
+        "--color-surface-container",
+        "--color-surface-container-focus",
+        "--color-surface-container-hover",
+        "--field-height",
+        "--shape-round"
+      ]
+    },
+    {
       "id": "icon",
       "name": "Icon",
       "kind": "display",
@@ -763,7 +1068,7 @@
       "not": [
         {
           "when": "The value is one of two to four short options",
-          "use": "filter-chip"
+          "use": "segmented-choice"
         },
         {
           "when": "A person picks one value from a list",
@@ -822,7 +1127,7 @@
         "select-tonal"
       ],
       "files": [
-        "packages/design-system/src/Select.astro",
+        "packages/design-system/src/Select.tsx",
         "packages/design-system/src/select.ts",
         "packages/design-system/src/selectSheet.ts",
         "packages/design-system/src/wheel.ts"
@@ -854,6 +1159,7 @@
       ],
       "markup": "<Select variant=\"tonal\" label=\"Sort\" data-library-sort><option value=\"newest\">Newest first</option></Select>",
       "rules": [
+        "A native select with no client directive (DS-8); a page that draws one calls installSelectSheet() once for the phone's sheet.",
         "Outlined (the default) is a value in a form; tonal is a sort or a filter and takes data-active on its wrapper (find it with closest(\"[data-select]\")) once its value is not the default.",
         "A select inside a settings row takes class=\"value-select\" from settings.css, which draws it as the row's value.",
         "data-wheel on a short ordered run (the hours of a day) opens its phone sheet as a Wheel (design-system/wheel.ts), not as rows."
@@ -902,7 +1208,8 @@
         "menu-item-value"
       ],
       "files": [
-        "packages/design-system/src/Menu.astro",
+        "packages/design-system/src/Menu.tsx",
+        "packages/design-system/src/MenuItem.tsx",
         "packages/design-system/src/menu.ts"
       ],
       "when": [
@@ -931,6 +1238,7 @@
       ],
       "markup": "<Menu id=\"row-menu-3\" title=\"Daily\"><MenuItem><Icon name=\"pencilSimple\" />Edit</MenuItem><MenuItem tone=\"danger\"><Icon name=\"trash\" />Delete</MenuItem></Menu>",
       "rules": [
+        "A native popover with no client directive: its button opens it with popoverTarget (DS-8).",
         "Under 40rem a menu is a sheet, never a small popover.",
         "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass()."
       ],
@@ -1046,9 +1354,9 @@
         "dialog-actions-stacked"
       ],
       "files": [
-        "packages/design-system/src/Dialog.astro",
-        "packages/design-system/src/DialogActions.astro",
-        "packages/design-system/src/DialogTitle.astro",
+        "packages/design-system/src/Dialog.tsx",
+        "packages/design-system/src/DialogActions.tsx",
+        "packages/design-system/src/DialogTitle.tsx",
         "packages/design-system/src/dialog.ts"
       ],
       "when": [
@@ -1074,7 +1382,7 @@
       "markup": "<Dialog aria-labelledby=\"t\"><DialogTitle id=\"t\">Delete?</DialogTitle><DialogActions><Button variant=\"text\">Cancel</Button></DialogActions></Dialog>",
       "rules": [
         "A script finds one with DIALOG_SELECTOR; one it builds uses dialogClass(), dialogBodyClass() and dialogActionsClass().",
-        "It renders closed: the script opens it with dialog.showModal() and closes it with dialog.close() from the Cancel button's click."
+        "It renders closed, with no client directive: a script opens it with dialog.showModal() (an island through ref) and closes it with dialog.close() from the Cancel button's click."
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -1101,9 +1409,9 @@
         "sheet-title"
       ],
       "files": [
-        "packages/design-system/src/Sheet.astro",
+        "packages/design-system/src/Sheet.tsx",
         "packages/design-system/src/sheet.ts",
-        "packages/design-system/src/SheetHeader.astro",
+        "packages/design-system/src/SheetHeader.tsx",
         "packages/design-system/src/sheetHead.ts"
       ],
       "when": [
@@ -1136,7 +1444,7 @@
       ],
       "markup": "<Sheet title=\"Regenerate\" titleId=\"regen-title\" close=\"data-dialog-close\"><form>...</form></Sheet>",
       "rules": [
-        "A script finds one with SHEET_SELECTOR (design-system/sheet.ts); kind=\"create\" is the New episode sheet, every other is a \"panel\".",
+        "A native dialog with no client directive: a script finds one with SHEET_SELECTOR (design-system/sheet.ts) and opens it with showModal(); kind=\"create\" is the New episode sheet, every other is a \"panel\".",
         "A header a script builds is sheetHeadHtml() (design-system/sheetHead.ts); never write the row or its Close by hand.",
         "`sheet-field*`, `sheet-form` and `sheet-actions` are form layout in sheets.css, not the shell."
       ],
@@ -1298,227 +1606,6 @@
         "--cta-bg-hover",
         "--cta-bg-pressed",
         "--cta-fg"
-      ]
-    },
-    {
-      "id": "play-chip",
-      "name": "Play chip",
-      "kind": "action",
-      "summary": "The tonal pill that plays a briefing or one story, with its state.",
-      "classes": [
-        "chip"
-      ],
-      "when": [
-        "play an episode or a story and show idle, current, played, error or preparing",
-        "episode duration with a play mark"
-      ],
-      "not": [
-        {
-          "when": "a choice the user ticks",
-          "use": "filter-chip"
-        },
-        {
-          "when": "a view switch",
-          "use": "segmented-nav"
-        }
-      ],
-      "keywords": [
-        "duration",
-        "play pill",
-        "status pill",
-        "now playing"
-      ],
-      "markup": "<button class=\"chip\" type=\"button\" data-state=\"idle\"><span class=\"chip-glyph\" aria-hidden=\"true\"><Icon name=\"play\" /></span><span class=\"chip-label\">5 min</span></button>",
-      "rules": [
-        "The label never wraps.",
-        "A label that changes keeps a hidden copy of the widest one so the chip keeps its width."
-      ],
-      "styles": [
-        "packages/design-system/styles/buttons.css"
-      ],
-      "usage": "The tonal pill that plays a briefing or one story: a play mark and a short label on the container fill, with no outline.",
-      "tokens": [
-        "--chip-bg",
-        "--chip-bg-current",
-        "--chip-bg-current-hover",
-        "--chip-bg-current-pressed",
-        "--chip-bg-hover",
-        "--chip-bg-pressed",
-        "--chip-fg",
-        "--chip-fg-current",
-        "--chip-gap",
-        "--chip-height",
-        "--chip-icon",
-        "--chip-padding-end",
-        "--chip-padding-start",
-        "--chip-radius",
-        "--color-accent-pressed",
-        "--color-on-surface-disabled",
-        "--color-on-surface-muted",
-        "--color-success",
-        "--color-surface-sunken",
-        "--size-touch"
-      ]
-    },
-    {
-      "id": "filter-chip",
-      "name": "Filter chip",
-      "kind": "selection",
-      "summary": "A checkbox drawn as a pill; ticked it takes the accent container.",
-      "classes": [
-        "filter-chip",
-        "filter-chips"
-      ],
-      "when": [
-        "tick several topics or categories to include",
-        "filter a list by one or more kinds",
-        "choose one of a few chips in a group"
-      ],
-      "not": [
-        {
-          "when": "exactly one of a few values",
-          "use": "segmented-choice"
-        },
-        {
-          "when": "switching the view of the same content",
-          "use": "segmented-nav"
-        },
-        {
-          "when": "a long list of options",
-          "use": "multiselect"
-        }
-      ],
-      "keywords": [
-        "multi select",
-        "tick",
-        "checkbox pill",
-        "tags",
-        "toggle chip"
-      ],
-      "markup": "<fieldset class=\"filter-chips\"><label class=\"filter-chip\"><input type=\"checkbox\" name=\"show\" value=\"daily\" /><Icon name=\"check\" className=\"filter-chip-check\" /><span>Daily</span></label></fieldset>",
-      "rules": [
-        "Always wraps a real checkbox or radio input."
-      ],
-      "styles": [
-        "packages/design-system/styles/primitives.css"
-      ],
-      "usage": "The filter chip: a checkbox drawn as a pill that takes the accent container when checked, its check taking no room (D95), in a row that scrolls sideways (the Library's Show filters).",
-      "tokens": [
-        "--chip-height",
-        "--chip-radius",
-        "--chip-radius-selected",
-        "--color-accent-container",
-        "--color-accent-container-hover",
-        "--color-accent-container-pressed",
-        "--color-focus-ring",
-        "--color-on-accent-container",
-        "--color-on-surface",
-        "--color-surface-container",
-        "--color-surface-container-hover",
-        "--color-surface-container-pressed",
-        "--size-icon-sm",
-        "--size-touch"
-      ]
-    },
-    {
-      "id": "segmented-choice",
-      "name": "Segmented choice",
-      "kind": "selection",
-      "summary": "One pill of radio items: pick exactly one value.",
-      "classes": [
-        "segmented-choice",
-        "segmented-choice-item"
-      ],
-      "when": [
-        "choose one of a few discrete values, such as 3, 5 or 10 minutes",
-        "a setting with two to four options"
-      ],
-      "not": [
-        {
-          "when": "switching between views or tabs",
-          "use": "segmented-nav"
-        },
-        {
-          "when": "ticking several",
-          "use": "filter-chip"
-        }
-      ],
-      "keywords": [
-        "radio",
-        "length",
-        "one of",
-        "option group",
-        "pick one"
-      ],
-      "markup": "<fieldset class=\"segmented-choice\" role=\"radiogroup\" aria-labelledby=\"len\"><label class=\"segmented-choice-item\"><input type=\"radio\" name=\"length\" value=\"3\" /><span>3 min</span></label></fieldset>",
-      "styles": [
-        "packages/design-system/styles/primitives.css"
-      ],
-      "usage": "Selection duty (2026-10-20), as Material 3's segmented button: one pill outlined with a hairline, hairline dividers between the segments, the chosen one filled with the accent container and a check before its words, the others transparent. Radios in a fieldset, so the arrow keys, the group and its name come from the browser. Told apart from .segmented-nav at a glance: an outline, not a track, and a check, not a raised pill.",
-      "tokens": [
-        "--chip-height",
-        "--color-accent-container",
-        "--color-accent-container-hover",
-        "--color-accent-container-pressed",
-        "--color-border-control",
-        "--color-focus-ring",
-        "--color-on-accent-container",
-        "--color-on-surface",
-        "--size-icon-sm",
-        "--size-touch"
-      ]
-    },
-    {
-      "id": "segmented-nav",
-      "name": "Segmented navigation",
-      "kind": "navigation",
-      "summary": "A tonal track with one sliding pill: switch between views of the same content.",
-      "classes": [
-        "segmented-nav",
-        "segmented-nav-tab",
-        "segmented-nav-compact"
-      ],
-      "when": [
-        "switch between Stories and Transcript",
-        "switch the view of one page without leaving it",
-        "a chart's two or three modes"
-      ],
-      "not": [
-        {
-          "when": "choosing a value of a setting",
-          "use": "segmented-choice"
-        },
-        {
-          "when": "jumping to sections of a long page",
-          "use": "tabs"
-        }
-      ],
-      "keywords": [
-        "tablist",
-        "view switcher",
-        "toggle views",
-        "stories transcript"
-      ],
-      "markup": "<div class=\"segmented-nav\" role=\"tablist\" aria-label=\"View\"><button class=\"segmented-nav-tab\" type=\"button\" role=\"tab\" aria-selected=\"true\" data-value=\"stories\">Stories</button></div>",
-      "rules": [
-        "`mountSegmentedNav(list, onSelect)` runs it; `data-param` keeps the choice in the URL."
-      ],
-      "styles": [
-        "packages/design-system/styles/primitives.css"
-      ],
-      "usage": "Navigation, used like tabs (2026-10-20): a tonal track with no outline and no check, and one pill in the accent container that slides under the active label, by transform alone. The design is flat, so the pill is told apart by colour, not by a shadow (2026-10-21); the choice control is told apart by its outline and check. The active label takes the pill's text colour, the others stay muted. Buttons in a tablist: segmentedNav.ts moves aria-selected and the roving tabindex, and answers Left, Right, Home and End.",
-      "tokens": [
-        "--chip-height",
-        "--color-accent-container",
-        "--color-accent-container-pressed",
-        "--color-focus-ring",
-        "--color-on-accent-container",
-        "--color-on-surface",
-        "--color-on-surface-muted",
-        "--color-surface-container",
-        "--segmented-height",
-        "--segmented-padding",
-        "--size-touch"
       ]
     },
     {
@@ -1812,45 +1899,6 @@
       "styles": [],
       "usage": "",
       "tokens": []
-    },
-    {
-      "id": "search-field",
-      "name": "Search field",
-      "kind": "field",
-      "summary": "The Library's rounded search pill, on the container tone.",
-      "classes": [
-        "search-field",
-        "search-clear"
-      ],
-      "when": [
-        "search or filter a list by text"
-      ],
-      "not": [
-        {
-          "when": "a text field in a form",
-          "use": "field"
-        }
-      ],
-      "keywords": [
-        "search bar",
-        "filter input",
-        "text filter"
-      ],
-      "styles": [
-        "packages/design-system/styles/buttons.css",
-        "packages/design-system/styles/search-field.css"
-      ],
-      "usage": "The search field: a filled pill with the glyph inside it, as a search bar is in every Google app. The glyph and the placeholder say what it is. Focus lifts it (the overlay fill and a hairline; the design is flat, so no shadow); the ring is the keyboard's only (data-input, app.ts), so a tap, a click or typing never draws it. Library, Sources and every topic's page share this one field (2026-10-21; styles.test.ts holds them to it).",
-      "tokens": [
-        "--color-border-control",
-        "--color-on-surface",
-        "--color-on-surface-muted",
-        "--color-surface-container",
-        "--color-surface-container-focus",
-        "--color-surface-container-hover",
-        "--field-height",
-        "--shape-round"
-      ]
     },
     {
       "id": "stat-tiles",

@@ -1,6 +1,7 @@
 ---
 import Icon from "@singularity/design-system/Icon";
 import { ICON_PATHS, type IconName } from "@singularity/design-system/icons";
+import SearchField from "@singularity/design-system/SearchField";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
 import { component, primitive, semantic } from "../lib/guide";
@@ -42,11 +43,7 @@ const jumps = [
       </div>
     </div>
     <div class="guide-toolbar">
-      <label class="search-field">
-        <Icon name="search" />
-      <span class="sr-only">Search tokens and icons</span>
-      <input type="search" placeholder="Search tokens and icons" autocomplete="off" data-filter />
-      </label>
+      <SearchField label="Search tokens and icons" placeholder="Search tokens and icons" autoComplete="off" data-filter />
     </div>
 
     <section aria-labelledby="space">

@@ -1,5 +1,5 @@
 ---
-import Icon from "@singularity/design-system/Icon";
+import SearchField from "@singularity/design-system/SearchField";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
 import { primitive, semantic } from "../lib/guide";
@@ -27,11 +27,7 @@ const NOTES: Record<string, string> = {
     <PageHead title="Typography" />
 
     <div class="guide-toolbar">
-      <label class="search-field">
-        <Icon name="search" />
-      <span class="sr-only">Filter text roles and sizes</span>
-      <input type="search" placeholder="Search roles and sizes" autocomplete="off" data-filter />
-      </label>
+      <SearchField label="Filter text roles and sizes" placeholder="Search roles and sizes" autoComplete="off" data-filter />
     </div>
 
     <section aria-labelledby="specimen">

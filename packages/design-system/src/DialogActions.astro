@@ -1,13 +1,13 @@
 ---
-import { dialogActionsClass } from "./dialog.ts";
-import "../styles/dialog.css";
+/**
+ * @deprecated Import DialogActions from "@singularityfm/design-system/DialogActions" (DS-5). This
+ * path stays until a breaking release: it renders that React DialogActions, its slot as children,
+ * and draws nothing of its own (designSystem.test.ts holds it to that).
+ */
+import type { ComponentProps } from "react";
+import DialogActions from "./DialogActions.tsx";
 
-interface Props {
-  /** Three answers in a column, the committing one first. */
-  stacked?: boolean;
-}
-
-const { stacked = false } = Astro.props;
+type Props = Omit<ComponentProps<typeof DialogActions>, "children">;
 ---
 
-<div class={dialogActionsClass(stacked)}><slot /></div>
+<DialogActions {...Astro.props}><slot /></DialogActions>

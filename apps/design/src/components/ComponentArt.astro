@@ -4,6 +4,7 @@ import Badge from "@singularity/design-system/Badge";
 import Banner from "@singularity/design-system/Banner";
 import BrandMark from "@singularity/design-system/BrandMark";
 import Button from "@singularity/design-system/Button";
+import Chip from "@singularity/design-system/Chip";
 import { codeSnippetHtml } from "@singularity/design-system/code";
 import "@singularity/design-system/styles/code.css";
 import Fab from "@singularity/design-system/Fab";
@@ -11,10 +12,14 @@ import Field from "@singularity/design-system/Field";
 import Flag from "@singularity/design-system/Flag";
 import Icon from "@singularity/design-system/Icon";
 import IconButton from "@singularity/design-system/IconButton";
-import MenuItem from "@singularity/design-system/MenuItem.astro";
+import MenuItem from "@singularity/design-system/MenuItem";
 import { menuBodyClass } from "@singularity/design-system/menu";
-import Select from "@singularity/design-system/Select.astro";
-import SheetHeader from "@singularity/design-system/SheetHeader.astro";
+import PlayChip from "@singularity/design-system/PlayChip";
+import SearchField from "@singularity/design-system/SearchField";
+import SegmentedChoice from "@singularity/design-system/SegmentedChoice";
+import SegmentedNav from "@singularity/design-system/SegmentedNav";
+import Select from "@singularity/design-system/Select";
+import SheetHeader from "@singularity/design-system/SheetHeader";
 import Slider from "@singularity/design-system/Slider";
 import Switch from "@singularity/design-system/Switch";
 import { SAMPLE } from "../lib/components";
@@ -52,6 +57,23 @@ const { slug } = Astro.props;
       </span>
     )
   }
+  {slug === "play-chip" && <PlayChip label={SAMPLE.duration} tabIndex={-1} />}
+  {slug === "chip" && <Chip defaultChecked tabIndex={-1}>{SAMPLE.label}</Chip>}
+  {
+    slug === "segmented-choice" && (
+      <SegmentedChoice
+        name="art-choice"
+        defaultValue="1"
+        options={SAMPLE.segments.slice(0, 2).map((label, n) => ({ value: String(n + 1), label, tabIndex: -1 }))}
+      />
+    )
+  }
+  {slug === "search-field" && <SearchField label={SAMPLE.search} placeholder={SAMPLE.search} tabIndex={-1} />}
+  {
+    slug === "segmented-nav" && (
+      <SegmentedNav tabs={SAMPLE.segments.slice(0, 2).map((label, n) => ({ value: String(n + 1), label }))} />
+    )
+  }
   {slug === "field" && <Field placeholder={SAMPLE.label} aria-label={SAMPLE.label} tabIndex={-1} />}
   {slug === "switch" && <Switch defaultChecked aria-label={SAMPLE.label} tabIndex={-1} />}
   {
@@ -70,7 +92,7 @@ const { slug } = Astro.props;
   }
   {
     slug === "select" && (
-      <Select variant="outlined" label={SAMPLE.label} tabindex="-1">
+      <Select variant="outlined" label={SAMPLE.label} tabIndex={-1}>
         <option>{SAMPLE.select[0]}</option>
       </Select>
     )
