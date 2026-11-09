@@ -74,6 +74,12 @@ interface Case {
   states: [state: string, script: string][];
   /** Selectors inside the component whose own place must hold too (its words). */
   watch?: string[];
+  /**
+   * The element that holds the words a script writes, and the states whose words are longer than the
+   * reserve: every other state's words must show whole (a reserve left empty keeps a box still by
+   * hiding the words), and these must be cut.
+   */
+  words?: { selector: string; cut?: string[] };
 }
 
 const label = (words: string) =>
@@ -110,16 +116,19 @@ const cases: Case[] = [
     name: "PlayChip: every word on a story's chip",
     el: h(PlayChip, { label: "0:24" }),
     states: STORY_WORDS.map((words) => [words, label(words)]),
+    words: { selector: "[data-chip-label]" },
   },
   {
     name: "PlayChip: the hero's words, with its reserve",
     el: h(PlayChip, { label: "3 min", reserve: "88 min left" }),
     states: HERO_WORDS.map((words) => [words, label(words)]),
+    words: { selector: "[data-chip-label]" },
   },
   {
     name: "PlayChip: words longer than the reserve are cut, not grown into",
     el: h(PlayChip, { label: "3 min" }),
     states: [["a long reason", label("You are offline and this cannot play yet")]],
+    words: { selector: "[data-chip-label]", cut: ["a long reason"] },
   },
   {
     name: "Button: its words swap, with a reserve",
@@ -151,6 +160,24 @@ const cases: Case[] = [
       h("option", { value: "long" }, "Longest first"),
     ),
     states: [["Longest first", "el.querySelector('select').value='long'"]],
+  },
+  {
+    name: "Fab: its words change, with a reserve",
+    el: draw(Fab, { label: "Play", icon: "play", reserve: "Resume · 88 min left" }, "Play · 3 min"),
+    states: [
+      "Resume · 12 min left",
+      "Preparing",
+      "Loading",
+      "Try again",
+      "A very long reason it cannot play",
+    ].map(
+      (words) =>
+        [
+          words,
+          `el.querySelector('.create-fab-label > span').textContent=${JSON.stringify(words)}`,
+        ] as [string, string],
+    ),
+    words: { selector: ".create-fab-label > span", cut: ["A very long reason it cannot play"] },
   },
   {
     name: "SegmentedNav: another tab",
@@ -277,7 +304,7 @@ describe.skipIf(!browser)("a control's box never depends on its state (DS-9)", (
           await page?.close();
         });
 
-        it.each(cases)("$name", async ({ el, states, watch = [] }) => {
+        it.each(cases)("$name", async ({ el, states, watch = [], words }) => {
           await stage(page, mood, theme, renderToStaticMarkup(el));
           const rest = await measure(page, watch);
           for (const [state, script] of states) {
@@ -285,6 +312,17 @@ describe.skipIf(!browser)("a control's box never depends on its state (DS-9)", (
               `(() => { const el = document.querySelector('#w > *'); ${script} })()`,
             );
             expect(await measure(page, watch), `${state}`).toEqual(rest);
+            if (words) {
+              const cut = await page.evaluate((selector) => {
+                const words = document.querySelector(
+                  `#w > * ${selector}, #w > ${selector}`,
+                ) as HTMLElement;
+                return words.scrollWidth > words.clientWidth + 1;
+              }, words.selector);
+              expect(cut, `${state}: words ${cut ? "cut" : "whole"}`).toBe(
+                words.cut?.includes(state) ?? false,
+              );
+            }
           }
         });
 

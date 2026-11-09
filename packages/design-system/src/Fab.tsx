@@ -24,6 +24,11 @@ interface FabProps {
   className?: string;
   /** Astro places the button in its parent's slot with it; it is not an attribute of the button. */
   slot?: string;
+  /**
+   * The widest words the button will say beside its glyph ("Resume · 88 min left"), for one whose
+   * words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis.
+   */
+  reserve?: string;
   /** The word the extended button shows beside its glyph ("Add"); it folds away while reading. */
   children: ReactNode;
 }
@@ -44,6 +49,7 @@ export default function Fab({
   className,
   type = "button",
   slot: _slot,
+  reserve,
   children,
   ...passed
 }: Props) {
@@ -52,8 +58,8 @@ export default function Fab({
   const face = (
     <>
       <Icon name={icon} size="lg" />
-      <span className={WORD} aria-hidden="true">
-        {children}
+      <span className={WORD} aria-hidden="true" data-reserve={reserve}>
+        {reserve ? <span>{children}</span> : children}
       </span>
     </>
   );

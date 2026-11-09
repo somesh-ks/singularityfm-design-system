@@ -7,7 +7,7 @@ Ledger section 3, one surface. Read [the core](https://github.com/somesh-ks/sing
 The craft that makes components hold still and answer clearly. Each was a reported or measured defect.
 
 - **Nothing changes width or jumps.**
-  - Every control keeps one box in every state (owner, 2026-11-09: "there shouldn't be any jerks"; DS-9). The play chip is as wide as the widest words it can say (`reserve`, "Play again" by default; a header's chip passes its own), so the neighbours never move as it plays, loads or fails (D92, which held 7rem and let "13 min left" and "Preparing audio" grow it; D106, #116). Button and tonal Select take `reserve` too, a busy spinner stands in the button's padding, and `layoutStability.test.ts` measures it all in a browser.
+  - Every control keeps one box in every state (owner, 2026-11-09: "there shouldn't be any jerks"; DS-9). The play chip is as wide as the widest words it can say (`reserve`, "Play again" by default; a header's chip passes its own), so the neighbours never move as it plays, loads or fails (D92, which held 7rem and let "13 min left" and "Preparing audio" grow it; D106, #116). Button, Fab and tonal Select take `reserve` too, a busy spinner stands in the button's padding, and `layoutStability.test.ts` measures it all in a browser.
   - A filter chip's and a segment's check takes no room; the label slides by half of it (D95, 2026-10-11).
   - The segmented thumb slides only while used, so a page never opens with motion (`player.css:2254-2304`).
   - The scrub bubble and the bar's times sit over a hidden copy of the widest time and snap to device pixels, so digits do not shimmer (2026-10-11).
