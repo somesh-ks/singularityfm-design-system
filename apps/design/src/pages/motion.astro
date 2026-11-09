@@ -1,6 +1,7 @@
 ---
 import Icon from "@singularity/design-system/Icon";
 import IconButton from "@singularity/design-system/IconButton";
+import SearchField from "@singularity/design-system/SearchField";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
 import { primitive } from "../lib/guide";
@@ -23,11 +24,7 @@ const interaction = [
     <PageHead title="Motion" />
 
     <div class="guide-toolbar">
-      <label class="search-field">
-        <Icon name="search" />
-      <span class="sr-only">Search motion</span>
-      <input type="search" placeholder="Search motion" autocomplete="off" data-filter />
-      </label>
+      <SearchField label="Search motion" placeholder="Search motion" autoComplete="off" data-filter />
     </div>
 
     <section aria-label="Motion tokens">

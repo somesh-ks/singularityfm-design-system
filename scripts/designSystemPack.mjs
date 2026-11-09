@@ -6,7 +6,9 @@
 // files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
 // and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
 // stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
-// each a native element that hydrates nowhere (DS-8); and a fourth that draws Dialog,
+// each a native element that hydrates nowhere (DS-8); and a fourth that draws the chips, the segmented
+// controls and the Search field by their names, none hydrated, and installs the segmented nav's script
+// from its export (DS-8); and a fifth that draws Dialog,
 // DialogTitle, DialogActions, Sheet and SheetHeader by their names and by their .astro shims, native
 // dialogs with no island (DS-3). The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
@@ -166,6 +168,26 @@ try {
       "",
     ].join("\n"),
   );
+  // The chips, the segmented choice and the Search field are native inputs and the Play chip a
+  // native button and the Segmented navigation the app's tablist, all React-rendered with no directive
+  // (DS-8); the page mounts the nav's script from its export, so a lost `./*` entry fails the build.
+  writeFileSync(
+    join(app, "src/pages/chips.astro"),
+    [
+      "---",
+      `import Chip from "${name}/Chip";`,
+      `import ChipGroup from "${name}/ChipGroup";`,
+      `import PlayChip from "${name}/PlayChip";`,
+      `import SearchField from "${name}/SearchField";`,
+      `import SegmentedChoice from "${name}/SegmentedChoice";`,
+      `import SegmentedNav from "${name}/SegmentedNav";`,
+      "---",
+      '<html lang="en"><body><form><ChipGroup className="placed-chips" aria-label="Show"><Chip className="placed-chip" name="c1" value="v1" data-id="c1" defaultChecked>Chip words</Chip></ChipGroup><SegmentedChoice className="placed-choice" name="r1" aria-label="Length" defaultValue="b" options={[{ value: "a", label: "Choice A" }, { value: "b", label: "Choice B", "data-id": "r1" }]} /><SearchField className="placed-search" label="Search words" name="q1" data-id="q1" /><PlayChip className="placed-play" label="1:24" aria-label="Play name" data-play-item="0" /><SegmentedNav className="placed-nav" aria-label="Views" tabs={[{ value: "a", label: "View A", controls: "pa" }, { value: "b", label: "View B" }]} /></form>',
+      `<script>import { mountSegmentedNav } from "${name}/segmentedNav"; for (const list of document.querySelectorAll('[role="tablist"]')) mountSegmentedNav(list, () => {});</script>`,
+      "</body></html>",
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -185,6 +207,7 @@ try {
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
   const inputs = readFileSync(join(app, "dist/inputs/index.html"), "utf8");
   const overlays = readFileSync(join(app, "dist/overlays/index.html"), "utf8");
+  const chips = readFileSync(join(app, "dist/chips/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
@@ -278,12 +301,12 @@ try {
     );
   const drawn = (found, parts) =>
     found.length === 2 && found[0] === found[1] && parts.every((part) => part.test(found[0]));
-  const tag = (name, ...attributes) =>
+  const opening = (name, ...attributes) =>
     new RegExp(`<${name}\\b${attributes.map((a) => `(?=[^>]*\\s${a})`).join("")}[^>]*>`, "i");
   if (
     !drawn(placed("placed-dialog"), [
-      tag("dialog", 'data-dialog=""', 'data-confirm=""', 'aria-labelledby="d1"'),
-      tag("form", 'data-form=""', "novalidate", 'style="order:\\s*1"'),
+      opening("dialog", 'data-dialog=""', 'data-confirm=""', 'aria-labelledby="d1"'),
+      opening("form", 'data-form=""', "novalidate", 'style="order:\\s*1"'),
       /<(h[1-6])\b(?=[^>]*\sid="d1")(?=[^>]*\sdata-confirm-title)(?=[^>]*\sstyle="order:\s*2")[^>]*>Question<\/\1>/,
       /<b>Answer<\/b>(?:<\/\w+>)*<\/form>\s*<p data-copy(?:="")?>After<\/p>\s*<\/dialog>$/,
     ])
@@ -293,9 +316,9 @@ try {
     );
   if (
     !drawn(placed("placed-sheet"), [
-      tag("dialog", 'data-sheet="panel"', 'aria-labelledby="s1"', 'data-health-sheet=""'),
+      opening("dialog", 'data-sheet="panel"', 'aria-labelledby="s1"', 'data-health-sheet=""'),
       /<(h[1-6])\b(?=[^>]*\sid="s1")(?=[^>]*\sdata-panel-title)[^>]*>Sheet words<\/\1>/,
-      tag("button", 'aria-label="Close"', "data-panel-close"),
+      opening("button", 'aria-label="Close"', "data-panel-close"),
       /<i>Body<\/i>(?:<\/\w+>)*\s*<p data-foot(?:="")?>Foot<\/p>\s*<\/dialog>$/,
     ])
   )
@@ -306,6 +329,80 @@ try {
     problems.push("the page drew no SheetHeader with its subtitle by each path");
   if (/<astro-island|<script/.test(overlays))
     problems.push("the overlays page hydrates or ships a script");
+  // Each keeps the test's own class, attributes and words on the element the app's scripts and rules
+  // find, found by the test's own class and never by the part's classes or wrapper markup: a native checkbox, ticked and named, in its chip; a radio group whose chosen radio is
+  // checked; a native search input; a button the player writes; a tablist whose chosen tab is
+  // aria-selected with its panel named. A dropped attribute, word or state fails here.
+  const tag = (pattern) => chips.match(pattern)?.[0] ?? "";
+  const has = (found, ...parts) => found !== "" && parts.every((part) => found.includes(part));
+  const wants = [
+    [has(tag(/<fieldset[^>]*\bplaced-chips\b[^>]*>/), 'aria-label="Show"'), "the ChipGroup"],
+    [
+      has(
+        tag(/<label[^>]*\bplaced-chip\b[^>]*>.*?<\/label>/),
+        'type="checkbox"',
+        'name="c1"',
+        'value="v1"',
+        'data-id="c1"',
+        'checked=""',
+        "Chip words",
+      ),
+      "the Chip",
+    ],
+    [
+      has(tag(/<fieldset[^>]*\bplaced-choice\b[^>]*>/), 'role="radiogroup"', 'aria-label="Length"'),
+      "the SegmentedChoice",
+    ],
+    [
+      has(
+        tag(/<input[^>]*value="b"[^>]*>/),
+        'type="radio"',
+        'name="r1"',
+        'data-id="r1"',
+        'checked=""',
+      ),
+      "the chosen radio",
+    ],
+    [
+      has(
+        tag(/<label[^>]*\bplaced-search\b[^>]*>.*?<\/label>/),
+        "Search words",
+        'type="search"',
+        'name="q1"',
+        'data-id="q1"',
+      ),
+      "the SearchField",
+    ],
+    [
+      has(
+        tag(/<button[^>]*\bplaced-play\b[^>]*>/),
+        'type="button"',
+        'data-state="idle"',
+        'data-playing="false"',
+        'aria-label="Play name"',
+        'data-play-item="0"',
+      ),
+      "the PlayChip",
+    ],
+    [chips.includes('data-chip-label="">1:24<'), "the PlayChip's words"],
+    [
+      has(tag(/<[a-z]+[^>]*\bplaced-nav\b[^>]*>/), 'role="tablist"', 'aria-label="Views"'),
+      "the SegmentedNav",
+    ],
+    [
+      has(tag(/<button[^>]*role="tab"[^>]*>View A/), 'aria-controls="pa"', 'aria-selected="true"'),
+      "the chosen tab and its panel",
+    ],
+    [
+      has(tag(/<button[^>]*role="tab"[^>]*>View B/), 'aria-selected="false"', 'tabindex="-1"'),
+      "the other tab, out of the Tab order",
+    ],
+  ];
+  for (const [kept, what] of wants) if (!kept) problems.push(`the chips page lost ${what}`);
+  // No island (DS-8): the segmented nav is the app's tablist markup and the page's one script call, so a
+  // directive that creeps back ships React's renderer to every page that draws one.
+  if (/<astro-island/.test(chips)) problems.push("the chips page hydrates");
+  if (!/<script\b/.test(chips)) problems.push("the chips page lost the segmented nav's script");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
   let lint = "";
   try {
@@ -324,6 +421,8 @@ try {
     problems.push("the Icon's stylesheet did not reach the page");
   if (![actions, ...styles].some((text) => text.includes(".create-fab{")))
     problems.push("the Fab's stylesheet did not reach the page");
+  if (![chips, ...styles].some((text) => text.includes(".search-field{")))
+    problems.push("the Search field's stylesheet did not reach the page");
   for (const [page, rule] of [
     [inputs, ".field-input{"],
     [inputs, ".switch-input:checked{"],

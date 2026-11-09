@@ -7,6 +7,7 @@
 import { BADGE } from "../../src/badge.js";
 import { BANNER } from "../../src/banner.js";
 import { BUTTON } from "../../src/button.js";
+import { CHIP } from "../../src/chip.js";
 import { DIALOG } from "../../src/dialog.js";
 import { DRAWER } from "../../src/drawer.js";
 import { FAB } from "../../src/fab.js";
@@ -16,7 +17,11 @@ import { ICON } from "../../src/icon.js";
 import { ICON_BUTTON } from "../../src/iconButton.js";
 import { LINK } from "../../src/link.js";
 import { MENU } from "../../src/menu.js";
+import { PLAY_CHIP } from "../../src/playChip.js";
 import { RIPPLE } from "../../src/ripple.js";
+import { SEARCH_FIELD } from "../../src/searchField.js";
+import { SEGMENTED_CHOICE } from "../../src/segmentedChoice.js";
+import { SEGMENTED_NAV } from "../../src/segmentedNav.js";
 import { SELECT } from "../../src/select.js";
 import { SHEET } from "../../src/sheet.js";
 import { SLIDER } from "../../src/slider.js";
@@ -28,6 +33,10 @@ const PART_OF: Record<string, string> = {
   Icon: "icon",
   "Icon button": "icon-btn",
   Chip: "filter-chip",
+  "Play chip": "play-chip",
+  "Segmented choice": "segmented-choice",
+  "Segmented navigation": "segmented-nav",
+  "Search field": "search-field",
   FAB: "fab",
   Link: "text-link",
   Switch: "switch",
@@ -287,6 +296,68 @@ export const componentParts = (): PartSource[] => [
         ? ["A link is a real <a href>; an action on this page is a Button."]
         : ["The player has its own copy, `.player-source-link` (player.css); do not add a third."],
     };
+  }),
+  control("play-chip", "Play chip", PLAY_CHIP, {
+    kind: "action",
+    classes: ["chip", "chip-glyph", "chip-label"],
+    files: ["packages/design-system/src/PlayChip.tsx", "packages/design-system/src/playChip.ts"],
+    keywords: ["duration", "play pill", "status pill", "now playing"],
+    markup: '<PlayChip label="5 min" aria-label="Play the briefing" data-play-item={0} />',
+    rules: [
+      "A native button with no client directive (DS-8): the player writes data-state, data-playing and [data-chip-label].",
+    ],
+  }),
+  control("filter-chip", "Chip", CHIP, {
+    classes: ["filter-chip", "filter-chips", "filter-chips-scroll"],
+    files: [
+      "packages/design-system/src/Chip.tsx",
+      "packages/design-system/src/ChipGroup.tsx",
+      "packages/design-system/src/chip.ts",
+    ],
+    not: [{ when: "a long list of options", use: "multiselect" }],
+    keywords: ["multi select", "tick", "checkbox pill", "tags", "toggle chip", "filter chip"],
+    markup:
+      '<ChipGroup aria-label="Show"><Chip name="show" value="daily" defaultChecked>Daily</Chip></ChipGroup>',
+    rules: [
+      "A native checkbox with no client directive (DS-8); scroll on the group for one sideways row.",
+    ],
+  }),
+  control("segmented-choice", "Segmented choice", SEGMENTED_CHOICE, {
+    classes: ["segmented-choice", "segmented-choice-item"],
+    files: [
+      "packages/design-system/src/SegmentedChoice.tsx",
+      "packages/design-system/src/segmentedChoice.ts",
+    ],
+    keywords: ["radio", "length", "one of", "option group", "pick one"],
+    markup:
+      '<SegmentedChoice name="length" aria-labelledby="len" defaultValue="3" options={[{ value: "3", label: "3 min" }]} />',
+    rules: ["Native radios with no client directive (DS-8)."],
+  }),
+  control("segmented-nav", "Segmented navigation", SEGMENTED_NAV, {
+    kind: "navigation",
+    classes: ["segmented-nav", "segmented-nav-tab", "segmented-nav-compact"],
+    files: [
+      "packages/design-system/src/SegmentedNav.tsx",
+      "packages/design-system/src/segmentedNav.ts",
+    ],
+    not: [{ when: "jumping to sections of a long page", use: "tabs" }],
+    keywords: ["tablist", "view switcher", "toggle views", "stories transcript"],
+    markup: '<SegmentedNav aria-label="View" tabs={[{ value: "stories", label: "Stories" }]} />',
+    rules: [
+      "A native tablist with no client directive (DS-8): the page calls mountSegmentedNav(list, onSelect) from design-system/segmentedNav once for each, and draws the panels (each tab's controls).",
+    ],
+  }),
+  control("search-field", "Search field", SEARCH_FIELD, {
+    kind: "field",
+    classes: ["search-field"],
+    files: [
+      "packages/design-system/src/SearchField.tsx",
+      "packages/design-system/src/searchField.ts",
+    ],
+    keywords: ["search bar", "filter input", "text filter"],
+    markup:
+      '<SearchField label="Search your library" name="q" placeholder="Search your library" />',
+    rules: ["A native input with no client directive (DS-8)."],
   }),
   control("icon", "Icon", ICON, {
     kind: "display",
