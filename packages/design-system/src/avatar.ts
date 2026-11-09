@@ -1,7 +1,7 @@
 /**
  * The Avatar (D326): the reader's face in the app bar and on the profile page. One flat shape with a
- * face and two tones, never a letter, a gradient, a shadow or a blush. Avatar.astro renders from it; a
- * script or an island that draws one calls avatarMarkup(). The rules are in styles/avatar.css.
+ * face and two tones, never a letter, a gradient, a shadow or a blush. Avatar.tsx renders from it; a
+ * script that draws one calls avatarMarkup(). The rules are in styles/avatar.css.
  *
  * No colour is written here: the markup carries classes, and avatar.css fills them from tokens, so the
  * hue engine drives every shape in every mood. A mood supplies tokens and nothing else (--av-body,
@@ -414,9 +414,16 @@ let clips = 0;
  * a page may draw any number of avatars.
  */
 export function avatarMarkup(id: string): string {
+  return `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">${avatarArt(id, `avatar-clip-${++clips}`)}</svg>`;
+}
+
+/**
+ * What avatarMarkup draws inside its SVG, its texture clipped by the id given. Avatar.tsx draws the
+ * SVG itself and passes an id from React's useId, so a server's and a hydrated island's agree.
+ */
+export function avatarArt(id: string, clip: string): string {
   const shape = Object.hasOwn(AVATAR_SHAPES, id) ? AVATAR_SHAPES[id] : AVATAR_SHAPES.cookie;
   if (!shape) return "";
-  const clip = `avatar-clip-${++clips}`;
   const bodies = shape.parts
     .filter((part) => part.tone === "body")
     .map(
@@ -427,7 +434,7 @@ export function avatarMarkup(id: string): string {
   const texture = `<clipPath id="${clip}">${bodies}</clipPath><g clip-path="url(#${clip})"><g class="avatar-dots">${DOTS}</g><g class="avatar-speck">${SPECK}</g></g>`;
   const stitch = shape.stitch ? `<path class="avatar-stitch" d="${shape.stitch}"/>` : "";
   const [band, cups] = phonesMarkup(shape);
-  return `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false"><g class="avatar-rig">${band}${shape.parts.map(partMarkup).join("")}${texture}${stitch}${shape.extras ?? ""}${cups}${faceMarkup(shape)}<path class="avatar-spark" d="${SPARK}"/></g></svg>`;
+  return `<g class="avatar-rig">${band}${shape.parts.map(partMarkup).join("")}${texture}${stitch}${shape.extras ?? ""}${cups}${faceMarkup(shape)}<path class="avatar-spark" d="${SPARK}"/></g>`;
 }
 
 /** A shape's face numbers, for a show that moves the face or glides it to another shape's. */

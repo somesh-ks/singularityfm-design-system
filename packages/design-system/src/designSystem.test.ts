@@ -104,8 +104,6 @@ describe("the Flag", () => {
 // The library's one component framework is React (DS-3). Each family PR moves its .astro files to .tsx
 // and trims this list; nothing joins it.
 const ASTRO_LEFT = [
-  "Avatar.astro",
-  "Code.astro",
   "Dialog.astro",
   "DialogActions.astro",
   "DialogTitle.astro",
@@ -120,10 +118,12 @@ const ASTRO_LEFT = [
 // deprecated shim: dropping it, or the `class` it takes, is a breaking change (COMPATIBILITY.md). The
 // breaking release that ends the .astro paths empties this list.
 const ASTRO_SHIMS = [
+  "Avatar.astro",
   "Badge.astro",
   "Banner.astro",
   "BrandMark.astro",
   "ChapterAside.astro",
+  "Code.astro",
   "Field.astro",
   "Flag.astro",
   "Icon.astro",

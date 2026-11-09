@@ -1,32 +1,16 @@
 ---
-import Icon from "./Icon.tsx";
-import "../styles/code.css";
+/**
+ * @deprecated Import Code from "@singularityfm/design-system/Code", pass className and draw it with
+ * client:load (DS-5, DS-7). This path stays until a breaking release: it renders that React Code,
+ * `class` passed on as className, hydrated where it is drawn so its button still copies, and draws
+ * nothing of its own (designSystem.test.ts holds it to that).
+ */
+import type { ComponentProps } from "react";
+import Code from "./Code.tsx";
 
-interface Props {
-  /** The text, copied exactly as it is. */
-  text: string;
-  /** The text's accessible name, e.g. "Prompt". */
-  label: string;
-  copy?: string;
-  copied?: string;
-  /** For placing the snippet where it stands (a margin, a grid area). Never its look. */
-  class?: string;
-}
+type Props = Omit<ComponentProps<typeof Code>, "className"> & { class?: string };
 
-const { text, label, copy = "Copy", copied = "Copied", class: className = "" } = Astro.props;
+const { class: className, ...props } = Astro.props;
 ---
 
-<div class={["code-snippet", className].filter(Boolean).join(" ")} data-code data-copied-word={copied}>
-  <pre class="code-snippet-text" tabindex="0" aria-label={label}>{text}</pre>
-  <button class="icon-btn code-snippet-copy" type="button" aria-label={copy} title={copy} data-code-copy>
-    <Icon name="copy" size="lg" />
-    <Icon name="check" size="lg" />
-  </button>
-  <span class="sr-only" role="status" data-code-said></span>
-</div>
-
-<script>
-  import { wireCodeCopy } from "./code";
-
-  wireCodeCopy();
-</script>
+<Code {...props} className={className} client:load />
