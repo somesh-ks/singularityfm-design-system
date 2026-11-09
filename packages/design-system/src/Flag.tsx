@@ -1,4 +1,4 @@
-import { flagBadgeClass, flagClass, flagParts, flagSrc, hasFlagArt } from "./flag";
+import { flagBadgeClass, flagClass, flagParts, flagSrc, hasFlagArt } from "./flag.ts";
 import "../styles/flag.css";
 
 interface Props {

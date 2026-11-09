@@ -4,7 +4,7 @@
  * script or a React island that draws one calls bannerClass() and the part helpers; the style guide
  * lists BANNER. The rules are in styles/banner.css.
  */
-import type { Guidance } from "./guidance";
+import type { Guidance } from "./guidance.ts";
 
 export type BannerTone = "warning" | "danger" | "success";
 
