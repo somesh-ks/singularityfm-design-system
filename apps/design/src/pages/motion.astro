@@ -1,5 +1,6 @@
 ---
 import Icon from "@singularity/design-system/Icon";
+import IconButton from "@singularity/design-system/IconButton";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
 import { primitive } from "../lib/guide";
@@ -48,7 +49,7 @@ const interaction = [
                       </div>
                     </div>
                   </td>
-                  <td><button class="icon-btn press" type="button" aria-label={`Run ${token.name}`} data-run-motion><Icon name="play" /></button></td>
+                  <td><IconButton label={`Run ${token.name}`} data-run-motion><Icon name="play" /></IconButton></td>
                 </tr>
               ))
             }
@@ -71,7 +72,7 @@ const interaction = [
                       </div>
                     </div>
                   </td>
-                  <td><button class="icon-btn press" type="button" aria-label={`Run ${token.name}`} data-run-motion><Icon name="play" /></button></td>
+                  <td><IconButton label={`Run ${token.name}`} data-run-motion><Icon name="play" /></IconButton></td>
                 </tr>
               ))
             }

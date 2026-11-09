@@ -21,7 +21,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 
 ## Commands
 
-- `pnpm install --frozen-lockfile`, then `pnpm run gate`: typecheck (tsc and `astro check`), lint, unit tests, the docs check, the token and guide build, the pack-and-install test.
+- `pnpm install --frozen-lockfile`, then `pnpm run gate`: typecheck (tsc and `astro check`), lint, unit tests, the docs check, the guide's `ds validate`, the token and guide build, the pack-and-install test.
 - `pnpm run ds find "<need>"`: before you write a class, token or value, find the part that already does it.
 - `pnpm run tokens`: rebuild `styles/tokens.css` from `tokens/tokens.json`. `pnpm run dev`: the guide on port 4323.
 - `pnpm run glyphs`: rebuild `src/icons.ts` from `tokens/glyphs.json` (`--fetch` first re-reads every path from Phosphor). The app builds its player registries from the published file.
