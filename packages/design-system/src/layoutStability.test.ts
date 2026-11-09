@@ -144,14 +144,14 @@ const cases: Case[] = [
     name: "Button: its words swap, with a reserve",
     el: h(Button, { variant: "tonal", reserve: "Saving…", style: { width: "auto" } }, "Save"),
     states: [
-      ["Saving…", "el.querySelector('.button-label > span').textContent='Saving…'"],
+      ["Saving…", "el.querySelector('[data-button-label]').textContent='Saving…'"],
       [
         "a long reason",
-        "el.querySelector('.button-label > span').textContent='Saving your changes failed'",
+        "el.querySelector('[data-button-label]').textContent='Saving your changes failed'",
       ],
     ],
     watch: [".button-label"],
-    words: { selector: ".button-label > span", cut: ["a long reason"] },
+    words: { selector: "[data-button-label]", cut: ["a long reason"] },
   },
   {
     name: "Button: a spinner runs beside its words",

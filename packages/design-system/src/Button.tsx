@@ -22,7 +22,8 @@ interface ButtonProps {
   slot?: string;
   /**
    * The widest words the button may swap to ("Saving…"). It is as wide as these and its own words
-   * in every state, so a button that hugs its words never changes width when they change (DS-9).
+   * in every state, so a button that hugs its words never changes width when they change (DS-9). A
+   * script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve.
    */
   reserve?: string;
   children?: ReactNode;
@@ -49,7 +50,7 @@ export default function Button({
   const rest = passedAttributes(passed);
   const face = reserve ? (
     <span className="button-label" data-reserve={reserve}>
-      <span>{children}</span>
+      <span data-button-label="">{children}</span>
     </span>
   ) : (
     children

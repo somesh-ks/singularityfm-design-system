@@ -234,7 +234,7 @@
 
 /* The live words add nothing to the width: the reserve sets it, and words longer than it end in an
    ellipsis. Centred, so a shorter word sits mid-button, not at the start of the reserved room. */
-.button-label > span {
+.button-label > [data-button-label] {
   display: block;
   inline-size: 0;
   min-inline-size: 100%;
