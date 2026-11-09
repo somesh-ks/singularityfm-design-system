@@ -1,5 +1,6 @@
 {
   "$schema": "https://biomejs.dev/schemas/latest/schema.json",
+  "extends": ["./packages/design-system/rules/biome-config.json"],
   "files": {
     "includes": [
       "**",

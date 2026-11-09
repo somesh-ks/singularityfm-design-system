@@ -1,8 +1,9 @@
 // The package as a customer gets it (D382 step 5): `pnpm pack` the design system, install the tarball into
 // a throwaway Astro project with React outside the workspace, and build a page that imports a component (by
 // its name, and by the deprecated .astro path), a component that imports its own stylesheet (the Icon, by
-// its name and by its .astro shim), a stylesheet (fonts.css, which pulls the font files) and a
-// token file. The workspace link serves every file in the folder, so a path missing from `files`, a broken
+// its name and by its .astro shim), a stylesheet (fonts.css, which pulls the font files), a token file
+// and the rules module, then lint a stylesheet with the shipped Biome plugin config. The workspace link
+// serves every file in the folder, so a path missing from `files`, a broken
 // exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every other
 // check and fails only here.
 //
@@ -32,6 +33,9 @@ const guideVersion = (dependency) =>
 const dependencies = Object.fromEntries(
   ["astro", "@astrojs/react", "react", "react-dom"].map((name) => [name, guideVersion(name)]),
 );
+dependencies["@biomejs/biome"] = JSON.parse(
+  readFileSync(join(root, "node_modules/@biomejs/biome/package.json"), "utf8"),
+).version;
 
 const work = mkdtempSync(join(tmpdir(), "ds-pack-"));
 // Windows has no `pnpm` executable, only `pnpm.cmd`, which execFile cannot start without a shell (Node
@@ -80,11 +84,18 @@ try {
       `import "${name}/styles/tokens.css";`,
       `import "${name}/styles/fonts.css";`,
       `import tokens from "${name}/tokens/tokens.json";`,
+      `import { validate } from "${name}/rules";`,
+      'const findings = validate(".a { color: #fff; }", "page.css").length;',
       "---",
-      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><p data-tokens={Object.keys(tokens).length}></p></body></html>',
+      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
       "",
     ].join("\n"),
   );
+  writeFileSync(
+    join(app, "biome.json"),
+    JSON.stringify({ extends: [`${name}/rules/biome-config.json`] }),
+  );
+  writeFileSync(join(app, "src/raw.css"), ".a { color: #fff; }\n");
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -107,6 +118,16 @@ try {
   // The shim passes `class` on as className; lost, the old path draws the glyph where nothing places it.
   if (html.match(/class="icon-glyph placed"/g)?.length !== 2)
     problems.push("the page drew no placed Icon by each path");
+  if (!html.includes('data-findings="1"')) problems.push("the rules module found no raw colour");
+  // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
+  let lint = "";
+  try {
+    lint = pnpm(["exec", "biome", "lint", "src/raw.css"], app);
+  } catch (error) {
+    lint = `${error.stdout}${error.stderr}`;
+  }
+  if (!/A raw colour: read a colour token/.test(lint))
+    problems.push("the Biome plugin did not fire on a raw colour");
   const assets = readdirSync(join(app, "dist/_astro"));
   // A .tsx in node_modules carries its stylesheet only if the consumer's build follows the import.
   const styles = assets

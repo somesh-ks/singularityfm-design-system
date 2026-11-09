@@ -1,4 +1,5 @@
 /** Answers "which part" and "which token" from a built system, so an agent need not grep stylesheets. */
+import { RETIRED_PATHS } from "../../rules/data.js";
 import type { Part, System, SystemToken } from "./types.js";
 
 // "action" is a stop word: nearly every part is one, so it ranked first whichever part names it most
@@ -91,6 +92,13 @@ export function findParts(system: System, need: string, limit = 3): PartHit[] {
     .slice(0, limit);
 }
 
+/** What replaces a retired import path, named whole or by its last part (`Button.astro`). */
+export function replacementFor(name: string): string | undefined {
+  const wanted = name.trim();
+  return RETIRED_PATHS.find((entry) => entry.path === wanted || entry.path.endsWith(`/${wanted}`))
+    ?.use;
+}
+
 export interface TokenHit {
   token: SystemToken;
   score: number;
@@ -155,6 +163,8 @@ export function shownTokens(system: System, need: string): TokenHit[] {
 
 /** A short answer to a need: the best parts in a few lines each, then the tokens that fit. */
 export function answer(system: System, need: string): string {
+  const replacement = replacementFor(need);
+  if (replacement) return `${need.trim()} is retired: import ${replacement}.`;
   const parts = findParts(system, need);
   const tokens = shownTokens(system, need);
   const out: string[] = [];

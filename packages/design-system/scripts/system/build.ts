@@ -151,14 +151,36 @@ function tokenRecord(token: Token, doc: TokenDocument): SystemToken {
   return record;
 }
 
+/**
+ * Every custom property the package's stylesheets declare that is not a token's own name: a type
+ * role's parts (`--text-label-size`), the safe-area insets, the ghost state pair a container sets.
+ * The unknown-property rule (rules/index.ts) knows a read of one of these as the library's.
+ */
+function declaredProperties(tokens: SystemToken[]): string[] {
+  const named = new Set(tokens.map((token) => token.name));
+  const dir = join(PACKAGE, "styles");
+  const declared = readdirSync(dir)
+    .filter((name) => name.endsWith(".css"))
+    .flatMap((name) => [
+      ...readFileSync(join(dir, name), "utf8")
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .matchAll(/(?:@property\s+|[{;\s])(--[\w-]+)\s*[:{]/g),
+    ])
+    .map((match) => match[1] ?? "")
+    .filter((name) => !named.has(name));
+  return [...new Set(declared)].sort();
+}
+
 export function buildSystem(): System {
   const doc = loadTokens();
   const sheets = readStylesheets();
   const reusable = reusableTokenNames(doc);
+  const tokens = doc.tokens.map((token) => tokenRecord(token, doc));
   return {
     generated: GENERATED,
     parts: PARTS.map((part) => derive(part, sheets, reusable)),
-    tokens: doc.tokens.map((token) => tokenRecord(token, doc)),
+    tokens,
+    properties: declaredProperties(tokens),
   };
 }
 

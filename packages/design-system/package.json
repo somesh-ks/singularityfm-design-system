@@ -16,6 +16,7 @@
     "fonts",
     "flags",
     "scripts",
+    "rules",
     "!**/*.test.ts",
     "!**/golden.json",
     "COMPATIBILITY.md"
@@ -38,6 +39,8 @@
     "./flags/*": "./flags/*",
     "./scripts/themeInit.js": "./scripts/themeInit.js",
     "./scripts/*": "./scripts/*.ts",
+    "./rules": "./rules/index.ts",
+    "./rules/biome-config.json": "./rules/biome-config.json",
     "./Button": "./src/Button.tsx",
     "./Button.astro": "./src/Button.tsx",
     "./BrandMark": "./src/BrandMark.tsx",

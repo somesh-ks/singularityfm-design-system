@@ -1,0 +1,11 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
+  "root": false,
+  "plugins": [
+    {
+      "path": "./raw-colour.grit",
+      "includes": ["**/*.css", "!**/styles/tokens.css"],
+      "resolutionKind": "config"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # State
 
-Rewritten, never appended. As of 2026-11-08 (DS-4, the golden file, the glyphs on React).
+Rewritten, never appended. As of 2026-11-09 (DS-4, DS-5, the golden file, the glyphs on React, the rules module).
 
 ## Works
 
@@ -11,16 +11,19 @@ Rewritten, never appended. As of 2026-11-08 (DS-4, the golden file, the glyphs o
 - The library's one component framework is React with Base UI (DS-3; DS-4 puts Base UI under every control with state, Button and Field included). The Button is `src/Button.tsx`, imported as `<pkg>/Button` (and, deprecated, `<pkg>/Button.astro`); it renders on the server with no script, and the guide's pages and a page of every Button case match the Astro Button pixel for pixel (390 and 1280, light and dark). `designSystem.test.ts` fails a new `.astro` file in `src` and a `.tsx` component with no exports entry; the pack-and-install test builds an Astro page with React and fails on a shipped script.
 - Icon, BrandMark and Flag are React too (DS-5) (`src/Icon.tsx`, `BrandMark.tsx`, `Flag.tsx`, imported as `<pkg>/Icon` and so on); `icon.ts` and `flag.ts` still write their classes. Their `.astro` paths are deprecated shims that render the `.tsx` and pass `class` on as `className`, so the app's `class=` callers keep working (a minor, not a breaking change). Banner, Code, Select and the guide draw the React ones. `designSystem.test.ts` lists the shims (`ASTRO_SHIMS`) and fails one that grows markup, logic or a stylesheet of its own; the pack-and-install test draws the Icon by both paths and fails a lost `class` or an Icon stylesheet that does not reach the page. The guide's CSS and assets build byte-identical and every page and each preview state matches pixel for pixel (390 and 1280, light and dark), except the guide's own text: the code snippets print the new import path and the props tables list `className`; the markup differs only in collapsible whitespace and a Flag's `<img ... />`.
 - The app draws the published package only: it pins 0.1.1 (app #769), draws the React Button with `className`, and its monorepo copy is deleted (app #771).
+- The package ships its lint rules (`<pkg>/rules`, master plan steps 6 and 7): plain functions of a file's text and path for raw colour, spacing off the 8pt grid (the library's named 4px exceptions are `GRID_EXCEPTIONS`, from the app's `ALLOWED_4PX`; the app passes its pages' own to `offGrid`; a 1px hairline offset passes), unknown custom properties (a library token, a property `system.json` lists under `properties`, or one the file declares), a component's class typed by a page (D237; a hook class on a component passes) and retired import paths (`RETIRED_PATHS`; `Button.astro` and the glyph shims warn). `pnpm run ds validate <files or globs>` runs them and exits 1 on an error; `ds find Button.astro` names the replacement. Raw colour in CSS is also a GritQL plugin (`rules/raw-colour.grit`), shipped with `rules/biome-config.json` for an app to extend and extended by this repository's biome.json. The pack-and-install test validates through the packed module and lints a raw colour through the shipped config.
 - Dark surfaces keep their order and a step of at least one just-noticeable difference (0.02 in OKLab) between each elevation (`buildTokens.test.ts`).
 
 ## Unverified
 
+- The style guide passes the rules. closed when: `ds validate 'apps/design/src/**/*'` runs in the gate with the guide's own 4px list. Today it finds 45: 4px gaps a guide list must name, demo colours in `scripts/color.ts`, preview markup typing a component's class, and one real drop: `.guide-bans li` reads `--space-3`, which no token defines, so its `padding-inline` never applies (a visual fix, the owner's OK first).
 - The style guide's Vercel project builds from this repository. closed when: a push to main deploys news.someshks.work/design from this repository and `ignore-build.sh` skips a docs-only push.
 - The app draws the React Icon, BrandMark and Flag. closed when: the app takes the release with them, imports `<pkg>/Icon`, `/BrandMark` and `/Flag` and passes `className` in its 35 or so `<Icon class=...>` and one `<BrandMark class=...>`, and its screenshots match.
 - The ruleset (`.github/rulesets/main.json`) is imported. closed when: a PR without a green `check` cannot merge.
 - The pack-and-install test runs on Windows. closed when: `pnpm run gate` passes in PowerShell on the owner's machine.
 - Six parts read empty in `system.json` (settings row, toast, empty state, multiselect, cover, fab): their base rules live in the app's stylesheets, not the library's, so the library has no comment to read. closed when: each one's CSS moves into the library with its component (Fab, D237), or the app writes its usage report (DS-2) and the part moves there.
 - "The primary fill" does not reach `--color-accent` in `ds find`: its role never says "primary". closed when: the accent's role names the primary fill and `golden.json` has a row for it.
+- `ds validate` over the library's own `styles/` finds one error: shell.css reads `--fab-size`, which only the app defines. closed when: Fab's CSS moves into the library with its component (D237) and defines it.
 
 ## Next
 
@@ -28,7 +31,6 @@ The order is the design system master plan's (owner, 2026-11-08); the non-breaki
 
 1. App #772 renames the workspace alias to `@singularityfm/*` (D382 step 9, the owner's merge); the app then takes 0.2.0 by a bump PR.
 2. The static families, one pull request each, each trimming `ASTRO_LEFT` (a path the app still calls with `class` keeps a shim in `ASTRO_SHIMS`, as the glyphs did) and proving pixel identity as the Button did: Badge; Banner; ChapterAside, RowExit, Ripple, SectionTabs (markup only; their scripts stay). With them, the record-named parts that need no Base UI yet: Link (D237), and IconButton and Fab as native buttons.
-3. A rules module in the package (raw colour, the 8pt grid with its named exceptions, unknown custom properties, `class=` on a component, retired paths) that the app's design-check, `ds validate` and later the MCP call, with Biome plugins for the pattern rules.
-4. A release of those minors, then the app's bump.
-5. The `1.0.0-next` pre-release line (DS-4): Button, IconButton and Fab on Base UI with `@base-ui/react` a required peer; Field, Switch, Slider; Avatar; Dialog; Sheet (Sheet and Drawer stay two components, D262); Menu; Select; Code; the Base UI parts Chip, the segmented controls and Search field. Then 1.0.0, keeping the `.astro` aliases until COMPATIBILITY.md's window has passed.
-6. After 1.0.0: a remote MCP on the style guide's project (a DS record first, amending D236), local evals through the editors' headless modes, and one agent plugin for Claude Code, Codex and Antigravity.
+3. A release of those minors, then the app's bump; the app's design-check then calls the rules with its own 4px list instead of its own copies.
+4. The `1.0.0-next` pre-release line (DS-4): Button, IconButton and Fab on Base UI with `@base-ui/react` a required peer; Field, Switch, Slider; Avatar; Dialog; Sheet (Sheet and Drawer stay two components, D262); Menu; Select; Code; the Base UI parts Chip, the segmented controls and Search field. Then 1.0.0, keeping the `.astro` aliases until COMPATIBILITY.md's window has passed.
+5. After 1.0.0: a remote MCP on the style guide's project (a DS record first, amending D236), local evals through the editors' headless modes, and one agent plugin for Claude Code, Codex and Antigravity.
