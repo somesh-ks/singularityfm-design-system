@@ -2,9 +2,9 @@
  * A component page's preview. The page draws every state of the controls (the library's own markup,
  * hidden but the first); this shows the one the controls name and puts its code in the snippet. The
  * rest is the little a stage needs to be touched: opening an overlay, keeping a slider's fill, moving
- * a section tab, taking a row out.
+ * a section tab, choosing a segmented nav's view, taking a row out.
  */
-export {};
+import { mountSegmentedNav } from "@singularity/design-system/segmentedNav";
 
 const root = document.querySelector<HTMLElement>("[data-playground]");
 const snippet = document.querySelector<HTMLElement>("[data-code-section] .code-snippet-text");
@@ -26,6 +26,9 @@ if (root) {
       if (!state.hidden && snippet && state.dataset.code) snippet.textContent = state.dataset.code;
     }
   };
+  // A segmented nav chooses as on an app page: its script, mounted once for each list (DS-8).
+  for (const list of root.querySelectorAll<HTMLElement>('[role="tablist"]'))
+    mountSegmentedNav(list, () => {});
   // A reload keeps what the controls last said; the page draws the first state.
   if (controls.length) {
     show();

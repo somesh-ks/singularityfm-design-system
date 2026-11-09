@@ -496,6 +496,13 @@
   grid-area: 1 / 1;
 }
 
+/* Fixed-width digits only where the number ticks: a chip's time while it plays. A still label such
+   as "1 min" keeps the font's own figures, which space it evenly. Moved unchanged from the reader's
+   reader.css with the Play chip (D237). */
+.chip[data-playing="true"] .chip-label {
+  font-variant-numeric: tabular-nums;
+}
+
 .chip-again,
 .chip-replay {
   display: none;

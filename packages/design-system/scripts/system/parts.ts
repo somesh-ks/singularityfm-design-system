@@ -24,89 +24,6 @@ export const PARTS: PartSource[] = [
     keywords: ["catch up", "side column", "create action"],
   },
   {
-    id: "play-chip",
-    name: "Play chip",
-    kind: "action",
-    summary: "The tonal pill that plays a briefing or one story, with its state.",
-    classes: ["chip"],
-    when: [
-      "play an episode or a story and show idle, current, played, error or preparing",
-      "episode duration with a play mark",
-    ],
-    not: [
-      { when: "a choice the user ticks", use: "filter-chip" },
-      { when: "a view switch", use: "segmented-nav" },
-    ],
-    keywords: ["duration", "play pill", "status pill", "now playing"],
-    markup:
-      '<button class="chip" type="button" data-state="idle"><span class="chip-glyph" aria-hidden="true"><Icon name="play" /></span><span class="chip-label">5 min</span></button>',
-    rules: [
-      "The label never wraps.",
-      "A label that changes keeps a hidden copy of the widest one so the chip keeps its width.",
-    ],
-  },
-  {
-    id: "filter-chip",
-    name: "Filter chip",
-    kind: "selection",
-    summary: "A checkbox drawn as a pill; ticked it takes the accent container.",
-    classes: ["filter-chip", "filter-chips"],
-    when: [
-      "tick several topics or categories to include",
-      "filter a list by one or more kinds",
-      "choose one of a few chips in a group",
-    ],
-    not: [
-      { when: "exactly one of a few values", use: "segmented-choice" },
-      { when: "switching the view of the same content", use: "segmented-nav" },
-      { when: "a long list of options", use: "multiselect" },
-    ],
-    keywords: ["multi select", "tick", "checkbox pill", "tags", "toggle chip"],
-    markup:
-      '<fieldset class="filter-chips"><label class="filter-chip"><input type="checkbox" name="show" value="daily" /><Icon name="check" className="filter-chip-check" /><span>Daily</span></label></fieldset>',
-    rules: ["Always wraps a real checkbox or radio input."],
-  },
-  {
-    id: "segmented-choice",
-    name: "Segmented choice",
-    kind: "selection",
-    summary: "One pill of radio items: pick exactly one value.",
-    classes: ["segmented-choice", "segmented-choice-item"],
-    when: [
-      "choose one of a few discrete values, such as 3, 5 or 10 minutes",
-      "a setting with two to four options",
-    ],
-    not: [
-      { when: "switching between views or tabs", use: "segmented-nav" },
-      { when: "ticking several", use: "filter-chip" },
-    ],
-    keywords: ["radio", "length", "one of", "option group", "pick one"],
-    markup:
-      '<fieldset class="segmented-choice" role="radiogroup" aria-labelledby="len"><label class="segmented-choice-item"><input type="radio" name="length" value="3" /><span>3 min</span></label></fieldset>',
-  },
-  {
-    id: "segmented-nav",
-    name: "Segmented navigation",
-    kind: "navigation",
-    summary: "A tonal track with one sliding pill: switch between views of the same content.",
-    classes: ["segmented-nav", "segmented-nav-tab", "segmented-nav-compact"],
-    when: [
-      "switch between Stories and Transcript",
-      "switch the view of one page without leaving it",
-      "a chart's two or three modes",
-    ],
-    not: [
-      { when: "choosing a value of a setting", use: "segmented-choice" },
-      { when: "jumping to sections of a long page", use: "tabs" },
-    ],
-    keywords: ["tablist", "view switcher", "toggle views", "stories transcript"],
-    markup:
-      '<div class="segmented-nav" role="tablist" aria-label="View"><button class="segmented-nav-tab" type="button" role="tab" aria-selected="true" data-value="stories">Stories</button></div>',
-    rules: [
-      "`mountSegmentedNav(list, onSelect)` runs it; `data-param` keeps the choice in the URL.",
-    ],
-  },
-  {
     id: "tabs",
     name: "Section tabs",
     kind: "navigation",
@@ -214,16 +131,6 @@ export const PARTS: PartSource[] = [
     when: ["choose several from a long list", "pick sources or topics in a field"],
     not: [{ when: "a few choices that fit on screen", use: "filter-chip" }],
     keywords: ["dropdown with checkboxes", "picker"],
-  },
-  {
-    id: "search-field",
-    name: "Search field",
-    kind: "field",
-    summary: "The Library's rounded search pill, on the container tone.",
-    classes: ["search-field", "search-clear"],
-    when: ["search or filter a list by text"],
-    not: [{ when: "a text field in a form", use: "field" }],
-    keywords: ["search bar", "filter input", "text filter"],
   },
   {
     id: "stat-tiles",

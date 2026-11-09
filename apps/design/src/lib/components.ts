@@ -138,7 +138,13 @@ export const SAMPLE = {
   glyph: "share",
   source: "example.com",
   sentence: ["Supporting text with a", "inside it."],
+  duration: "1:24",
+  segments: ["One", "Two", "Three", "Four"],
+  search: "Search",
 } as const;
+
+/** The glyphs of a compact Segmented navigation's tabs, one a view. */
+export const SEGMENT_GLYPHS: readonly IconName[] = ["chartBar", "table", "house", "search"];
 
 /** A sample's words as a slug, for an anchor. */
 export const sampleSlug = (text: string): string => text.toLowerCase().replace(/\W+/g, "-");
@@ -235,6 +241,34 @@ export const SPECS: readonly ComponentSpec[] = [
         SAMPLE.label,
       ),
     note: "In the app it floats at the bottom end below 64rem and is not shown from 64rem; here it sits in the stage. The app's script sets data-folded while a page scrolls down.",
+  },
+  {
+    slug: "play-chip",
+    name: "PlayChip",
+    label: "Play chip",
+    group: "actions",
+    registry: "Play chip",
+    file: "PlayChip.tsx",
+    controls: [
+      choice("state", "State", [
+        ["idle", "Idle"],
+        ["current", "Current"],
+        ["played", "Played"],
+        ["preparing", "Preparing"],
+        ["error", "Error"],
+        ["unavailable", "Unavailable"],
+      ]),
+      toggle("playing", "Playing"),
+    ],
+    imports: ["PlayChip"],
+    code: (state) => {
+      const attrs = [`label="${SAMPLE.duration}"`];
+      if (state.state !== "idle") attrs.push(`state="${state.state}"`);
+      if (on(state, "playing")) attrs.push('data-playing="true"');
+      attrs.push(`aria-label="${SAMPLE.label}"`);
+      return jsx("PlayChip", attrs);
+    },
+    note: "A native button, so it needs no client directive. The player writes data-state, data-playing and the words as it plays; Playing shows its bars while the state is Current. On the stage it sits as on a card (card-group), one step up from the container tone.",
   },
   {
     slug: "menu",
@@ -353,6 +387,77 @@ export const SPECS: readonly ComponentSpec[] = [
     note: "The fill up to the thumb is a custom property the page keeps; a short script on this page does it.",
   },
   {
+    slug: "chip",
+    name: "Chip",
+    group: "inputs",
+    registry: "Chip",
+    file: "Chip.tsx",
+    controls: [
+      toggle("ticked", "Ticked"),
+      toggle("scroll", "One row that scrolls"),
+      toggle("disabled", "Disabled"),
+    ],
+    imports: ["ChipGroup", "Chip"],
+    code: (state) =>
+      [
+        `<ChipGroup aria-label="${SAMPLE.label}"${on(state, "scroll") ? " scroll" : ""}${on(state, "disabled") ? " disabled" : ""}>`,
+        ...SAMPLE.select.map(
+          (option, n) =>
+            `  ${jsx("Chip", [`name="sample"`, `value="${n + 1}"`, ...(n === 0 && on(state, "ticked") ? ["defaultChecked"] : [])], option)}`,
+        ),
+        "</ChipGroup>",
+      ].join("\n"),
+    note: "Each one is a native checkbox, so it needs no client directive. The stage is the container tone, so the chips sit on it as on a card (card-group), one step up.",
+    subparts: [
+      {
+        file: "ChipGroup.tsx",
+        name: "ChipGroup",
+        note: "The fieldset that holds a row of chips, 8px apart; scroll keeps them on one row that scrolls sideways.",
+      },
+    ],
+  },
+  {
+    slug: "segmented-choice",
+    name: "SegmentedChoice",
+    label: "Segmented choice",
+    group: "inputs",
+    registry: "Segmented choice",
+    file: "SegmentedChoice.tsx",
+    controls: [
+      choice("count", "Segments", [
+        ["2", "Two"],
+        ["3", "Three"],
+        ["4", "Four"],
+      ]),
+      toggle("disabled", "Disabled"),
+    ],
+    imports: ["SegmentedChoice"],
+    code: (state) =>
+      `<SegmentedChoice\n  name="sample"\n  aria-label="${SAMPLE.label}"\n  defaultValue="1"${on(state, "disabled") ? "\n  disabled" : ""}\n  options={[\n${SAMPLE.segments
+        .slice(0, Number(state.count))
+        .map((label, n) => `    { value: "${n + 1}", label: "${label}" },`)
+        .join("\n")}\n  ]}\n/>`,
+    note: "Native radios, so it needs no client directive.",
+  },
+  {
+    slug: "search-field",
+    name: "SearchField",
+    label: "Search field",
+    group: "inputs",
+    registry: "Search field",
+    file: "SearchField.tsx",
+    controls: [toggle("filled", "With words")],
+    imports: ["SearchField"],
+    code: (state) =>
+      jsx("SearchField", [
+        `label="${SAMPLE.search}"`,
+        'name="q"',
+        `placeholder="${SAMPLE.search}"`,
+        ...(on(state, "filled") ? [`defaultValue="${SAMPLE.value}"`] : []),
+      ]),
+    note: "A native search input, so it needs no client directive. Its pill is the container tone, the stage's own, as the tonal Select's is: on a page it sits on the page's surface.",
+  },
+  {
     slug: "select",
     name: "Select",
     group: "inputs",
@@ -413,6 +518,38 @@ export const SPECS: readonly ComponentSpec[] = [
             SAMPLE.source,
           )
         : `<p>${SAMPLE.sentence[0]} ${jsx("Link", ['href="/path"'], SAMPLE.label)} ${SAMPLE.sentence[1]}</p>`,
+  },
+  {
+    slug: "segmented-nav",
+    name: "SegmentedNav",
+    label: "Segmented navigation",
+    group: "navigation",
+    registry: "Segmented navigation",
+    file: "SegmentedNav.tsx",
+    controls: [
+      choice("count", "Views", [
+        ["2", "Two"],
+        ["3", "Three"],
+        ["4", "Four"],
+      ]),
+      choice("size", "Size", [
+        ["default", "Default"],
+        ["compact", "Compact"],
+      ]),
+    ],
+    imports: ["SegmentedNav"],
+    code: (state) => {
+      const compact = state.size === "compact";
+      const tabs = SAMPLE.segments
+        .slice(0, Number(state.count))
+        .map((label, n) =>
+          compact
+            ? `    { value: "${n + 1}", label: "${label}", icon: "${SEGMENT_GLYPHS[n]}" },`
+            : `    { value: "${n + 1}", label: "${label}" },`,
+        );
+      return `<SegmentedNav\n  aria-label="${SAMPLE.label}"${compact ? "\n  compact" : ""}\n  tabs={[\n${tabs.join("\n")}\n  ]}\n/>`;
+    },
+    note: "A native tablist with no client directive: the page calls mountSegmentedNav() from segmentedNav once for each list, and draws the panels; each tab's controls names its panel. On the stage's container tone its track takes the overlay tone through --segmented-nav-bg, as on a card.",
   },
   {
     slug: "section-tabs",
@@ -788,8 +925,9 @@ export const stateKey = (controls: readonly Control[], state: State): string =>
  * its name (DS-3); its old .astro path is deprecated, so the guide never prints it.
  */
 export function codeFor(spec: ComponentSpec, state: State): string {
+  const files = SPECS.flatMap((other) => [other, ...(other.subparts ?? [])]);
   const imports = spec.imports.map((name) =>
-    SPECS.find((other) => other.name === name)?.file?.endsWith(".tsx")
+    files.find((other) => other.name === name)?.file?.endsWith(".tsx")
       ? `import ${name} from "@singularityfm/design-system/${name}";`
       : `import ${name} from "@singularityfm/design-system/${name}.astro";`,
   );

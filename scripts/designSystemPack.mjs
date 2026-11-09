@@ -6,7 +6,9 @@
 // files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
 // and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
 // stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
-// each a native element that hydrates nowhere (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
+// each a native element that hydrates nowhere (DS-8); and a fourth that draws the chips, the segmented
+// controls and the Search field by their names, none hydrated, and installs the segmented nav's script
+// from its export (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -137,6 +139,26 @@ try {
       "",
     ].join("\n"),
   );
+  // The chips, the segmented choice and the Search field are native inputs and the Play chip a
+  // native button and the Segmented navigation the app's tablist, all React-rendered with no directive
+  // (DS-8); the page mounts the nav's script from its export, so a lost `./*` entry fails the build.
+  writeFileSync(
+    join(app, "src/pages/chips.astro"),
+    [
+      "---",
+      `import Chip from "${name}/Chip";`,
+      `import ChipGroup from "${name}/ChipGroup";`,
+      `import PlayChip from "${name}/PlayChip";`,
+      `import SearchField from "${name}/SearchField";`,
+      `import SegmentedChoice from "${name}/SegmentedChoice";`,
+      `import SegmentedNav from "${name}/SegmentedNav";`,
+      "---",
+      '<html lang="en"><body><form><ChipGroup className="placed-chips" aria-label="Show"><Chip className="placed-chip" name="c1" value="v1" data-id="c1" defaultChecked>Chip words</Chip></ChipGroup><SegmentedChoice className="placed-choice" name="r1" aria-label="Length" defaultValue="b" options={[{ value: "a", label: "Choice A" }, { value: "b", label: "Choice B", "data-id": "r1" }]} /><SearchField className="placed-search" label="Search words" name="q1" data-id="q1" /><PlayChip className="placed-play" label="1:24" aria-label="Play name" data-play-item="0" /><SegmentedNav className="placed-nav" aria-label="Views" tabs={[{ value: "a", label: "View A", controls: "pa" }, { value: "b", label: "View B" }]} /></form>',
+      `<script>import { mountSegmentedNav } from "${name}/segmentedNav"; for (const list of document.querySelectorAll('[role="tablist"]')) mountSegmentedNav(list, () => {});</script>`,
+      "</body></html>",
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -155,6 +177,7 @@ try {
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
   const inputs = readFileSync(join(app, "dist/inputs/index.html"), "utf8");
+  const chips = readFileSync(join(app, "dist/chips/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
@@ -229,6 +252,97 @@ try {
   // that draws a Switch or a Slider.
   if (/<astro-island|<script/.test(inputs))
     problems.push("the inputs page hydrates or ships a script");
+  // Each keeps the test's own class, attributes and words on the element the app's scripts and rules
+  // find: a native checkbox, ticked and named, in its chip; a radio group whose chosen radio is
+  // checked; a native search input; a button the player writes; a tablist whose chosen tab is
+  // aria-selected with its panel named. A dropped attribute, word or state fails here.
+  const tag = (pattern) => chips.match(pattern)?.[0] ?? "";
+  const has = (found, ...parts) => found !== "" && parts.every((part) => found.includes(part));
+  const wants = [
+    [
+      has(
+        tag(/<fieldset[^>]*placed-chips[^>]*>/),
+        'class="filter-chips placed-chips"',
+        'aria-label="Show"',
+      ),
+      "the ChipGroup",
+    ],
+    [
+      has(
+        tag(/<label class="filter-chip placed-chip">.*?<\/label>/),
+        'type="checkbox"',
+        'name="c1"',
+        'value="v1"',
+        'data-id="c1"',
+        'checked=""',
+        "<span>Chip words</span>",
+      ),
+      "the Chip",
+    ],
+    [
+      has(
+        tag(/<fieldset[^>]*placed-choice[^>]*>/),
+        'class="segmented-choice placed-choice"',
+        'role="radiogroup"',
+        'aria-label="Length"',
+      ),
+      "the SegmentedChoice",
+    ],
+    [
+      has(
+        tag(/<input[^>]*value="b"[^>]*>/),
+        'type="radio"',
+        'name="r1"',
+        'data-id="r1"',
+        'checked=""',
+      ),
+      "the chosen radio",
+    ],
+    [
+      has(
+        tag(/<label class="search-field placed-search">.*?<\/label>/),
+        '<span class="sr-only">Search words</span>',
+        'type="search"',
+        'name="q1"',
+        'data-id="q1"',
+      ),
+      "the SearchField",
+    ],
+    [
+      has(
+        tag(/<button[^>]*placed-play[^>]*>/),
+        'class="chip placed-play"',
+        'type="button"',
+        'data-state="idle"',
+        'data-playing="false"',
+        'aria-label="Play name"',
+        'data-play-item="0"',
+      ),
+      "the PlayChip",
+    ],
+    [chips.includes('data-chip-label="">1:24<'), "the PlayChip's words"],
+    [
+      has(
+        tag(/<div[^>]*role="tablist"[^>]*>/),
+        'class="segmented-nav placed-nav"',
+        'aria-label="Views"',
+      ),
+      "the SegmentedNav",
+    ],
+    [
+      has(tag(/<button[^>]*role="tab"[^>]*>View A/), 'aria-controls="pa"', 'aria-selected="true"'),
+      "the chosen tab and its panel",
+    ],
+    [
+      has(tag(/<button[^>]*role="tab"[^>]*>View B/), 'aria-selected="false"', 'tabindex="-1"'),
+      "the other tab, out of the Tab order",
+    ],
+  ];
+  for (const [kept, what] of wants) if (!kept) problems.push(`the chips page lost ${what}`);
+  // No island (DS-8): the segmented nav is the app's tablist markup and the page's one script call, so a
+  // directive that creeps back ships React's renderer to every page that draws one.
+  if (/<astro-island/.test(chips)) problems.push("the chips page hydrates");
+  if (!/<script\b/.test(chips)) problems.push("the chips page lost the segmented nav's script");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
   let lint = "";
   try {
@@ -247,6 +361,8 @@ try {
     problems.push("the Icon's stylesheet did not reach the page");
   if (![actions, ...styles].some((text) => text.includes(".create-fab{")))
     problems.push("the Fab's stylesheet did not reach the page");
+  if (![chips, ...styles].some((text) => text.includes(".search-field{")))
+    problems.push("the Search field's stylesheet did not reach the page");
   for (const rule of [".field-input{", ".switch-input:checked{", ".slider-input{"])
     if (![inputs, ...styles].some((text) => text.includes(rule)))
       problems.push(`${rule.slice(0, -1)} did not reach the page`);
