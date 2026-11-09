@@ -1,3 +1,4 @@
+import { Button as BaseButton } from "@base-ui/react/button";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { passedAttributes } from "./attributes";
 import { FAB_CLASSES } from "./fab";
@@ -33,9 +34,10 @@ type Props = FabProps & Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof FabP
 const [ROOT, WORD] = FAB_CLASSES;
 
 /**
- * The FAB (DS-3): static, so it renders on the server with no client directive and ships no script.
- * The app's own script folds it (data-folded) while scrolling down to read. No Base UI yet: a native
- * button or link has every behaviour it needs (DS-4 moves it onto Base UI on the 1.0.0-next line).
+ * The FAB (DS-4, DS-7) on Base UI's Button: a native `<button>`, so it presses before any script and
+ * takes no client directive; an Astro page ships no script for it. The app's own script folds it
+ * (data-folded) while scrolling down to read. With an href it is a plain `<a>`, so the action works
+ * before any script (/create): a link is never a Base UI primitive (DS-4).
  */
 export default function Fab({
   label,
@@ -62,8 +64,8 @@ export default function Fab({
       {face}
     </a>
   ) : (
-    <button className={classes} type={type} aria-label={label} {...rest}>
+    <BaseButton className={classes} type={type} aria-label={label} {...rest}>
       {face}
-    </button>
+    </BaseButton>
   );
 }

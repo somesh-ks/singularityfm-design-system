@@ -1,3 +1,4 @@
+import { Button as BaseButton } from "@base-ui/react/button";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { passedAttributes } from "./attributes";
 import { type ButtonSize, type ButtonTone, type ButtonVariant, buttonClass } from "./button";
@@ -26,8 +27,10 @@ interface ButtonProps {
 type Props = ButtonProps & Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonProps>;
 
 /**
- * The Button (DS-3): static, so it renders on the server with no client directive and ships no
- * script. No Base UI: a native button or link already has every behaviour it needs.
+ * The Button (DS-4, DS-7) on Base UI's Button: a native `<button>` (data-disabled when disabled), so it
+ * presses, submits and stays disabled before any script and takes no client directive. An Astro page
+ * draws it as it is and ships no script for it; in a React island it hydrates with the island. With an
+ * href it is a plain `<a>`: a link is never a Base UI primitive (DS-4).
  */
 export default function Button({
   variant,
@@ -47,8 +50,8 @@ export default function Button({
       {children}
     </a>
   ) : (
-    <button className={classes} type={type} {...rest}>
+    <BaseButton className={classes} type={type} {...rest}>
       {children}
-    </button>
+    </BaseButton>
   );
 }

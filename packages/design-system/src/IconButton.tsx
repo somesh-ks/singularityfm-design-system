@@ -1,3 +1,4 @@
+import { Button as BaseButton } from "@base-ui/react/button";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { passedAttributes } from "./attributes";
 import { type IconButtonVariant, iconButtonClass } from "./iconButton";
@@ -27,9 +28,9 @@ interface IconButtonProps {
 type Props = IconButtonProps & Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof IconButtonProps>;
 
 /**
- * The Icon button (DS-3): static, so it renders on the server with no client directive and ships no
- * script. No Base UI yet: a native button or link has every behaviour it needs (DS-4 moves it onto
- * Base UI on the 1.0.0-next line).
+ * The Icon button (DS-4, DS-7) on Base UI's Button: a native `<button>`, so it presses and stays
+ * disabled before any script and takes no client directive; an Astro page ships no script for it. With
+ * an href it is a plain `<a>`: a link is never a Base UI primitive (DS-4).
  */
 export default function IconButton({
   label,
@@ -49,8 +50,8 @@ export default function IconButton({
       {children}
     </a>
   ) : (
-    <button className={classes} type={type} aria-label={label} {...rest}>
+    <BaseButton className={classes} type={type} aria-label={label} {...rest}>
       {children}
-    </button>
+    </BaseButton>
   );
 }

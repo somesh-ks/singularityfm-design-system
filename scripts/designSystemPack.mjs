@@ -4,8 +4,8 @@
 // its name and by its .astro shim), one that holds words (the Badge, by both paths), one that holds a
 // row and its attributes (the Row exit, by both paths), a stylesheet (fonts.css, which pulls the font
 // files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
-// and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
-// stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
+// and a second page that draws Link, Button, IconButton and Fab by their names (the Fab brings its own
+// stylesheet), the Base UI ones with no island (DS-7); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
 // the Switch and the Slider hydrated where they are drawn (DS-7). The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
@@ -107,17 +107,20 @@ try {
   );
   writeFileSync(join(app, "src/raw.css"), ".a { color: #fff; }\n");
   // An exports entry lost from the map sends `<pkg>/IconButton` to "./*", src/IconButton.ts, which does
-  // not exist: the build fails here, where the workspace link would have served the .tsx.
+  // not exist: the build fails here, where the workspace link would have served the .tsx. Button,
+  // IconButton and Fab are Base UI Buttons drawn with no directive (DS-7): each must work as the native
+  // element it renders, before any script, and each with an href stays a plain link (DS-4).
   writeFileSync(
     join(app, "src/pages/actions.astro"),
     [
       "---",
+      `import Button from "${name}/Button";`,
       `import Fab from "${name}/Fab";`,
       `import Icon from "${name}/Icon";`,
       `import IconButton from "${name}/IconButton";`,
       `import Link from "${name}/Link";`,
       "---",
-      '<html lang="en"><body><Link href="/">Link words</Link><IconButton label="Icon name"><Icon name="close" /></IconButton><Fab icon="plus" label="Fab name">Fab word</Fab></body></html>',
+      '<html lang="en"><body><form><Button variant="filled" type="submit" data-id="b1">Save</Button><Button variant="text" disabled data-id="b2">Off</Button></form><Link href="/">Link words</Link><IconButton label="Icon name" data-id="i1"><Icon name="close" /></IconButton><IconButton label="Icon link" href="/back"><Icon name="close" /></IconButton><Fab icon="plus" label="Fab name">Fab word</Fab><Fab icon="plus" label="Fab link" href="/create">Fab word</Fab></body></html>',
       "",
     ].join("\n"),
   );
@@ -164,6 +167,18 @@ try {
   // label, still builds.
   for (const text of ["Link words", 'aria-label="Icon name"', 'aria-label="Fab name"', "Fab word"])
     if (!actions.includes(text)) problems.push(`the actions page lost ${text}`);
+  // With no script, the native element is all a press meets: a submit that Base UI's type="button"
+  // overrode stops posting its form, a disabled one that became aria-disabled takes the press, and a
+  // passed attribute lost leaves a page script nothing to find it by.
+  const tag = (pattern) => actions.match(pattern)?.[0] ?? "";
+  if (!/type="submit"/.test(tag(/<button[^>]*data-id="b1"[^>]*>/)))
+    problems.push("the submit Button does not submit");
+  if (!/\sdisabled=""/.test(tag(/<button[^>]*data-id="b2"[^>]*>/)))
+    problems.push("the disabled Button is not natively disabled");
+  if (!/<button[^>]*data-id="i1"/.test(actions)) problems.push("the IconButton lost its attribute");
+  for (const label of ["Icon link", "Fab link"])
+    if (!new RegExp(`<a[^>]*aria-label="${label}"`).test(actions))
+      problems.push(`the ${label} is not a link`);
   // The shim passes `class` on as className; lost, the old path draws the glyph where nothing places it.
   // The test's own class, wherever the Icon's own classes put it.
   if (html.match(/class="[^"]*(?<![\w-])placed-icon(?![\w-])[^"]*"/g)?.length !== 2)

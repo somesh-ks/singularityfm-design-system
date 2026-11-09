@@ -46,7 +46,8 @@
       "markup": "<Button variant=\"filled\" type=\"submit\">Save</Button>",
       "rules": [
         "At most one per surface.",
-        "Never a bold label."
+        "Never a bold label.",
+        "It takes no client directive: on Base UI it is still a native button (a link with an href), which presses before any script (DS-7)."
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -102,7 +103,8 @@
       "markup": "<Button variant=\"tonal\">Share</Button>",
       "rules": [
         "Matches the filled button's height.",
-        "No outline."
+        "No outline.",
+        "It takes no client directive: on Base UI it is still a native button (a link with an href), which presses before any script (DS-7)."
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -156,7 +158,8 @@
       ],
       "markup": "<Button variant=\"text\">Cancel</Button>",
       "rules": [
-        "In a dialog, Cancel and the filled button sit in a DialogActions row (EpisodeActions.astro); a form sheet keeps its one filled button in `.sheet-actions`."
+        "In a dialog, Cancel and the filled button sit in a DialogActions row (EpisodeActions.astro); a form sheet keeps its one filled button in `.sheet-actions`.",
+        "It takes no client directive: on Base UI it is still a native button (a link with an href), which presses before any script (DS-7)."
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -305,7 +308,8 @@
       "rules": [
         "label is required: it is the button's accessible name (aria-label), as the glyph has no words.",
         "It draws `.press`: the press is a state layer; the glyph never scales.",
-        "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass()."
+        "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass().",
+        "It takes no client directive: on Base UI it is still a native button (a link with an href), which presses before any script (DS-7)."
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -403,7 +407,8 @@
       "rules": [
         "One per page, below 64rem; from 64rem it is not shown.",
         "label is its whole accessible name; the word beside the glyph is hidden from a screen reader.",
-        "A script folds it by data-folded on FAB_SELECTOR (design-system/fab.ts)."
+        "A script folds it by data-folded on FAB_SELECTOR (design-system/fab.ts).",
+        "It takes no client directive: on Base UI it is still a native button (a link with an href), which presses before any script (DS-7)."
       ],
       "styles": [
         "packages/design-system/styles/fab.css",

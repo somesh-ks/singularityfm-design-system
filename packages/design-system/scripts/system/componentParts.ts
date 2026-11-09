@@ -96,6 +96,10 @@ const sentences = (lines: readonly string[]): string[] =>
 
 const FILES = ["packages/design-system/src/Button.tsx", "packages/design-system/src/button.ts"];
 
+/** The Button family on Base UI (DS-4) is a native element, so a page never hydrates it (DS-7). */
+const NO_DIRECTIVE =
+  "It takes no client directive: on Base UI it is still a native button (a link with an href), which presses before any script (DS-7).";
+
 /** A single-class control (Switch, Slider): the registry's guidance plus the words a lookup matches. */
 const control = (
   id: string,
@@ -161,7 +165,7 @@ export const componentParts = (): PartSource[] => [
       ],
       keywords: extra?.keywords,
       markup: extra?.markup,
-      rules: extra?.rules,
+      rules: [...(extra?.rules ?? []), NO_DIRECTIVE],
     };
   }),
   ...Object.entries(BUTTON.tones).map(([tone, guidance]): PartSource => {
@@ -243,6 +247,7 @@ export const componentParts = (): PartSource[] => [
             "label is required: it is the button's accessible name (aria-label), as the glyph has no words.",
             "It draws `.press`: the press is a state layer; the glyph never scales.",
             "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass().",
+            NO_DIRECTIVE,
           ]
         : undefined,
     };
@@ -263,6 +268,7 @@ export const componentParts = (): PartSource[] => [
       "One per page, below 64rem; from 64rem it is not shown.",
       "label is its whole accessible name; the word beside the glyph is hidden from a screen reader.",
       "A script folds it by data-folded on FAB_SELECTOR (design-system/fab.ts).",
+      NO_DIRECTIVE,
     ],
   },
   ...Object.entries(LINK.variants).map(([variant, guidance]): PartSource => {
