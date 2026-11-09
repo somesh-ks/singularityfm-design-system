@@ -65,7 +65,11 @@ export default function SegmentedChoice({
             {...passedAttributes(attributes)}
             {...(value === undefined
               ? { defaultChecked: option === defaultValue }
-              : { checked: option === value, onChange: () => onValueChange?.(option) })}
+              : { checked: option === value })}
+            // An island that only listens (defaultValue with onValueChange) hears each choice too.
+            onChange={
+              value === undefined && !onValueChange ? undefined : () => onValueChange?.(option)
+            }
           />
           <span>{label}</span>
         </label>

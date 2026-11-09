@@ -257,39 +257,27 @@ try {
   if (/<astro-island|<script/.test(inputs))
     problems.push("the inputs page hydrates or ships a script");
   // Each keeps the test's own class, attributes and words on the element the app's scripts and rules
-  // find: a native checkbox, ticked and named, in its chip; a radio group whose chosen radio is
+  // find, found by the test's own class and never by the part's classes or wrapper markup: a native checkbox, ticked and named, in its chip; a radio group whose chosen radio is
   // checked; a native search input; a button the player writes; a tablist whose chosen tab is
   // aria-selected with its panel named. A dropped attribute, word or state fails here.
   const tag = (pattern) => chips.match(pattern)?.[0] ?? "";
   const has = (found, ...parts) => found !== "" && parts.every((part) => found.includes(part));
   const wants = [
+    [has(tag(/<fieldset[^>]*\bplaced-chips\b[^>]*>/), 'aria-label="Show"'), "the ChipGroup"],
     [
       has(
-        tag(/<fieldset[^>]*placed-chips[^>]*>/),
-        'class="filter-chips placed-chips"',
-        'aria-label="Show"',
-      ),
-      "the ChipGroup",
-    ],
-    [
-      has(
-        tag(/<label class="filter-chip placed-chip">.*?<\/label>/),
+        tag(/<label[^>]*\bplaced-chip\b[^>]*>.*?<\/label>/),
         'type="checkbox"',
         'name="c1"',
         'value="v1"',
         'data-id="c1"',
         'checked=""',
-        "<span>Chip words</span>",
+        "Chip words",
       ),
       "the Chip",
     ],
     [
-      has(
-        tag(/<fieldset[^>]*placed-choice[^>]*>/),
-        'class="segmented-choice placed-choice"',
-        'role="radiogroup"',
-        'aria-label="Length"',
-      ),
+      has(tag(/<fieldset[^>]*\bplaced-choice\b[^>]*>/), 'role="radiogroup"', 'aria-label="Length"'),
       "the SegmentedChoice",
     ],
     [
@@ -304,8 +292,8 @@ try {
     ],
     [
       has(
-        tag(/<label class="search-field placed-search">.*?<\/label>/),
-        '<span class="sr-only">Search words</span>',
+        tag(/<label[^>]*\bplaced-search\b[^>]*>.*?<\/label>/),
+        "Search words",
         'type="search"',
         'name="q1"',
         'data-id="q1"',
@@ -314,8 +302,7 @@ try {
     ],
     [
       has(
-        tag(/<button[^>]*placed-play[^>]*>/),
-        'class="chip placed-play"',
+        tag(/<button[^>]*\bplaced-play\b[^>]*>/),
         'type="button"',
         'data-state="idle"',
         'data-playing="false"',
@@ -326,11 +313,7 @@ try {
     ],
     [chips.includes('data-chip-label="">1:24<'), "the PlayChip's words"],
     [
-      has(
-        tag(/<div[^>]*role="tablist"[^>]*>/),
-        'class="segmented-nav placed-nav"',
-        'aria-label="Views"',
-      ),
+      has(tag(/<[a-z]+[^>]*\bplaced-nav\b[^>]*>/), 'role="tablist"', 'aria-label="Views"'),
       "the SegmentedNav",
     ],
     [
