@@ -48,7 +48,18 @@ export interface RetiredPath {
 
 /** Import paths the package retired. */
 export const RETIRED_PATHS: RetiredPath[] = [
-  ...["Button", "Icon", "BrandMark", "Flag", "Badge", "Banner"].map(
+  ...[
+    "Button",
+    "Icon",
+    "BrandMark",
+    "Flag",
+    "Badge",
+    "Banner",
+    "ChapterAside",
+    "RowExit",
+    "Ripple",
+    "SectionTabs",
+  ].map(
     (name): RetiredPath => ({
       path: `@singularityfm/design-system/${name}.astro`,
       use: `@singularityfm/design-system/${name}`,
