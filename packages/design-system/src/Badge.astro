@@ -1,13 +1,15 @@
 ---
-import { badgeClass } from "./badge";
-import "../styles/badge.css";
+/**
+ * @deprecated Import Badge from "@singularityfm/design-system/Badge" and pass className (DS-5). This
+ * path stays until a breaking release: it renders that React Badge, `class` passed on as className
+ * and its slot as children, and draws nothing of its own (designSystem.test.ts holds it to that).
+ */
+import type { ComponentProps } from "react";
+import Badge from "./Badge.tsx";
 
-interface Props {
-  /** For placing the badge where it stands (a margin, a grid area). Never its look. */
-  class?: string;
-}
+type Props = Omit<ComponentProps<typeof Badge>, "className" | "children"> & { class?: string };
 
-const { class: className = "" } = Astro.props;
+const { class: className, ...props } = Astro.props;
 ---
 
-<span class={[badgeClass(), className].filter(Boolean).join(" ")}><slot /></span>
+<Badge {...props} className={className}><slot /></Badge>

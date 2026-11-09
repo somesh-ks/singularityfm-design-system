@@ -1,6 +1,6 @@
 /**
  * The Badge: a small grey pill that holds one word or one number. The one place its class is
- * written. Badge.astro renders from it; the style guide lists BADGE. The rules are in
+ * written. Badge.tsx renders from it; the style guide lists BADGE. The rules are in
  * styles/badge.css.
  */
 import type { Guidance } from "./guidance";
