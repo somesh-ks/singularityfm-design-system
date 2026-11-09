@@ -44,6 +44,7 @@
     "./Button": "./src/Button.tsx",
     "./Button.astro": "./src/Button.tsx",
     "./Badge": "./src/Badge.tsx",
+    "./Banner": "./src/Banner.tsx",
     "./BrandMark": "./src/BrandMark.tsx",
     "./Flag": "./src/Flag.tsx",
     "./Icon": "./src/Icon.tsx",

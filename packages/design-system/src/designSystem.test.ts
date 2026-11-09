@@ -105,7 +105,6 @@ describe("the Flag", () => {
 // and trims this list; nothing joins it.
 const ASTRO_LEFT = [
   "Avatar.astro",
-  "Banner.astro",
   "ChapterAside.astro",
   "Code.astro",
   "Dialog.astro",
@@ -127,7 +126,7 @@ const ASTRO_LEFT = [
 // A migrated component whose .astro path the apps still import, `class` and all, keeps that path as a
 // deprecated shim: dropping it, or the `class` it takes, is a breaking change (COMPATIBILITY.md). The
 // breaking release that ends the .astro paths empties this list.
-const ASTRO_SHIMS = ["Badge.astro", "BrandMark.astro", "Flag.astro", "Icon.astro"];
+const ASTRO_SHIMS = ["Badge.astro", "Banner.astro", "BrandMark.astro", "Flag.astro", "Icon.astro"];
 
 describe("the component framework", () => {
   const files = readdirSync(import.meta.dirname, { recursive: true }).map(String);

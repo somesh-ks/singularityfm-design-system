@@ -1,6 +1,6 @@
 /**
  * The Banner: a flat, tinted block that tells a person something about the page or the device and,
- * at most, offers one way on. The one place its classes are written. Banner.astro renders from it; a
+ * at most, offers one way on. The one place its classes are written. Banner.tsx renders from it; a
  * script or a React island that draws one calls bannerClass() and the part helpers; the style guide
  * lists BANNER. The rules are in styles/banner.css.
  */
