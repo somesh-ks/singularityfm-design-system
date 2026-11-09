@@ -46,8 +46,12 @@
     "./Badge": "./src/Badge.tsx",
     "./Banner": "./src/Banner.tsx",
     "./BrandMark": "./src/BrandMark.tsx",
+    "./ChapterAside": "./src/ChapterAside.tsx",
     "./Flag": "./src/Flag.tsx",
     "./Icon": "./src/Icon.tsx",
+    "./Ripple": "./src/Ripple.tsx",
+    "./RowExit": "./src/RowExit.tsx",
+    "./SectionTabs": "./src/SectionTabs.tsx",
     "./*.astro": "./src/*.astro",
     "./*": "./src/*.ts"
   },

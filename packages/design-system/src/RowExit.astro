@@ -1,14 +1,16 @@
 ---
-import { rowExitClass } from "./rowExit";
-import "../styles/row-exit.css";
+/**
+ * @deprecated Import RowExit from "@singularityfm/design-system/RowExit" and pass className (DS-5).
+ * This path stays until a breaking release: it renders that React RowExit, `class` passed on as
+ * className, its other attributes on the row and its slot as children, and draws nothing of its own
+ * (designSystem.test.ts holds it to that). Its attributes stay as open as the Astro row's were: a
+ * `style` string reaches the .tsx, which turns it into the object React needs.
+ */
+import RowExit from "./RowExit.tsx";
 
-interface Props {
-  /** For placing the row (its own layout). Never how it leaves. */
-  class?: string;
-  [attribute: string]: unknown;
-}
+type Props = Record<string, unknown> & { class?: string };
 
-const { class: className = "", ...rest } = Astro.props;
+const { class: className, ...props } = Astro.props;
 ---
 
-<li class={[className, rowExitClass()].filter(Boolean).join(" ")} {...rest}><slot /></li>
+<RowExit {...props} className={className}><slot /></RowExit>

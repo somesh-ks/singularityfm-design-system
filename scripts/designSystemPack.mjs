@@ -1,11 +1,12 @@
 // The package as a customer gets it (D382 step 5): `pnpm pack` the design system, install the tarball into
 // a throwaway Astro project with React outside the workspace, and build a page that imports a component (by
 // its name, and by the deprecated .astro path), a component that imports its own stylesheet (the Icon, by
-// its name and by its .astro shim), one that holds words (the Badge, by both paths), a stylesheet
-// (fonts.css, which pulls the font files), a token file and the rules module, then lint a stylesheet
-// with the shipped Biome plugin config. The workspace link serves every file in the folder, so a path
-// missing from `files`, a broken exports entry or a lost astro peer (Astro then leaves the .astro source
-// to Node) passes every other check and fails only here.
+// its name and by its .astro shim), one that holds words (the Badge, by both paths), one that holds a
+// row and its attributes (the Row exit, by both paths), a stylesheet (fonts.css, which pulls the font
+// files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config.
+// The workspace link serves every file in the folder, so a path missing from `files`, a broken exports
+// entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every other check and
+// fails only here.
 //
 // Usage: pnpm run pack:check  (installs offline from the pnpm store when it can)
 import { execFileSync } from "node:child_process";
@@ -83,13 +84,15 @@ try {
       `import OldIcon from "${name}/Icon.astro";`,
       `import Badge from "${name}/Badge";`,
       `import OldBadge from "${name}/Badge.astro";`,
+      `import RowExit from "${name}/RowExit";`,
+      `import OldRowExit from "${name}/RowExit.astro";`,
       `import "${name}/styles/tokens.css";`,
       `import "${name}/styles/fonts.css";`,
       `import tokens from "${name}/tokens/tokens.json";`,
       `import { validate } from "${name}/rules";`,
       'const findings = validate(".a { color: #fff; }", "page.css").length;',
       "---",
-      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
+      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><ul><RowExit className="placed-row" data-id="s1">Row</RowExit><OldRowExit class="placed-row" data-id="s1" style="order: 1; background-image: url(data:image/gif;base64,R0lGOD)">Row</OldRowExit></ul><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
       "",
     ].join("\n"),
   );
@@ -127,6 +130,17 @@ try {
   const badges = [...html.matchAll(/<(\w+)[^>]*\bplaced-badge\b[^>]*>([^<]*)<\/\1>/g)];
   if (badges.length !== 2 || badges.some((badge) => badge[2] !== "Words"))
     problems.push("the page drew no placed Badge with its words by each path");
+  // The Row exit shim hands its other attributes and its slot to React: lost, the app's source and
+  // blocked rows lose the data-id or data-domain their scripts find them by, or their content. The old
+  // path takes a `style` string as the Astro row did; passed to React as it is, the build throws, and
+  // split at a `;` inside its url(), the row loses the image.
+  const rows = [...html.matchAll(/<(\w+)[^>]*\bplaced-row\b[^>]*>([^<]*)<\/\1>/g)];
+  if (
+    rows.length !== 2 ||
+    rows.some((row) => row[2] !== "Row" || !row[0].includes('data-id="s1"')) ||
+    !rows.some((row) => row[0].includes("gif;base64,R0lGOD"))
+  )
+    problems.push("the page drew no placed Row exit with its attributes and content by each path");
   if (!html.includes('data-findings="1"')) problems.push("the rules module found no raw colour");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
   let lint = "";

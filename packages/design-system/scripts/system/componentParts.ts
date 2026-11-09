@@ -370,6 +370,7 @@ export const componentParts = (): PartSource[] => [
   control("ripple", "Ripple", RIPPLE, {
     kind: "feedback",
     classes: ["ripple-area", "ripple-wave"],
+    files: ["packages/design-system/src/Ripple.tsx", "packages/design-system/src/ripple.ts"],
     keywords: ["ripple", "touch feedback", "press wave", "touch area", "tab press", "bottom bar"],
     markup: '<a href="/library" data-ripple><Ripple />Library</a>',
     rules: [
