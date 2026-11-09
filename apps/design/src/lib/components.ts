@@ -269,6 +269,13 @@ export const SPECS: readonly ComponentSpec[] = [
       return jsx("PlayChip", attrs);
     },
     note: "A native button, so it needs no client directive. The player writes data-state, data-playing and the words as it plays; Playing shows its bars while the state is Current. On the stage it sits as on a card (card-group), one step up from the container tone.",
+    subparts: [
+      {
+        file: "PlayingBars.tsx",
+        name: "PlayingBars",
+        note: "The three moving bars that show something playing, for any other play control that shows it; className places and sizes them.",
+      },
+    ],
   },
   {
     slug: "menu",

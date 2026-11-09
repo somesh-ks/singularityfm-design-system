@@ -63,6 +63,7 @@
     "./Menu": "./src/Menu.tsx",
     "./MenuItem": "./src/MenuItem.tsx",
     "./PlayChip": "./src/PlayChip.tsx",
+    "./PlayingBars": "./src/PlayingBars.tsx",
     "./Ripple": "./src/Ripple.tsx",
     "./RowExit": "./src/RowExit.tsx",
     "./SearchField": "./src/SearchField.tsx",

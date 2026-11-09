@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
 import { passedAttributes } from "./attributes.ts";
 import Icon from "./Icon.tsx";
+import PlayingBars from "./PlayingBars.tsx";
 import type { PlayChipState } from "./playChip.ts";
 
 interface PlayChipProps {
@@ -47,11 +48,7 @@ export default function PlayChip({
           <Icon name="play" className="swap-paused" />
           <Icon name="pause" className="swap-playing" />
         </span>
-        <span className="chip-bars">
-          <i />
-          <i />
-          <i />
-        </span>
+        <PlayingBars />
         <Icon name="check" className="chip-check" />
         <Icon name="replay" className="chip-replay" />
         <Icon name="refresh" className="chip-refresh" />
