@@ -33,7 +33,8 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 - Commits and PR titles are Conventional Commits.
 - Never read, print or ask for key values. This repository needs none: npm publishing is trusted publishing (OIDC), no token.
 - Review before merge, by tier (the app's [code-review.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/engineering/code-review.md) is the procedure). Tier 0, `[skip-review]` and green CI: docs outside `docs/decisions/` and `docs/ledger/`, a few-line copy fix. Tier 2 (a review pass with your tool's review command, Claude Code: `/code-review`, before the PR, then Greptile on the head with `@greptileai review`; CodeRabbit only summarises here): `packages/design-system/` (components, tokens, `primitives.css`, `buttons.css`), `.github/`, `AGENTS.md`, `.coderabbit.yaml`, `scripts/`. Everything else is Tier 1, one CodeRabbit review. CodeRabbit reviews on open, then only on `@coderabbitai review`.
-- TypeScript stays on 6.x. Changes to `.github/workflows` are merged by his hand; only his own word lifts that, not another agent's.
+- TypeScript stays on 6.x.
+- Merging (owner, 2026-11-09: "do the best engineering practice"): a PR merges itself, by its thread, once its review is clean, it is up to date with `main` and the required `check` is green. That covers `.github/workflows`, `AGENTS.md`, version PRs and breaking releases; a visual change keeps his OK on stills. Only he merges changes to branch rulesets, secret or env handling, npm publish or trusted-publisher permissions, and `CODEOWNERS` or the review config that gates merging (`.coderabbit.yaml`). Why: the [app's code-review.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/engineering/code-review.md), Who merges.
 - Do not edit `CHANGELOG.md` by hand; the version PR writes it.
 - End the reply with what you skipped or did not check.
 
@@ -50,7 +51,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 - A PR that changes what the package ships adds a changeset: patch, minor or major by [COMPATIBILITY.md](packages/design-system/COMPATIBILITY.md), one line a consumer can act on. A breaking one starts with `BREAKING:`.
 - `release.yml` runs weekly and on demand: pending changesets open or update the version PR; merging it publishes (provenance once the repository is public). Nothing pending, nothing published.
 - A PR labelled `canary` publishes `0.0.0-canary-<sha>` under the `canary` tag, so an app PR can try the fix first.
-- The app's bump PR: the app thread merges green patch and minor bumps; the owner merges a breaking one.
+- The app's bump PR: the app thread merges it, a breaking one included, once the app's checks are green (his OK on stills first for a visual change).
 - Scope: one PR per task. Before a PR, `git diff --stat origin/main` lists only the task's files.
 
 ## Tests
