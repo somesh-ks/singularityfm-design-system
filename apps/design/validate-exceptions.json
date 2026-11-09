@@ -118,6 +118,102 @@
       "rule": "class-on-component",
       "text": "slug === \"avatar\"",
       "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/lib/components.ts",
+      "rule": "class-on-component",
+      "text": "slug: \"chip\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentArt.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"chip\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentPreview.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"chip\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/lib/components.ts",
+      "rule": "class-on-component",
+      "text": "slug: \"segmented-choice\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentArt.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"segmented-choice\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentPreview.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"segmented-choice\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/lib/components.ts",
+      "rule": "class-on-component",
+      "text": "slug: \"search-field\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentArt.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"search-field\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentPreview.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"search-field\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/lib/components.ts",
+      "rule": "class-on-component",
+      "text": "slug: \"segmented-nav\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentArt.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"segmented-nav\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentPreview.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"segmented-nav\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/lib/components.ts",
+      "rule": "class-on-component",
+      "text": "label: \"Play chip\"",
+      "reason": "the Play chip page's title, the registry's name for it, not a class"
+    },
+    {
+      "file": "apps/design/src/lib/components.ts",
+      "rule": "class-on-component",
+      "text": "registry: \"Play chip\"",
+      "reason": "the registry's name for the Play chip, not a class"
+    },
+    {
+      "file": "apps/design/src/lib/guide.ts",
+      "rule": "class-on-component",
+      "text": "note: \"A chosen chip or segment\"",
+      "reason": "the contrast table's words for where the pair is drawn, not a class"
+    },
+    {
+      "file": "apps/design/src/pages/type.astro",
+      "rule": "class-on-component",
+      "text": "<label class=\"search-field guide-sample-field\">",
+      "reason": "the type page's sample text box wears the search pill without its glyph: it is not a search, so it is not the Search field"
     }
   ]
 }

@@ -15,7 +15,7 @@ export const FIELD: Guidance = {
   dontUseWhen: [
     {
       when: "The value is one of two to four short options.",
-      instead: "Chip",
+      instead: "Segmented choice",
     },
     {
       when: "A person picks one value from a list.",

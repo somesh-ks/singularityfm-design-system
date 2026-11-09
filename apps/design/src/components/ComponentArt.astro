@@ -4,6 +4,7 @@ import Badge from "@singularity/design-system/Badge";
 import Banner from "@singularity/design-system/Banner";
 import BrandMark from "@singularity/design-system/BrandMark";
 import Button from "@singularity/design-system/Button";
+import Chip from "@singularity/design-system/Chip";
 import { codeSnippetHtml } from "@singularity/design-system/code";
 import "@singularity/design-system/styles/code.css";
 import Fab from "@singularity/design-system/Fab";
@@ -13,6 +14,10 @@ import Icon from "@singularity/design-system/Icon";
 import IconButton from "@singularity/design-system/IconButton";
 import MenuItem from "@singularity/design-system/MenuItem.astro";
 import { menuBodyClass } from "@singularity/design-system/menu";
+import PlayChip from "@singularity/design-system/PlayChip";
+import SearchField from "@singularity/design-system/SearchField";
+import SegmentedChoice from "@singularity/design-system/SegmentedChoice";
+import SegmentedNav from "@singularity/design-system/SegmentedNav";
 import Select from "@singularity/design-system/Select.astro";
 import SheetHeader from "@singularity/design-system/SheetHeader.astro";
 import Slider from "@singularity/design-system/Slider";
@@ -50,6 +55,23 @@ const { slug } = Astro.props;
         <MenuItem><Icon name="share" /> {SAMPLE.menu.items[0]}</MenuItem>
         <MenuItem><Icon name="download" /> {SAMPLE.menu.items[1]}</MenuItem>
       </span>
+    )
+  }
+  {slug === "play-chip" && <PlayChip label={SAMPLE.duration} tabIndex={-1} />}
+  {slug === "chip" && <Chip defaultChecked tabIndex={-1}>{SAMPLE.label}</Chip>}
+  {
+    slug === "segmented-choice" && (
+      <SegmentedChoice
+        name="art-choice"
+        defaultValue="1"
+        options={SAMPLE.segments.slice(0, 2).map((label, n) => ({ value: String(n + 1), label, tabIndex: -1 }))}
+      />
+    )
+  }
+  {slug === "search-field" && <SearchField label={SAMPLE.search} placeholder={SAMPLE.search} tabIndex={-1} />}
+  {
+    slug === "segmented-nav" && (
+      <SegmentedNav tabs={SAMPLE.segments.slice(0, 2).map((label, n) => ({ value: String(n + 1), label }))} />
     )
   }
   {slug === "field" && <Field placeholder={SAMPLE.label} aria-label={SAMPLE.label} tabIndex={-1} />}
