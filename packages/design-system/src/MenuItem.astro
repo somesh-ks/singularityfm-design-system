@@ -1,27 +1,21 @@
 ---
+/**
+ * @deprecated Import MenuItem from "@singularityfm/design-system/MenuItem" and pass className (DS-5).
+ * This path stays until a breaking release: it renders that React MenuItem, `class` passed on as
+ * className and its slot as the row's content, and draws nothing of its own (designSystem.test.ts
+ * holds it to that). Outside a React Menu, as in the deprecated Menu.astro, the row is the same
+ * button it was, with no script.
+ */
 import type { HTMLAttributes } from "astro/types";
-import { type MenuItemTone, menuItemClass } from "./menu";
-import "../styles/menu.css";
+import MenuItem from "./MenuItem.tsx";
+import type { MenuItemTone } from "./menu";
 
-interface MenuItemProps {
-  /** The danger tone, for the one row that destroys. */
-  tone?: MenuItemTone;
-  /** For placing the row where it stands. Never its look. */
+type Props = Omit<HTMLAttributes<"button">, "class" | "role"> & {
   class?: string;
-}
+  tone?: MenuItemTone;
+};
 
-type Props = MenuItemProps & Omit<HTMLAttributes<"button">, keyof MenuItemProps | "role">;
-
-const { tone, class: placement, type = "button", slot: _slot, ...passed } = Astro.props;
-
-// A bare data attribute (data-block) is true on a component and would print as data-block="true";
-// on a plain element it is empty. The menu's scripts read both, so the row keeps the empty form.
-const rest = Object.fromEntries(
-  Object.entries(passed).map(([name, value]) => [
-    name,
-    value === true && name.startsWith("data-") ? "" : value,
-  ]),
-);
+const { class: className, ...props } = Astro.props;
 ---
 
-<button class:list={[menuItemClass(tone), placement]} type={type} role="menuitem" {...rest}><slot /></button>
+<MenuItem {...props} className={className}><slot /></MenuItem>

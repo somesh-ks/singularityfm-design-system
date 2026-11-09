@@ -904,7 +904,8 @@
         "menu-item-value"
       ],
       "files": [
-        "packages/design-system/src/Menu.astro",
+        "packages/design-system/src/Menu.tsx",
+        "packages/design-system/src/MenuItem.tsx",
         "packages/design-system/src/menu.ts"
       ],
       "when": [
@@ -931,8 +932,9 @@
         "more menu",
         "overflow menu"
       ],
-      "markup": "<Menu id=\"row-menu-3\" title=\"Daily\"><MenuItem><Icon name=\"pencilSimple\" />Edit</MenuItem><MenuItem tone=\"danger\"><Icon name=\"trash\" />Delete</MenuItem></Menu>",
+      "markup": "<Menu id=\"row-menu-3\" title=\"Daily\" trigger={<IconButton label=\"More\"><Icon name=\"moreVert\" /></IconButton>}><MenuItem><Icon name=\"pencilSimple\" />Edit</MenuItem><MenuItem tone=\"danger\"><Icon name=\"trash\" />Delete</MenuItem></Menu>",
       "rules": [
+        "In an Astro page the Menu, its trigger and its rows are one React component drawn with client:load (DS-7).",
         "Under 40rem a menu is a sheet, never a small popover.",
         "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass()."
       ],

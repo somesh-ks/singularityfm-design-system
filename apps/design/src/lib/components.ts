@@ -241,7 +241,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Menu",
     group: "actions",
     registry: "Menu",
-    file: "Menu.astro",
+    file: "Menu.tsx",
     controls: [
       choice("items", "Actions", [
         ["3", "Three"],
@@ -263,16 +263,15 @@ export const SPECS: readonly ComponentSpec[] = [
         lines.push(`  <MenuItem tone="danger"><Icon name="trash" /> ${SAMPLE.danger}</MenuItem>`);
       const sub = on(state, "subtitle") ? ` subtitle="${SAMPLE.menu.subtitle}"` : "";
       return [
-        `<Button variant="tonal" popoverTarget="sample-menu">${SAMPLE.menu.trigger}</Button>`,
-        `<Menu id="sample-menu" title="${SAMPLE.menu.title}"${sub}>`,
+        `<Menu id="sample-menu" title="${SAMPLE.menu.title}"${sub} trigger={<Button variant="tonal">${SAMPLE.menu.trigger}</Button>}>`,
         ...lines,
         "</Menu>",
       ].join("\n");
     },
-    note: "The Button opens the real popover: a small menu under the button from 40rem, a bottom sheet on a phone. The app's script adds the arrow keys.",
+    note: "The Button opens the real popover: a small menu under the button from 40rem, a bottom sheet on a phone; Base UI adds the keys. In an Astro page the menu, its trigger and its rows are one React component, drawn with client:load.",
     subparts: [
       {
-        file: "MenuItem.astro",
+        file: "MenuItem.tsx",
         name: "MenuItem",
         note: 'One row: its glyph first, then the words. tone="danger" for the one row that destroys.',
       },
@@ -788,7 +787,9 @@ export const stateKey = (controls: readonly Control[], state: State): string =>
  */
 export function codeFor(spec: ComponentSpec, state: State): string {
   const imports = spec.imports.map((name) =>
-    SPECS.find((other) => other.name === name)?.file?.endsWith(".tsx")
+    [...SPECS, ...SPECS.flatMap((other) => other.subparts ?? [])]
+      .find((other) => other.name === name)
+      ?.file?.endsWith(".tsx")
       ? `import ${name} from "@singularityfm/design-system/${name}";`
       : `import ${name} from "@singularityfm/design-system/${name}.astro";`,
   );

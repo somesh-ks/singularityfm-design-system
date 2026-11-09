@@ -1,4 +1,12 @@
 ---
+/**
+ * @deprecated Import Menu from "@singularityfm/design-system/Menu" and draw it, its trigger and its
+ * rows as one React component with client:load (DS-4, DS-7). This path stays as it was until a
+ * breaking release, the native popover a page's own button opens with popovertarget and a page's
+ * script gives keys and focus: it cannot render the React Menu, since an Astro slot reaches an island
+ * as static markup, outside Base UI's tree, and its trigger is the page's. Its look is menu.css, the
+ * React Menu's too, and its rows are MenuItem, so the two cannot drift apart in how they are drawn.
+ */
 import { menuBodyClass, menuListClass } from "./menu";
 import SheetHeader from "./SheetHeader.astro";
 import "../styles/menu.css";

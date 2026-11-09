@@ -6,7 +6,9 @@
 // files), a token file and the rules module, then lint a stylesheet with the shipped Biome plugin config;
 // and a second page that draws Link, IconButton and Fab by their names (the Fab brings its own
 // stylesheet); and a third that draws Field, Switch and Slider by their names and by their .astro shims,
-// the Switch and the Slider hydrated where they are drawn (DS-7). The workspace link serves every file in the folder, so a path missing from `files`, a
+// the Switch and the Slider hydrated where they are drawn (DS-7); and a fourth that draws a Menu, its
+// trigger and its rows as one island of the consumer's own (DS-7), a MenuItem by its name and by its shim,
+// and the deprecated Menu.astro. The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -138,6 +140,33 @@ try {
       "",
     ].join("\n"),
   );
+  // A Menu's rows reach Base UI only inside one React tree, so the consumer composes it in a component of
+  // its own and draws that with client:load; a row by itself, or in the deprecated Menu.astro, is static.
+  mkdirSync(join(app, "src/components"));
+  writeFileSync(
+    join(app, "src/components/RowMenu.tsx"),
+    [
+      `import Icon from "${name}/Icon";`,
+      `import IconButton from "${name}/IconButton";`,
+      `import Menu from "${name}/Menu";`,
+      `import MenuItem from "${name}/MenuItem";`,
+      'export default () => <Menu id="m1" title="Row" className="placed-menu" trigger={<IconButton label="Row actions"><Icon name="moreVert" /></IconButton>}><MenuItem data-id="i1">Share</MenuItem><MenuItem tone="danger">Delete</MenuItem></Menu>;',
+      "",
+    ].join("\n"),
+  );
+  writeFileSync(
+    join(app, "src/pages/menus.astro"),
+    [
+      "---",
+      'import RowMenu from "../components/RowMenu";',
+      `import MenuItem from "${name}/MenuItem";`,
+      `import OldMenuItem from "${name}/MenuItem.astro";`,
+      `import OldMenu from "${name}/Menu.astro";`,
+      "---",
+      '<html lang="en"><body><RowMenu client:load /><MenuItem className="placed-item" data-id="i2" data-block>Row words</MenuItem><OldMenuItem class="placed-item" data-id="i2" data-block>Row words</OldMenuItem><button popovertarget="m2">Old</button><OldMenu id="m2" title="Old"><OldMenuItem>Old row</OldMenuItem></OldMenu></body></html>',
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -156,6 +185,7 @@ try {
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");
   const inputs = readFileSync(join(app, "dist/inputs/index.html"), "utf8");
+  const menus = readFileSync(join(app, "dist/menus/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
@@ -229,6 +259,35 @@ try {
   for (const tag of islands)
     for (const [, url] of tag.matchAll(/(?:component|renderer)-url="([^"]+)"/g))
       if (!existsSync(join(app, "dist", url))) problems.push(`an island names ${url}, not built`);
+  // The Menu: one island that loads with the page, its trigger drawn on the server (Base UI portals the
+  // list, so it is drawn only once hydrated); a row by each path keeps the test's class, attributes and
+  // words; the old Menu still draws its popover and row.
+  const menuIslands = [...menus.matchAll(/<astro-island\b[^>]*>/g)].map((tag) => tag[0]);
+  if (menuIslands.length !== 1 || !/client="load"/.test(menuIslands[0] ?? ""))
+    problems.push(`the menus page drew ${menuIslands.length} islands, not the one Menu`);
+  for (const tag of menuIslands)
+    for (const [, url] of tag.matchAll(/(?:component|renderer)-url="([^"]+)"/g))
+      if (!existsSync(join(app, "dist", url))) problems.push(`an island names ${url}, not built`);
+  if (
+    !/<button[^>]*aria-label="Row actions"[^>]*aria-haspopup="menu"|<button[^>]*aria-haspopup="menu"[^>]*aria-label="Row actions"/.test(
+      menus,
+    )
+  )
+    problems.push("the Menu's trigger was not drawn on the server");
+  const menuRows = [...menus.matchAll(/<button[^>]*\bplaced-item\b[^>]*>([^<]*)<\/button>/g)];
+  if (
+    menuRows.length !== 2 ||
+    menuRows.some(
+      ([tag, words]) =>
+        !/data-id="i2"/.test(tag) ||
+        !/data-block=""/.test(tag) ||
+        !/role="menuitem"/.test(tag) ||
+        words !== "Row words",
+    )
+  )
+    problems.push("the page drew no placed MenuItem with its attributes and words by each path");
+  if (!/<div[^>]*id="m2"[^>]*popover[^>]*>[\s\S]*Old row/.test(menus))
+    problems.push("the deprecated Menu.astro drew no popover with its row");
   if (/<astro-island/.test(html) || /<astro-island/.test(actions))
     problems.push("a page that draws no Switch or Slider hydrates");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
@@ -249,8 +308,13 @@ try {
     problems.push("the Icon's stylesheet did not reach the page");
   if (![actions, ...styles].some((text) => text.includes(".create-fab{")))
     problems.push("the Fab's stylesheet did not reach the page");
-  for (const rule of [".field-input{", ".switch-input[data-checked]{", ".slider-input{"])
-    if (![inputs, ...styles].some((text) => text.includes(rule)))
+  for (const [page, rule] of [
+    [inputs, ".field-input{"],
+    [inputs, ".switch-input[data-checked]{"],
+    [inputs, ".slider-input{"],
+    [menus, ".menu-list{"],
+  ])
+    if (![page, ...styles].some((text) => text.includes(rule)))
       problems.push(`${rule.slice(0, -1)} did not reach the page`);
   if (!assets.some((file) => file.endsWith(".woff2")))
     problems.push("the build emitted no font file");

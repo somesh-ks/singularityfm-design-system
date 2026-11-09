@@ -15,8 +15,6 @@ import Icon from "@singularity/design-system/Icon";
 import IconButton from "@singularity/design-system/IconButton";
 import type { IconName } from "@singularity/design-system/icons";
 import Link from "@singularity/design-system/Link";
-import Menu from "@singularity/design-system/Menu.astro";
-import MenuItem from "@singularity/design-system/MenuItem.astro";
 import Ripple from "@singularity/design-system/Ripple";
 import RowExit from "@singularity/design-system/RowExit";
 import SectionTabs from "@singularity/design-system/SectionTabs";
@@ -32,6 +30,7 @@ import {
   type State,
   sampleSlug,
 } from "../lib/components";
+import SampleMenu from "./SampleMenu";
 
 /**
  * One state of a component page's controls, drawn by the component itself. The page renders every
@@ -99,25 +98,17 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
 
 {
   slug === "menu" && (
-    <>
-      <Button variant="tonal" popoverTarget={`${id}-menu`}>
-        {SAMPLE.menu.trigger}
-      </Button>
-      <Menu id={`${id}-menu`} title={SAMPLE.menu.title} subtitle={on("subtitle") ? SAMPLE.menu.subtitle : undefined}>
-        {SAMPLE.menu.items.slice(0, Number(state.items)).map((label, n) => (
-          <MenuItem>
-            <Icon name={menuIcons[n] ?? "check"} /> {label}
-          </MenuItem>
-        ))}
-        {
-          on("danger") && (
-            <MenuItem tone="danger">
-              <Icon name="trash" /> {SAMPLE.danger}
-            </MenuItem>
-          )
-        }
-      </Menu>
-    </>
+    <SampleMenu
+      client:load
+      id={`${id}-menu`}
+      trigger={SAMPLE.menu.trigger}
+      title={SAMPLE.menu.title}
+      subtitle={on("subtitle") ? SAMPLE.menu.subtitle : undefined}
+      rows={SAMPLE.menu.items
+        .slice(0, Number(state.items))
+        .map((label, n) => [menuIcons[n] ?? "check", label] as const)}
+      danger={on("danger") ? SAMPLE.danger : undefined}
+    />
   )
 }
 

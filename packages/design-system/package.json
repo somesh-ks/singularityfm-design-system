@@ -53,6 +53,8 @@
     "./Icon": "./src/Icon.tsx",
     "./IconButton": "./src/IconButton.tsx",
     "./Link": "./src/Link.tsx",
+    "./Menu": "./src/Menu.tsx",
+    "./MenuItem": "./src/MenuItem.tsx",
     "./Ripple": "./src/Ripple.tsx",
     "./RowExit": "./src/RowExit.tsx",
     "./SectionTabs": "./src/SectionTabs.tsx",
