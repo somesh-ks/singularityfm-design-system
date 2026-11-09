@@ -1,16 +1,13 @@
 ---
+/**
+ * @deprecated Import DialogTitle from "@singularityfm/design-system/DialogTitle" (DS-5). This path
+ * stays until a breaking release: it renders that React DialogTitle, its attributes on the heading
+ * and its slot as children, and draws nothing of its own (designSystem.test.ts holds it to that).
+ */
 import type { HTMLAttributes } from "astro/types";
-import { dialogTitleClass } from "./dialog.ts";
-import "../styles/dialog.css";
+import DialogTitle from "./DialogTitle.tsx";
 
 type Props = Omit<HTMLAttributes<"h2">, "class">;
-
-const rest = Object.fromEntries(
-  Object.entries(Astro.props).map(([name, value]) => [
-    name,
-    value === true && name.startsWith("data-") ? "" : value,
-  ]),
-);
 ---
 
-<h2 class={dialogTitleClass()} {...rest}><slot /></h2>
+<DialogTitle {...Astro.props}><slot /></DialogTitle>

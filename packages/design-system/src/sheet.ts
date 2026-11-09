@@ -1,6 +1,6 @@
 /**
  * The Sheet: a form or a list in a panel that slides over the page, the whole screen on a phone and
- * a panel on the right from 40rem. The one place its classes are written. Sheet.astro renders from
+ * a panel on the right from 40rem. The one place its classes are written. Sheet.tsx renders from
  * it; a script that builds a header calls sheetHeadClass() and sheetTitleClass(), and a script that
  * finds a sheet reads SHEET_SELECTOR. The rules are in styles/sheet.css. A yes-or-no box is a Dialog;
  * the bottom sheet of the Base UI islands is the Drawer.

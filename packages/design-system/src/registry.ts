@@ -8,6 +8,7 @@ import { AVATAR, AVATAR_CLASSES, AVATAR_RETIRED } from "./avatar.ts";
 import { BADGE, BADGE_CLASSES, BADGE_RETIRED } from "./badge.ts";
 import { BANNER, BANNER_CLASSES, BANNER_RETIRED } from "./banner.ts";
 import { BUTTON, BUTTON_CLASSES, BUTTON_RETIRED } from "./button.ts";
+import { CHIP, CHIP_CLASSES, CHIP_RETIRED } from "./chip.ts";
 import { CODE, CODE_CLASSES, CODE_RETIRED } from "./code.ts";
 import { DIALOG, DIALOG_CLASSES, DIALOG_RETIRED } from "./dialog.ts";
 import { DRAWER, DRAWER_CLASSES, DRAWER_RETIRED } from "./drawer.ts";
@@ -20,8 +21,16 @@ import { ICON, ICON_CLASSES, ICON_RETIRED } from "./icon.ts";
 import { ICON_BUTTON, ICON_BUTTON_CLASSES, ICON_BUTTON_RETIRED } from "./iconButton.ts";
 import { LINK, LINK_CLASSES, LINK_RETIRED } from "./link.ts";
 import { MENU, MENU_CLASSES, MENU_RETIRED } from "./menu.ts";
+import { PLAY_CHIP, PLAY_CHIP_CLASSES, PLAY_CHIP_RETIRED } from "./playChip.ts";
 import { RIPPLE, RIPPLE_CLASSES, RIPPLE_RETIRED } from "./ripple.ts";
 import { ROW_EXIT, ROW_EXIT_CLASSES, ROW_EXIT_RETIRED } from "./rowExit.ts";
+import { SEARCH_FIELD, SEARCH_FIELD_CLASSES, SEARCH_FIELD_RETIRED } from "./searchField.ts";
+import {
+  SEGMENTED_CHOICE,
+  SEGMENTED_CHOICE_CLASSES,
+  SEGMENTED_CHOICE_RETIRED,
+} from "./segmentedChoice.ts";
+import { SEGMENTED_NAV, SEGMENTED_NAV_CLASSES, SEGMENTED_NAV_RETIRED } from "./segmentedNav.ts";
 import { SELECT, SELECT_CLASSES, SELECT_RETIRED } from "./select.ts";
 import { SHEET, SHEET_CLASSES, SHEET_RETIRED } from "./sheet.ts";
 import { SLIDER, SLIDER_CLASSES, SLIDER_RETIRED, SLIDER_VARIANTS } from "./slider.ts";
@@ -87,6 +96,28 @@ export const COMPONENTS: DesignSystemComponent[] = [
     useWhen: LINK.useWhen,
     dontUseWhen: LINK.dontUseWhen,
     parts: LINK.variants,
+  },
+  {
+    name: "Play chip",
+    sheet: "buttons.css",
+    prefix: "chip",
+    classes: PLAY_CHIP_CLASSES,
+    retired: PLAY_CHIP_RETIRED,
+    summary: PLAY_CHIP.summary,
+    useWhen: PLAY_CHIP.useWhen,
+    dontUseWhen: PLAY_CHIP.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Segmented navigation",
+    sheet: "primitives.css",
+    prefix: "segmented-nav",
+    classes: SEGMENTED_NAV_CLASSES,
+    retired: SEGMENTED_NAV_RETIRED,
+    summary: SEGMENTED_NAV.summary,
+    useWhen: SEGMENTED_NAV.useWhen,
+    dontUseWhen: SEGMENTED_NAV.dontUseWhen,
+    parts: SEGMENTED_NAV.sizes,
   },
   {
     name: "Icon",
@@ -185,6 +216,39 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: FIELD.summary,
     useWhen: FIELD.useWhen,
     dontUseWhen: FIELD.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Chip",
+    sheet: "primitives.css",
+    prefix: "filter-chip",
+    classes: CHIP_CLASSES,
+    retired: CHIP_RETIRED,
+    summary: CHIP.summary,
+    useWhen: CHIP.useWhen,
+    dontUseWhen: CHIP.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Segmented choice",
+    sheet: "primitives.css",
+    prefix: "segmented-choice",
+    classes: SEGMENTED_CHOICE_CLASSES,
+    retired: SEGMENTED_CHOICE_RETIRED,
+    summary: SEGMENTED_CHOICE.summary,
+    useWhen: SEGMENTED_CHOICE.useWhen,
+    dontUseWhen: SEGMENTED_CHOICE.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Search field",
+    sheet: "search-field.css",
+    prefix: "search-field",
+    classes: SEARCH_FIELD_CLASSES,
+    retired: SEARCH_FIELD_RETIRED,
+    summary: SEARCH_FIELD.summary,
+    useWhen: SEARCH_FIELD.useWhen,
+    dontUseWhen: SEARCH_FIELD.dontUseWhen,
     parts: {},
   },
   {
