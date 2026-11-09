@@ -57,7 +57,14 @@ const { slug } = Astro.props;
   {
     slug === "slider" && (
       <span class="guide-live-slider">
-        <Slider min={0} max={100} defaultValue={40} aria-label={SAMPLE.label} tabIndex={-1} />
+        <Slider
+          min="0"
+          max="100"
+          defaultValue="40"
+          style="--range-fill: 40%"
+          aria-label={SAMPLE.label}
+          tabIndex={-1}
+        />
       </span>
     )
   }

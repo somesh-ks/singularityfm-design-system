@@ -1,10 +1,9 @@
 ---
 /**
- * @deprecated Import Slider from "@singularityfm/design-system/Slider", pass className and draw it
- * with client:load (DS-5, DS-7). This path stays until a breaking release: it renders that React
- * Slider, `class` passed on as className and `value` as defaultValue (a page cannot hold a value React
- * controls), hydrated where it is drawn so it still answers a drag, and draws nothing of its own
- * (designSystem.test.ts holds it to that). The Slider keeps --range-fill itself.
+ * @deprecated Import Slider from "@singularityfm/design-system/Slider" and pass className (DS-5,
+ * DS-8). This path stays until a breaking release: it renders that React Slider, the same native
+ * range, `class` passed on as className and `value` as defaultValue (React's starting state), and
+ * draws nothing of its own (designSystem.test.ts holds it to that).
  */
 import type { HTMLAttributes } from "astro/types";
 import Slider from "./Slider.tsx";
@@ -18,4 +17,4 @@ type Props = Omit<HTMLAttributes<"input">, "class" | "type"> & {
 const { class: className, value: defaultValue, ...props } = Astro.props;
 ---
 
-<Slider defaultValue={defaultValue} {...props} className={className} client:load />
+<Slider defaultValue={defaultValue} {...props} className={className} />

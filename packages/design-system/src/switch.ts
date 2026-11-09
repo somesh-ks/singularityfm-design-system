@@ -1,6 +1,6 @@
 /**
  * The Switch: one setting that is on or off, and takes effect when it is flipped. The one place its
- * class is written. Switch.astro renders from it; a script or a React island that draws a switch
+ * class is written. Switch.tsx renders from it; a script or a React island that draws a switch
  * calls switchClass(); the style guide lists SWITCH. The rules are in styles/switch.css.
  */
 import type { Guidance } from "./guidance";

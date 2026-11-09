@@ -23,7 +23,7 @@ type Props = FieldProps &
   };
 
 /**
- * The Field (DS-4, DS-7) on Base UI's Field control: a native input, or a textarea when multiline,
+ * The Field (DS-8) on Base UI's Field control: a native input, or a textarea when multiline,
  * so it types, submits and validates before any script and needs no client directive. Inside Base
  * UI's Field.Root (a React island's form) it takes that field's label, description and validity;
  * alone it is the plain control, and `aria-invalid` draws the failed edge.

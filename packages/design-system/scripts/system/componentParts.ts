@@ -321,20 +321,20 @@ export const componentParts = (): PartSource[] => [
       "master",
     ],
     markup:
-      '<div class="settings-row"><label class="settings-label" for="autoplay">Autoplay</label><Switch client:load id="autoplay" name="autoplay" /></div>',
+      '<div class="settings-row"><label class="settings-label" for="autoplay">Autoplay</label><Switch id="autoplay" name="autoplay" /></div>',
     files: ["packages/design-system/src/Switch.tsx", "packages/design-system/src/switch.ts"],
     rules: [
-      "In an Astro page it hydrates where it is drawn (client:load) and starts from defaultChecked; in a React island it is controlled by checked and onCheckedChange (DS-7).",
+      'It is the native checkbox (role="switch") and takes no client directive (DS-8): an Astro page starts it with defaultChecked, a React island passes checked with onChange.',
     ],
   }),
   control("slider", "Slider", SLIDER, {
     keywords: ["slider", "range", "volume", "speed", "scrub"],
     markup:
-      '<Slider client:load aria-labelledby="volume-label" min={0} max={1} step={0.05} defaultValue={0.7} />',
+      '<Slider aria-label="Volume" min={0} max={1} step={0.05} defaultValue={0.7} style="--range-fill: 70%" />',
     files: ["packages/design-system/src/Slider.tsx", "packages/design-system/src/slider.ts"],
     rules: [
-      "In an Astro page it hydrates where it is drawn (client:load) and starts from defaultValue; in a React island it is controlled by value and onValueChange (DS-7).",
-      "It keeps --range-fill from its own value; a row's label names it with aria-labelledby, since a <label for> cannot reach its hidden input.",
+      "It is the native range and takes no client directive (DS-8): an Astro page starts it with defaultValue, a React island passes value with onChange.",
+      "WebKit paints the filled track from --range-fill, which starts at 0%: set it to (value - min) / (max - min) as a percentage and update it on input.",
     ],
   }),
   control("field", "Field", FIELD, {
@@ -343,7 +343,7 @@ export const componentParts = (): PartSource[] => [
       '<div class="manage-field"><label for="title">Title</label><Field id="title" name="title" type="text" /></div>',
     files: ["packages/design-system/src/Field.tsx", "packages/design-system/src/field.ts"],
     rules: [
-      "It needs no client directive: it is a native input, and types and submits before any script (DS-7).",
+      "It needs no client directive: it is a native input, and types and submits before any script (DS-8).",
       "Draw it with <Field> (multiline for a textarea); a select or a script takes the class from fieldClass().",
       "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element.",
     ],

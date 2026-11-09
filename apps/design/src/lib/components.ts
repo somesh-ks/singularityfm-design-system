@@ -319,12 +319,14 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Switch"],
     code: (state) => {
-      const attrs = ["client:load"];
+      const attrs: string[] = [];
       if (state.state === "on") attrs.push("defaultChecked");
-      if (state.state === "mixed") attrs.push("indeterminate");
       attrs.push(`aria-label="${SAMPLE.label}"`);
       if (on(state, "disabled")) attrs.push("disabled");
-      return jsx("Switch", attrs);
+      const tag = jsx("Switch", attrs);
+      return state.state === "mixed"
+        ? `${tag}\n<!-- Mixed is the input's indeterminate property: a script sets it while only some of a group are on. -->`
+        : tag;
     },
   },
   {
@@ -343,13 +345,12 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["Slider"],
     code: (state) => {
-      const attrs = ["min={0}", "max={100}", "defaultValue={40}", `aria-label="${SAMPLE.label}"`];
+      const attrs = ['min="0"', 'max="100"', 'defaultValue="40"', `aria-label="${SAMPLE.label}"`];
       if (state.variant !== "default") attrs.unshift(state.variant ?? "");
-      attrs.unshift("client:load");
       if (on(state, "disabled")) attrs.push("disabled");
       return jsx("Slider", attrs);
     },
-    note: "It keeps the fill up to the thumb from its own value.",
+    note: "The fill up to the thumb is a custom property the page keeps; a short script on this page does it.",
   },
   {
     slug: "select",

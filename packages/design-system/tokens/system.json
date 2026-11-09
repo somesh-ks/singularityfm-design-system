@@ -637,7 +637,7 @@
       "when": [
         "A setting is on or off and applies as soon as it is flipped: Sounds, Autoplay, a podcast's Enabled",
         "It sits at the end of a settings row, with the row's label as its name",
-        "One switch stands for a group of switches (a master): it takes `indeterminate`, unchecked, while only some of the group are on. The track sits halfway between the off grey and the accent and the thumb halfway along it. Pressing it turns the whole group on, or off when all are on"
+        "One switch stands for a group of switches (a master): the script sets `indeterminate` on it, and unchecks it, while only some of the group are on. The track sits halfway between the off grey and the accent and the thumb halfway along it. Pressing it turns the whole group on, or off when all are on"
       ],
       "not": [
         {
@@ -663,14 +663,14 @@
         "indeterminate",
         "master"
       ],
-      "markup": "<div class=\"settings-row\"><label class=\"settings-label\" for=\"autoplay\">Autoplay</label><Switch client:load id=\"autoplay\" name=\"autoplay\" /></div>",
+      "markup": "<div class=\"settings-row\"><label class=\"settings-label\" for=\"autoplay\">Autoplay</label><Switch id=\"autoplay\" name=\"autoplay\" /></div>",
       "rules": [
-        "In an Astro page it hydrates where it is drawn (client:load) and starts from defaultChecked; in a React island it is controlled by checked and onCheckedChange (DS-7)."
+        "It is the native checkbox (role=\"switch\") and takes no client directive (DS-8): an Astro page starts it with defaultChecked, a React island passes checked with onChange."
       ],
       "styles": [
         "packages/design-system/styles/switch.css"
       ],
-      "usage": "One setting that is on or off, a <button role=\"switch\"> drawn as a track; its ::before is the thumb.",
+      "usage": "One setting that is on or off, a checkbox with role=\"switch\" drawn as a track; its ::before is the thumb.",
       "tokens": [
         "--color-accent",
         "--color-accent-hover",
@@ -721,23 +721,21 @@
         "speed",
         "scrub"
       ],
-      "markup": "<Slider client:load aria-labelledby=\"volume-label\" min={0} max={1} step={0.05} defaultValue={0.7} />",
+      "markup": "<Slider aria-label=\"Volume\" min={0} max={1} step={0.05} defaultValue={0.7} style=\"--range-fill: 70%\" />",
       "rules": [
-        "In an Astro page it hydrates where it is drawn (client:load) and starts from defaultValue; in a React island it is controlled by value and onValueChange (DS-7).",
-        "It keeps --range-fill from its own value; a row's label names it with aria-labelledby, since a <label for> cannot reach its hidden input."
+        "It is the native range and takes no client directive (DS-8): an Astro page starts it with defaultValue, a React island passes value with onChange.",
+        "WebKit paints the filled track from --range-fill, which starts at 0%: set it to (value - min) / (max - min) as a percentage and update it on input."
       ],
       "styles": [
         "packages/design-system/styles/slider.css"
       ],
-      "usage": "A value between two ends, set by dragging a thumb or with the arrow keys. The root (.slider-input) is the target; inside it the control, the track and the thumb are Base UI's parts, which carry no class of their own, so the rules reach them through the root: the control is its child, the track the control's, the thumb the one part with data-index. The rail paints the filled part as a gradient up to --range-fill, which Slider.tsx keeps at (value - min) / (max - min) as a percentage, as WebKit's native track did. One rule draws it in every engine: the parts are spans, not a native range's engine-only pseudo-elements.",
+      "usage": "A value between two ends, set by dragging a thumb or with the arrow keys. A native range. WebKit has no pseudo-element for the filled part of the track, so the track paints it as a gradient up to --range-fill, which the script keeps at (value - min) / (max - min) as a percentage. Firefox has ::-moz-range-progress and ignores the gradient. The two engines' pseudo-elements cannot share a rule: a selector one engine does not know drops the whole rule in the other.",
       "tokens": [
         "--button-radius",
         "--color-accent",
         "--color-accent-hover",
         "--color-accent-pressed",
         "--color-border-control",
-        "--color-focus-gap",
-        "--color-focus-ring",
         "--color-surface",
         "--scrubber-thumb",
         "--scrubber-thumb-active-scale",
@@ -791,7 +789,7 @@
       ],
       "markup": "<div class=\"manage-field\"><label for=\"title\">Title</label><Field id=\"title\" name=\"title\" type=\"text\" /></div>",
       "rules": [
-        "It needs no client directive: it is a native input, and types and submits before any script (DS-7).",
+        "It needs no client directive: it is a native input, and types and submits before any script (DS-8).",
         "Draw it with <Field> (multiline for a textarea); a select or a script takes the class from fieldClass().",
         "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element."
       ],

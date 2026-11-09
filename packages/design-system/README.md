@@ -2,8 +2,9 @@
 
 The components, stylesheets, tokens, fonts and flags that the Singularity reader is drawn with. It ships
 source (`.tsx`, `.ts`, and the `.astro` components not yet moved to React), not compiled output: your
-build compiles it. The components are React (DS-3), with Base UI where they have behaviour; a static one
-renders on the server in an Astro page with no client directive and ships no script.
+build compiles it. The components are React (DS-3): each draws the native element where the browser already
+does the job, and Base UI only where it adds behaviour the browser lacks (DS-8). One that works before any
+script renders on the server in an Astro page with no client directive and ships no script.
 
 ## Install
 
@@ -12,7 +13,7 @@ pnpm add @singularityfm/design-system
 ```
 
 Peer dependencies: `react` and `react-dom` (^19.3.0), `astro` (^7.4.4), and `@base-ui/react` (^1.9.0)
-once you draw a component with behaviour. An Astro app adds `@astrojs/react` to its integrations. Node 24
+once you draw a component built on it (the Field). An Astro app adds `@astrojs/react` to its integrations. Node 24
 or later.
 
 An Astro page passes `className`, not `class`, to a React component: `@astrojs/react` drops `class`.
