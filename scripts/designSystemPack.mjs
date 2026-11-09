@@ -133,7 +133,7 @@ try {
       `import Switch from "${name}/Switch";`,
       `import OldSwitch from "${name}/Switch.astro";`,
       "---",
-      '<html lang="en"><body><form><Field className="placed-field" data-id="f1" defaultValue="Words" /><OldField class="placed-field" data-id="f1" value="Words" style="order: 1" /><Switch className="placed-switch" data-id="s1" name="s1" defaultChecked /><OldSwitch class="placed-switch" data-id="s1" name="s1" checked /><Slider className="placed-slider" data-id="v1" name="v1" min={0} max={100} defaultValue={30} /><OldSlider class="placed-slider" data-id="v1" name="v1" min="0" max="100" value="30" /></form></body></html>',
+      '<html lang="en"><body><form><Field className="placed-field" data-id="f1" defaultValue="Words" /><OldField class="placed-field" data-id="f1" value="Words" style="order: 1" readonly maxlength="60" /><Switch className="placed-switch" data-id="s1" name="s1" defaultChecked /><OldSwitch class="placed-switch" data-id="s1" name="s1" checked /><Slider className="placed-slider" data-id="v1" name="v1" min={0} max={100} defaultValue={30} /><OldSlider class="placed-slider" data-id="v1" name="v1" min="0" max="100" value="30" /></form></body></html>',
       "",
     ].join("\n"),
   );
@@ -198,6 +198,10 @@ try {
     problems.push("the page drew no placed Field with its attribute and value by each path");
   if (!fields.some((tag) => /style="order:\s*1"/.test(tag)))
     problems.push("the Field shim lost a style string");
+  // React drops a boolean under its HTML name: the old path's `readonly` field would come out editable.
+  // React prints readOnly="" and maxLength; HTML reads attribute names in any case.
+  if (!fields.some((tag) => /\breadonly=""/i.test(tag) && /\bmaxlength="60"/i.test(tag)))
+    problems.push("the Field shim lost an HTML-named attribute (readonly, maxlength)");
   const switches = roots("placed-switch");
   if (
     switches.length !== 2 ||
