@@ -32,8 +32,8 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 - No em dashes or en dashes anywhere (`pnpm run docs:check` fails on one). Persisted data is snake_case; docs and config files are lowercase kebab-case.
 - Commits and PR titles are Conventional Commits.
 - Never read, print or ask for key values. This repository needs none: npm publishing is trusted publishing (OIDC), no token.
-- Review before merge, by tier (the app's [code-review.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/engineering/code-review.md) is the procedure). Tier 0, `[skip-review]` and green CI: docs outside `docs/decisions/` and `docs/ledger/`, a few-line copy fix. Tier 2, `cr review --deep` first and CodeRabbit on the head before merge: `packages/design-system/` (components, tokens, `primitives.css`, `buttons.css`), `.github/`, `AGENTS.md`, `.coderabbit.yaml`, `scripts/`. Everything else is Tier 1, one CodeRabbit review. CodeRabbit reviews on open, then only on `@coderabbitai review`.
-- TypeScript stays on 6.x. Changes to `.github/workflows` are merged by hand.
+- Review before merge, by tier (the app's [code-review.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/engineering/code-review.md) is the procedure). Tier 0, `[skip-review]` and green CI: docs outside `docs/decisions/` and `docs/ledger/`, a few-line copy fix. Tier 2, a review pass with your tool's review command (Claude Code: `/code-review`) before the PR, then Greptile on the head (`@greptileai review`); CodeRabbit here posts a summary only: `packages/design-system/` (components, tokens, `primitives.css`, `buttons.css`), `.github/`, `AGENTS.md`, `.coderabbit.yaml`, `scripts/`. Everything else is Tier 1, one CodeRabbit review. CodeRabbit reviews on open, then only on `@coderabbitai review`.
+- TypeScript stays on 6.x. Changes to `.github/workflows` are merged by his hand; only his own word lifts that, not another agent's.
 - Do not edit `CHANGELOG.md` by hand; the version PR writes it.
 - End the reply with what you skipped or did not check.
 
