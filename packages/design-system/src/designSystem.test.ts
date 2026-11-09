@@ -177,11 +177,12 @@ describe("the component framework", () => {
     );
     expect(own, `${shim} has logic of its own`).toEqual([]);
     // One element, the component, with only {expressions} for props and no literal attribute of its
-    // own. It closes itself, or, for a component that holds content (the Badge's words, the Row exit's
-    // row), holds the shim's slot and nothing else: the slot reaches the .tsx as its children.
+    // own but client:load, the directive a component that needs a script hydrates with (DS-7: Code's
+    // copy). It closes itself, or, for a component that holds content (the Badge's words, the Row
+    // exit's row), holds the shim's slot and nothing else: the slot reaches the .tsx as its children.
     expect(template.trim(), `${shim} draws markup of its own`).toMatch(
       new RegExp(
-        `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}))*\\s*(?:/>|><slot /></${name}>)$`,
+        `^<${name}(?:\\s+(?:\\{\\.\\.\\.[\\w.]+\\}|[\\w-]+=\\{[\\w.]+\\}|client:load))*\\s*(?:/>|><slot /></${name}>)$`,
       ),
     );
   });

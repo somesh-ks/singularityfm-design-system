@@ -94,12 +94,14 @@ let wired = false;
  * Copies a snippet's text when its button is pressed, for every snippet codeSnippetHtml built on the
  * page now or later (one listener on the document). The button shows a check and the status says
  * Copied for two seconds, with the success sound; with no clipboard the text is selected instead. The
- * Code component copies by itself and carries none of the hooks this listens for.
+ * Code component carries the same hooks but copies by itself once hydrated, and marks its press
+ * handled (defaultPrevented), so this leaves it alone.
  */
 export function wireCodeCopy(): void {
   if (wired) return;
   wired = true;
   document.addEventListener("click", async (event) => {
+    if (event.defaultPrevented) return;
     const button = (event.target as Element | null)?.closest<HTMLButtonElement>("[data-code-copy]");
     const snippet = button?.closest<HTMLElement>("[data-code]");
     const text = snippet?.querySelector<HTMLElement>(".code-snippet-text");

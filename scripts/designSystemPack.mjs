@@ -251,7 +251,8 @@ try {
   if (/<astro-island|<script/.test(inputs))
     problems.push("the inputs page hydrates or ships a script");
   // Each path keeps the test's class, shape and size on the Avatar's root and draws the shape in it,
-  // and keeps the Code's class on its root and its name and words on its text.
+  // and keeps the Code's class on its root and its name and words on its text, and the hooks the
+  // Astro snippet carried (a script or rule that finds it by them fails silently without them).
   const avatars = [
     ...display.matchAll(
       /<span\b[^>]*\bplaced-avatar\b[^>]*>\s*<svg\b[^>]*>\s*<g class="avatar-rig">/g,
@@ -268,6 +269,10 @@ try {
     ),
   ];
   if (codes.length !== 2) problems.push("the page drew no placed Code with its words by each path");
+  const hooks = display.match(
+    /data-code=""|data-copied-word="Copied"|data-code-copy=""|data-code-said=""/g,
+  );
+  if (hooks?.length !== 8) problems.push("a Code lost a data-code hook the Astro snippet carried");
   const codeIslands = [...display.matchAll(/<astro-island\b[^>]*>/g)].map((tag) => tag[0]);
   if (codeIslands.length !== 2 || codeIslands.some((tag) => !/client="load"/.test(tag)))
     problems.push(`the display page drew ${codeIslands.length} islands, not the two Code ones`);
