@@ -1,6 +1,7 @@
 ---
 import BrandMark from "@singularity/design-system/BrandMark";
 import Icon from "@singularity/design-system/Icon";
+import IconButton from "@singularity/design-system/IconButton";
 import themeInit from "@singularity/design-system/scripts/themeInit.js?raw";
 import Nav from "../components/Nav.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
@@ -57,9 +58,9 @@ const savedTheme = `(() => { let t = "dark"; try { if (localStorage.getItem("des
         {/* The bar shows below 64rem, where the nav's side column is hidden. */}
         {
           parent && (
-            <a class="icon-btn app-bar-back" href={href(parent.path)} aria-label={parent.label}>
+            <IconButton className="app-bar-back" href={href(parent.path)} label={parent.label}>
               <Icon name="arrowBack" />
-            </a>
+            </IconButton>
           )
         }
         <a class="wordmark" href={href("")} aria-label="Singularity design system">

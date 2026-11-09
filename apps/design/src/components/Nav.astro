@@ -1,6 +1,7 @@
 ---
 import BrandMark from "@singularity/design-system/BrandMark";
 import Icon from "@singularity/design-system/Icon";
+import IconButton from "@singularity/design-system/IconButton";
 import { href, NAV } from "../lib/sections";
 import ThemeToggle from "./ThemeToggle.astro";
 
@@ -52,16 +53,15 @@ const updated = new Intl.DateTimeFormat("en-GB", {
             </a>
             {children && (
               <>
-                <button
-                  class="icon-btn guide-nav-toggle"
-                  type="button"
+                <IconButton
+                  className="guide-nav-toggle"
                   aria-expanded={open ? "true" : "false"}
                   aria-controls={`nav-sub-${page.label.toLowerCase()}`}
-                  aria-label={`${page.label} pages`}
+                  label={`${page.label} pages`}
                   data-nav-toggle
                 >
                   <Icon name="chevronDown" />
-                </button>
+                </IconButton>
                 <ul class="guide-nav-sub" id={`nav-sub-${page.label.toLowerCase()}`} role="list" hidden={!open}>
                   {groups
                     ? groups.map((group) => (

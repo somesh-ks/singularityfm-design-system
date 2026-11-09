@@ -1,0 +1,123 @@
+{
+  "grid": [
+    [".guide-ramp li", "a ramp step's swatch onto its own number, inside one step"],
+    [
+      ".guide-type-spec",
+      "a type role's spec is one caption: 4px between its wrapped lines, 16px between its items"
+    ],
+    [
+      ".guide-motion-dot",
+      "the dot's inset inside its track, as the segmented control's pill sits 4px inside its own"
+    ],
+    [".guide-tag", "the word Design beside the name it shares: one label"],
+    [
+      ".guide-bar-end",
+      "the theme button's hit area, offset to the bar's end as .app-bar-back's is at its start"
+    ],
+    [
+      ".guide-nav-foot",
+      "the theme button's 44px hit area over the date: its glyph sits inside that area, further off"
+    ],
+    [
+      ".guide-nav-group",
+      "the open group's tonal box, a step past the column's rows with that step padded back, so the rows keep their edge"
+    ],
+    [
+      ".guide-nav-sub",
+      "the 44px rows of the pages under a page: their fills stay 4px apart, their words a row apart"
+    ],
+    [
+      ".guide-nav-group-label",
+      "a group heading onto its first 44px row, whose words sit further down inside the row"
+    ],
+    [
+      ".guide-tile-text",
+      "a card's title onto its note, inside one card, as .banner-body's title onto its body"
+    ],
+    [".guide-art-dots", "a card picture's marks: four dots drawn as one square"],
+    [".guide-art-chips", "a card picture's marks: chips drawn as one row"],
+    [".guide-art-track", "a card picture's track: its fill inset 4px inside it"],
+    [".guide-art-scale", "a card picture's marks: bars drawn as one scale"],
+    [".guide-live-wheel", "a card picture's wheel: its rows packed as a wheel's are"]
+  ],
+  "exempt": [
+    {
+      "file": "apps/design/src/scripts/color.ts",
+      "rule": "raw-colour",
+      "text": "fillStyle = \"#000\"",
+      "reason": "the canvas's reset before it reads a theme colour, so a colour it cannot parse reads black, never the last one; nothing is drawn with it"
+    },
+    {
+      "file": "apps/design/src/scripts/color.ts",
+      "rule": "raw-colour",
+      "text": "oklch(",
+      "reason": "the colour tool's converter: a function named oklch and the OKLCH text it writes from a measured token; no colour is drawn from it"
+    },
+    {
+      "file": "apps/design/src/scripts/componentPage.ts",
+      "rule": "class-on-component",
+      "text": "[data-code-section] .code-snippet-text",
+      "reason": "the preview script finds the Code part it writes the current state's code into"
+    },
+    {
+      "file": "apps/design/src/scripts/componentPage.ts",
+      "rule": "class-on-component",
+      "text": "(\".row-exit\")",
+      "reason": "the preview script finds the Row exit rows it marks data-removing and clears, the script's part the Row exit documents"
+    },
+    {
+      "file": "apps/design/src/scripts/componentPage.ts",
+      "rule": "class-on-component",
+      "text": "\".slider-hue-field, .slider-wave-field\"",
+      "reason": "the preview script finds the Slider field it keeps --range-fill on, the caller's part slider.ts documents"
+    },
+    {
+      "file": "apps/design/src/scripts/componentPage.ts",
+      "rule": "class-on-component",
+      "text": "(\".slider-input\")",
+      "reason": "the preview script finds the Slider inputs whose fill it keeps"
+    },
+    {
+      "file": "apps/design/src/scripts/componentPage.ts",
+      "rule": "class-on-component",
+      "text": "(\".ripple-area\")",
+      "reason": "the preview script loads the ripple's script only when the page draws a Ripple"
+    },
+    {
+      "file": "apps/design/src/lib/components.ts",
+      "rule": "class-on-component",
+      "text": "slug: \"row-exit\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/lib/components.ts",
+      "rule": "class-on-component",
+      "text": "slug: \"avatar\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentArt.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"row-exit\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentArt.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"avatar\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentPreview.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"row-exit\"",
+      "reason": "the component page's address, not a class"
+    },
+    {
+      "file": "apps/design/src/components/ComponentPreview.astro",
+      "rule": "class-on-component",
+      "text": "slug === \"avatar\"",
+      "reason": "the component page's address, not a class"
+    }
+  ]
+}

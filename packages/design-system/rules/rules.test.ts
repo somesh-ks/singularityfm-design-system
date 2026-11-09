@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   classOnComponent,
+  declaredProperties,
   offGrid,
   RETIRED_PATHS,
   rawColour,
@@ -96,6 +97,14 @@ describe("the rules", () => {
     expect(lines(unknownProperty(read, "bar.ts"))).toEqual([2]);
     const keyed = 'const style = { "--fill": 1 };\nconst a = "var(--fill)";';
     expect(unknownProperty(keyed, "bar.tsx")).toEqual([]);
+    // The style guide's sheet read --swatch, which a page's style attribute sets, and validating the
+    // two together called it unknown: a property any of the files declares is declared.
+    const sheet = ".ramp li { background: var(--swatch); }";
+    const page = "<li style={`--swatch: var(--color-accent)`}>";
+    expect(lines(unknownProperty(sheet, "guide.css"))).toEqual([1]);
+    expect(unknownProperty(sheet, "guide.css", declaredProperties(page, "color.astro"))).toEqual(
+      [],
+    );
   });
 
   // Prevents a page drawing a component by its class (D237), on a raw element or through the
