@@ -1,5 +1,5 @@
 /*
- * The Code snippet (design-system/code.ts, Code.astro): text a person copies as it is, in the
+ * The Code snippet (design-system/code.ts, Code.tsx): text a person copies as it is, in the
  * monospace family (--font-code: Google Sans Code, the same in every mood), on the tonal box a
  * field has, with a Copy button at its top end. The text wraps and keeps its line breaks, so a long
  * line never scrolls sideways and nothing is cut. Pressed, the button's copy glyph turns to a check

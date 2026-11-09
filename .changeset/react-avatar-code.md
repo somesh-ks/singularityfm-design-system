@@ -1,0 +1,10 @@
+---
+"@singularityfm/design-system": minor
+---
+
+Avatar and Code are React components (DS-7, DS-8): import them as `@singularityfm/design-system/Avatar` and `/Code` and pass `className`; the Avatar is on Base UI's Avatar, so a page that draws it needs `@base-ui/react` installed (the optional peer the Field already uses). `Avatar.astro` and `Code.astro` are deprecated but work as before, `class` and every prop included, until a breaking release removes them, and `ds validate` warns on them. What looks or acts different:
+
+- Avatar, a shape: the same `<span class="avatar">` (a `<button>` with `label`) and SVG, on the server with no script. Draw it with no client directive, as before, so a script that redraws it in place (`avatarMarkup()`, `data-play`, `data-state`, `data-face`, `data-tone`) keeps working. `avatarArt(id, clip)` is new, the SVG's contents.
+- Avatar, a photo: drawn with `client:load` (or in a React island), the shape stands in once it hydrates when the photo fails to load, even a load that failed before. The `<img>` carries `aria-hidden="true"` (its `alt` was already empty) and React may write a `<link rel="preload">` for it. The shim draws no island, so its photo stays as before.
+- Code: draw `<Code client:load ...>` in an Astro page; a React island draws it as it is. The shim carries `client:load`. It renders whole on the server, keeps its `data-code`, `data-copied-word`, `data-code-copy`, `data-code-said` and `data-copied` hooks, and copies by its own press once hydrated (a press before that is lost unless the page runs `wireCodeCopy()`, which copies it; after, `wireCodeCopy()` leaves it alone). It sits in an `<astro-island>` (`display: contents`), so check a rule that reaches `.code-snippet` by a child combinator (`.x > .code-snippet`); a descendant selector still does.
+- Code's Copy button, and the one `codeSnippetHtml()` builds, gain `.press`: a hover and press fade like every Icon button. `copySnippetText()` and `COPIED_MS` are new exports of `code.ts`.

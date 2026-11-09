@@ -1,5 +1,5 @@
 ---
-import Code from "@singularity/design-system/Code.astro";
+import Code from "@singularity/design-system/Code";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
 import Select from "@singularity/design-system/Select";
 import Switch from "@singularity/design-system/Switch";
@@ -99,7 +99,7 @@ const hasStage = !spec.noPreview;
       spec.code && (
         <section aria-labelledby="code" data-code-section>
           <h2 class="section-head text-heading" id="code">Code</h2>
-          <Code label={`${spec.name} usage`} text={codeFor(spec, start)} />
+          <Code client:load label={`${spec.name} usage`} text={codeFor(spec, start)} />
         </section>
       )
     }

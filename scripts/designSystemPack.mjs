@@ -11,7 +11,8 @@
 // from its export (DS-8); and a fifth that draws Dialog,
 // DialogTitle, DialogActions, Sheet and SheetHeader by their names and by their .astro shims, native
 // dialogs with no island (DS-3); and a sixth that draws a Menu, its rows and a Select, by their
-// names and by their .astro shims, native and with no island (DS-8). The workspace link serves every file in the folder, so a path missing from `files`, a
+// names and by their .astro shims, native and with no island (DS-8); and a seventh that draws Avatar and Code by their
+// names and shims, the Code hydrated. The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -206,6 +207,21 @@ try {
       "",
     ].join("\n"),
   );
+  // The Code copies only once hydrated, so it is an island by each path; the Avatar's shape is static
+  // markup a script redraws in place, so it is none.
+  writeFileSync(
+    join(app, "src/pages/display.astro"),
+    [
+      "---",
+      `import Avatar from "${name}/Avatar";`,
+      `import OldAvatar from "${name}/Avatar.astro";`,
+      `import Code from "${name}/Code";`,
+      `import OldCode from "${name}/Code.astro";`,
+      "---",
+      '<html lang="en"><body><Avatar className="placed-avatar" shape="ghost" size="lg" /><OldAvatar class="placed-avatar" shape="ghost" size="lg" /><Code client:load className="placed-code" label="Code name" text="Code words" /><OldCode class="placed-code" label="Code name" text="Code words" /></body></html>',
+      "",
+    ].join("\n"),
+  );
   let install = "offline";
   try {
     pnpm(["install", "--offline"], app);
@@ -227,6 +243,7 @@ try {
   const overlays = readFileSync(join(app, "dist/overlays/index.html"), "utf8");
   const chips = readFileSync(join(app, "dist/chips/index.html"), "utf8");
   const menus = readFileSync(join(app, "dist/menus/index.html"), "utf8");
+  const display = readFileSync(join(app, "dist/display/index.html"), "utf8");
   if (html.match(/<button/g)?.length !== 2) problems.push("the page drew no Button by each path");
   // A static component renders on the server alone (DS-3): a script here means it began to hydrate.
   if (html.includes("<script")) problems.push("the page ships a script");
@@ -465,6 +482,33 @@ try {
   )
     problems.push("the page drew no placed Select with its attributes and options by each path");
   if (/<astro-island/.test(menus)) problems.push("the menus page hydrates");
+  // Each path draws the same Avatar, found by the test's class, with its shape drawn in it (the clip
+  // id aside, which React makes per instance): a shim that drops the shape or the size draws another.
+  // Each Code keeps the test's class, its name and its words, and the hooks the Astro snippet carried
+  // (a script or rule that finds it by them fails silently without them). The test's own class,
+  // attributes and words only, never the library's markup.
+  const avatars = [...display.matchAll(/<(\w+)\b[^>]*\bplaced-avatar\b[\s\S]*?<\/svg>/g)].map(
+    (match) => match[0].replace(/(?<=id="|#)[^")]+/g, "id"),
+  );
+  if (avatars.length !== 2 || avatars[0] !== avatars[1])
+    problems.push("the page drew no placed Avatar, the same by each path");
+  const count = (pattern) => display.match(pattern)?.length ?? 0;
+  if (
+    count(/class="[^"]*\bplaced-code\b/g) !== 2 ||
+    count(/aria-label="Code name"/g) !== 2 ||
+    count(/>Code words</g) !== 2
+  )
+    problems.push("the page drew no placed Code with its name and words by each path");
+  const hooks = display.match(
+    /data-code=""|data-copied-word="Copied"|data-code-copy=""|data-code-said=""/g,
+  );
+  if (hooks?.length !== 8) problems.push("a Code lost a data-code hook the Astro snippet carried");
+  const codeIslands = [...display.matchAll(/<astro-island\b[^>]*>/g)].map((tag) => tag[0]);
+  if (codeIslands.length !== 2 || codeIslands.some((tag) => !/client="load"/.test(tag)))
+    problems.push(`the display page drew ${codeIslands.length} islands, not the two Code ones`);
+  for (const tag of codeIslands)
+    for (const [, url] of tag.matchAll(/(?:component|renderer)-url="([^"]+)"/g))
+      if (!existsSync(join(app, "dist", url))) problems.push(`an island names ${url}, not built`);
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.
   let lint = "";
   try {
@@ -493,6 +537,8 @@ try {
     [overlays, "dialog.sheet-side{"],
     [menus, ".menu-list{"],
     [menus, ".select-outlined{"],
+    [display, ".avatar{"],
+    [display, ".code-snippet{"],
   ])
     if (![page, ...styles].some((text) => text.includes(rule)))
       problems.push(`${rule.slice(0, -1)} did not reach the page`);

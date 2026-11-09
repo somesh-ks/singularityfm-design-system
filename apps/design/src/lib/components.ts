@@ -806,7 +806,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Avatar",
     group: "display",
     registry: "Avatar",
-    file: "Avatar.astro",
+    file: "Avatar.tsx",
     controls: [
       choice(
         "shape",
@@ -863,7 +863,7 @@ export const SPECS: readonly ComponentSpec[] = [
     name: "Code",
     group: "display",
     registry: "Code",
-    file: "Code.astro",
+    file: "Code.tsx",
     controls: [
       choice("text", "Text", [
         ["line", "One line"],
@@ -873,8 +873,8 @@ export const SPECS: readonly ComponentSpec[] = [
     imports: ["Code"],
     code: (state) =>
       state.text === "lines"
-        ? `<Code label="${SAMPLE.label}" text={${JSON.stringify(SAMPLE.codeLines)}} />`
-        : `<Code label="${SAMPLE.label}" text="${SAMPLE.code}" />`,
+        ? `<Code client:load label="${SAMPLE.label}" text={${JSON.stringify(SAMPLE.codeLines)}} />`
+        : `<Code client:load label="${SAMPLE.label}" text="${SAMPLE.code}" />`,
     note: "Press the button on the snippet: it copies the text and says so.",
   },
 ];
