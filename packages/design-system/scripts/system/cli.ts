@@ -1,8 +1,9 @@
 /**
- * npm run ds -- find "<what you need>" | part <id> | token <words> | list
+ * npm run ds -- find "<what you need>" | part <id> | token <words> | list | validate <files or globs>
  * Reads tokens/system.json, so it answers in milliseconds and never greps a stylesheet.
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, globSync, readFileSync } from "node:fs";
+import { validate } from "../../rules/index.js";
 import { SYSTEM_PATH } from "./build.js";
 import { answer, describePart, describeTokenLine, findTokens } from "./query.js";
 import type { System } from "./types.js";
@@ -48,7 +49,22 @@ switch (command) {
   case "list":
     for (const part of system.parts) console.log(`${part.id}: ${part.summary}`);
     break;
+  case "validate": {
+    // Tests hold violations on purpose, as fixtures.
+    const files = [...new Set(rest.flatMap((pattern) => globSync(pattern)))].filter(
+      (file) => !/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(file),
+    );
+    const findings = files.flatMap((file) => validate(readFileSync(file, "utf8"), file));
+    for (const { file, line, severity, rule, message } of findings)
+      console.log(`${file}:${line} ${severity} ${rule}: ${message}`);
+    const errors = findings.filter((finding) => finding.severity === "error").length;
+    console.log(`${files.length} files, ${errors} errors, ${findings.length - errors} warnings`);
+    if (errors > 0) process.exit(1);
+    break;
+  }
   default:
-    console.error('Usage: npm run ds -- find "<need>" | part <id> | token <words> | list');
+    console.error(
+      'Usage: npm run ds -- find "<need>" | part <id> | token <words> | list | validate <files or globs>',
+    );
     process.exit(command ? 1 : 0);
 }

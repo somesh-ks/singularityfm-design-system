@@ -1,0 +1,15 @@
+// Raw colour in a stylesheet (rules/index.ts rawColour, for Biome): a hex, or a colour function
+// whose channels are literals. A function that reads var(), such as oklch(from var(--x) l c h), is
+// a token's. The token files are left out by the includes in biome-config.json.
+language css
+
+or {
+  CssColor() as $colour where {
+    register_diagnostic(span=$colour, message="A raw colour: read a colour token (pnpm run ds token color).", severity="error")
+  },
+  CssFunction(name=$name, items=$items) as $colour where {
+    $name <: r"(?i)(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)",
+    not $items <: contains `var($_)`,
+    register_diagnostic(span=$colour, message="A raw colour: read a colour token (pnpm run ds token color).", severity="error")
+  }
+}

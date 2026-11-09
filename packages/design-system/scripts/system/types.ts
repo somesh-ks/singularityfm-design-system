@@ -62,4 +62,6 @@ export interface System {
   generated: string;
   parts: Part[];
   tokens: SystemToken[];
+  /** Custom properties the stylesheets declare beside the tokens, by name. */
+  properties: string[];
 }
