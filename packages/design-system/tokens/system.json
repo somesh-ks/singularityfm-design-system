@@ -5949,6 +5949,7 @@
     "--cover-spread",
     "--dock-room",
     "--drawer-corner",
+    "--fab-size",
     "--focus-ring-text",
     "--ghost-accent-hover",
     "--ghost-accent-pressed",
