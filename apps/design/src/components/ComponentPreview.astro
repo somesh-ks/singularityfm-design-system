@@ -8,10 +8,13 @@ import Code from "@singularity/design-system/Code.astro";
 import Dialog from "@singularity/design-system/Dialog.astro";
 import DialogActions from "@singularity/design-system/DialogActions.astro";
 import DialogTitle from "@singularity/design-system/DialogTitle.astro";
+import Fab from "@singularity/design-system/Fab";
 import Field from "@singularity/design-system/Field.astro";
 import Flag from "@singularity/design-system/Flag";
 import Icon from "@singularity/design-system/Icon";
+import IconButton from "@singularity/design-system/IconButton";
 import type { IconName } from "@singularity/design-system/icons";
+import Link from "@singularity/design-system/Link";
 import Menu from "@singularity/design-system/Menu.astro";
 import MenuItem from "@singularity/design-system/MenuItem.astro";
 import Ripple from "@singularity/design-system/Ripple";
@@ -60,6 +63,38 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       {state.variant === "danger" ? SAMPLE.danger : SAMPLE.label}
     </Button>
   )
+}
+
+{
+  slug === "icon-button" && (
+    <IconButton
+      label={SAMPLE.label}
+      variant={state.variant === "tonal" ? "tonal" : undefined}
+      href={state.element === "link" ? "#" : undefined}
+      disabled={state.element === "link" ? undefined : on("disabled")}
+    >
+      <Icon name={SAMPLE.glyph} />
+    </IconButton>
+  )
+}
+
+{
+  slug === "fab" && (
+    <Fab icon="plus" label={SAMPLE.label} href="#" data-folded={on("folded") ? "" : undefined}>
+      {SAMPLE.label}
+    </Fab>
+  )
+}
+
+{
+  slug === "link" &&
+    (state.variant === "source" ? (
+      <Link variant="source" href="#">{SAMPLE.source}</Link>
+    ) : (
+      <p class="guide-prose">
+        {SAMPLE.sentence[0]} <Link href="#">{SAMPLE.label}</Link> {SAMPLE.sentence[1]}
+      </p>
+    ))
 }
 
 {

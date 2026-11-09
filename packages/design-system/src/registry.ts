@@ -11,11 +11,14 @@ import { BUTTON, BUTTON_CLASSES, BUTTON_RETIRED } from "./button";
 import { CODE, CODE_CLASSES, CODE_RETIRED } from "./code";
 import { DIALOG, DIALOG_CLASSES, DIALOG_RETIRED } from "./dialog";
 import { DRAWER, DRAWER_CLASSES, DRAWER_RETIRED } from "./drawer";
+import { FAB, FAB_CLASSES, FAB_RETIRED } from "./fab";
 import { FIELD, FIELD_CLASSES, FIELD_RETIRED } from "./field";
 import { FLAG, FLAG_CLASSES, FLAG_RETIRED } from "./flag";
 import { GLOW, GLOW_CLASSES, GLOW_RETIRED } from "./glow";
 import type { Guidance } from "./guidance";
 import { ICON, ICON_CLASSES, ICON_RETIRED } from "./icon";
+import { ICON_BUTTON, ICON_BUTTON_CLASSES, ICON_BUTTON_RETIRED } from "./iconButton";
+import { LINK, LINK_CLASSES, LINK_RETIRED } from "./link";
 import { MENU, MENU_CLASSES, MENU_RETIRED } from "./menu";
 import { RIPPLE, RIPPLE_CLASSES, RIPPLE_RETIRED } from "./ripple";
 import { ROW_EXIT, ROW_EXIT_CLASSES, ROW_EXIT_RETIRED } from "./rowExit";
@@ -49,6 +52,41 @@ export const COMPONENTS: DesignSystemComponent[] = [
     useWhen: BUTTON.useWhen,
     dontUseWhen: BUTTON.dontUseWhen,
     parts: { ...BUTTON.variants, ...BUTTON.tones, ...BUTTON.sizes },
+  },
+  {
+    name: "Icon button",
+    sheet: "buttons.css",
+    prefix: "icon-btn",
+    classes: ICON_BUTTON_CLASSES,
+    retired: ICON_BUTTON_RETIRED,
+    summary: ICON_BUTTON.summary,
+    useWhen: ICON_BUTTON.useWhen,
+    dontUseWhen: ICON_BUTTON.dontUseWhen,
+    parts: ICON_BUTTON.variants,
+  },
+  {
+    name: "FAB",
+    sheet: "fab.css",
+    prefix: "create-fab",
+    classes: FAB_CLASSES,
+    retired: FAB_RETIRED,
+    summary: FAB.summary,
+    useWhen: FAB.useWhen,
+    dontUseWhen: FAB.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Link",
+    sheet: "primitives.css",
+    // Its two variants' classes share no prefix: the text link's stands for the family here, and
+    // the source link's class is listed with it.
+    prefix: "text-link",
+    classes: LINK_CLASSES,
+    retired: LINK_RETIRED,
+    summary: LINK.summary,
+    useWhen: LINK.useWhen,
+    dontUseWhen: LINK.dontUseWhen,
+    parts: LINK.variants,
   },
   {
     name: "Icon",

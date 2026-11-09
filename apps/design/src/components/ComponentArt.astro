@@ -6,9 +6,11 @@ import BrandMark from "@singularity/design-system/BrandMark";
 import Button from "@singularity/design-system/Button";
 import { codeSnippetHtml } from "@singularity/design-system/code";
 import "@singularity/design-system/styles/code.css";
+import Fab from "@singularity/design-system/Fab";
 import Field from "@singularity/design-system/Field.astro";
 import Flag from "@singularity/design-system/Flag";
 import Icon from "@singularity/design-system/Icon";
+import IconButton from "@singularity/design-system/IconButton";
 import MenuItem from "@singularity/design-system/MenuItem.astro";
 import { menuBodyClass } from "@singularity/design-system/menu";
 import Select from "@singularity/design-system/Select.astro";
@@ -21,7 +23,7 @@ import { SAMPLE } from "../lib/components";
  * A component's picture on its card in the index: the component itself in its default state, drawn
  * by the library and not touched (inert, no script). Where the library has nothing to draw (the
  * Wheel, the Drawer, the Glow, the lists) the picture is made of tokens, plainly. The picture sits
- * inside a link, so nothing here may be a link.
+ * inside a link, so nothing here may be a link: the Link's picture is its words, drawn plainly.
  */
 interface Props {
   slug: string;
@@ -32,6 +34,16 @@ const { slug } = Astro.props;
 
 <span class="guide-live" inert>
   {slug === "button" && <Button variant="filled">{SAMPLE.label}</Button>}
+  {
+    slug === "icon-button" && (
+      <span class="guide-live-row">
+        <IconButton label={SAMPLE.label}><Icon name={SAMPLE.glyph} /></IconButton>
+        <IconButton label={SAMPLE.label} variant="tonal"><Icon name={SAMPLE.glyph} /></IconButton>
+      </span>
+    )
+  }
+  {slug === "fab" && <Fab icon="plus" label={SAMPLE.label}>{SAMPLE.label}</Fab>}
+  {slug === "link" && <span class="guide-live-link">{SAMPLE.label}</span>}
   {
     slug === "menu" && (
       <span class:list={[menuBodyClass(), "guide-live-menu"]}>

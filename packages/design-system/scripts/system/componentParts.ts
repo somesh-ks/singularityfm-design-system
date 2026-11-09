@@ -9,9 +9,12 @@ import { BANNER } from "../../src/banner.js";
 import { BUTTON } from "../../src/button.js";
 import { DIALOG } from "../../src/dialog.js";
 import { DRAWER } from "../../src/drawer.js";
+import { FAB } from "../../src/fab.js";
 import { FIELD } from "../../src/field.js";
 import type { ComponentRef, Guidance } from "../../src/guidance.js";
 import { ICON } from "../../src/icon.js";
+import { ICON_BUTTON } from "../../src/iconButton.js";
+import { LINK } from "../../src/link.js";
 import { MENU } from "../../src/menu.js";
 import { RIPPLE } from "../../src/ripple.js";
 import { SELECT } from "../../src/select.js";
@@ -37,14 +40,27 @@ const PART_OF: Record<string, string> = {
   Dialog: "dialog",
   Sheet: "sheet",
   Drawer: "drawer",
+  "Icon button.standard": "icon-btn",
+  "Icon button.tonal": "icon-btn-tonal",
+  "Link.text": "text-link",
+  "Link.source": "source-link",
 };
 
 const partOf = (ref: ComponentRef | undefined, fallback: string): string => {
   if (!ref) return fallback;
   const [component, part] = ref.split(".");
   if (component === "Button" && part) return `button-${part}`;
-  return PART_OF[component ?? ""] ?? fallback;
+  return PART_OF[ref] ?? PART_OF[component ?? ""] ?? fallback;
 };
+
+/** A variant's exclusions, then its family's, as the lookup's "not when" lines. */
+const exclusions = (
+  lines: Guidance["dontUseWhen"],
+  fallback: string,
+): { when: string; use: string }[] =>
+  lines
+    .filter((item) => item.instead)
+    .map((item) => ({ when: item.when.replace(/\.$/, ""), use: partOf(item.instead, fallback) }));
 
 const words: Record<string, { keywords: string[]; markup: string; rules?: string[] }> = {
   filled: {
@@ -184,6 +200,92 @@ export const componentParts = (): PartSource[] => [
       })),
       keywords: extra?.keywords,
       markup: extra?.markup,
+    };
+  }),
+  ...Object.entries(ICON_BUTTON.variants).map(([variant, guidance]): PartSource => {
+    const standard = variant === "standard";
+    const id = standard ? "icon-btn" : "icon-btn-tonal";
+    return {
+      id,
+      name: standard ? "Icon button" : "Tonal icon button",
+      kind: "action",
+      summary: standard ? ICON_BUTTON.summary : guidance.summary,
+      // The standard part stands for the family, so it carries the press and the row end too.
+      classes: standard ? ["icon-btn", "press", "icon-btn-end"] : ["icon-btn-tonal"],
+      files: [
+        "packages/design-system/src/IconButton.tsx",
+        "packages/design-system/src/iconButton.ts",
+      ],
+      when: sentences(standard ? [...ICON_BUTTON.useWhen, ...guidance.useWhen] : guidance.useWhen),
+      not: exclusions(
+        standard ? [...guidance.dontUseWhen, ...ICON_BUTTON.dontUseWhen] : guidance.dontUseWhen,
+        "icon-btn",
+      ),
+      keywords: standard
+        ? [
+            "icon button",
+            "icon-only",
+            "close",
+            "x",
+            "dots",
+            "more",
+            "glyph button",
+            "toolbar",
+            "back",
+            "arrow",
+          ]
+        : ["circle button", "share", "favorite"],
+      markup: standard
+        ? '<IconButton label="Close"><Icon name="close" size="lg" /></IconButton>'
+        : '<IconButton variant="tonal" label="Share"><Icon name="shareFat" /></IconButton>',
+      rules: standard
+        ? [
+            "label is required: it is the button's accessible name (aria-label), as the glyph has no words.",
+            "It draws `.press`: the press is a state layer; the glyph never scales.",
+            "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass().",
+          ]
+        : undefined,
+    };
+  }),
+  {
+    id: "fab",
+    name: "Floating action button",
+    kind: "action",
+    summary: FAB.summary,
+    // add-fab and play-fab are the app's: a page's hook, and the Play face it still draws itself.
+    classes: ["create-fab", "create-fab-label", "add-fab", "play-fab"],
+    files: ["packages/design-system/src/Fab.tsx", "packages/design-system/src/fab.ts"],
+    when: sentences(FAB.useWhen),
+    not: exclusions(FAB.dontUseWhen, "button-filled"),
+    keywords: ["floating button", "fab", "floating action", "create button", "primary action"],
+    markup: '<Fab icon="plus" label="Add source to Design">Add</Fab>',
+    rules: [
+      "One per page, below 64rem; from 64rem it is not shown.",
+      "label is its whole accessible name; the word beside the glyph is hidden from a screen reader.",
+      "A script folds it by data-folded on FAB_SELECTOR (design-system/fab.ts).",
+    ],
+  },
+  ...Object.entries(LINK.variants).map(([variant, guidance]): PartSource => {
+    const text = variant === "text";
+    const id = text ? "text-link" : "source-link";
+    return {
+      id,
+      name: `${guidance.label} link`,
+      kind: "action",
+      summary: guidance.summary,
+      classes: [id],
+      files: ["packages/design-system/src/Link.tsx", "packages/design-system/src/link.ts"],
+      when: sentences(guidance.useWhen),
+      not: exclusions([...guidance.dontUseWhen, ...LINK.dontUseWhen], "button-text"),
+      keywords: text
+        ? ["inline link", "hint link", "text link", "breadcrumb", "link in a sentence"]
+        : ["external link", "publisher", "original article", "source"],
+      markup: text
+        ? '<Link href="/settings">Settings</Link>'
+        : '<Link variant="source" href={url} target="_blank" rel="noopener noreferrer">{publisher}</Link>',
+      rules: text
+        ? ["A link is a real <a href>; an action on this page is a Button."]
+        : ["The player has its own copy, `.player-source-link` (player.css); do not add a third."],
     };
   }),
   control("icon", "Icon", ICON, {

@@ -135,6 +135,9 @@ export const SAMPLE = {
   banner: { title: "Title", body: "Supporting text", action: "Action" },
   badge: "Label",
   sheet: "Sheet title",
+  glyph: "share",
+  source: "example.com",
+  sentence: ["Supporting text with a", "inside it."],
 } as const;
 
 /** A sample's words as a slug, for an anchor. */
@@ -182,6 +185,56 @@ export const SPECS: readonly ComponentSpec[] = [
       return jsx("Button", attrs, state.variant === "danger" ? SAMPLE.danger : SAMPLE.label);
     },
     note: "A link is a Button with an href; a link cannot be disabled, so the switch applies to the button.",
+  },
+  {
+    slug: "icon-button",
+    name: "IconButton",
+    label: "Icon button",
+    group: "actions",
+    registry: "Icon button",
+    file: "IconButton.tsx",
+    controls: [
+      choice("variant", "Variant", [
+        ["standard", "Standard"],
+        ["tonal", "Tonal"],
+      ]),
+      choice("element", "Element", [
+        ["button", "Button"],
+        ["link", "Link"],
+      ]),
+      toggle("disabled", "Disabled"),
+    ],
+    imports: ["IconButton", "Icon"],
+    code: (state) => {
+      const attrs = [`label="${SAMPLE.label}"`];
+      if (state.variant === "tonal") attrs.push('variant="tonal"');
+      if (state.element === "link") attrs.push('href="/path"');
+      else if (on(state, "disabled")) attrs.push("disabled");
+      return jsx("IconButton", attrs, `<Icon name="${SAMPLE.glyph}" />`);
+    },
+    note: "label is the button's name for a screen reader; the glyph has no words. A link cannot be disabled, so the switch applies to the button.",
+  },
+  {
+    slug: "fab",
+    name: "Fab",
+    label: "FAB",
+    group: "actions",
+    registry: "FAB",
+    file: "Fab.tsx",
+    controls: [toggle("folded", "Folded")],
+    imports: ["Fab"],
+    code: (state) =>
+      jsx(
+        "Fab",
+        [
+          'icon="plus"',
+          `label="${SAMPLE.label}"`,
+          'href="/path"',
+          ...(on(state, "folded") ? ["data-folded"] : []),
+        ],
+        SAMPLE.label,
+      ),
+    note: "In the app it floats at the bottom end below 64rem and is not shown from 64rem; here it sits in the stage. The app's script sets data-folded while a page scrolls down.",
   },
   {
     slug: "menu",
@@ -333,6 +386,33 @@ export const SPECS: readonly ComponentSpec[] = [
     imports: [],
     noPreview:
       "The Wheel is the list inside a Select's bottom sheet (selectSheet.ts draws the sheet around it); it is not a component of its own. On a phone, a Select whose options carry data-wheel opens it.",
+  },
+  {
+    slug: "link",
+    name: "Link",
+    group: "navigation",
+    registry: "Link",
+    file: "Link.tsx",
+    controls: [
+      choice("variant", "Variant", [
+        ["text", "Text"],
+        ["source", "Source"],
+      ]),
+    ],
+    imports: ["Link"],
+    code: (state) =>
+      state.variant === "source"
+        ? jsx(
+            "Link",
+            [
+              'variant="source"',
+              'href="https://example.com"',
+              'target="_blank"',
+              'rel="noopener noreferrer"',
+            ],
+            SAMPLE.source,
+          )
+        : `<p>${SAMPLE.sentence[0]} ${jsx("Link", ['href="/path"'], SAMPLE.label)} ${SAMPLE.sentence[1]}</p>`,
   },
   {
     slug: "section-tabs",
