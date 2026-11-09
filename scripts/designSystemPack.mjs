@@ -92,7 +92,7 @@ try {
       `import { validate } from "${name}/rules";`,
       'const findings = validate(".a { color: #fff; }", "page.css").length;',
       "---",
-      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><ul><RowExit className="placed-row" data-id="s1">Row</RowExit><OldRowExit class="placed-row" data-id="s1" style="order: 1">Row</OldRowExit></ul><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
+      '<html lang="en"><body><Button variant="filled">Play</Button><OldButton variant="text">Stop</OldButton><Icon name="play" className="placed" /><OldIcon name="play" class="placed" /><Badge className="placed-badge">Words</Badge><OldBadge class="placed-badge">Words</OldBadge><ul><RowExit className="placed-row" data-id="s1">Row</RowExit><OldRowExit class="placed-row" data-id="s1" style="order: 1; background-image: url(data:image/gif;base64,R0lGOD)">Row</OldRowExit></ul><p data-tokens={Object.keys(tokens).length} data-findings={findings}></p></body></html>',
       "",
     ].join("\n"),
   );
@@ -132,9 +132,14 @@ try {
     problems.push("the page drew no placed Badge with its words by each path");
   // The Row exit shim hands its other attributes and its slot to React: lost, the app's source and
   // blocked rows lose the data-id or data-domain their scripts find them by, or their content. The old
-  // path takes a `style` string as the Astro row did; passed to React as it is, the build throws.
+  // path takes a `style` string as the Astro row did; passed to React as it is, the build throws, and
+  // split at a `;` inside its url(), the row loses the image.
   const rows = [...html.matchAll(/<(\w+)[^>]*\bplaced-row\b[^>]*>([^<]*)<\/\1>/g)];
-  if (rows.length !== 2 || rows.some((row) => row[2] !== "Row" || !row[0].includes('data-id="s1"')))
+  if (
+    rows.length !== 2 ||
+    rows.some((row) => row[2] !== "Row" || !row[0].includes('data-id="s1"')) ||
+    !rows.some((row) => row[0].includes("gif;base64,R0lGOD"))
+  )
     problems.push("the page drew no placed Row exit with its attributes and content by each path");
   if (!html.includes('data-findings="1"')) problems.push("the rules module found no raw colour");
   // The shipped plugin, through the shared config a consumer extends: a raw colour fails the lint.

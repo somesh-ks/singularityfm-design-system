@@ -15,13 +15,36 @@ interface RowExitProps {
 type Props = RowExitProps & Omit<LiHTMLAttributes<HTMLLIElement>, keyof RowExitProps>;
 
 /**
+ * A style string's declarations: split at each `;` outside quotes and parentheses, so a value that holds
+ * one (`url(data:image/png;base64,...)`, `content: ";"`) stays whole.
+ */
+function declarations(style: string): string[] {
+  const out: string[] = [];
+  let quote = "";
+  let depth = 0;
+  let start = 0;
+  for (let at = 0; at < style.length; at += 1) {
+    const character = style[at];
+    if (character === "\\") at += 1;
+    else if (quote) quote = character === quote ? "" : quote;
+    else if (character === '"' || character === "'") quote = character;
+    else if (character === "(") depth += 1;
+    else if (character === ")") depth = Math.max(0, depth - 1);
+    else if (character === ";" && depth === 0) {
+      out.push(style.slice(start, at));
+      start = at + 1;
+    }
+  }
+  return [...out, style.slice(start)];
+}
+
+/**
  * A `style="order: 1"` string, the form `RowExit.astro` took and still passes on, as the object React
  * requires: React throws on a string style, and the deprecated path keeps its open attributes
- * (COMPATIBILITY.md).
+ * (COMPATIBILITY.md). A property name holds no colon, so the first one ends it.
  */
 function styleObject(style: string): CSSProperties {
-  const entries = style
-    .split(";")
+  const entries = declarations(style)
     .map((declaration) => declaration.split(/:(.*)/s))
     .filter(([name, value]) => name?.trim() && value?.trim())
     .map(([name = "", value = ""]) => {
