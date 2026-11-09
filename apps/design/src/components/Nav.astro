@@ -1,6 +1,6 @@
 ---
-import BrandMark from "@singularity/design-system/BrandMark.astro";
-import Icon from "@singularity/design-system/Icon.astro";
+import BrandMark from "@singularity/design-system/BrandMark";
+import Icon from "@singularity/design-system/Icon";
 import { href, NAV } from "../lib/sections";
 import ThemeToggle from "./ThemeToggle.astro";
 
@@ -45,8 +45,8 @@ const updated = new Intl.DateTimeFormat("en-GB", {
               data-group-current={inside ? "" : undefined}
             >
               <span class="app-nav-indicator">
-                <Icon name={page.icon} size="lg" class="app-nav-icon-rest" />
-                <Icon name={page.iconCurrent} size="lg" class="app-nav-icon-current" />
+                <Icon name={page.icon} size="lg" className="app-nav-icon-rest" />
+                <Icon name={page.iconCurrent} size="lg" className="app-nav-icon-current" />
               </span>
               <span>{page.label}</span>
             </a>

@@ -1,6 +1,6 @@
 /**
- * The markup of a sheet's header row and of an icon, written once for the Astro components
- * (SheetHeader.astro, Icon.astro) and for the sheets a script builds, so a sheet a script builds
+ * The markup of a sheet's header row and of an icon, written once for the components
+ * (SheetHeader.astro, Icon.tsx) and for the sheets a script builds, so a sheet a script builds
  * is the same sheet a page builds (the design-system audit, 2026-10-25).
  */
 import { type IconSize, iconClass } from "./icon";
@@ -16,7 +16,7 @@ export const escapeHtml = (text: string): string =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
-/** One glyph, as Icon.astro draws it: `data-icon` names it for buttons.css's ink margins (D187). */
+/** One glyph, as Icon.tsx draws it: `data-icon` names it for buttons.css's ink margins (D187). */
 export const iconHtml = (name: IconName, size: IconSize = "md"): string => {
   const bold = ICON_BOLD_PATHS[name];
   const paths = bold

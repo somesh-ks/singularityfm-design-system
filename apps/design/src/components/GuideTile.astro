@@ -1,5 +1,5 @@
 ---
-import Icon from "@singularity/design-system/Icon.astro";
+import Icon from "@singularity/design-system/Icon";
 import { href, type Section } from "../lib/sections";
 
 /**
@@ -37,5 +37,5 @@ const { page, art } = Astro.props;
     <span class="guide-tile-title">{page.label}</span>
     <span class="guide-tile-note">{page.note}</span>
   </span>
-  <Icon name="chevronRight" class="guide-tile-go" />
+  <Icon name="chevronRight" className="guide-tile-go" />
 </a>

@@ -1,7 +1,7 @@
 ---
 import Button from "./Button.tsx";
 import { type BannerTone, type BannerVariant, bannerClass, bannerText } from "./banner";
-import Icon from "./Icon.astro";
+import Icon from "./Icon.tsx";
 import type { IconName } from "./icons";
 import "../styles/banner.css";
 
@@ -27,8 +27,8 @@ const { tone, variant, icon, iconFrom, title, body, bodyId, action } = Astro.pro
   {
     variant === "strip" ? (
       <span class="banner-signal">
-        {iconFrom && <Icon name={iconFrom} class="banner-signal-layer banner-signal-from" />}
-        <Icon name={icon} class={iconFrom ? "banner-signal-layer banner-signal-to" : undefined} />
+        {iconFrom && <Icon name={iconFrom} className="banner-signal-layer banner-signal-from" />}
+        <Icon name={icon} className={iconFrom ? "banner-signal-layer banner-signal-to" : undefined} />
       </span>
     ) : (
       <Icon name={icon} />

@@ -29,7 +29,7 @@ export const PARTS: PartSource[] = [
     kind: "action",
     summary: "A glyph in a round 44px target, quiet until used.",
     classes: ["icon-btn", "press", "icon-btn-end"],
-    files: ["packages/design-system/src/Icon.astro"],
+    files: ["packages/design-system/src/Icon.tsx"],
     when: [
       "close a sheet or dialog",
       "a row's more menu (the dots)",
@@ -41,7 +41,7 @@ export const PARTS: PartSource[] = [
     ],
     keywords: ["close", "x", "dots", "more", "glyph button", "toolbar"],
     markup:
-      '<button class="icon-btn press" type="button" aria-label="Close"><Icon name="close" class="icon-lg" /></button>',
+      '<button class="icon-btn press" type="button" aria-label="Close"><Icon name="close" size="lg" /></button>',
     rules: [
       "Always an aria-label.",
       "`.press` gives the press as a state layer; the glyph never scales.",
@@ -99,7 +99,7 @@ export const PARTS: PartSource[] = [
     ],
     keywords: ["multi select", "tick", "checkbox pill", "tags", "toggle chip"],
     markup:
-      '<fieldset class="filter-chips"><label class="filter-chip"><input type="checkbox" name="show" value="daily" /><Icon name="check" class="filter-chip-check" /><span>Daily</span></label></fieldset>',
+      '<fieldset class="filter-chips"><label class="filter-chip"><input type="checkbox" name="show" value="daily" /><Icon name="check" className="filter-chip-check" /><span>Daily</span></label></fieldset>',
     rules: ["Always wraps a real checkbox or radio input."],
   },
   {

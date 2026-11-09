@@ -1,5 +1,5 @@
 ---
-import Icon from "@singularity/design-system/Icon.astro";
+import Icon from "@singularity/design-system/Icon";
 
 /**
  * Light or dark, one press. The glyph shows where a press goes (the sun in the dark theme), and the
@@ -14,8 +14,8 @@ const { class: className = "" } = Astro.props;
 ---
 
 <button class:list={["icon-btn", className]} type="button" aria-label="Switch to light theme" data-theme-toggle>
-  <Icon name="sun" class="guide-theme-sun" />
-  <Icon name="moon" class="guide-theme-moon" />
+  <Icon name="sun" className="guide-theme-sun" />
+  <Icon name="moon" className="guide-theme-moon" />
 </button>
 <script>
   import "../scripts/themeToggle";
