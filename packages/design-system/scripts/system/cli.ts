@@ -60,9 +60,9 @@ function readExceptions(path: string | undefined): {
   return { grid, exempt };
 }
 
-/** Whether an exemption names this finding: its rule, its file and its line's text. */
-const exempt = (finding: Finding, text: string, list: Exemption[]): boolean =>
-  list.some(
+/** The exemption that names this finding (its rule, its file and its line's text), if one does. */
+const exemptionFor = (finding: Finding, text: string, list: Exemption[]): Exemption | undefined =>
+  list.find(
     (entry) =>
       entry.rule === finding.rule &&
       entry.file === finding.file.split("\\").join("/") &&
@@ -130,11 +130,25 @@ switch (command) {
       [...texts].flatMap(([file, text]) => [...declaredProperties(text, file)]),
     );
     const gridExceptions = exceptions?.grid;
+    const exemptions = exceptions?.exempt ?? [];
+    const used = new Set<Exemption>();
     const findings = [...texts].flatMap(([file, text]) =>
-      validate(text, file, { gridExceptions, declared }).filter(
-        (finding) => !exempt(finding, text, exceptions?.exempt ?? []),
-      ),
+      validate(text, file, { gridExceptions, declared }).filter((finding) => {
+        const entry = exemptionFor(finding, text, exemptions);
+        if (entry) used.add(entry);
+        return !entry;
+      }),
     );
+    // An exemption that names nothing is stale: the code moved or was fixed, and the entry would
+    // otherwise sit there excusing whatever lands on that line next.
+    for (const entry of exemptions.filter((item) => !used.has(item)))
+      findings.push({
+        rule: entry.rule,
+        file: entry.file,
+        line: 0,
+        message: `the exemption "${entry.text}" matches no finding; remove it from the exceptions file`,
+        severity: "error",
+      });
     for (const { file, line, severity, rule, message } of findings)
       console.log(`${file}:${line} ${severity} ${rule}: ${message}`);
     const errors = findings.filter((finding) => finding.severity === "error").length;

@@ -462,13 +462,12 @@ export interface ValidateOptions {
 
 /** Every rule's findings for one file, in line order. */
 export function validate(text: string, file: string, options: ValidateOptions = {}): Finding[] {
-  return [
-    rawColour(text, file),
-    offGrid(text, file, options.gridExceptions),
-    unknownProperty(text, file, options.declared),
-    classOnComponent(text, file),
-    retiredPath(text, file),
-  ]
-    .flat()
-    .sort((a, b) => a.line - b.line);
+  // Every rule in RULES runs; the two that take a caller's list get it.
+  return RULES.flatMap((rule) =>
+    rule === offGrid
+      ? offGrid(text, file, options.gridExceptions)
+      : rule === unknownProperty
+        ? unknownProperty(text, file, options.declared)
+        : rule(text, file),
+  ).sort((a, b) => a.line - b.line);
 }
