@@ -405,7 +405,9 @@
   color: var(--color-accent-pressed);
 }
 
+/* Shown wherever PlayingBars stands; in the chip, the glyph rule above hides them until it plays. */
 .chip-bars {
+  display: flex;
   align-items: flex-end;
   justify-content: center;
   gap: var(--chip-ring);
