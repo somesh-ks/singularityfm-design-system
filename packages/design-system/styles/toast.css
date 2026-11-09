@@ -191,3 +191,10 @@
     transform: none;
   }
 }
+
+/* High contrast drops the inverse fill, so a hairline in the system text colour keeps the toast's edge visible. */
+@media (forced-colors: active) {
+  .toast {
+    border: var(--stroke-hairline) solid CanvasText;
+  }
+}
