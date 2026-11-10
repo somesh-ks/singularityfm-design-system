@@ -585,7 +585,6 @@
         "--color-on-surface-disabled",
         "--color-on-surface-muted",
         "--color-success",
-        "--color-surface",
         "--color-surface-sunken",
         "--size-touch"
       ]
@@ -6075,6 +6074,7 @@
     "--select-pad-end",
     "--select-pad-start",
     "--settings-control-width",
+    "--sheen-mask",
     "--sheet-foot",
     "--sheet-foot-mask",
     "--sheet-gutter",

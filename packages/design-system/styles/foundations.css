@@ -508,16 +508,24 @@
     }
   }
 
-  /* A light band crossing words: a mask (or a background) tile 250% of the words' width, so one loop
-     travels exactly one tile (1 / (1 - 2.5) = -66.6667% from 100%) and ends where it began. The app's
-     queue words use the same maths (queue-sheen). */
+  /* A light band crossing words (owner, 2026-11-10): a mask tile 250% of the words' width that dims them
+     to 70% and lets the band through at full, so the words keep their own colour. One loop travels exactly
+     one tile (1 / (1 - 2.5) = -66.6667% from 100%) and ends where it began. A part sets
+     `mask: var(--sheen-mask) 0 0 / 250% 100%` and `animation: sheen`. */
+  :root {
+    --sheen-mask: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 40%,
+      var(--color-surface) 50%,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 60%
+    );
+  }
+
   @keyframes sheen {
     from {
-      background-position: 100% 0;
       mask-position: 100% 0;
     }
     to {
-      background-position: -66.6667% 0;
       mask-position: -66.6667% 0;
     }
   }

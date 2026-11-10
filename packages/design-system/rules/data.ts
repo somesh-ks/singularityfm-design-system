@@ -87,4 +87,8 @@ export const RETIRED_PATHS: RetiredPath[] = [
  */
 export const PX_EXCEPTIONS: [selector: string, reason: string][] = [
   [".avatar", "the figure's SVG units: its pivot and its bob are drawn in the picture's own scale"],
+  [
+    ".avatar-phones",
+    "the figure's SVG units: the pair of phones slides in the picture's own scale",
+  ],
 ];

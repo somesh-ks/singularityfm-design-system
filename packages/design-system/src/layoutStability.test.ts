@@ -261,6 +261,11 @@ const CHANGES_BOX = [
     state: "el.dataset.folded=''",
   },
   {
+    name: "Fab with a reserve: folds to its glyph too, the reserve never pins it open",
+    el: draw(Fab, { label: "Play", icon: "play", reserve: "Resume · 88 min left" }, "Play"),
+    state: "el.dataset.folded=''",
+  },
+  {
     name: "Badge: grows with its number",
     el: h(Badge, null, "9"),
     state: "el.textContent='10'",

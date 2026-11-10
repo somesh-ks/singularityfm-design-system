@@ -303,15 +303,17 @@ export function offGrid(
 const withoutStrings = (value: string): string =>
   blank(value, /(["'])(?:\\.|(?!\1)[^\\])*\1|url\([^)]*\)/g);
 
-const PIXELS = /(?<![\w.#-])(\d*\.?\d+)px\b/g;
+// Not after a letter, digit, dot, # or `name-` (an identifier such as a-12px); a sign (-6px) is a length.
+const PIXELS = /(?<![\w.#])(?<![a-zA-Z]-)(\d*\.?\d+)px\b/g;
 
 /**
  * Prevents a pixel length written into a stylesheet (owner, 2026-11-10: "avoid pixel values as hardcoded
  * thing, as a rule"). A length is a token, rem, em, ch, lh, a percentage or a calc() of those, so it
  * follows the reader's text size, the mood and the words it holds; a width found by measuring one
  * state's words is a number that goes stale in the next. Zero (0px, which a calc() or a registered
- * property needs) and the 1px hairline pass. A media query reads rem too. An exception names its rule,
- * with the reason (PX_EXCEPTIONS, or the caller's own).
+ * property needs) and the 1px hairline pass. A media or container query reads rem too; a feature query
+ * (@supports) tests a value and is not read. An exception names its rule, with the reason (PX_EXCEPTIONS,
+ * or the caller's own here; through `ds validate`, the exceptions file's `exempt`).
  */
 export function rawPixels(
   text: string,

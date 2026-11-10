@@ -24,6 +24,8 @@ interface ButtonProps {
    * The widest words the button may swap to ("Saving…"). It is as wide as these and its own words
    * in every state, so a button that hugs its words never changes width when they change (DS-9). A
    * script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve.
+   * A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy
+   * spinner's place (buttons.css), so give a busy button with a spinner no `reserve`.
    */
   reserve?: string;
   children?: ReactNode;

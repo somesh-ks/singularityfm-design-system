@@ -108,7 +108,6 @@
    sheet or an empty page, and its alternative. Both fill their row. */
 .button-filled,
 .button-tonal {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -212,6 +211,10 @@
    shortcut: the spinner is wider than the default mood's padding, so in a button that hugs its words
    (a dialog action) it would stand over the first letters; busy spinners are for buttons that fill their
    row, where the words are centred. Upgrade when a hugging button needs one: give it a spinner slot. */
+:is(.button-filled, .button-tonal):has(> .spinner) {
+  position: relative;
+}
+
 :is(.button-filled, .button-tonal) > .spinner {
   position: absolute;
   inset-block: 0;
@@ -637,22 +640,8 @@
    full strength under reduced motion and forced colours. */
 .chip[data-state="preparing"] .chip-label {
   --chip-sheen: 2400ms;
-  -webkit-mask:
-    linear-gradient(
-      90deg,
-      color-mix(in oklab, var(--color-surface) 70%, transparent) 40%,
-      var(--color-surface) 50%,
-      color-mix(in oklab, var(--color-surface) 70%, transparent) 60%
-    )
-    0 0 / 250% 100%;
-  mask:
-    linear-gradient(
-      90deg,
-      color-mix(in oklab, var(--color-surface) 70%, transparent) 40%,
-      var(--color-surface) 50%,
-      color-mix(in oklab, var(--color-surface) 70%, transparent) 60%
-    )
-    0 0 / 250% 100%;
+  -webkit-mask: var(--sheen-mask) 0 0 / 250% 100%;
+  mask: var(--sheen-mask) 0 0 / 250% 100%;
   animation: sheen var(--chip-sheen) var(--ease-linear) infinite;
 }
 
