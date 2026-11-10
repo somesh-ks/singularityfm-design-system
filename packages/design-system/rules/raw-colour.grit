@@ -7,14 +7,14 @@ language css
 
 or {
   CssColor() as $colour where {
-    not $colour <: within CssSupportsAtRule(),
+    not $colour <: within CssSupportsAtRuleDeclarator(),
     register_diagnostic(span=$colour, message="A raw colour: read a colour token (pnpm run ds token color).", severity="error")
   },
   CssFunction(name=$name, items=$items) as $colour where {
     $name <: r"(?i)(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)",
     not $items <: r"(?is)^\s*from\s+(?:var\(|currentcolor\b|[a-z]+\(\s*from\s).*",
     not $items <: r"(?is)^(?:\s|,|/|var\([^()]*(?:\([^()]*\)[^()]*)*\))*$",
-    not $colour <: within CssSupportsAtRule(),
+    not $colour <: within CssSupportsAtRuleDeclarator(),
     register_diagnostic(span=$colour, message="A raw colour: read a colour token (pnpm run ds token color).", severity="error")
   }
 }
