@@ -40,6 +40,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 ## The design system
 
 - A control is a component named for what it is (Button); an app draws it, never types its class (D237, D253). A UI fix starts at the component.
+- No pixel lengths in stylesheets (owner, DS-10): a token, rem, em, ch or a calc() of them; a width that must hold comes from the content (DS-9), never a measured number. `raw-px` in `ds validate` and `rules.test.ts` fail on one (0, the 1px hairline and a named SVG scene pass).
 - Spacing keeps the 8pt grid (4px for named cases only). Use a token; a new token or control class needs the owner's OK first. If the system cannot express a request, stop, propose a small deviation and wait.
 - Design fixes are load-bearing: a rule or markup with a rationale comment is never removed or rewritten for another task. Before changing `primitives.css`, `buttons.css` or the tokens, read `git log -L '/<selector>/,+20:<file>'` and the ledger.
 - No flag emoji: Flag (D367).

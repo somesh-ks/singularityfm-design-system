@@ -6,9 +6,9 @@
  */
 import { COMPONENTS } from "../src/registry";
 import system from "../tokens/system.json" with { type: "json" };
-import { GRID_EXCEPTIONS, RETIRED_PATHS } from "./data";
+import { GRID_EXCEPTIONS, PX_EXCEPTIONS, RETIRED_PATHS } from "./data";
 
-export { GRID_EXCEPTIONS, RETIRED_PATHS, type RetiredPath } from "./data";
+export { GRID_EXCEPTIONS, PX_EXCEPTIONS, RETIRED_PATHS, type RetiredPath } from "./data";
 
 export interface Finding {
   rule: string;
@@ -299,6 +299,50 @@ export function offGrid(
     );
 }
 
+/** Quoted text and url() arguments, blanked: `content: "12px"` and a file name hold no length. */
+const withoutStrings = (value: string): string =>
+  blank(value, /(["'])(?:\\.|(?!\1)[^\\])*\1|url\([^)]*\)/g);
+
+const PIXELS = /(?<![\w.#-])(\d*\.?\d+)px\b/g;
+
+/**
+ * Prevents a pixel length written into a stylesheet (owner, 2026-11-10: "avoid pixel values as hardcoded
+ * thing, as a rule"). A length is a token, rem, em, ch, lh, a percentage or a calc() of those, so it
+ * follows the reader's text size, the mood and the words it holds; a width found by measuring one
+ * state's words is a number that goes stale in the next. Zero (0px, which a calc() or a registered
+ * property needs) and the 1px hairline pass. A media query reads rem too. An exception names its rule,
+ * with the reason (PX_EXCEPTIONS, or the caller's own).
+ */
+export function rawPixels(
+  text: string,
+  file: string,
+  exceptions: readonly [selector: string, reason: string][] = [],
+): Finding[] {
+  if (!isCss(file) || isTokenFile(file)) return [];
+  const css = withoutCssComments(text);
+  const allowed = [...PX_EXCEPTIONS, ...exceptions].map(([name]) => wholeName(name));
+  const found = (value: string, index: number, where: string): Finding[] =>
+    [...withoutStrings(value).matchAll(PIXELS)]
+      .filter((match) => ![0, 1].includes(Number(match[1])))
+      .map((match) => ({
+        rule: "raw-px",
+        file,
+        line: lineAt(text, index),
+        message: `${where} writes ${match[0]}; use a token, rem, em, ch or a calc() of them`,
+        severity: "error" as const,
+      }));
+  const inDeclarations = declarations(css)
+    // Each selector in the list must be named: an exception covers its rule, not a neighbour.
+    .filter(({ selectors }) => !selectors.every((one) => allowed.some((name) => name.test(one))))
+    .flatMap(({ selector, property, value, index }) =>
+      found(value, index, `${selector} { ${property} }`),
+    );
+  const inQueries = [...css.matchAll(/@(?:media|container)\b[^{]*/g)].flatMap((match) =>
+    found(match[0], match.index ?? 0, match[0].trim()),
+  );
+  return [...inDeclarations, ...inQueries].sort((a, b) => a.line - b.line);
+}
+
 /** The tokens, and the properties the library's stylesheets declare (a type role's parts, the insets). */
 const LIBRARY_PROPERTIES = new Set([
   ...system.tokens.map((token) => token.name),
@@ -451,7 +495,14 @@ export function retiredPath(text: string, file: string): Finding[] {
   });
 }
 
-export const RULES = [rawColour, offGrid, unknownProperty, classOnComponent, retiredPath];
+export const RULES = [
+  rawColour,
+  offGrid,
+  rawPixels,
+  unknownProperty,
+  classOnComponent,
+  retiredPath,
+];
 
 export interface ValidateOptions {
   /** The caller's own 4px cases, as offGrid takes them. */
