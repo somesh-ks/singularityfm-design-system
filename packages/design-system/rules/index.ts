@@ -304,7 +304,8 @@ const withoutStrings = (value: string): string =>
   blank(value, /(["'])(?:\\.|(?!\1)[^\\])*\1|url\([^)]*\)/g);
 
 // Not after a letter, digit, dot, # or `name-` (an identifier such as a-12px); a sign (-6px) is a length.
-const PIXELS = /(?<![\w.#])(?<![a-zA-Z]-)(\d*\.?\d+)px\b/g;
+// CSS units are case-blind and a number may carry an exponent: 12PX and 1e2px are lengths too.
+const PIXELS = /(?<![\w.#])(?<![a-zA-Z]-)(\d*\.?\d+(?:e[+-]?\d+)?)px\b/gi;
 
 /**
  * Prevents a pixel length written into a stylesheet (owner, 2026-11-10: "avoid pixel values as hardcoded

@@ -155,11 +155,12 @@ describe("the rules", () => {
       ".g { --gap: 20px; }",
       ".h { translate: 0 calc((1 - var(--on)) * -6px); }",
       ".avatar[data-act] .avatar-rig { transform-origin: 50px 90px; }",
+      ".i { width: 12PX; min-width: 1e2px; max-width: 1em; }",
     ].join("\n");
-    expect(lines(rawPixels(css, "page.css"))).toEqual([1, 2, 6, 7, 8]);
+    expect(lines(rawPixels(css, "page.css"))).toEqual([1, 2, 6, 7, 8, 10, 10]);
     expect(rawPixels(css, "packages/design-system/styles/tokens.css")).toEqual([]);
     // A caller's own exception names the rule and says why.
-    expect(lines(rawPixels(css, "page.css", [[".g", "a test"]]))).toEqual([1, 2, 6, 8]);
+    expect(lines(rawPixels(css, "page.css", [[".g", "a test"]]))).toEqual([1, 2, 6, 8, 10, 10]);
   });
 
   it("raw-px: the library's own stylesheets hold none", () => {
