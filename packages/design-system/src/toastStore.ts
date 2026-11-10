@@ -29,9 +29,9 @@ export const TOAST_MS = 5000;
 let timer: ReturnType<typeof setTimeout> | undefined;
 
 /**
- * A toast that stays until it is used or closed, and so draws its close button on every screen: one
- * with an action, so nothing is lost to a timer, and an error, so a failure is read before it goes
- * (owner, 2026-11-10). A short message goes by itself and has no close button; a swipe takes either.
+ * A toast that stays until it is used or closed: one with an action, so nothing is lost to a timer,
+ * and an error, so a failure is read before it goes (owner, 2026-11-10). A short message goes by
+ * itself. Any of them closes by its close button with a mouse, or a swipe on a touch screen.
  */
 export function stays(content: Pick<ToastContent, "actionLabel" | "kind">): boolean {
   return !!content.actionLabel || content.kind === "error";
