@@ -1,2 +1,4 @@
-# The design system is a product with one owner: every change is reviewed by the owner (D237, D253).
+# The design system is a product with one owner (D237, D253). A pull request merges itself once its
+# review is clean, it is up to date with main and `check` is green; the owner merges changes to this
+# file, the rulesets, secrets, env and npm publishing (owner, 2026-11-09, AGENTS.md).
 * @somesh-ks
