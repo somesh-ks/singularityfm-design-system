@@ -156,6 +156,39 @@ html[data-dialog-open] .create-fab {
   text-overflow: ellipsis;
 }
 
+/* The waiting words shimmer, as the Play chip's do (buttons.css): a page's player writes data-state on a
+   Fab as it does on a PlayChip. Still under reduced motion and forced colours. */
+.create-fab[data-state="preparing"] .create-fab-label:not([data-reserve]),
+.create-fab[data-state="preparing"] .create-fab-label[data-reserve] > * {
+  --fab-sheen: 2400ms;
+  -webkit-mask:
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 40%,
+      var(--color-surface) 50%,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 60%
+    )
+    0 0 / 250% 100%;
+  mask:
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 40%,
+      var(--color-surface) 50%,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 60%
+    )
+    0 0 / 250% 100%;
+  animation: sheen var(--fab-sheen) var(--ease-linear) infinite;
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .create-fab[data-state="preparing"] .create-fab-label:not([data-reserve]),
+  .create-fab[data-state="preparing"] .create-fab-label[data-reserve] > * {
+    -webkit-mask: none;
+    mask: none;
+    animation: none;
+  }
+}
+
 .create-fab[data-folded] .create-fab-label,
 .create-fab[data-folded] .create-fab-label[data-reserve] {
   max-width: 0;

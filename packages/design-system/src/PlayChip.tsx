@@ -10,7 +10,7 @@ interface PlayChipProps {
   /** Where the item stands; the player rewrites it (buttons.css documents each). */
   state?: PlayChipState;
   /**
-   * The widest words the chip will ever show ("88 min left"). The chip is as wide as these in every
+   * The widest words the chip will ever show ("Processing"). The chip is as wide as these in every
    * state, so nothing beside it moves when its words change; words longer than them are cut with an
    * ellipsis. The default, "Play again", is the widest the library itself draws and covers a time,
    * Loading, Playing, Paused and Try again.

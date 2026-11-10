@@ -93,7 +93,7 @@ const dataState = (state: string) => `el.dataset.state=${JSON.stringify(state)}`
 const PLAY_STATES = ["idle", "current", "played", "preparing", "error", "unavailable"];
 // The words the player writes on a story's chip, and the hero's.
 const STORY_WORDS = ["0:24", "12:34", "Loading", "Playing", "Paused", "Try again", "Play again"];
-const HERO_WORDS = ["3 min", "88 min left", "13 min left", "Loading", "Preparing", "Try again"];
+const HERO_WORDS = ["3 min", "88 min left", "13 min left", "Loading", "Processing", "Try again"];
 
 const cases: Case[] = [
   {
@@ -124,7 +124,7 @@ const cases: Case[] = [
   },
   {
     name: "PlayChip: the hero's words, with its reserve",
-    el: h(PlayChip, { label: "3 min", reserve: "88 min left" }),
+    el: h(PlayChip, { label: "3 min", reserve: "Processing" }),
     states: HERO_WORDS.map((words) => [words, label(words)]),
     words: { selector: "[data-chip-label]" },
   },
@@ -183,7 +183,7 @@ const cases: Case[] = [
     el: draw(Fab, { label: "Play", icon: "play", reserve: "Resume · 88 min left" }, "Play · 3 min"),
     states: [
       "Resume · 12 min left",
-      "Preparing",
+      "Processing",
       "Loading",
       "Try again",
       "A very long reason it cannot play",

@@ -629,6 +629,39 @@
   display: block;
 }
 
+/* The waiting words shimmer (owner, 2026-11-10: "Processing" with a shimmer): a light band crosses the
+   letters, nothing else. A mask dims the words to 70% and lets the band through at full, so the words
+   keep whatever colour their chip gives them (the hero's fill, a story's accent, any mood). Still and at
+   full strength under reduced motion and forced colours. */
+.chip[data-state="preparing"] .chip-label {
+  --chip-sheen: 2400ms;
+  -webkit-mask:
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 40%,
+      var(--color-surface) 50%,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 60%
+    )
+    0 0 / 250% 100%;
+  mask:
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 40%,
+      var(--color-surface) 50%,
+      color-mix(in oklab, var(--color-surface) 70%, transparent) 60%
+    )
+    0 0 / 250% 100%;
+  animation: sheen var(--chip-sheen) var(--ease-linear) infinite;
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .chip[data-state="preparing"] .chip-label {
+    -webkit-mask: none;
+    mask: none;
+    animation: none;
+  }
+}
+
 /* While it plays, the play mark gives way to three moving bars. */
 .chip[data-state="current"][data-playing="true"] .chip-glyph > .swap {
   display: none;

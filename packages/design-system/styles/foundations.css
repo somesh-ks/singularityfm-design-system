@@ -508,6 +508,20 @@
     }
   }
 
+  /* A light band crossing words: a mask (or a background) tile 250% of the words' width, so one loop
+     travels exactly one tile (1 / (1 - 2.5) = -66.6667% from 100%) and ends where it began. The app's
+     queue words use the same maths (queue-sheen). */
+  @keyframes sheen {
+    from {
+      background-position: 100% 0;
+      mask-position: 100% 0;
+    }
+    to {
+      background-position: -66.6667% 0;
+      mask-position: -66.6667% 0;
+    }
+  }
+
   @keyframes pulse {
     50% {
       opacity: var(--opacity-disabled);

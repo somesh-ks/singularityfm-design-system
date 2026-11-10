@@ -585,6 +585,7 @@
         "--color-on-surface-disabled",
         "--color-on-surface-muted",
         "--color-success",
+        "--color-surface",
         "--color-surface-sunken",
         "--size-touch"
       ]
@@ -6003,6 +6004,7 @@
     "--bottom-nav-height",
     "--check-bold-mask",
     "--check-mask",
+    "--chip-sheen",
     "--column-inner",
     "--column-wide",
     "--cover-c-add",
@@ -6023,6 +6025,7 @@
     "--cover-spread",
     "--dock-room",
     "--drawer-corner",
+    "--fab-sheen",
     "--fab-size",
     "--focus-ring-text",
     "--ghost-accent-hover",
