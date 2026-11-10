@@ -106,6 +106,7 @@ export const BUTTON_CLASSES: string[] = [
   ...Object.keys(BUTTON.variants).map((variant) => `button-${variant}`),
   ...Object.keys(BUTTON.tones).map((tone) => `button-${tone}`),
   ...Object.keys(BUTTON.sizes).map((size) => `button-${size}`),
+  "button-label",
 ];
 
 /** Classes the Button replaced; none may be written again, in any app that draws the system. */

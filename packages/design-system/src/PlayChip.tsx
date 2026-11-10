@@ -10,6 +10,13 @@ interface PlayChipProps {
   /** Where the item stands; the player rewrites it (buttons.css documents each). */
   state?: PlayChipState;
   /**
+   * The widest words the chip will ever show ("Processing"). The chip is as wide as these in every
+   * state, so nothing beside it moves when its words change; words longer than them are cut with an
+   * ellipsis. The default, "Play again", is the widest the library itself draws and covers a time,
+   * Loading, Playing, Paused and Try again.
+   */
+  reserve?: string;
+  /**
    * For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. An
    * Astro page passes className too: @astrojs/react drops a `class` prop.
    */
@@ -24,12 +31,13 @@ type Props = PlayChipProps & Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof
  * The Play chip (D237, DS-8): a native button, React-rendered with no client directive, so it
  * presses before any script and a page's player writes its state on it as it plays: data-state,
  * data-playing and the words in [data-chip-label]. Its glyph slot holds every mark and the state
- * picks the one that shows; the words share a cell with a hidden "Play again", so the chip keeps
- * its width. Pass the hooks the player reads (data-play-item) and its name (aria-label).
+ * picks the one that shows; the words share a cell with the widest ones it can say (`reserve`), so the
+ * chip keeps its width in every state (DS-9). Pass the hooks the player reads (data-play-item) and its name (aria-label).
  */
 export default function PlayChip({
   label,
   state = "idle",
+  reserve = "Play again",
   className,
   type = "button",
   slot: _slot,
@@ -54,7 +62,7 @@ export default function PlayChip({
         <Icon name="refresh" className="chip-refresh" />
         <span className="spinner" />
       </span>
-      <span className="chip-text">
+      <span className="chip-text" data-reserve={reserve}>
         <span className="chip-label" data-chip-label="">
           {label}
         </span>

@@ -71,12 +71,18 @@
   outline-offset: var(--stroke-ring-gap);
 }
 
+/* The select's own padding, one place, so the reserve below holds the room the select does. */
+.select-tonal {
+  --select-pad-start: var(--space-4);
+  --select-pad-end: calc(var(--space-4) + var(--space-4) + var(--field-chevron-gap));
+}
+
 /* The select is 44px tall and the box around it 36px: negative margins let it reach past the border
    for a full-size target. The row's padding holds room for the overhang. */
 .select-tonal > select {
   height: var(--size-touch);
   margin-block: calc((var(--chip-height) - var(--size-touch)) / 2 - var(--stroke-hairline));
-  padding-inline: var(--space-4) calc(var(--space-4) + var(--space-4) + var(--field-chevron-gap));
+  padding-inline: var(--select-pad-start) var(--select-pad-end);
   border: 0;
   border-radius: inherit;
   background: none;
@@ -86,6 +92,28 @@
   outline: none; /* the ring is the chip's: .select-tonal:has(> select:focus-visible), above */
   box-shadow: none;
   cursor: pointer;
+}
+
+/* The reserve (Select's `reserve`, DS-9): a closed select drawn as its chosen option is as wide as that
+   option, so picking a longer one widens the chip. The longest words stand in the same cell, hidden,
+   with the select's own padding, and the select fills the cell: the chip is as wide as they are
+   whichever option is chosen. */
+.select-tonal[data-reserve] {
+  display: inline-grid;
+}
+
+.select-tonal[data-reserve]::before {
+  content: attr(data-reserve);
+  grid-area: 1 / 1;
+  padding-inline: var(--select-pad-start) var(--select-pad-end);
+  visibility: hidden;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.select-tonal:where([data-reserve]) > select {
+  grid-area: 1 / 1;
+  inline-size: 100%;
 }
 
 /* The chevron is a hint at the end of the label, a step smaller than a toolbar glyph. */

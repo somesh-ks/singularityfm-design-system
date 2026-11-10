@@ -20,6 +20,14 @@ interface ButtonProps {
   className?: string;
   /** Astro places the button in its parent's slot with it; it is not an attribute of the button. */
   slot?: string;
+  /**
+   * The widest words the button may swap to ("Saving…"). It is as wide as these and its own words
+   * in every state, so a button that hugs its words never changes width when they change (DS-9). A
+   * script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve.
+   * A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy
+   * spinner's place (buttons.css), so give a busy button with a spinner no `reserve`.
+   */
+  reserve?: string;
   children?: ReactNode;
 }
 
@@ -37,18 +45,26 @@ export default function Button({
   className,
   type = "button",
   slot: _slot,
+  reserve,
   children,
   ...passed
 }: Props) {
   const rest = passedAttributes(passed);
+  const face = reserve ? (
+    <span className="button-label" data-reserve={reserve}>
+      <span data-button-label="">{children}</span>
+    </span>
+  ) : (
+    children
+  );
   const classes = [buttonClass(variant, tone, size), className].filter(Boolean).join(" ");
   return href ? (
     <a className={classes} href={href} {...rest}>
-      {children}
+      {face}
     </a>
   ) : (
     <button className={classes} type={type} {...rest}>
-      {children}
+      {face}
     </button>
   );
 }

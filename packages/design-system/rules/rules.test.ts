@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   classOnComponent,
@@ -5,6 +7,7 @@ import {
   offGrid,
   RETIRED_PATHS,
   rawColour,
+  rawPixels,
   retiredPath,
   unknownProperty,
 } from "./index";
@@ -137,5 +140,39 @@ describe("the rules", () => {
       expect(finding.severity).toBe("warning");
       expect(finding.fix).toBe(RETIRED_PATHS[0]?.use);
     }
+  });
+
+  // Prevents a width measured in one state's words (a chip 141.5px wide) pasted into a stylesheet:
+  // it goes stale with the next label, text size or mood (owner, 2026-11-10).
+  it("raw-px: finds a pixel length, never zero, the hairline, a token, a string or a comment", () => {
+    const css = [
+      ".a { width: 141.5px; }",
+      ".b { padding: 0 calc(var(--space-4) - 3px); }",
+      ".c { margin: 0px; border: 1px solid; }",
+      ".d { width: 12rem; content: '12px'; background: url(a-12px.svg); }",
+      "/* a 44px target */ .e { min-height: var(--size-touch); }",
+      "@media (min-width: 640px) { .f { color: red; } }",
+      ".g { --gap: 20px; }",
+      ".h { translate: 0 calc((1 - var(--on)) * -6px); }",
+      ".avatar[data-act] .avatar-rig { transform-origin: 50px 90px; }",
+      ".i { width: 12PX; min-width: 1e2px; max-width: 1em; }",
+    ].join("\n");
+    expect(lines(rawPixels(css, "page.css"))).toEqual([1, 2, 6, 7, 8, 10, 10]);
+    expect(rawPixels(css, "packages/design-system/styles/tokens.css")).toEqual([]);
+    // A caller's own exception names the rule and says why.
+    expect(lines(rawPixels(css, "page.css", [[".g", "a test"]]))).toEqual([1, 2, 6, 8, 10, 10]);
+  });
+
+  it("raw-px: the library's own stylesheets hold none", () => {
+    const dir = join(import.meta.dirname, "..", "styles");
+    const found = readdirSync(dir)
+      .filter((name) => name.endsWith(".css"))
+      .flatMap((name) =>
+        rawPixels(
+          readFileSync(join(dir, name), "utf8"),
+          `packages/design-system/styles/${name}`,
+        ).map(({ line, message }) => `${name}:${line} ${message}`),
+      );
+    expect(found).toEqual([]);
   });
 });

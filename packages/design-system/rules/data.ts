@@ -80,3 +80,15 @@ export const RETIRED_PATHS: RetiredPath[] = [
     }),
   ),
 ];
+
+/**
+ * Rules where a pixel length is allowed, as [selector, reason]: the geometry of an SVG scene, whose
+ * units are the drawing's own (a pivot at 50 90 of a 100 wide figure), never a length on the page.
+ */
+export const PX_EXCEPTIONS: [selector: string, reason: string][] = [
+  [".avatar", "the figure's SVG units: its pivot and its bob are drawn in the picture's own scale"],
+  [
+    ".avatar-phones",
+    "the figure's SVG units: the pair of phones slides in the picture's own scale",
+  ],
+];

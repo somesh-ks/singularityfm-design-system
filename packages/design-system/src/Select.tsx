@@ -17,6 +17,12 @@ interface SelectProps {
    * className too: @astrojs/react drops a `class` prop.
    */
   className?: string;
+  /**
+   * A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select
+   * as its chosen option (appearance: base-select) it is as wide as that option, so it grows and
+   * shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9).
+   */
+  reserve?: string;
   /** The options: `<option>` and `<optgroup>`, as a native select holds them. */
   children?: ReactNode;
 }
@@ -36,6 +42,7 @@ type Props = SelectProps &
 export default function Select({
   variant = "outlined",
   label,
+  reserve,
   className,
   style,
   children,
@@ -43,7 +50,11 @@ export default function Select({
 }: Props) {
   const Wrapper = label ? "label" : "span";
   return (
-    <Wrapper className={[selectClass(variant), className].filter(Boolean).join(" ")} data-select="">
+    <Wrapper
+      className={[selectClass(variant), className].filter(Boolean).join(" ")}
+      data-select=""
+      data-reserve={variant === "tonal" ? reserve : undefined}
+    >
       {label && <span className="sr-only">{label}</span>}
       <select
         // An outlined select is a Field's looks inside the wrapper; a tonal one is drawn by the wrapper.

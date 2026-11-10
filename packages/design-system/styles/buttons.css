@@ -204,6 +204,57 @@
   inset-block: calc((var(--size-touch) - var(--button-height-small)) / -2);
 }
 
+/* Busy and changing words (DS-9). A worded button's box and the place of its words never depend on its
+   state. A spinner child (`.spinner`) stands in the start padding, hidden until aria-busy or data-busy
+   says "working", so the words stay where they were; and the words it may swap to are reserved (the Button's
+   `reserve`: .button-label), so a button that hugs its words keeps its width.
+   shortcut: the spinner is wider than the default mood's padding, so in a button that hugs its words
+   (a dialog action) it would stand over the first letters; busy spinners are for buttons that fill their
+   row, where the words are centred. Upgrade when a hugging button needs one: give it a spinner slot. */
+:is(.button-filled, .button-tonal):has(> .spinner) {
+  position: relative;
+}
+
+:is(.button-filled, .button-tonal) > .spinner {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--button-padding);
+  margin-block: auto;
+  visibility: hidden;
+}
+
+:is(.button-filled, .button-tonal):is([aria-busy="true"], [data-busy="true"]) > .spinner {
+  visibility: visible;
+}
+
+.button-label {
+  display: inline-grid;
+}
+
+.button-label > * {
+  grid-area: 1 / 1;
+}
+
+/* The live words add nothing to the width: the reserve sets it, and words longer than it end in an
+   ellipsis. Centred, so a shorter word sits mid-button, not at the start of the reserved room. */
+.button-label > [data-button-label] {
+  display: block;
+  inline-size: 0;
+  min-inline-size: 100%;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.button-label::after {
+  content: attr(data-reserve);
+  grid-area: 1 / 1;
+  visibility: hidden;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Tonal action: the one creating action in the side column (Catch up, AppNav.astro). Usage: add it
    to the action's own element, which keeps its size and layout. It wears the primary fill, the
    filled button's and Play's (owner, 2026-11-04: "all should have the same color synchronized"); it
@@ -488,14 +539,32 @@
   height: var(--chip-icon);
 }
 
-/* The label and a hidden copy of the widest one share a cell, so the chip keeps its width when a
-   pointer or the keyboard turns Played into Play again. Touch keeps Played, and reserves nothing. */
+/* The label shares a cell with the widest words the chip will ever say (PlayChip's `reserve`, written
+   in data-reserve and drawn here, hidden), so the chip is as wide as those words in every state and
+   what stands beside it never moves as it plays, loads or fails (DS-9). The label itself adds nothing
+   to the width: words longer than the reserve are cut with an ellipsis, not grown into. */
 .chip-text {
   display: inline-grid;
 }
 
 .chip-text > * {
   grid-area: 1 / 1;
+}
+
+.chip-text[data-reserve]::after {
+  content: attr(data-reserve);
+  grid-area: 1 / 1;
+  visibility: hidden;
+  white-space: nowrap;
+  /* The reserve is the widest words in tabular figures, so any digits fit it. */
+  font-variant-numeric: tabular-nums;
+}
+
+.chip-text[data-reserve] > :is(.chip-label, .chip-again) {
+  inline-size: 0;
+  min-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Fixed-width digits only where the number ticks: a chip's time while it plays. A still label such
@@ -550,17 +619,38 @@
   height: var(--chip-icon);
 }
 
-/* Preparing: the audio is being made. The mark becomes the spinner. */
+/* Preparing: the audio is being made. The words shimmer (below) and the play mark stays; no spinner (owner,
+   2026-11-10: "Processing should have the text shimmer effect without loading circle"). Buffering while it
+   plays (data-playing) is the one wait that still turns the mark into the spinner. */
 .chip[data-state="preparing"] {
   cursor: progress;
 }
 
-.chip[data-state="preparing"] .chip-glyph > .swap {
+.chip[data-state="preparing"][data-playing="true"] .chip-glyph > .swap {
   display: none;
 }
 
-.chip[data-state="preparing"] .spinner {
+.chip[data-state="preparing"][data-playing="true"] .spinner {
   display: block;
+}
+
+/* The waiting words shimmer (owner, 2026-11-10: "Processing" with a shimmer): a light band crosses the
+   letters, nothing else. A mask dims the words to 70% and lets the band through at full, so the words
+   keep whatever colour their chip gives them (the hero's fill, a story's accent, any mood). Still and at
+   full strength under reduced motion and forced colours. */
+.chip[data-state="preparing"] .chip-label {
+  --chip-sheen: 2400ms;
+  -webkit-mask: var(--sheen-mask) 0 0 / 250% 100%;
+  mask: var(--sheen-mask) 0 0 / 250% 100%;
+  animation: sheen var(--chip-sheen) var(--ease-linear) infinite;
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .chip[data-state="preparing"] .chip-label {
+    -webkit-mask: none;
+    mask: none;
+    animation: none;
+  }
 }
 
 /* While it plays, the play mark gives way to three moving bars. */
