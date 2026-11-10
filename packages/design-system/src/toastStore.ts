@@ -24,20 +24,28 @@ function emit(): void {
   for (const listener of listeners) listener();
 }
 
-/** How long a message with no action stays. */
+/** How long a short message, one with no action that is not an error, stays. */
 export const TOAST_MS = 5000;
 let timer: ReturnType<typeof setTimeout> | undefined;
 
 /**
+ * A toast that stays until it is used or closed, and so draws its close button on every screen: one
+ * with an action, so nothing is lost to a timer, and an error, so a failure is read before it goes
+ * (owner, 2026-11-10). A short message goes by itself and has no close button; a swipe takes either.
+ */
+export function stays(content: Pick<ToastContent, "actionLabel" | "kind">): boolean {
+  return !!content.actionLabel || content.kind === "error";
+}
+
+/**
  * One toast at a time, for things that finish while their sheet is closed; a new one replaces the
- * old. A toast with an action stays until it is used or dismissed, so nothing is lost to a timer;
- * one without goes by itself.
+ * old.
  */
 export function showToast(content: Omit<ToastContent, "id">): void {
   counter += 1;
   clearTimeout(timer);
   current = { id: counter, ...content };
-  if (!content.actionLabel) timer = setTimeout(dismissToast, TOAST_MS);
+  if (!stays(content)) timer = setTimeout(dismissToast, TOAST_MS);
   emit();
 }
 
