@@ -616,16 +616,18 @@
   height: var(--chip-icon);
 }
 
-/* Preparing: the audio is being made. The mark becomes the spinner. */
+/* Preparing: the audio is being made. The words shimmer (below) and the play mark stays; no spinner (owner,
+   2026-11-10: "Processing should have the text shimmer effect without loading circle"). Buffering while it
+   plays (data-playing) is the one wait that still turns the mark into the spinner. */
 .chip[data-state="preparing"] {
   cursor: progress;
 }
 
-.chip[data-state="preparing"] .chip-glyph > .swap {
+.chip[data-state="preparing"][data-playing="true"] .chip-glyph > .swap {
   display: none;
 }
 
-.chip[data-state="preparing"] .spinner {
+.chip[data-state="preparing"][data-playing="true"] .spinner {
   display: block;
 }
 

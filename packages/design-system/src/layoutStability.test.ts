@@ -113,7 +113,11 @@ const cases: Case[] = [
   {
     name: "PlayChip: every state",
     el: h(PlayChip, { label: "3 min" }),
-    states: PLAY_STATES.map((state) => [state, dataState(state)]),
+    states: [
+      ...PLAY_STATES.map((state) => [state, dataState(state)] as [string, string]),
+      // Buffering while it plays: the mark turns to the spinner.
+      ["buffering", "el.dataset.state='preparing';el.dataset.playing='true'"],
+    ],
     watch: ["[data-chip-label]"],
   },
   {
