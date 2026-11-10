@@ -1,5 +1,15 @@
 # @singularityfm/design-system
 
+## 0.6.0
+
+### Minor Changes
+
+- 22c013d: Toast: an error now stays until it is closed or swiped, and draws the close button, like a toast with an action; the close button now shows on phones too, also on a one-line toast; a short message still goes by itself with no close button.
+
+### Patch Changes
+
+- c504ef1: COMPATIBILITY.md: the app's bump pull request merges like any other once its checks are green, a breaking one included.
+
 ## 0.5.0
 
 ### Minor Changes
