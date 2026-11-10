@@ -53,6 +53,12 @@ describe("the rules", () => {
     // A `/*` inside a string opens no comment: the app's `Accept: "image/*"` hid the lines after it.
     const accept = 'const a = { Accept: "image/*" };\nconst c = "#ff0000";\n/* x */';
     expect(lines(rawColour(accept, "icon.ts"))).toEqual([2]);
+    // A backtick in a regex opens no string that swallows the comments after it, and an unquoted
+    // url() holding `/*` opens no comment.
+    const tick = 'const r = /["\'`]/;\n/* #fff */\n// #000\nconst c = "#123";';
+    expect(lines(rawColour(tick, "a.ts"))).toEqual([4]);
+    const url = ".a { background: url(a/*b.png); }\n.b { color: #fff; }\n/* x */";
+    expect(lines(rawColour(url, "a.css"))).toEqual([2]);
     // Only a relative colour from a token is the token's: a literal that takes one channel from a
     // token is still a literal, and a query's prelude holds values too.
     const partial = [
@@ -60,8 +66,11 @@ describe("the rules", () => {
       ".b { background: rgb(255 0 0 / var(--alpha)); }",
       "@container style(--tone: #ff0000) { .c { color: var(--color-accent); } }",
       "@supports (color: oklch(from red l c h)) { .d { color: var(--color-accent); } }",
+      ".e { color: rgb(var(--accent-rgb)); background: oklch(from currentColor l c h); }",
+      '.f::after { content: "@media #fff"; }',
     ].join("\n");
-    expect(lines(rawColour(partial, "page.css"))).toEqual([1, 2, 3]);
+    expect(lines(rawColour(partial, "page.css"))).toEqual([1, 2, 3, 6]);
+    expect(rawColour("const s = `oklch(from ${source} l c h)`;", "build.ts")).toEqual([]);
   });
 
   // Prevents a 12px gap beside a 16px one: spacing lands on 8, 16, 24; 4px only where named.
