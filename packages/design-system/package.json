@@ -1,6 +1,6 @@
 {
   "name": "@singularityfm/design-system",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Singularity's design system: React components (Base UI where they have behaviour), stylesheets, tokens, fonts and flags.",
   "license": "MIT",
   "repository": {
