@@ -1,8 +1,8 @@
 /*
  * The Toast (Toast.tsx). One quiet message at a time: a flat, inverse surface with a hairline radius,
  * an optional leading icon (a check or an alert, so the outcome is not told by colour alone), the
- * message at the label size, at most one text action in the accent and, only while it stays until
- * used, a close button. A top-layer popover above whatever is docked at the bottom.
+ * message at the label size, at most one text action in the accent and a close button, shown only to
+ * a mouse (below). A top-layer popover above whatever is docked at the bottom.
  *
  * Where it sits is the page's to say, by custom properties set on the root (never on .toast, so the
  * component's rules stay the only ones that draw it):
@@ -113,23 +113,27 @@
   padding-inline-end: var(--space-4);
 }
 
-/* The close button is for a mouse (owner, 2026-11-10: "x on desktop, not on mobile"). On a touch
-   screen a swipe takes the toast away (Toast.tsx), so the button gives its room to the words and
-   stays only for a keyboard and a screen reader, as a sheet's Close does (D144); with no action
-   left at its end, the text has the same room on both sides. */
-@media not ((hover: hover) and (pointer: fine)) {
-  .toast .toast-dismiss {
+/* The close button is for a mouse (owner, 2026-11-10: "x on desktop, not on mobile"). With no mouse
+   or trackpad at all, a swipe takes the toast away (Toast.tsx), so the button gives its room to the
+   words and stays only for a keyboard and a screen reader, as .sr-only does, and shows again while
+   it has keyboard focus. Any fine pointer counts, not only the primary one: a tablet with a trackpad
+   cannot swipe a toast, as a mouse never drags it. Without it, the end padding follows the rule above. */
+@media not ((any-hover: hover) and (any-pointer: fine)) {
+  .toast .toast-dismiss:not(:focus-visible) {
     position: absolute;
     width: 1px;
     height: 1px;
+    min-width: 0;
     min-height: 0;
+    margin: 0;
     padding: 0;
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+    border: 0;
   }
 
-  .toast:not(:has(.toast-action:not([hidden]))) {
+  .toast:not(:has(button:not([hidden], .toast-dismiss))) {
     padding-inline-end: var(--space-4);
   }
 }
