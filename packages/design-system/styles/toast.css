@@ -113,6 +113,27 @@
   padding-inline-end: var(--space-4);
 }
 
+/* The close button is for a mouse (owner, 2026-11-10: "x on desktop, not on mobile"). On a touch
+   screen a swipe takes the toast away (Toast.tsx), so the button gives its room to the words and
+   stays only for a keyboard and a screen reader, as a sheet's Close does (D144); with no action
+   left at its end, the text has the same room on both sides. */
+@media not ((hover: hover) and (pointer: fine)) {
+  .toast .toast-dismiss {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .toast:not(:has(.toast-action:not([hidden]))) {
+    padding-inline-end: var(--space-4);
+  }
+}
+
 .toast-icon {
   flex: none;
 }
