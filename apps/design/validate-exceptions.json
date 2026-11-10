@@ -35,6 +35,10 @@
       "a group heading onto its first 44px row, whose words sit further down inside the row"
     ],
     [
+      ".guide-nav-toggle",
+      "the chevron's target ends with its row: the group's 4px padding, so the longest names stay clear of it"
+    ],
+    [
       ".guide-tile-text",
       "a card's title onto its note, inside one card, as .banner-body's title onto its body"
     ],
