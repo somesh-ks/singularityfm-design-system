@@ -55,7 +55,7 @@
   block-size: calc(var(--size-option) * (var(--wheel-rows) - 1) / 2);
 }
 
-:root[data-input="keyboard"] .wheel-list:focus-visible {
+:root:not([data-input="pointer"]) .wheel-list:focus-visible {
   outline: var(--stroke-ring) solid var(--color-focus-ring);
   outline-offset: calc(var(--stroke-ring) * -1);
   border-radius: var(--row-radius);

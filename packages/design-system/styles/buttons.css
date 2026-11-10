@@ -292,6 +292,7 @@
 
 .button-text,
 .button-filled,
+/* biome-ignore lint/style/noDescendingSpecificity: sets the transition only; the dialog rule before it sets the fill. */
 .button-tonal {
   transition:
     background-color var(--duration-hover) var(--ease-hover),

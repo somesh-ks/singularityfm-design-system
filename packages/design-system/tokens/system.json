@@ -813,7 +813,7 @@
       "styles": [
         "packages/design-system/styles/search-field.css"
       ],
-      "usage": "The search field: a filled pill with the glyph inside it, as a search bar is in every Google app. The glyph and the placeholder say what it is. Focus lifts it (the overlay fill and a hairline; the design is flat, so no shadow); the ring is the keyboard's only (data-input, app.ts), so a tap, a click or typing never draws it. Library, Sources and every topic's page share this one field (2026-10-21; styles.test.ts holds them to it).",
+      "usage": "The search field: a filled pill with the glyph inside it, as a search bar is in every Google app. The glyph and the placeholder say what it is. Focus lifts it (the overlay fill and a hairline; the design is flat, so no shadow); the ring is the keyboard's only (data-input, app.ts), so a tap, a click or typing never draws it. It is keyed off the pointer, not on the keyboard, so a page with no input script still shows keyboard users their place (2026-11-10). Library, Sources and every topic's page share this one field (2026-10-21; styles.test.ts holds them to it).",
       "tokens": [
         "--color-border-control",
         "--color-on-surface",

@@ -35,6 +35,10 @@ export const GRID_EXCEPTIONS: [selector: string, reason: string][] = [
   [".source-host", "the separator dot beside its own text"],
   [".score", "the meter beside its own label"],
   [".source-plus-btn", "the button's hit area and its press layer's inset"],
+  [
+    ".create-fab-label",
+    "the word's end onto the Fab's padding, which is sized for the plus's square: 4px more balances it",
+  ],
 ];
 
 export interface RetiredPath {

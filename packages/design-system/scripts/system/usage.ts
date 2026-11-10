@@ -16,7 +16,15 @@ export function usageComment(stylesheet: string, selector: string, root: string)
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   // The first rule under a comment: a class may also open a group ("a, b {") that has none.
   for (const rule of css.matchAll(new RegExp(`^${escaped}(?=\\s*(?:[,{]|$))`, "gm"))) {
-    const before = css.slice(0, rule.index).trimEnd();
+    let before = css.slice(0, rule.index).trimEnd();
+    // A lint suppression has to sit right on its rule (Biome reads only that comment), so the usage
+    // is the comment over it: read as the usage, it replaced the filter chip's (2026-11-10).
+    while (
+      before.endsWith("*/") &&
+      /^\/\*\s*biome-ignore\b/.test(before.slice(before.lastIndexOf("/*")))
+    ) {
+      before = before.slice(0, before.lastIndexOf("/*")).trimEnd();
+    }
     if (!before.endsWith("*/")) continue;
     const start = before.lastIndexOf("/*");
     if (start < 0) continue;

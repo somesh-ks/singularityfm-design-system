@@ -1,4 +1,5 @@
 import type { FieldsetHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import { warnUnnamed } from "./accessibleName.ts";
 import { passedAttributes } from "./attributes.ts";
 
 export type SegmentedChoiceOption = {
@@ -49,6 +50,7 @@ export default function SegmentedChoice({
   slot: _slot,
   ...passed
 }: Props) {
+  warnUnnamed("SegmentedChoice", passed);
   return (
     <fieldset
       className={["segmented-choice", className].filter(Boolean).join(" ")}

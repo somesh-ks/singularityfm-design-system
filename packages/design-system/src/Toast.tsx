@@ -125,22 +125,29 @@ export default function Toast() {
     };
   }, []);
 
+  // The role follows the store, a render ahead of the words (shown): a live region whose role changed
+  // in the same commit as its text could go unannounced (an error after a status). A message under the
+  // other role shows no words for that one render, so the last message's words are never in the region
+  // under the new role, where an alert would read them out again.
+  const role = (toast ?? shown)?.kind === "error" ? "alert" : "status";
+  const words = (shown?.kind === "error" ? "alert" : "status") === role ? shown : null;
+
   return (
     <div
       ref={ref}
       className="toast"
       popover="manual"
-      role={shown?.kind === "error" ? "alert" : "status"}
+      role={role}
       data-one-line={shown?.oneLine ? "" : undefined}
     >
-      {shown?.kind ? (
-        <Icon className="toast-icon" name={shown.kind === "error" ? "alert" : "check"} />
+      {words?.kind ? (
+        <Icon className="toast-icon" name={words.kind === "error" ? "alert" : "check"} />
       ) : null}
       {/* Keyed by the message's id, so the same words shown again are new text the live region
           speaks again. */}
-      <span key={shown?.id} className="toast-text">
+      <span key={words?.id} className="toast-text">
         {/* A place's flag is the Flag's art, never the emoji Windows draws as two letters (D367). */}
-        {flagParts(shown?.message ?? "").map((part, index) =>
+        {flagParts(words?.message ?? "").map((part, index) =>
           typeof part === "string" ? (
             part
           ) : !hasFlagArt(part.region) ? (

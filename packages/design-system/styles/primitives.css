@@ -770,6 +770,7 @@
 
 /* A long name shortens with an ellipsis; the glyph always stays. The underline is the span's own
    background, a rail thick and flush with its foot, empty until hovered. */
+/* biome-ignore lint/style/noDescendingSpecificity: clips the link's words; the segmented choice above moves a different span. */
 .source-link > span {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -842,6 +843,7 @@
 
 /* The filter chip: a checkbox drawn as a pill that takes the accent container when checked, its
    check taking no room (D95), in a row that scrolls sideways (the Library's Show filters). */
+/* biome-ignore lint/style/noDescendingSpecificity: the chip's own box; the scroll row above only sets its flex. */
 .filter-chip {
   position: relative;
   display: inline-flex;
@@ -923,6 +925,7 @@
     transform var(--duration-enter) var(--ease-out);
 }
 
+/* biome-ignore lint/style/noDescendingSpecificity: sets the transition; the segmented choice above sets a transform on a different span. */
 .filter-chip > span {
   transition: transform var(--duration-enter) var(--ease-out);
 }
@@ -1039,6 +1042,7 @@
 }
 
 /* An older markup drew the check as an icon inside; the mask below draws it now. */
+/* biome-ignore lint/style/noDescendingSpecificity: hides an older markup's glyph; the filter chip above shows its own. */
 .suggest-box > .icon-glyph {
   display: none;
 }

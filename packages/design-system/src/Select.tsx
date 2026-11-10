@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode, SelectHTMLAttributes } from "react";
+import { warnUnnamed } from "./accessibleName.ts";
 import { passedAttributes, styleObject } from "./attributes.ts";
 import { fieldClass } from "./field.ts";
 import Icon from "./Icon.tsx";
@@ -48,6 +49,7 @@ export default function Select({
   children,
   ...passed
 }: Props) {
+  warnUnnamed("Select", passed, { byId: true, label });
   const Wrapper = label ? "label" : "span";
   return (
     <Wrapper

@@ -412,6 +412,7 @@ html[data-mini="visible"] main {
 
 /* The pill behind the icon: bare at rest, the accent container for the current destination, a state
    layer under a pointer. */
+/* biome-ignore lint/style/noDescendingSpecificity: the pill's box; the focus rule above sets its outline. */
 .app-nav-indicator {
   display: grid;
   place-items: center;
@@ -544,6 +545,7 @@ html[data-nav-arrived] .app-nav-item:not([aria-current="page"]) .app-nav-indicat
   }
 }
 
+/* biome-ignore lint/style/noDescendingSpecificity: sets the pressed fill; the arrival rule above sets the transition. */
 .app-nav-item:not([aria-current="page"]):active .app-nav-indicator::before {
   background: var(--ghost-pressed);
 }
@@ -595,6 +597,7 @@ html[data-nav-arrived] .app-nav-item:not([aria-current="page"]) .app-nav-indicat
     color: var(--color-on-surface);
   }
 
+  /* biome-ignore lint/style/noDescendingSpecificity: sets the icon's timing; the end tabs above set the ripple's reach. */
   .app-nav-item {
     --nav-icon-duration: var(--duration-state);
     --nav-icon-ease: var(--ease-hover);
