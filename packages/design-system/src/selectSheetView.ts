@@ -65,8 +65,8 @@ function fill(list: HTMLElement, select: HTMLSelectElement, id: string): void {
     const rows = Array.from(select.options)
       .map((option, index) => ({ option, index }))
       .filter(({ option }) => !option.hidden)
-      // A row may read shorter on the wheel than in the list (data-wheel-text): the list says
-      // "Auto (29)", the wheel turns a column of numbers and says "29".
+      // A row may read shorter on the wheel than in the field (data-wheel-text): the field says
+      // "Auto (29)", the wheel turns a column of numbers and says "29", as the desktop list does.
       .map(({ option, index }) => ({
         index,
         text: option.dataset.wheelText ?? option.text,

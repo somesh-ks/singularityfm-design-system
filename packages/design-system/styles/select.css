@@ -268,6 +268,18 @@
     cursor: pointer;
   }
 
+  /* A row with data-wheel-text reads that in the list, as it does on the wheel, while the field and a
+     screen reader keep the option's own words: Stories lists 45 and its field says "Auto (45)" (owner,
+     2026-11-10). The native list elsewhere shows the option's own words. */
+  :is(.select-outlined, .select-tonal) > select option[data-wheel-text] {
+    font-size: 0;
+  }
+
+  :is(.select-outlined, .select-tonal) > select option[data-wheel-text]::before {
+    content: attr(data-wheel-text);
+    font-size: var(--font-size-body);
+  }
+
   /* A group's heading starts where its options' words do, whatever side the field aligns its value
      to: a quiet label over them, as a menu's section title. */
   :is(.select-outlined, .select-tonal) > select optgroup {
