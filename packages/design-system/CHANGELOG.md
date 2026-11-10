@@ -1,5 +1,12 @@
 # @singularityfm/design-system
 
+## 0.8.0
+
+### Minor Changes
+
+- 07df10b: Select: an option with `data-wheel-text` now shows that text in the desktop list too (Chromium and Safari), while the closed field and screen readers keep the option's own text. Stories lists 45 and its field reads "Auto (45)".
+- b5b628b: Toast: the close button now shows only with a mouse, on every toast, a short one included; on a touch screen it is hidden (a swipe closes the toast) and stays reachable by keyboard and screen reader. Errors and toasts with an action still stay until closed.
+
 ## 0.7.0
 
 ### Minor Changes
