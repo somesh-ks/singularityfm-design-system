@@ -1,5 +1,9 @@
 {
   "grid": [
+    [
+      ".guide-nav-toggle",
+      "the chevron centred on its row, which the open group's box pads a step down (.guide-nav-group)"
+    ],
     [".guide-ramp li", "a ramp step's swatch onto its own number, inside one step"],
     [
       ".guide-type-spec",

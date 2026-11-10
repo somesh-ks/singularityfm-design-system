@@ -28,11 +28,24 @@ const lineAt = (text: string, index: number): number => text.slice(0, index).spl
 const blank = (text: string, pattern: RegExp): string =>
   text.replace(pattern, (match) => match.replace(/[^\n]/g, " "));
 
-const withoutCssComments = (css: string): string => blank(css, /\/\*[\s\S]*?\*\//g);
+/** A one-line quoted string, or a template literal: what a comment marker inside it is not. */
+const STRING = /"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`/;
+
+/**
+ * Blanks the comments a pattern matches, reading strings first: `"image/*"` opens no comment, so
+ * the lines after it are still read (a `/*` in a string hid every line to the next `*\/`).
+ */
+const blankComments = (text: string, comment: RegExp, strings = STRING): string =>
+  text.replace(new RegExp(`${strings.source}|${comment.source}`, "g"), (match) =>
+    /^["'`]/.test(match) ? match : match.replace(/[^\n]/g, " "),
+  );
+
+const withoutCssComments = (css: string): string =>
+  blankComments(css, /\/\*[\s\S]*?\*\//, /"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'/);
 
 /** Comments in markup and script: block, HTML, and `//` lines (not the `//` of a URL). */
 const withoutCodeComments = (code: string): string =>
-  blank(code, /\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|(?<![:/\w"'`])\/\/[^\n]*/g);
+  blankComments(code, /\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|(?<![:/\w"'`])\/\/[^\n]*/);
 
 const posix = (file: string): string => file.split("\\").join("/");
 const isCss = (file: string): boolean => /\.css$/.test(file);
@@ -173,14 +186,15 @@ const HEX = /(?<![\w&-])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})(?![\
 const COLOUR_FUNCTION = /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi;
 
 /**
- * Raw colours in a piece of text, as [index, literal]. A colour function that reads var() is a
- * token's; a url() names a resource (`url(#gradient)`), never a colour.
+ * Raw colours in a piece of text, as [index, literal]. A relative colour from a token (`oklch(from
+ * var(--x) l c h)`) is the token's; one that only takes a channel from one (`rgb(255 0 0 /
+ * var(--a))`) is a literal red. A url() names a resource (`url(#gradient)`), never a colour.
  */
 function rawColours(source: string): [number, string][] {
   const text = blank(source, /url\([^)]*\)/gi);
   const hex = [...text.matchAll(HEX)].map((m): [number, string] => [m.index ?? 0, m[0]]);
   const functions = [...text.matchAll(COLOUR_FUNCTION)]
-    .filter((m) => !/var\(/.test(argumentsAt(text, (m.index ?? 0) + m[0].length - 1)))
+    .filter((m) => !/^\s*from\s+var\(/i.test(argumentsAt(text, (m.index ?? 0) + m[0].length - 1)))
     .map((m): [number, string] => [m.index ?? 0, m[0]]);
   return [...hex, ...functions].sort((a, b) => a[0] - b[0]);
 }
@@ -215,9 +229,16 @@ export function rawColour(text: string, file: string): Finding[] {
     return rawColours(withoutReferences(withoutCodeComments(text))).map(([at, literal]) =>
       finding(at, literal),
     );
-  return declarations(withoutCssComments(text)).flatMap(({ value, index, property }) =>
+  const css = withoutCssComments(text);
+  // A query's prelude holds values too (`@container style(--tone: #f00)`); a feature query
+  // (`@supports (color: oklch(from red l c h))`) tests a syntax and paints nothing.
+  const inQueries = [...css.matchAll(/@(?:media|container)\b[^{;]*/g)].flatMap((match) =>
+    rawColours(match[0]).map(([at, literal]) => finding((match.index ?? 0) + at, literal)),
+  );
+  const inDeclarations = declarations(css).flatMap(({ value, index, property }) =>
     rawColours(value).map(([, literal]) => finding(index + property.length, literal)),
   );
+  return [...inQueries, ...inDeclarations].sort((a, b) => a.line - b.line);
 }
 
 const SPACING =
@@ -280,21 +301,28 @@ export function offGrid(
     .filter(({ property }) => SPACING.test(property))
     .flatMap(({ selector, selectors, property, value, index }) =>
       terms(value).flatMap((term) => {
-        const resolved = pixels(term);
-        if (resolved === null || resolved % 8 === 0 || Math.abs(resolved) === 1) return [];
         // Each selector in the list must be named: an exception covers its rule, not a neighbour.
         const allowed = [...GRID_EXCEPTIONS, ...exceptions].map(([name]) => wholeName(name));
         const named = selectors.every((one) => allowed.some((name) => name.test(one)));
-        if (Math.abs(resolved) === 4 && named) return [];
-        return [
-          {
-            rule: "off-grid",
-            file,
-            line: lineAt(text, index),
-            message: `${selector} { ${property}: ${term} } is ${resolved}px, off the 8pt grid`,
-            severity: "error" as const,
-          },
-        ];
+        const off = (px: number | null) =>
+          px === null || (px % 8 !== 0 && Math.abs(px) !== 1 && !(Math.abs(px) === 4 && named));
+        const finding = (what: string) => ({
+          rule: "off-grid",
+          file,
+          line: lineAt(text, index),
+          message: `${selector} { ${property}: ${term} } ${what}, off the 8pt grid`,
+          severity: "error" as const,
+        });
+        const resolved = pixels(term);
+        if (resolved !== null) return off(resolved) ? [finding(`is ${resolved}px`)] : [];
+        // A term that is no fixed length (a max(), a clamp(), a dimension in the sum) is held to the
+        // space steps it names: 4px inside max() is still 4px, and a step no token defines is none.
+        return [...term.matchAll(/var\(\s*(--space-[\w-]+)/g)]
+          .filter(([, name = ""]) => {
+            const value = TOKEN_VALUES.get(name);
+            return off(value === undefined ? null : pixels(value));
+          })
+          .map(([, name]) => finding(`reads ${name}`));
       }),
     );
 }
@@ -366,9 +394,10 @@ export function declaredProperties(text: string, file: string): Set<string> {
     [
       ...source.matchAll(/(--[\w-]+)\s*:/g),
       ...source.matchAll(/@property\s+(--[\w-]+)/g),
-      // A script's write and a style object's key; a getPropertyValue read declares nothing.
+      // A script's write and a style object's key, computed (`["--x"]: 1`) or not; a getPropertyValue
+      // read declares nothing.
       ...source.matchAll(/setProperty\(\s*["'`](--[\w-]+)["'`]/g),
-      ...source.matchAll(/["'`](--[\w-]+)["'`]\s*:/g),
+      ...source.matchAll(/["'`](--[\w-]+)["'`]\]?\s*:/g),
     ].map((match) => match[1] ?? ""),
   );
 }

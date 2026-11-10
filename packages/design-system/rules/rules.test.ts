@@ -50,6 +50,18 @@ describe("the rules", () => {
       "<style>.a { color: #123; }</style>",
     ].join("\n");
     expect(lines(rawColour(markup, "Page.astro"))).toEqual([4, 5, 6]);
+    // A `/*` inside a string opens no comment: the app's `Accept: "image/*"` hid the lines after it.
+    const accept = 'const a = { Accept: "image/*" };\nconst c = "#ff0000";\n/* x */';
+    expect(lines(rawColour(accept, "icon.ts"))).toEqual([2]);
+    // Only a relative colour from a token is the token's: a literal that takes one channel from a
+    // token is still a literal, and a query's prelude holds values too.
+    const partial = [
+      ".a { color: oklch(0.5 0.2 var(--hue)); }",
+      ".b { background: rgb(255 0 0 / var(--alpha)); }",
+      "@container style(--tone: #ff0000) { .c { color: var(--color-accent); } }",
+      "@supports (color: oklch(from red l c h)) { .d { color: var(--color-accent); } }",
+    ].join("\n");
+    expect(lines(rawColour(partial, "page.css"))).toEqual([1, 2, 3]);
   });
 
   // Prevents a 12px gap beside a 16px one: spacing lands on 8, 16, 24; 4px only where named.
@@ -81,6 +93,17 @@ describe("the rules", () => {
     expect(offGrid(quoted, "page.css", [['[data-tags="news,local"]', "a tag row"]])).toEqual([]);
     // A leading zero is a valid length, never a crash: 08px is 8px.
     expect(offGrid(".g { padding: 08px; margin: 012px; }", "page.css").length).toBe(1);
+    // A value that is no fixed length is held to the space steps it names: 4px inside max() or
+    // beside a dimension is still 4px, and a step no token defines (with a fallback, which the
+    // unknown-property rule lets pass) is no step.
+    const loose = [
+      ".h { padding: max(var(--space-1), 1rem); }",
+      ".i { margin: calc(var(--space-1) + var(--size-touch)); }",
+      ".j { gap: var(--space-3, 0.75rem); }",
+      ".banner-body { padding: max(var(--space-1), 1rem); }",
+      ".k { padding: max(var(--space-2), 1rem); }",
+    ].join("\n");
+    expect(lines(offGrid(loose, "page.css"))).toEqual([1, 2, 3]);
   });
 
   // Prevents a declaration the browser drops silently: a read of a property nothing defines.
@@ -98,7 +121,8 @@ describe("the rules", () => {
     // A read through getPropertyValue declares nothing; a style object's key does.
     const read = 'getComputedStyle(el).getPropertyValue("--gone");\nconst a = "var(--gone)";';
     expect(lines(unknownProperty(read, "bar.ts"))).toEqual([2]);
-    const keyed = 'const style = { "--fill": 1 };\nconst a = "var(--fill)";';
+    const keyed =
+      'const style = { "--fill": 1, ["--rest"]: 2 };\nconst a = "var(--fill) var(--rest)";';
     expect(unknownProperty(keyed, "bar.tsx")).toEqual([]);
     // The style guide's sheet read --swatch, which a page's style attribute sets, and validating the
     // two together called it unknown: a property any of the files declares is declared.
