@@ -28,11 +28,32 @@ const lineAt = (text: string, index: number): number => text.slice(0, index).spl
 const blank = (text: string, pattern: RegExp): string =>
   text.replace(pattern, (match) => match.replace(/[^\n]/g, " "));
 
-const withoutCssComments = (css: string): string => blank(css, /\/\*[\s\S]*?\*\//g);
+/**
+ * A quoted string on one line: what a comment marker inside it is not. One line, templates too, so a
+ * stray quote (a backtick in a regex's character class) never reads a hundred lines as one string.
+ */
+const STRING = /"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\\n])*`/;
+
+/**
+ * Blanks the comments a pattern matches, reading strings first: `"image/*"` opens no comment, so
+ * the lines after it are still read (a `/*` in a string hid every line to the next `*\/`).
+ */
+const blankComments = (text: string, comment: RegExp, strings = STRING): string =>
+  text.replace(new RegExp(`${strings.source}|${comment.source}`, "g"), (match) =>
+    /^(?:["'`]|url\()/i.test(match) ? match : match.replace(/[^\n]/g, " "),
+  );
+
+const withoutCssComments = (css: string): string =>
+  // An unquoted url() is a string too: `url(a/*b.png)` opens no comment.
+  blankComments(
+    css,
+    /\/\*[\s\S]*?\*\//,
+    /"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|url\([^)"'\n]*\)/i,
+  );
 
 /** Comments in markup and script: block, HTML, and `//` lines (not the `//` of a URL). */
 const withoutCodeComments = (code: string): string =>
-  blank(code, /\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|(?<![:/\w"'`])\/\/[^\n]*/g);
+  blankComments(code, /\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|(?<![:/\w"'`])\/\/[^\n]*/);
 
 const posix = (file: string): string => file.split("\\").join("/");
 const isCss = (file: string): boolean => /\.css$/.test(file);
@@ -173,14 +194,21 @@ const HEX = /(?<![\w&-])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})(?![\
 const COLOUR_FUNCTION = /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/gi;
 
 /**
- * Raw colours in a piece of text, as [index, literal]. A colour function that reads var() is a
- * token's; a url() names a resource (`url(#gradient)`), never a colour.
+ * A colour function's arguments that are a token's colour: relative to a token, an interpolated
+ * source, currentColor or another relative colour (`oklch(from var(--x) l c h)`), or channels that
+ * are all tokens (`rgb(var(--accent-rgb))`). One with a literal channel (`rgb(255 0 0 / var(--a))`,
+ * `oklch(0.5 0.2 var(--h))`) is a literal colour.
  */
+const isTokenColour = (args: string): boolean =>
+  /^\s*from\s+(?:var\(|\$\{|currentcolor\b|[a-z]+\(\s*from\s)/i.test(args) ||
+  !/\d/.test(args.replace(/var\((?:[^()]|\([^()]*\))*\)/g, ""));
+
+/** Raw colours in a piece of text, as [index, literal]. A url() names a resource, never a colour. */
 function rawColours(source: string): [number, string][] {
   const text = blank(source, /url\([^)]*\)/gi);
   const hex = [...text.matchAll(HEX)].map((m): [number, string] => [m.index ?? 0, m[0]]);
   const functions = [...text.matchAll(COLOUR_FUNCTION)]
-    .filter((m) => !/var\(/.test(argumentsAt(text, (m.index ?? 0) + m[0].length - 1)))
+    .filter((m) => !isTokenColour(argumentsAt(text, (m.index ?? 0) + m[0].length - 1)))
     .map((m): [number, string] => [m.index ?? 0, m[0]]);
   return [...hex, ...functions].sort((a, b) => a[0] - b[0]);
 }
@@ -215,9 +243,17 @@ export function rawColour(text: string, file: string): Finding[] {
     return rawColours(withoutReferences(withoutCodeComments(text))).map(([at, literal]) =>
       finding(at, literal),
     );
-  return declarations(withoutCssComments(text)).flatMap(({ value, index, property }) =>
+  const css = withoutCssComments(text);
+  // A query's prelude holds values too (`@container style(--tone: #f00)`); a feature query
+  // (`@supports (color: oklch(from red l c h))`) tests a syntax and paints nothing.
+  const unquoted = blank(css, /(["'])(?:\\.|(?!\1)[^\\\n])*\1/g);
+  const inQueries = [...unquoted.matchAll(/@(?:media|container)\b[^{;]*/g)].flatMap((match) =>
+    rawColours(match[0]).map(([at, literal]) => finding((match.index ?? 0) + at, literal)),
+  );
+  const inDeclarations = declarations(css).flatMap(({ value, index, property }) =>
     rawColours(value).map(([, literal]) => finding(index + property.length, literal)),
   );
+  return [...inQueries, ...inDeclarations].sort((a, b) => a.line - b.line);
 }
 
 const SPACING =
@@ -276,27 +312,36 @@ export function offGrid(
   exceptions: readonly [selector: string, reason: string][] = [],
 ): Finding[] {
   if (!isCss(file) || isTokenFile(file)) return [];
+  const allowed = [...GRID_EXCEPTIONS, ...exceptions].map(([name]) => wholeName(name));
   return declarations(withoutCssComments(text))
     .filter(({ property }) => SPACING.test(property))
-    .flatMap(({ selector, selectors, property, value, index }) =>
-      terms(value).flatMap((term) => {
+    .flatMap(({ selector, selectors, property, value, index }) => {
+      // Each selector in the list must be named: an exception covers its rule, not a neighbour.
+      const named = selectors.every((one) => allowed.some((name) => name.test(one)));
+      return terms(value).flatMap((term) => {
+        const off = (px: number | null) =>
+          px === null || (px % 8 !== 0 && Math.abs(px) !== 1 && !(Math.abs(px) === 4 && named));
+        const finding = (what: string) => ({
+          rule: "off-grid",
+          file,
+          line: lineAt(text, index),
+          message: `${selector} { ${property}: ${term} } ${what}, off the 8pt grid`,
+          severity: "error" as const,
+        });
         const resolved = pixels(term);
-        if (resolved === null || resolved % 8 === 0 || Math.abs(resolved) === 1) return [];
-        // Each selector in the list must be named: an exception covers its rule, not a neighbour.
-        const allowed = [...GRID_EXCEPTIONS, ...exceptions].map(([name]) => wholeName(name));
-        const named = selectors.every((one) => allowed.some((name) => name.test(one)));
-        if (Math.abs(resolved) === 4 && named) return [];
-        return [
-          {
-            rule: "off-grid",
-            file,
-            line: lineAt(text, index),
-            message: `${selector} { ${property}: ${term} } is ${resolved}px, off the 8pt grid`,
-            severity: "error" as const,
-          },
-        ];
-      }),
-    );
+        if (resolved !== null) return off(resolved) ? [finding(`is ${resolved}px`)] : [];
+        // A term that is no fixed length (a max(), a clamp(), a percentage or a dimension in the
+        // sum) is held to the space steps it names, as the app's design-check held them: 4px inside
+        // max() is still 4px, and a step no token defines is none. A step scaled onto the grid is
+        // written as the step it lands on (var(--space-2), not var(--space-1) * 2).
+        return [...term.matchAll(/var\(\s*(--space-[\w-]+)/g)]
+          .filter(([, name = ""]) => {
+            const value = TOKEN_VALUES.get(name);
+            return off(value === undefined ? null : pixels(value));
+          })
+          .map(([, name]) => finding(`reads ${name}`));
+      });
+    });
 }
 
 /** Quoted text and url() arguments, blanked: `content: "12px"` and a file name hold no length. */
@@ -366,9 +411,10 @@ export function declaredProperties(text: string, file: string): Set<string> {
     [
       ...source.matchAll(/(--[\w-]+)\s*:/g),
       ...source.matchAll(/@property\s+(--[\w-]+)/g),
-      // A script's write and a style object's key; a getPropertyValue read declares nothing.
+      // A script's write and a style object's key, computed (`["--x"]: 1`) or not; a getPropertyValue
+      // read declares nothing.
       ...source.matchAll(/setProperty\(\s*["'`](--[\w-]+)["'`]/g),
-      ...source.matchAll(/["'`](--[\w-]+)["'`]\s*:/g),
+      ...source.matchAll(/["'`](--[\w-]+)["'`]\]?\s*:/g),
     ].map((match) => match[1] ?? ""),
   );
 }
