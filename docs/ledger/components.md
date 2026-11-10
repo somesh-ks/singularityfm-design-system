@@ -12,6 +12,7 @@ The craft that makes components hold still and answer clearly. Each was a report
   - The segmented thumb slides only while used, so a page never opens with motion (`player.css:2254-2304`).
   - The scrub bubble and the bar's times sit over a hidden copy of the widest time and snap to device pixels, so digits do not shimmer (2026-10-11).
   - Toasts have a fixed width on a phone (they jumped from 105 to 358px).
+  - Only a toast that stays (an error, or one with an action such as Undo or Retry) has a close button, on every screen; a short one goes by itself with none, and a swipe takes either (2026-11-10).
   - A stable scrollbar gutter stopped the New episode panel rewrapping when More options opens (D102).
   - Rows keep one height with or without a search match (D95). The Add panel's switch keeps one height at every width (D89).
   - The first frame of an episode page drew the first story, then the current one. The page now derives `override ?? first` instead of holding the first in state (2026-10-09).
