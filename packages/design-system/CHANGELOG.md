@@ -1,5 +1,11 @@
 # @singularityfm/design-system
 
+## 0.8.1
+
+### Patch Changes
+
+- f9729a6: Toast: the close button also shows on a tablet with a trackpad or mouse (any fine pointer, not only the primary one), and on a touch screen it reappears while it has keyboard focus.
+
 ## 0.8.0
 
 ### Minor Changes
