@@ -31,5 +31,5 @@ and listed in the style guide. The removal is a breaking release of its own.
 ## Announcing a breaking release
 
 The changeset starts with `BREAKING:` and says what to change, with the before and after. The release's
-CHANGELOG entry and GitHub release carry it. The app's bump pull request for a breaking release is merged by
-the owner, never automatically; patch and minor bumps merge when green.
+CHANGELOG entry and GitHub release carry it. The app's bump pull request merges like any other once its checks are green,
+a breaking one included; a visual change keeps the owner's OK on stills.
