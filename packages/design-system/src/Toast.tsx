@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { flagBadgeClass, flagClass, flagParts, flagSrc, hasFlagArt } from "./flag.ts";
 import Icon from "./Icon.tsx";
 import { createVelocityTracker, swipeLeaves, TAP_SLOP_PX } from "./swipe.ts";
-import { dismissToast, getToast, subscribeToast, type ToastContent } from "./toastStore.ts";
+import { dismissToast, getToast, stays, subscribeToast, type ToastContent } from "./toastStore.ts";
 // A message that names a place draws the Flag's art, so the Toast brings the Flag's rules too.
 import "../styles/flag.css";
 import "../styles/toast.css";
@@ -176,7 +176,8 @@ export default function Toast() {
           {shown.actionLabel}
         </button>
       ) : null}
-      {shown?.actionLabel ? (
+      {/* Only a toast that stays has a close button; a short one goes by itself (toastStore.ts). */}
+      {shown && stays(shown) ? (
         <button
           className="toast-dismiss press"
           type="button"

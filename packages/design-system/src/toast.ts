@@ -10,7 +10,7 @@ export const TOAST: Guidance = {
   summary: "One quiet message at a time on the inverse surface, with an optional action.",
   useWhen: [
     "A brief message with Undo after a delete.",
-    "A failure that clears itself, or a partial save.",
+    "A failure, which stays with its close button until it is closed or retried, or a partial save.",
     "A run that finished while its sheet was closed.",
   ],
   dontUseWhen: [
