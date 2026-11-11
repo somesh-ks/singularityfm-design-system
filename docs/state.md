@@ -32,7 +32,6 @@ Rewritten, never appended. As of 2026-11-11: 0.9.0 is on npm (every control fami
 - SegmentedChoice, Select and Slider warn once in development when drawn with no accessible name (owner, 2026-11-10: a warning now, not a required prop; an `id` counts for Select and Slider, which an outside `<label for>` may name). closed when: the app's bump runs its dev server and its console shows none (or it names what warns).
 - The library's keyboard rings on the search field, picker search and wheel are keyed off the pointer (`:not([data-input="pointer"])`) instead of on the keyboard, so a consumer with no input-mode script shows them; with one (the app's `app.ts`, the guide's `inputMode.ts`) nothing changes. closed when: the app's bump passes its screenshots and browser suites (a click into its search still draws no ring).
 - A Toast's role now follows the store, a render before its words. closed when: a screen reader announces an error toast that replaces a status toast (VoiceOver and NVDA).
-- `.guide-bans li` (Principles, the banned list) has no inline padding: it read `--space-3`, which no token defines, so its `padding-inline` never applied, and the dead declaration is gone (the look is unchanged). closed when: the owner says whether the pills want inline padding (a visual change) or stay as drawn.
 - The style guide's Vercel project builds from this repository. closed when: a push to main deploys news.someshks.work/design from this repository and `ignore-build.sh` skips a docs-only push.
 - The ruleset (`.github/rulesets/main.json`) is imported. closed when: a PR without a green `check` cannot merge.
 - The pack-and-install test runs on Windows. closed when: `pnpm run gate` passes in PowerShell on the owner's machine.
@@ -51,8 +50,8 @@ Rewritten, never appended. As of 2026-11-11: 0.9.0 is on npm (every control fami
 
 The order is the design system master plan's (owner, 2026-11-08). DS-8 drew every family on its native markup, so none of them broke a consumer and each shipped as a minor; no pre-release line is needed for them. Merging (owner, 2026-11-09, `AGENTS.md`): a pull request, a version or breaking one included, merges itself once its review is clean, it is up to date with `main` and `check` is green; a visual change waits for his OK on stills.
 
-1. The app's design-check calls the package's rules with its own 4px list instead of its own copies. DS#49 first closes the cases the app's copies caught and the rules missed; then an app PR bumps to that release and swaps its copies.
-2. Open for the owner: the Play button as a Fab variant, the chips' padding, and the app's page overrides moved into library variants.
+1. The app's page overrides move into library variants, each drawing as it does today (owner's call open; stills show no change).
+2. The Play button stays the app's own icon-only button (owner, 2026-11-11), so it needs no Fab variant.
 3. `release.yml` opens a version pull request from pending changesets; it merges itself once `check` is green, and merging it publishes.
 4. 1.0.0 retires the `.astro` shims once COMPATIBILITY.md's window has passed (a major, under the same merge rule).
 5. After 1.0.0: a remote MCP on the style guide's project (a DS record first, amending D236), local evals through the editors' headless modes, and one agent plugin for Claude Code, Codex and Antigravity.
