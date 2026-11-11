@@ -48,6 +48,9 @@
         "At most one per surface.",
         "Never a bold label."
       ],
+      "imports": [
+        "@singularityfm/design-system/Button"
+      ],
       "styles": [
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/foundations.css"
@@ -104,6 +107,9 @@
         "Matches the filled button's height.",
         "No outline."
       ],
+      "imports": [
+        "@singularityfm/design-system/Button"
+      ],
       "styles": [
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/foundations.css"
@@ -158,6 +164,9 @@
       "rules": [
         "In a dialog, Cancel and the filled button sit in a DialogActions row (EpisodeActions.astro); a form sheet keeps its one filled button in `.sheet-actions`."
       ],
+      "imports": [
+        "@singularityfm/design-system/Button"
+      ],
       "styles": [
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/foundations.css",
@@ -202,6 +211,9 @@
         "red"
       ],
       "markup": "<Button variant=\"text\" tone=\"danger\">Delete</Button>",
+      "imports": [
+        "@singularityfm/design-system/Button"
+      ],
       "styles": [
         "packages/design-system/styles/buttons.css"
       ],
@@ -241,6 +253,9 @@
         "button size"
       ],
       "markup": "<Button variant=\"text\" size=\"small\">Listen now</Button>",
+      "imports": [
+        "@singularityfm/design-system/Button"
+      ],
       "styles": [
         "packages/design-system/styles/buttons.css"
       ],
@@ -307,6 +322,9 @@
         "It draws `.press`: the press is a state layer; the glyph never scales.",
         "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass()."
       ],
+      "imports": [
+        "@singularityfm/design-system/IconButton"
+      ],
       "styles": [
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/foundations.css"
@@ -349,6 +367,9 @@
         "favorite"
       ],
       "markup": "<IconButton variant=\"tonal\" label=\"Share\"><Icon name=\"shareFat\" /></IconButton>",
+      "imports": [
+        "@singularityfm/design-system/IconButton"
+      ],
       "styles": [
         "packages/design-system/styles/buttons.css"
       ],
@@ -405,6 +426,9 @@
         "label is its whole accessible name; the word beside the glyph is hidden from a screen reader.",
         "A script folds it by data-folded on FAB_SELECTOR (design-system/fab.ts)."
       ],
+      "imports": [
+        "@singularityfm/design-system/Fab"
+      ],
       "styles": [
         "packages/design-system/styles/fab.css",
         "packages/design-system/styles/foundations.css"
@@ -460,6 +484,9 @@
       "rules": [
         "A link is a real <a href>; an action on this page is a Button."
       ],
+      "imports": [
+        "@singularityfm/design-system/Link"
+      ],
       "styles": [
         "packages/design-system/styles/primitives.css"
       ],
@@ -506,6 +533,9 @@
       "markup": "<Link variant=\"source\" href={url} target=\"_blank\" rel=\"noopener noreferrer\">{publisher}</Link>",
       "rules": [
         "The player has its own copy, `.player-source-link` (player.css); do not add a third."
+      ],
+      "imports": [
+        "@singularityfm/design-system/Link"
       ],
       "styles": [
         "packages/design-system/styles/foundations.css",
@@ -560,6 +590,9 @@
       "markup": "<PlayChip label=\"5 min\" aria-label=\"Play the briefing\" data-play-item={0} />",
       "rules": [
         "A native button with no client directive (DS-8): the player writes data-state, data-playing and [data-chip-label]."
+      ],
+      "imports": [
+        "@singularityfm/design-system/PlayChip"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css"
@@ -642,6 +675,10 @@
       "rules": [
         "A native checkbox with no client directive (DS-8); scroll on the group for one sideways row."
       ],
+      "imports": [
+        "@singularityfm/design-system/Chip",
+        "@singularityfm/design-system/ChipGroup"
+      ],
       "styles": [
         "packages/design-system/styles/primitives.css"
       ],
@@ -704,6 +741,9 @@
       "rules": [
         "Native radios with no client directive (DS-8)."
       ],
+      "imports": [
+        "@singularityfm/design-system/SegmentedChoice"
+      ],
       "styles": [
         "packages/design-system/styles/primitives.css"
       ],
@@ -758,6 +798,9 @@
       "rules": [
         "A native tablist with no client directive (DS-8): the page calls mountSegmentedNav(list, onSelect) from design-system/segmentedNav once for each, and draws the panels (each tab's controls)."
       ],
+      "imports": [
+        "@singularityfm/design-system/SegmentedNav"
+      ],
       "styles": [
         "packages/design-system/styles/primitives.css"
       ],
@@ -809,6 +852,9 @@
       "markup": "<SearchField label=\"Search your library\" name=\"q\" placeholder=\"Search your library\" />",
       "rules": [
         "A native input with no client directive (DS-8)."
+      ],
+      "imports": [
+        "@singularityfm/design-system/SearchField"
       ],
       "styles": [
         "packages/design-system/styles/search-field.css"
@@ -865,6 +911,9 @@
         "Draw it with <Icon>; a script builds one with iconHtml() and an island with <Icon> from player/ui, both through iconClass().",
         "A control that holds a glyph places it with its own rule; it never sets the glyph's size twice."
       ],
+      "imports": [
+        "@singularityfm/design-system/Icon"
+      ],
       "styles": [
         "packages/design-system/styles/icon.css"
       ],
@@ -917,6 +966,9 @@
       "markup": "<Badge>Admin</Badge>",
       "rules": [
         "It holds one word or one number; the page places it with a class, never styles it."
+      ],
+      "imports": [
+        "@singularityfm/design-system/Badge"
       ],
       "styles": [
         "packages/design-system/styles/badge.css"
@@ -971,6 +1023,9 @@
       "markup": "<div class=\"settings-row\"><label class=\"settings-label\" for=\"autoplay\">Autoplay</label><Switch id=\"autoplay\" name=\"autoplay\" /></div>",
       "rules": [
         "It is the native checkbox (role=\"switch\") and takes no client directive (DS-8): an Astro page starts it with defaultChecked, a React island passes checked with onChange."
+      ],
+      "imports": [
+        "@singularityfm/design-system/Switch"
       ],
       "styles": [
         "packages/design-system/styles/switch.css"
@@ -1030,6 +1085,9 @@
       "rules": [
         "It is the native range and takes no client directive (DS-8): an Astro page starts it with defaultValue, a React island passes value with onChange.",
         "WebKit paints the filled track from --range-fill, which starts at 0%: set it to (value - min) / (max - min) as a percentage and update it on input."
+      ],
+      "imports": [
+        "@singularityfm/design-system/Slider"
       ],
       "styles": [
         "packages/design-system/styles/slider.css"
@@ -1098,6 +1156,9 @@
         "Draw it with <Field> (multiline for a textarea); a select or a script takes the class from fieldClass().",
         "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element."
       ],
+      "imports": [
+        "@singularityfm/design-system/Field"
+      ],
       "styles": [
         "packages/design-system/styles/field.css"
       ],
@@ -1163,6 +1224,9 @@
         "Outlined (the default) is a value in a form; tonal is a sort or a filter and takes data-active on its wrapper (find it with closest(\"[data-select]\")) once its value is not the default.",
         "A select inside a settings row takes class=\"value-select\" from settings.css, which draws it as the row's value.",
         "data-wheel on a short ordered run (the hours of a day) opens its phone sheet as a Wheel (design-system/wheel.ts), not as rows."
+      ],
+      "imports": [
+        "@singularityfm/design-system/Select"
       ],
       "styles": [
         "packages/design-system/styles/select.css"
@@ -1241,6 +1305,10 @@
         "A native popover with no client directive: its button opens it with popoverTarget (DS-8).",
         "Under 40rem a menu is a sheet, never a small popover.",
         "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass()."
+      ],
+      "imports": [
+        "@singularityfm/design-system/Menu",
+        "@singularityfm/design-system/MenuItem"
       ],
       "styles": [
         "packages/design-system/styles/menu.css"
@@ -1323,6 +1391,9 @@
         "Only the icon takes the tone.",
         "An island draws one with bannerClass() and bannerText."
       ],
+      "imports": [
+        "@singularityfm/design-system/Banner"
+      ],
       "styles": [
         "packages/design-system/styles/banner.css"
       ],
@@ -1384,6 +1455,10 @@
         "Mount <Toast client:idle /> once per page; call showToast() from toastStore, or sendToast() from toastEvent in code that must not load the store.",
         "The page says where it sits with --toast-nav, --toast-dock, --toast-lift and --toast-inline-start/-end on the root, never with a rule on .toast."
       ],
+      "imports": [
+        "@singularityfm/design-system/Toast",
+        "@singularityfm/design-system/toastStore"
+      ],
       "styles": [
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/toast.css"
@@ -1436,6 +1511,7 @@
       ],
       "keywords": [
         "confirm",
+        "confirmation",
         "modal",
         "yes or no",
         "are you sure",
@@ -1445,6 +1521,11 @@
       "rules": [
         "A script finds one with DIALOG_SELECTOR; one it builds uses dialogClass(), dialogBodyClass() and dialogActionsClass().",
         "It renders closed, with no client directive: a script opens it with dialog.showModal() (an island through ref) and closes it with dialog.close() from the Cancel button's click."
+      ],
+      "imports": [
+        "@singularityfm/design-system/Dialog",
+        "@singularityfm/design-system/DialogActions",
+        "@singularityfm/design-system/DialogTitle"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -1510,6 +1591,10 @@
         "A header a script builds is sheetHeadHtml() (design-system/sheetHead.ts); never write the row or its Close by hand.",
         "`sheet-field*`, `sheet-form` and `sheet-actions` are form layout in sheets.css, not the shell."
       ],
+      "imports": [
+        "@singularityfm/design-system/Sheet",
+        "@singularityfm/design-system/SheetHeader"
+      ],
       "styles": [
         "packages/design-system/styles/sheet.css"
       ],
@@ -1569,6 +1654,7 @@
         "Mount SheetFrame; it draws the scrim, viewport, popup and panel from drawer.ts, and the Sheet's head.",
         "Motion uses --duration-sheet-in, --duration-sheet-out and --ease-drawer."
       ],
+      "imports": [],
       "styles": [
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/drawer.css",
@@ -1627,6 +1713,9 @@
         "To reach past the control's box set --ripple-reach-start, --ripple-reach-end or --ripple-reach-bottom on the control; --ripple-display: none turns the layer off where the control has a pointer state.",
         "installRipple() (design-system/ripple.ts) is called once by the app script; the control sets nothing else."
       ],
+      "imports": [
+        "@singularityfm/design-system/Ripple"
+      ],
       "styles": [
         "packages/design-system/styles/ripple.css"
       ],
@@ -1657,6 +1746,7 @@
         "side column",
         "create action"
       ],
+      "imports": [],
       "styles": [
         "packages/design-system/styles/buttons.css"
       ],
@@ -1699,6 +1789,9 @@
       ],
       "rules": [
         "Drawn only for two sections or more."
+      ],
+      "imports": [
+        "@singularityfm/design-system/SectionTabs"
       ],
       "styles": [
         "packages/design-system/styles/primitives.css"
@@ -1755,6 +1848,7 @@
         "Label in regular weight, never bold.",
         "Sits in a `.rows.card-group`."
       ],
+      "imports": [],
       "styles": [
         "packages/design-system/styles/foundations.css",
         "packages/design-system/styles/primitives.css",
@@ -1798,6 +1892,7 @@
         "A card of one row follows its height for its corner.",
         "Dividers run edge to edge inside."
       ],
+      "imports": [],
       "styles": [
         "packages/design-system/styles/primitives.css",
         "packages/design-system/styles/select.css",
@@ -1849,6 +1944,7 @@
         "switch row",
         "setting"
       ],
+      "imports": [],
       "styles": [
         "packages/design-system/styles/picker.css",
         "packages/design-system/styles/primitives.css",
@@ -1900,6 +1996,7 @@
       "rules": [
         "Never hand-write `.empty` markup."
       ],
+      "imports": [],
       "styles": [],
       "usage": "",
       "tokens": []
@@ -1926,6 +2023,7 @@
         "dropdown with checkboxes",
         "picker"
       ],
+      "imports": [],
       "styles": [],
       "usage": "",
       "tokens": []
@@ -1953,6 +2051,7 @@
         "numbers",
         "metrics"
       ],
+      "imports": [],
       "styles": [
         "packages/design-system/styles/primitives.css"
       ],
@@ -1974,6 +2073,7 @@
         "heading",
         "group title"
       ],
+      "imports": [],
       "styles": [
         "packages/design-system/styles/primitives.css"
       ],
@@ -1995,6 +2095,7 @@
         "subtitle",
         "facts line"
       ],
+      "imports": [],
       "styles": [
         "packages/design-system/styles/primitives.css"
       ],
@@ -2019,6 +2120,7 @@
         "thumbnail",
         "album art"
       ],
+      "imports": [],
       "styles": [],
       "usage": "",
       "tokens": []
@@ -3649,6 +3751,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-grey-900)",
+      "role": "The headline ink on the page and on every surface. Running text under a heading takes on-surface-reading.",
       "dark": "var(--color-grey-100)",
       "hex": {
         "light": "#212223",
@@ -3696,6 +3799,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-grey-100)",
+      "role": "Text and glyphs on the inverse surface, which toasts use.",
       "dark": "var(--color-grey-900)",
       "hex": {
         "light": "#e3e4e6",
@@ -4013,6 +4117,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-white)",
+      "role": "Words and glyphs on the accent fill, and a switch's thumb.",
       "dark": "var(--color-grey-900)",
       "hex": {
         "light": "#ffffff",
@@ -4036,6 +4141,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-on-accent)",
+      "role": "Words on a cover's accent. The same colour as on-accent.",
       "dark": "var(--color-on-accent)",
       "hex": {
         "light": "#ffffff",
@@ -4047,6 +4153,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-accent)",
+      "role": "The keyboard focus ring, in the accent. A field in error redraws it in danger.",
       "dark": "var(--color-accent)",
       "hex": {
         "light": "#1755b9",
@@ -4110,6 +4217,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-green-600)",
+      "role": "The good state: the success banner's tone and ink.",
       "dark": "var(--color-green-300)",
       "hex": {
         "light": "#086e3e",
@@ -4121,6 +4229,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-green-50)",
+      "role": "The success tone's tinted background, under --color-success.",
       "dark": "var(--color-green-900)",
       "hex": {
         "light": "#eefdf2",
@@ -4132,6 +4241,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-orange-500)",
+      "role": "A state worth a look: the warning banner's tone and ink.",
       "dark": "var(--color-orange-300)",
       "hex": {
         "light": "#bc530b",
@@ -4143,6 +4253,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-orange-50)",
+      "role": "The warning tone's tinted background, under --color-warning.",
       "dark": "var(--color-orange-900)",
       "hex": {
         "light": "#fff6f3",
@@ -4154,6 +4265,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-red-600)",
+      "role": "A failure or a destructive action. The danger banner, the Delete button, a field in error.",
       "dark": "var(--color-red-300)",
       "hex": {
         "light": "#a5251f",
@@ -4165,6 +4277,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-red-50)",
+      "role": "The danger tone's tinted background, under --color-danger.",
       "dark": "var(--color-red-900)",
       "hex": {
         "light": "#fff6f5",
@@ -4200,6 +4313,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-blue-600)",
+      "role": "A neutral notice tone. No library part draws it yet.",
       "dark": "var(--color-blue-300)",
       "hex": {
         "light": "#1755b9",
@@ -4211,6 +4325,7 @@
       "tier": "semantic",
       "type": "color",
       "light": "var(--color-blue-50)",
+      "role": "The info tone's tinted background, under --color-info.",
       "dark": "var(--color-blue-800)",
       "hex": {
         "light": "#f5f9ff",
@@ -4222,6 +4337,7 @@
       "tier": "semantic",
       "type": "shadow",
       "light": "var(--shadow-cover-light)",
+      "role": "Under a cover image.",
       "dark": "var(--shadow-cover-dark)"
     },
     {
@@ -4229,6 +4345,7 @@
       "tier": "semantic",
       "type": "shadow",
       "light": "var(--shadow-floating-light)",
+      "role": "Under the mini player and other floating chrome.",
       "dark": "var(--shadow-floating-dark)"
     },
     {
@@ -4236,6 +4353,7 @@
       "tier": "semantic",
       "type": "shadow",
       "light": "var(--shadow-sheet-light)",
+      "role": "Under a bottom sheet.",
       "dark": "var(--shadow-sheet-dark)"
     },
     {
@@ -4243,6 +4361,7 @@
       "tier": "semantic",
       "type": "shadow",
       "light": "var(--shadow-popover-light)",
+      "role": "Under a menu, a picker list or a toast.",
       "dark": "var(--shadow-popover-dark)"
     },
     {
@@ -4250,6 +4369,7 @@
       "tier": "semantic",
       "type": "shadow",
       "light": "var(--shadow-raised-light)",
+      "role": "Under a raised surface.",
       "dark": "var(--shadow-raised-dark)"
     },
     {
@@ -4326,31 +4446,36 @@
       "name": "--shape-xs",
       "tier": "semantic",
       "type": "dimension",
-      "light": "var(--radius-xs)"
+      "light": "var(--radius-xs)",
+      "role": "The smallest corner: a flag, a hairline control."
     },
     {
       "name": "--shape-sm",
       "tier": "semantic",
       "type": "dimension",
-      "light": "var(--radius-sm)"
+      "light": "var(--radius-sm)",
+      "role": "A small corner: a cover in a list."
     },
     {
       "name": "--shape-md",
       "tier": "semantic",
       "type": "dimension",
-      "light": "var(--radius-md)"
+      "light": "var(--radius-md)",
+      "role": "A medium corner: a toast, a menu."
     },
     {
       "name": "--shape-lg",
       "tier": "semantic",
       "type": "dimension",
-      "light": "var(--radius-lg)"
+      "light": "var(--radius-lg)",
+      "role": "A large corner: a dialog, a code block."
     },
     {
       "name": "--shape-xl",
       "tier": "semantic",
       "type": "dimension",
-      "light": "var(--radius-xl)"
+      "light": "var(--radius-xl)",
+      "role": "The largest corner short of a sheet: a menu sheet, a card."
     },
     {
       "name": "--shape-sheet",
@@ -4383,7 +4508,8 @@
       "name": "--size-touch-comfortable",
       "tier": "semantic",
       "type": "dimension",
-      "light": "3rem"
+      "light": "3rem",
+      "role": "A touch target with room: a settings row's minimum height."
     },
     {
       "name": "--size-option",
@@ -4403,19 +4529,22 @@
       "name": "--size-icon",
       "tier": "semantic",
       "type": "dimension",
-      "light": "1.25rem"
+      "light": "1.25rem",
+      "role": "A glyph beside a label."
     },
     {
       "name": "--size-icon-lg",
       "tier": "semantic",
       "type": "dimension",
-      "light": "1.5rem"
+      "light": "1.5rem",
+      "role": "A glyph that stands alone in a target."
     },
     {
       "name": "--breakpoint-wide",
       "tier": "semantic",
       "type": "dimension",
-      "light": "40rem"
+      "light": "40rem",
+      "role": "Sheets and dialogs sit at the side instead of filling a phone."
     },
     {
       "name": "--breakpoint-side",
@@ -4435,43 +4564,50 @@
       "name": "--text-display",
       "tier": "semantic",
       "type": "typography",
-      "light": "family: var(--font-ui); size: var(--font-size-display); weight: var(--font-weight-regular); tracking: var(--font-tracking-display); leading: var(--font-leading-display)"
+      "light": "family: var(--font-ui); size: var(--font-size-display); weight: var(--font-weight-regular); tracking: var(--font-tracking-display); leading: var(--font-leading-display)",
+      "role": "A page's title."
     },
     {
       "name": "--text-lead",
       "tier": "semantic",
       "type": "typography",
-      "light": "family: var(--font-ui); size: var(--font-size-lead); weight: var(--font-weight-regular); tracking: var(--font-tracking-lead); leading: var(--font-leading-lead)"
+      "light": "family: var(--font-ui); size: var(--font-size-lead); weight: var(--font-weight-regular); tracking: var(--font-tracking-lead); leading: var(--font-leading-lead)",
+      "role": "A hero's title and the line that introduces a page."
     },
     {
       "name": "--text-title",
       "tier": "semantic",
       "type": "typography",
-      "light": "family: var(--font-ui); size: var(--font-size-title); weight: var(--font-weight-regular); tracking: var(--font-tracking-title); leading: var(--font-leading-title)"
+      "light": "family: var(--font-ui); size: var(--font-size-title); weight: var(--font-weight-regular); tracking: var(--font-tracking-title); leading: var(--font-leading-title)",
+      "role": "A story's headline; one clear step above the text under it."
     },
     {
       "name": "--text-heading",
       "tier": "semantic",
       "type": "typography",
-      "light": "family: var(--font-ui); size: var(--font-size-section); weight: var(--font-weight-regular); tracking: var(--font-tracking-label-lg); leading: var(--font-leading-label)"
+      "light": "family: var(--font-ui); size: var(--font-size-section); weight: var(--font-weight-regular); tracking: var(--font-tracking-label-lg); leading: var(--font-leading-label)",
+      "role": "A section heading: regular weight, never bold."
     },
     {
       "name": "--text-label",
       "tier": "semantic",
       "type": "typography",
-      "light": "family: var(--font-ui); size: var(--font-size-label); weight: var(--font-weight-medium); tracking: var(--font-tracking-body); leading: var(--font-leading-label)"
+      "light": "family: var(--font-ui); size: var(--font-size-label); weight: var(--font-weight-medium); tracking: var(--font-tracking-body); leading: var(--font-leading-label)",
+      "role": "A control's words."
     },
     {
       "name": "--text-body",
       "tier": "semantic",
       "type": "typography",
-      "light": "family: var(--font-ui); size: var(--font-size-body); weight: var(--font-weight-regular); tracking: var(--font-tracking-body); leading: var(--font-leading-body)"
+      "light": "family: var(--font-ui); size: var(--font-size-body); weight: var(--font-weight-regular); tracking: var(--font-tracking-body); leading: var(--font-leading-body)",
+      "role": "The interface's running text."
     },
     {
       "name": "--text-reading",
       "tier": "semantic",
       "type": "typography",
-      "light": "family: var(--font-read); size: var(--font-size-reading); weight: var(--font-weight-regular); tracking: var(--font-tracking-body); leading: var(--font-leading-reading)"
+      "light": "family: var(--font-read); size: var(--font-size-reading); weight: var(--font-weight-regular); tracking: var(--font-tracking-body); leading: var(--font-leading-reading)",
+      "role": "Story and summary text: one size at every width, one ink step under the headline."
     },
     {
       "name": "--text-meta",
@@ -4484,7 +4620,8 @@
       "name": "--text-caption",
       "tier": "semantic",
       "type": "typography",
-      "light": "family: var(--font-ui); size: var(--font-size-caption); weight: var(--font-weight-regular); tracking: var(--font-tracking-caption); leading: var(--font-leading-caption)"
+      "light": "family: var(--font-ui); size: var(--font-size-caption); weight: var(--font-weight-regular); tracking: var(--font-tracking-caption); leading: var(--font-leading-caption)",
+      "role": "The smallest text: a swatch's note, a count."
     },
     {
       "name": "haptic-navigate",
