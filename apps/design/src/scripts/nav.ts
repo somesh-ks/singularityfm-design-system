@@ -121,7 +121,7 @@ function move(nav: HTMLElement, open: boolean): void {
   nav.scrollTop = scroll;
 
   // The furthest anything moves. A long list covers more ground in the same time, so its first frame is
-  // faster than a short list's; the duration grows with that reach (up to twice the token) to keep it even.
+  // faster than a short list's; the duration grows with that reach (up to three times the token) to keep it even.
   const reach = Math.max(
     0,
     ...rows.map((row) => Math.abs((wasTop.get(row) ?? 0) - (tops.get(row) ?? 0))),
@@ -129,8 +129,8 @@ function move(nav: HTMLElement, open: boolean): void {
   );
   const base = Number.parseFloat(token(open ? "--duration-enter" : "--duration-state"));
   const timing: KeyframeAnimationOptions = {
-    // shortcut: 200px is the reach a list of the nav's usual size moves; longer lists grow the duration, capped at 2x.
-    duration: base * Math.min(2, Math.max(1, reach / 200)),
+    // shortcut: 200px is the reach a list of the nav's usual size moves; longer lists grow the duration, capped at 3x.
+    duration: base * Math.min(3, Math.max(1, reach / 200)),
     easing: token("--ease-out"),
     fill: "forwards",
     composite: "add",
