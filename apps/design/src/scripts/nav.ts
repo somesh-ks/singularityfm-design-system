@@ -120,8 +120,17 @@ function move(nav: HTMLElement, open: boolean): void {
   // The final layout may have clamped the scroll; the layout in flight is as tall as before.
   nav.scrollTop = scroll;
 
+  // The furthest anything moves. A long list covers more ground in the same time, so its first frame is
+  // faster than a short list's; the duration grows with that reach (up to twice the token) to keep it even.
+  const reach = Math.max(
+    0,
+    ...rows.map((row) => Math.abs((wasTop.get(row) ?? 0) - (tops.get(row) ?? 0))),
+    ...groups.map((entry) => Math.abs((heights.get(entry) ?? 0) - (wasHeight.get(entry) ?? 0))),
+  );
+  const base = Number.parseFloat(token(open ? "--duration-enter" : "--duration-state"));
   const timing: KeyframeAnimationOptions = {
-    duration: Number.parseFloat(token(open ? "--duration-enter" : "--duration-state")),
+    // shortcut: 200px is the reach a list of the nav's usual size moves; longer lists grow the duration, capped at 2x.
+    duration: base * Math.min(2, Math.max(1, reach / 200)),
     easing: token("--ease-out"),
     fill: "forwards",
     composite: "add",
