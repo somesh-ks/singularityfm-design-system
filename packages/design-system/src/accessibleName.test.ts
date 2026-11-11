@@ -32,10 +32,10 @@ describe("an unnamed control", () => {
     renderToStaticMarkup(h(Select, { id: "sort" }));
     renderToStaticMarkup(h(Slider, { "aria-labelledby": "speed" }));
     renderToStaticMarkup(h(Slider, { id: "speed" }));
-    // Unnamed, twice each: one warning per component.
+    // Unnamed, twice each (a blank label names nothing): one warning per component.
     for (let time = 0; time < 2; time++) {
       renderToStaticMarkup(h(SegmentedChoice, { name: "n", options, id: "not-a-name" }));
-      renderToStaticMarkup(h(Select, {}));
+      renderToStaticMarkup(h(Select, { label: "  " }));
       renderToStaticMarkup(h(Slider, {}));
     }
   }

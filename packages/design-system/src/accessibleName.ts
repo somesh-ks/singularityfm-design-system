@@ -16,13 +16,22 @@ interface Naming {
 const warned = new Set<string>();
 
 /**
- * The environment's mode, read without Node's types (the package ships its source, which a consumer's
- * tsc reads). Only "development" warns, so a browser bundle, where there is no `process`, stays quiet.
+ * Node's `process`, declared here so a consumer's tsc reads the shipped source without Node's types.
+ * Only a type: nothing is emitted, so a bundle still sees the plain `process.env.NODE_ENV`.
+ */
+declare const process: { env: Record<string, string | undefined> };
+
+/**
+ * The environment's mode, written as the literal `process.env.NODE_ENV` that Vite, webpack and
+ * esbuild replace in a browser bundle, so a client-drawn control warns in development too. Only
+ * "development" warns; a browser bundle that replaces nothing has no `process` and stays quiet.
  */
 function developing(): boolean {
-  const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process
-    ?.env;
-  return env?.NODE_ENV === "development";
+  try {
+    return process.env.NODE_ENV === "development";
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -36,7 +45,7 @@ export function warnUnnamed(
 ): void {
   if (!developing() || warned.has(component)) return;
   const named =
-    Boolean(label) ||
+    (typeof label === "string" ? Boolean(label.trim()) : Boolean(label)) ||
     Boolean(naming["aria-label"]?.trim()) ||
     Boolean(naming["aria-labelledby"]?.trim()) ||
     Boolean(naming.title?.trim()) ||

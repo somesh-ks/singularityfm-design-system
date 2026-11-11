@@ -52,7 +52,7 @@ describe("the design system file", () => {
   // own, and it was shown as the usage of the settings row. A class may also open a group ("a, b {")
   // elsewhere with no comment of its own; the comment is the one over its own rule. A lint suppression
   // sits right on its rule, and it was published as the filter chip's usage.
-  it("takes a usage comment from the rule of the class alone", () => {
+  it("takes a usage comment from the class's own rule, past a lint suppression", () => {
     const root = mkdtempSync(join(tmpdir(), "usage-"));
     mkdirSync(join(root, "styles"), { recursive: true });
     writeFileSync(

@@ -171,16 +171,17 @@ export default function Toast() {
           ),
         )}
       </span>
-      {shown?.actionLabel ? (
+      {/* The action is the words' too: under a role that changed it would offer the last message's. */}
+      {words?.actionLabel ? (
         <button
           className="toast-action"
           type="button"
           onClick={() => {
             dismissToast();
-            shown.onAction?.();
+            words.onAction?.();
           }}
         >
-          {shown.actionLabel}
+          {words.actionLabel}
         </button>
       ) : null}
       {/* Every toast has a close button, shown only to a mouse: on a touch screen a swipe takes it
