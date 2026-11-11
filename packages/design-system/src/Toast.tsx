@@ -131,8 +131,9 @@ export default function Toast() {
   // under the new role, where an alert would read them out again.
   const role = (toast ?? shown)?.kind === "error" ? "alert" : "status";
   const words = (shown?.kind === "error" ? "alert" : "status") === role ? shown : null;
-  // The buttons act on the coming message for that render, never the last one's action, and keep their
-  // nodes, so a keyboard press on one keeps its focus when the next message replaces it.
+  // The buttons follow the words on screen; for the render a changed role holds the words back, they act
+  // on the coming message, never the last one's action. Either way they keep their nodes, so a keyboard
+  // press on one keeps its focus when the next message replaces it.
   const acting = words ?? toast;
 
   return (
