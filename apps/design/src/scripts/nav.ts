@@ -38,6 +38,9 @@ function token(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
+/** Everything the column scrolls: the brand, each page's row and the foot. */
+const ROWS = ".app-nav-brand, .app-nav-list > li, .guide-nav-foot";
+
 /** Drops what a motion held inline. Touching the style of an element with none writes `style=""`. */
 function unhold(element: HTMLElement): void {
   if (!element.hasAttribute("style")) return;
@@ -54,9 +57,7 @@ function settle(): void {
   heights.clear();
   fades.clear();
   for (const entry of groups) entry.panel.hidden = !expanded(entry);
-  for (const row of document.querySelectorAll<HTMLElement>(".app-nav-list > li, .guide-nav-foot")) {
-    unhold(row);
-  }
+  for (const row of document.querySelectorAll<HTMLElement>(ROWS)) unhold(row);
 }
 
 /**
@@ -68,7 +69,7 @@ function settle(): void {
  * A list that closes stays in the page until the motion ends.
  */
 function move(nav: HTMLElement, open: boolean): void {
-  const rows = [...nav.querySelectorAll<HTMLElement>(".app-nav-list > li, .guide-nav-foot")];
+  const rows = [...nav.querySelectorAll<HTMLElement>(ROWS)];
   // Where the last press sent everything, or where it stands at rest. offsetTop and offsetHeight
   // ignore transforms and clips, so the column must be at rest for them to be what is seen.
   const wasTop = new Map(rows.map((row) => [row, tops.get(row) ?? row.offsetTop]));
@@ -90,7 +91,19 @@ function move(nav: HTMLElement, open: boolean): void {
     }
   };
   layOut(true);
-  for (const row of rows) tops.set(row, row.offsetTop);
+  // A list that closes can leave less to scroll than the column has scrolled; when it leaves the page
+  // the scroll clamps. The rows end where the clamp will put them, so settling moves nothing.
+  // shortcut: a scroll by the reader during the motion is not counted; upgrade if it shows.
+  // Measured from the last row's box, not scrollHeight, which counts a motion's translates.
+  const last = rows.at(-1);
+  const bottom = last
+    ? last.offsetTop +
+      last.offsetHeight +
+      Number.parseFloat(getComputedStyle(last).marginBlockEnd) +
+      Number.parseFloat(getComputedStyle(nav).paddingBlockEnd)
+    : 0;
+  const clamp = scroll - Math.max(0, Math.min(scroll, bottom - nav.clientHeight));
+  for (const row of rows) tops.set(row, row.offsetTop + clamp);
   for (const entry of groups) heights.set(entry, entry.group.offsetHeight);
   layOut(false);
   // Every read of the layout in flight before the first write, so the press lays out once.
@@ -104,8 +117,7 @@ function move(nav: HTMLElement, open: boolean): void {
       },
     ]),
   );
-  // shortcut: hiding a list can clamp the column's scroll; it is put back here, but a close that ends
-  // at the column's end still settles by the clamp. Upgrade if a short window makes it show.
+  // The final layout may have clamped the scroll; the layout in flight is as tall as before.
   nav.scrollTop = scroll;
 
   const timing: KeyframeAnimationOptions = {
