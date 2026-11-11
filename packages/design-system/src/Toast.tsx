@@ -131,6 +131,9 @@ export default function Toast() {
   // under the new role, where an alert would read them out again.
   const role = (toast ?? shown)?.kind === "error" ? "alert" : "status";
   const words = (shown?.kind === "error" ? "alert" : "status") === role ? shown : null;
+  // The buttons act on the coming message for that render, never the last one's action, and keep their
+  // nodes, so a keyboard press on one keeps its focus when the next message replaces it.
+  const acting = words ?? toast;
 
   return (
     <div
@@ -171,28 +174,27 @@ export default function Toast() {
           ),
         )}
       </span>
-      {/* The action is the words' too: under a role that changed it would offer the last message's. */}
-      {words?.actionLabel ? (
+      {acting?.actionLabel ? (
         <button
           className="toast-action"
           type="button"
           onClick={() => {
             dismissToast();
-            words.onAction?.();
+            acting.onAction?.();
           }}
         >
-          {words.actionLabel}
+          {acting.actionLabel}
         </button>
       ) : null}
       {/* Every toast has a close button, shown only to a mouse: on a touch screen a swipe takes it
           (styles/toast.css), and a keyboard and a screen reader still reach it (owner, 2026-11-10). */}
-      {shown ? (
+      {acting ? (
         <button
           className="toast-dismiss press"
           type="button"
           aria-label="Dismiss"
           onClick={() => {
-            shown.onDismiss?.();
+            acting.onDismiss?.();
             dismissToast();
           }}
         >

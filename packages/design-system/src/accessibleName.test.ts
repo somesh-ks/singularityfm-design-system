@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } fr
 // components warn in development; a named control, and production, stay quiet.
 describe("an unnamed control", () => {
   let warn: MockInstance<typeof console.warn>;
+  let named = 0;
 
   beforeEach(() => {
     vi.resetModules();
@@ -32,6 +33,8 @@ describe("an unnamed control", () => {
     renderToStaticMarkup(h(Select, { id: "sort" }));
     renderToStaticMarkup(h(Slider, { "aria-labelledby": "speed" }));
     renderToStaticMarkup(h(Slider, { id: "speed" }));
+    // Checked before the unnamed ones, whose warning a named control's would otherwise hide (once each).
+    named = warn.mock.calls.length;
     // Unnamed, twice each (a blank label names nothing): one warning per component.
     for (let time = 0; time < 2; time++) {
       renderToStaticMarkup(h(SegmentedChoice, { name: "n", options, id: "not-a-name" }));
@@ -43,6 +46,7 @@ describe("an unnamed control", () => {
   it("warns once per component in development", async () => {
     vi.stubEnv("NODE_ENV", "development");
     await draw();
+    expect(named).toBe(0);
     const said = warn.mock.calls.map(([message]) => String(message));
     expect(said).toHaveLength(3);
     for (const name of ["SegmentedChoice", "Select", "Slider"]) {

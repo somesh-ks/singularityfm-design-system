@@ -36,14 +36,18 @@ function developing(): boolean {
 
 /**
  * Warns once per component when it has no name. An `id` counts as one when `byId` is set (a select
- * or a slider an outside `<label for>` names); a fieldset cannot take one that way.
+ * or a slider an outside `<label for>` names); a fieldset cannot take one that way. A component with a
+ * `label` prop passes `label`, even when it is undefined, so the advice names the prop only where it
+ * exists. A `<label>` wrapped around the control names it too, but a server render cannot see its
+ * parent, so the advice points such a caller at `for` and an id.
  */
 export function warnUnnamed(
   component: string,
   naming: Naming,
-  { byId = false, label }: { byId?: boolean; label?: unknown } = {},
+  options: { byId?: boolean; label?: unknown } = {},
 ): void {
   if (!developing() || warned.has(component)) return;
+  const { byId = false, label } = options;
   const named =
     (typeof label === "string" ? Boolean(label.trim()) : Boolean(label)) ||
     Boolean(naming["aria-label"]?.trim()) ||
@@ -52,11 +56,13 @@ export function warnUnnamed(
     (byId && Boolean(naming.id));
   if (named) return;
   warned.add(component);
+  const ways = [
+    ...("label" in options ? ["label"] : []),
+    "aria-label",
+    "aria-labelledby",
+    ...(byId ? ["an id an outside <label for> names (a wrapping <label> it cannot see)"] : []),
+  ];
   console.warn(
-    `@singularityfm/design-system: a ${component} has no accessible name, so a screen reader says only its role. Pass ${
-      byId
-        ? "label, aria-label, aria-labelledby, or an id an outside <label for> names"
-        : "aria-label or aria-labelledby"
-    }.`,
+    `@singularityfm/design-system: a ${component} has no accessible name, so a screen reader says only its role. Pass ${ways.slice(0, -1).join(", ")} or ${ways.at(-1)}.`,
   );
 }
