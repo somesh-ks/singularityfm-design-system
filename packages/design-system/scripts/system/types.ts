@@ -34,6 +34,8 @@ export interface PartSource {
 }
 
 export interface Part extends PartSource {
+  /** What to import to draw it, from the package's exports map: "@singularityfm/design-system/Button". */
+  imports: string[];
   /** The stylesheets (repo paths) that define the classes. */
   styles: string[];
   /** The comment written over the root class, which is the owner's wording of its usage. */

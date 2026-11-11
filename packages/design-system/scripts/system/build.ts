@@ -70,6 +70,26 @@ function reusableTokenNames(doc: TokenDocument): Set<string> {
   );
 }
 
+const MANIFEST = JSON.parse(readFileSync(join(PACKAGE, "package.json"), "utf8")) as {
+  name: string;
+  exports: Record<string, string>;
+};
+
+/**
+ * The import specifiers of a part's source files, read from the exports map so a renamed export
+ * cannot leave the lookup naming one that does not resolve. The deprecated `.astro` paths are left out.
+ */
+function importsOf(files: string[] | undefined): string[] {
+  const specifiers = (files ?? []).flatMap((file) => {
+    const target = `./${posix(relative(PACKAGE, join(ROOT, file)))}`;
+    const key = Object.entries(MANIFEST.exports).find(
+      ([name, path]) => path === target && !name.endsWith(".astro"),
+    )?.[0];
+    return key ? [`${MANIFEST.name}/${key.slice(2)}`] : [];
+  });
+  return [...new Set(specifiers)];
+}
+
 function derive(source: PartSource, sheets: Stylesheet[], reusable: Set<string>): Part {
   const rulePatterns = source.classes.map(ruleOf);
   const styles = new Set<string>();
@@ -88,6 +108,7 @@ function derive(source: PartSource, sheets: Stylesheet[], reusable: Set<string>)
   }
   return {
     ...source,
+    imports: importsOf(source.files),
     styles: [...styles].sort(),
     usage,
     tokens: [...tokens].sort(),
@@ -196,7 +217,7 @@ export function renderLlms(system: System): string {
     `<!-- ${GENERATED} -->`,
     "",
     "Pick a part from this list before writing a class or a value. A part that fits is used as it is; none fits means ask the owner. Never invent a control class.",
-    'Detail of one: `npm run ds -- part <id>`. Search by need: `npm run ds -- find "<what you need>"`. Tokens: `npm run ds -- token <words>`. Everything: tokens/system.json.',
+    'Ask `ds find "<need>"`, `ds part <id>` or `ds token <words>`, not this whole file (`ds` is `pnpm run ds` here, `tsx node_modules/@singularityfm/design-system/scripts/system/cli.ts` in an app). Rules for an app: AGENTS.md. Everything: tokens/system.json.',
     "",
     "## Parts",
     "`id` classes: what it is. Use: when. Not: situation → part to use instead.",
@@ -220,11 +241,22 @@ export function renderLlms(system: System): string {
     "## Color roles",
     "Components read only these (never a hex, never a primitive color).",
   );
-  for (const token of system.tokens)
-    if (token.tier === "semantic" && token.type === "color")
+  // A tone's tinted background is the tone's name plus -subtle: one line names them, not one each.
+  const colors = system.tokens.filter(
+    (token) => token.tier === "semantic" && token.type === "color",
+  );
+  const subtle = colors.filter((token) =>
+    colors.some((base) => token.name === `${base.name}-subtle`),
+  );
+  for (const token of colors)
+    if (!subtle.includes(token))
       lines.push(
-        token.role ? `- ${token.name}: ${firstSentence(token.role, 90)}` : `- ${token.name}`,
+        token.role ? `- ${token.name}: ${firstSentence(token.role, 72)}` : `- ${token.name}`,
       );
+  if (subtle.length > 0)
+    lines.push(
+      `- <tone>-subtle for ${subtle.map((token) => token.name.replace(/^--color-|-subtle$/g, "")).join(", ")}: the tone's tinted background`,
+    );
   // A fill's hover and press are derived colours (D317): one line names them, not 26.
   const stated = new Set(
     system.tokens
@@ -232,7 +264,9 @@ export function renderLlms(system: System): string {
       .map((token) => token.name.replace(/-(hover|pressed)$/, "")),
   );
   if (stated.size > 0)
-    lines.push(`- <fill>-hover and <fill>-pressed for ${[...stated].join(", ")}: its state fills`);
+    lines.push(
+      `- --color-<fill>-hover and -pressed for ${[...stated].map((name) => name.replace(/^--color-/, "")).join(", ")}: its state fills`,
+    );
   lines.push("", "## Scales", "Read directly by components.");
   const scales = ["space", "radius", "stroke", "duration", "ease"];
   for (const scale of scales) {
@@ -244,7 +278,9 @@ export function renderLlms(system: System): string {
         (token) =>
           token.tier === "primitive" &&
           token.name.startsWith(prefix) &&
-          (scale !== "radius" || token.name === "--radius-round"),
+          (scale !== "radius" || token.name === "--radius-round") &&
+          // The Avatar's own animation times: it plays them, a page never reads them.
+          !token.name.startsWith("--duration-avatar-"),
       )
       .map((token) => {
         const name = token.name.slice(prefix.length);
@@ -254,16 +290,16 @@ export function renderLlms(system: System): string {
     if (scale === "radius")
       lines.push("- --shape-{xs, sm, md, lg, xl, sheet, 2xl}: corners, a style redraws them");
   }
-  const groups = new Map<string, number>();
+  const groups = new Set<string>();
   for (const token of system.tokens)
     if (token.tier === "component") {
       const group = token.name.split("-")[2] ?? "";
-      groups.set(group, (groups.get(group) ?? 0) + 1);
+      groups.add(group);
     }
   lines.push(
     "",
     "## Component tokens",
-    `Sizes per part: ${[...groups].map(([group, count]) => `${group} (${count})`).join(", ")}. List one with \`npm run ds -- token <group>\`.`,
+    `Sizes per part: ${[...groups].join(", ")}. List one with \`ds token <group>\`.`,
     "",
   );
   return lines.join("\n");

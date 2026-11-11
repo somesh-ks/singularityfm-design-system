@@ -526,7 +526,7 @@ export const componentParts = (): PartSource[] => [
       "packages/design-system/src/DialogTitle.tsx",
       "packages/design-system/src/dialog.ts",
     ],
-    keywords: ["confirm", "modal", "yes or no", "are you sure", "delete confirm"],
+    keywords: ["confirm", "confirmation", "modal", "yes or no", "are you sure", "delete confirm"],
     markup:
       '<Dialog aria-labelledby="t"><DialogTitle id="t">Delete?</DialogTitle><DialogActions><Button variant="text">Cancel</Button></DialogActions></Dialog>',
     rules: [
