@@ -70,6 +70,7 @@ describe("the rules", () => {
       '.f::after { content: "@media #fff"; }',
     ].join("\n");
     expect(lines(rawColour(partial, "page.css"))).toEqual([1, 2, 3, 6]);
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: the text is a source file's template literal, as the rule reads it.
     expect(rawColour("const s = `oklch(from ${source} l c h)`;", "build.ts")).toEqual([]);
   });
 
