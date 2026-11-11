@@ -35,7 +35,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "complexity": {
         "noImportantStyles": "error"
       },
@@ -55,6 +55,19 @@
           "correctness": {
             "noUnusedImports": "off",
             "noUnusedVariables": "off"
+          },
+          "style": {
+            "useImportType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/design-system/scripts/themeInit.js"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useTemplate": "off"
           }
         }
       }

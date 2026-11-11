@@ -323,6 +323,7 @@
   /* The filled track is a gradient, which forced colours removes along with every other background
        image. Opting the slider out keeps it, and the system colours here keep it legible. */
 
+  /* biome-ignore lint/style/noDescendingSpecificity: both set forced-color-adjust to none; this one adds the system colours. */
   .slider-input {
     --range-fill-color: Highlight;
     --range-track-color: ButtonText;

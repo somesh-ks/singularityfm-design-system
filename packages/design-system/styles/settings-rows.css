@@ -43,6 +43,7 @@
   min-width: 0;
 }
 
+/* biome-ignore lint/style/noDescendingSpecificity: sets size and leading; the quiet row's rule above sets its colour. */
 .settings-label {
   font-size: var(--text-body-size);
   line-height: var(--font-leading-label);
@@ -56,6 +57,7 @@
 
 /* The label is as wide as its words and the control takes the row's end (owner, 2026-10-25): a label
    that filled the row made the empty middle a target, and hovering it lit the control it names. */
+/* biome-ignore lint/style/noDescendingSpecificity: sets flex only; the quiet row's rule above sets its colour. */
 .settings-row > .settings-label {
   flex: 0 1 auto;
 }
@@ -302,6 +304,7 @@
 /* The same on the index for any select (Theme): its value sits at the row's end among the link rows'
    values (2026-10-22), so it reads as they do. No more specific than the rule that hides it until
    the stored value is set, which comes later and so still wins. */
+/* biome-ignore lint/style/noDescendingSpecificity: the same colour and weight as the model row's rule above, so their order changes nothing. */
 .settings-view .value-select > select.field-input {
   color: var(--color-on-surface-muted);
   font-weight: var(--font-weight-regular);

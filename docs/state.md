@@ -1,6 +1,6 @@
 # State
 
-Rewritten, never appended. As of 2026-11-10: 0.9.0 is on npm (every control family on React, DS-7 and DS-8; Toast, PlayingBars, the toast's close button for a mouse); the app pins 0.8.1 (app #788). The repository is public (owner, 2026-11-10), so CodeRabbit reviews line by line.
+Rewritten, never appended. As of 2026-11-11: 0.9.0 is on npm (every control family on React, DS-7 and DS-8; Toast, PlayingBars, the toast's close button for a mouse); the app pins 0.8.1 (app #788). The repository is public (owner, 2026-11-10), so CodeRabbit reviews line by line.
 
 ## Works
 
@@ -28,13 +28,15 @@ Rewritten, never appended. As of 2026-11-10: 0.9.0 is on npm (every control fami
 
 ## Unverified
 
+- SegmentedChoice, Select and Slider warn once in development when drawn with no accessible name (owner, 2026-11-10: a warning now, not a required prop; an `id` counts for Select and Slider, which an outside `<label for>` may name). closed when: the app's bump runs its dev server and its console shows none (or it names what warns).
+- The library's keyboard rings on the search field, picker search and wheel are keyed off the pointer (`:not([data-input="pointer"])`) instead of on the keyboard, so a consumer with no input-mode script shows them; with one (the app's `app.ts`, the guide's `inputMode.ts`) nothing changes. closed when: the app's bump passes its screenshots and browser suites (a click into its search still draws no ring).
+- A Toast's role now follows the store, a render before its words. closed when: a screen reader announces an error toast that replaces a status toast (VoiceOver and NVDA).
 - `.guide-bans li` (Principles, the banned list) has no inline padding: it read `--space-3`, which no token defines, so its `padding-inline` never applied, and the dead declaration is gone (the look is unchanged). closed when: the owner says whether the pills want inline padding (a visual change) or stay as drawn.
 - The style guide's Vercel project builds from this repository. closed when: a push to main deploys news.someshks.work/design from this repository and `ignore-build.sh` skips a docs-only push.
 - The ruleset (`.github/rulesets/main.json`) is imported. closed when: a PR without a green `check` cannot merge.
 - The pack-and-install test runs on Windows. closed when: `pnpm run gate` passes in PowerShell on the owner's machine.
 - Five parts read empty in `system.json` (settings row, toast, empty state, multiselect, cover): their base rules live in the app's stylesheets, not the library's, so the library has no comment to read. closed when: each one's CSS moves into the library with its component, or the app writes its usage report (DS-2) and the part moves there.
 - "The primary fill" does not reach `--color-accent` in `ds find`: its role never says "primary". closed when: the accent's role names the primary fill and `golden.json` has a row for it.
-- `ds validate` over the library's own `src/` and `styles/` finds two errors: `fab.css` spaces the Fab's label with a 4px `margin-inline` twice (Code no longer types `icon-btn`: it draws the IconButton). closed when: the Fab's label margin is in `GRID_EXCEPTIONS` with a reason or on the grid.
 - The app draws Field, Switch and Slider by name. closed when: the app's bump to the release with them imports `<pkg>/Field`, `/Switch` and `/Slider` with `className` (its `@base-ui/react` already covers the Field), and its screenshots and browser suites pass. Its scripts (`settingsPage.ts`, `notificationsSettings.ts`, `podcastPage.ts`), SpeedPanel's `sliderClass()` and its selectors (`settings.css`, `topics.css`) need no change: the markup is main's.
 - The app draws the React overlays. closed when: the app imports `<pkg>/Dialog`, `/DialogTitle`, `/DialogActions`, `/Sheet` and `/SheetHeader` and passes `className` (`blocked-outlets.astro`'s `class="blocked-sheet"`), and its screenshots and browser suites pass.
 - The app draws Chip, ChipGroup, PlayChip, SegmentedChoice, SegmentedNav and SearchField. closed when: the app's bump replaces its hand-typed `filter-chip` (library, CreateForm, EpisodeActions, PodcastProfile, GenerateSheet), `chip` (PlayChip.astro), `segmented-choice` (CreateForm, EpisodeActions, GenerateSheet), `segmented-nav` (TopicsPanel, admin costs and health) and `search-field` (library, downloads, blocked outlets, SourceFilter, EmojiPicker) markup, imports `mountSegmentedNav` and `selectTab` from `<pkg>/segmentedNav` in `topicsPanel.ts`, `costsPage.ts` and `healthPage.ts` (and `topicsPage.ts`'s dynamic import), deletes its own `segmentedNav.ts` and its `coverage.ts` entry, and its screenshots and browser suites pass.

@@ -171,6 +171,7 @@ dialog.sheet-side[data-scrolled] .sheet-head {
 
 /* A title with a quiet line under it (a Library card's menu: its facts), the way a media sheet names
    what it acts on. The line is the muted ink and one line long. */
+/* biome-ignore lint/style/noDescendingSpecificity: sets the grid; the head's rule above sets min-width. */
 .sheet-heading {
   display: grid;
 }

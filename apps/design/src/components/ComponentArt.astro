@@ -63,6 +63,7 @@ const { slug } = Astro.props;
     slug === "segmented-choice" && (
       <SegmentedChoice
         name="art-choice"
+        aria-label={SAMPLE.label}
         defaultValue="1"
         options={SAMPLE.segments.slice(0, 2).map((label, n) => ({ value: String(n + 1), label, tabIndex: -1 }))}
       />

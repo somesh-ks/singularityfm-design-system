@@ -369,6 +369,7 @@
     display: none;
   }
 
+  /* biome-ignore lint/style/noDescendingSpecificity: the rule above is the one case that hides the head; this draws it everywhere else. */
   .menu-sheet > .sheet-head:not([data-has-back]) {
     display: flex;
     flex: none;

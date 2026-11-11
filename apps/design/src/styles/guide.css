@@ -143,6 +143,7 @@
 }
 
 /* A step is its color, then its number under it. */
+/* biome-ignore lint/style/noDescendingSpecificity: another list; .guide-list li + li above never matches it. */
 .guide-ramp li {
   display: grid;
   gap: var(--space-1);
@@ -502,6 +503,7 @@
   list-style: none;
 }
 
+/* biome-ignore lint/style/noDescendingSpecificity: another list; .guide-list li + li above never matches it. */
 .guide-bans li {
   display: inline-flex;
   align-items: center;

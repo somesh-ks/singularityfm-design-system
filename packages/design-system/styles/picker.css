@@ -77,6 +77,7 @@
 
 /* In the Create form it is an outlined select, as the one it replaces (select.css): the Field's edge
    on a pill, the text at the body size so iOS never zooms into it. */
+/* biome-ignore lint/style/noDescendingSpecificity: the create form's trigger; the settings row's rule above never matches it. */
 .create-voice-select > .picker-trigger {
   inline-size: 100%;
   min-block-size: var(--field-height);
@@ -95,6 +96,7 @@
 
 /* Focused or open, one accent line on its edge, as a focused field's. */
 .create-voice-select > .picker-trigger:focus-visible,
+/* biome-ignore lint/style/noDescendingSpecificity: sets the accent edge; the settings row's rule above sets its fill. */
 .create-voice-select > .picker-trigger[aria-expanded="true"] {
   border-color: var(--color-accent);
   outline-offset: calc(var(--stroke-hairline) * -1);
@@ -264,7 +266,7 @@
   background: var(--color-surface-container-hover);
 }
 
-:root[data-input="keyboard"] .picker-search:focus-within {
+:root:not([data-input="pointer"]) .picker-search:focus-within {
   outline: var(--stroke-ring) solid var(--color-focus-ring);
   outline-offset: var(--stroke-ring-gap);
 }
@@ -408,6 +410,7 @@
   column-gap: var(--space-6);
 }
 
+/* biome-ignore lint/style/noDescendingSpecificity: places the name; the chosen row's rule above sets its colour. */
 .picker-option-voice > .picker-option-name {
   grid-column: 2;
   grid-row: 1;

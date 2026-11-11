@@ -1,4 +1,5 @@
 import type { CSSProperties, InputHTMLAttributes } from "react";
+import { warnUnnamed } from "./accessibleName.ts";
 import { passedAttributes, styleObject } from "./attributes.ts";
 import { sliderClass, sliderWaveFieldClass } from "./slider.ts";
 import "../styles/slider.css";
@@ -32,6 +33,7 @@ type Props = SliderProps & Omit<InputHTMLAttributes<HTMLInputElement>, keyof Sli
  * percentage, on the input, or on the field a hue or wavy Slider is wrapped in (slider.ts).
  */
 export default function Slider({ className, style, hue = false, wavy = false, ...passed }: Props) {
+  warnUnnamed("Slider", passed, { byId: true });
   const placed = hue || wavy;
   const input = (
     <input

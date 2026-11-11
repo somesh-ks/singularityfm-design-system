@@ -142,6 +142,7 @@
   flex: none;
 }
 
+/* biome-ignore lint/style/noDescendingSpecificity: min-width only; the one-line toast above adds its ellipsis. */
 .toast-text {
   min-width: 0;
 }

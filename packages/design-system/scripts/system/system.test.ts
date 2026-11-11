@@ -50,16 +50,18 @@ describe("the design system file", () => {
 
   // Prevents a part showing another rule's comment: `.settings-row .multiselect` has a comment of its
   // own, and it was shown as the usage of the settings row. A class may also open a group ("a, b {")
-  // elsewhere with no comment of its own; the comment is the one over its own rule.
-  it("takes a usage comment from the rule of the class alone", () => {
+  // elsewhere with no comment of its own; the comment is the one over its own rule. A lint suppression
+  // sits right on its rule, and it was published as the filter chip's usage.
+  it("takes a usage comment from the class's own rule, past a lint suppression", () => {
     const root = mkdtempSync(join(tmpdir(), "usage-"));
     mkdirSync(join(root, "styles"), { recursive: true });
     writeFileSync(
       join(root, "styles/x.css"),
-      "/* inside the row */\n.row .field {\n  color: red;\n}\n\n.row,\n.plain {\n  display: flex;\n}\n\n/* the row itself */\n.row {\n  color: blue;\n}\n",
+      "/* inside the row */\n.row .field {\n  color: red;\n}\n\n.row,\n.plain {\n  display: flex;\n}\n\n/* the row itself */\n.row {\n  color: blue;\n}\n\n/* a chip */\n/* biome-ignore lint/style/noDescendingSpecificity: why. */\n.chip {\n  color: green;\n}\n",
     );
     expect(usageComment("styles/x.css", ".row", root)).toBe("the row itself");
     expect(usageComment("styles/x.css", ".plain", root)).toBe("");
+    expect(usageComment("styles/x.css", ".chip", root)).toBe("a chip");
   });
 
   // Prevents the index outgrowing its purpose: it is read whole, so each byte is paid for on every task.

@@ -31,6 +31,8 @@ function repo() {
   git(root, ["init", "-q", "-b", "main"]);
   git(root, ["config", "user.email", "t@example.com"]);
   git(root, ["config", "user.name", "t"]);
+  // The fixture's files are LF; a Windows machine's global autocrlf would print a warning per add.
+  git(root, ["config", "core.autocrlf", "false"]);
   const stubs = join(root, ".stubs");
   mkdirSync(stubs);
   writeFileSync(join(stubs, "date"), `#!/bin/sh\necho ${NOW / 1000}\n`);
