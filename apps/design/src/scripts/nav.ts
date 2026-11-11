@@ -17,8 +17,19 @@ for (const toggle of document.querySelectorAll<HTMLButtonElement>("[data-nav-tog
   if (group && panel) groups.push({ group, toggle, panel });
 }
 
-/** The motion in flight: one for the whole column, so presses on two groups never fight. */
+/**
+ * The motion in flight: one for the whole column, so presses on two groups never fight. Each press adds
+ * a layer and leaves the earlier ones running (composite "add"), so a row already moving keeps its speed
+ * through a second press and only takes on that press's own push, as a single press would give it.
+ */
 let flight: Animation[] = [];
+/** Per press, so only the newest press's end settles the column. */
+let press = 0;
+/** Where each row and each group's visible height end up, as the last press laid them out. */
+const tops = new Map<HTMLElement, number>();
+const heights = new Map<Group, number>();
+/** Each list's fade, the one part that replaces rather than adds: opacity clamps a layer to 0 to 1. */
+const fades = new Map<Group, Animation>();
 
 const expanded = ({ toggle }: Group): boolean => toggle.getAttribute("aria-expanded") === "true";
 
@@ -27,40 +38,42 @@ function token(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-/** How far an element is moved now, by a motion in flight. */
-function lift(element: HTMLElement): number {
-  return new DOMMatrixReadOnly(getComputedStyle(element).transform).m42;
-}
-
-/** How much of a group's box its clip hides now, from the bottom. */
-function cut(element: HTMLElement): number {
-  const inset = /inset\(([^)]*)\)/.exec(getComputedStyle(element).clipPath)?.[1];
-  if (!inset) return 0;
-  const sides = (inset.split(" round ")[0] ?? "").trim().split(/\s+/).map(Number.parseFloat);
-  return sides[2] ?? sides[0] ?? 0;
+/** Drops what a motion held inline. Touching the style of an element with none writes `style=""`. */
+function unhold(element: HTMLElement): void {
+  if (!element.hasAttribute("style")) return;
+  element.style.removeProperty("translate");
+  element.style.removeProperty("clip-path");
+  if (!element.style.length) element.removeAttribute("style");
 }
 
 /** Ends any motion and puts every list where its chevron says. */
 function settle(): void {
   for (const animation of flight) animation.cancel();
   flight = [];
+  tops.clear();
+  heights.clear();
+  fades.clear();
   for (const entry of groups) entry.panel.hidden = !expanded(entry);
+  for (const row of document.querySelectorAll<HTMLElement>(".app-nav-list > li, .guide-nav-foot")) {
+    unhold(row);
+  }
 }
 
 /**
- * Moves the column to what the chevrons now say. It reads where everything stands on screen (a motion
- * in flight included), lays the column out with every list that is open or still leaving, and reads
- * where everything ends; that is the only layout. After it only transform (the rows), opacity (a
- * group's pages) and clip-path (a group's box, so its tonal fill grows with it) change, so no frame lays
- * out again. A list that closes stays in the page until the motion ends. A press mid-flight, on this
- * group or another, starts every part from where it stands.
+ * Moves the column to what the chevrons now say. It lays the column out with every list that is open
+ * or still leaving and reads where everything ends; that is the only layout. A row's inline translate
+ * holds it at its end and a layer of transform animates the difference away; a group's inline clip
+ * holds its box at its end height and a layer of clip-path does the same (so its tonal fill grows with
+ * it); a list fades. Only transform, translate, clip-path and opacity change, so no frame lays out again.
+ * A list that closes stays in the page until the motion ends.
  */
 function move(nav: HTMLElement, open: boolean): void {
   const rows = [...nav.querySelectorAll<HTMLElement>(".app-nav-list > li, .guide-nav-foot")];
-  // Where things stand on screen. offsetTop and offsetHeight ignore transforms and clips.
-  const seen = new Map(rows.map((row) => [row, row.offsetTop + lift(row)]));
-  const shown = new Map(
-    groups.map((entry) => [entry, entry.group.offsetHeight - cut(entry.group)]),
+  // Where the last press sent everything, or where it stands at rest. offsetTop and offsetHeight
+  // ignore transforms and clips, so the column must be at rest for them to be what is seen.
+  const wasTop = new Map(rows.map((row) => [row, tops.get(row) ?? row.offsetTop]));
+  const wasHeight = new Map(
+    groups.map((entry) => [entry, heights.get(entry) ?? entry.group.offsetHeight]),
   );
   const faded = new Map(
     groups.map((entry) => [
@@ -69,8 +82,6 @@ function move(nav: HTMLElement, open: boolean): void {
     ]),
   );
   const leaving = new Set(groups.filter((entry) => !entry.panel.hidden));
-  for (const animation of flight) animation.cancel();
-  flight = [];
 
   const scroll = nav.scrollTop;
   const layOut = (final: boolean): void => {
@@ -79,9 +90,20 @@ function move(nav: HTMLElement, open: boolean): void {
     }
   };
   layOut(true);
-  const endTops = new Map(rows.map((row) => [row, row.offsetTop]));
-  const endHeights = new Map(groups.map((entry) => [entry, entry.group.offsetHeight]));
+  for (const row of rows) tops.set(row, row.offsetTop);
+  for (const entry of groups) heights.set(entry, entry.group.offsetHeight);
   layOut(false);
+  // Every read of the layout in flight before the first write, so the press lays out once.
+  const placed = new Map(rows.map((row) => [row, row.offsetTop]));
+  const boxed = new Map(
+    groups.map((entry) => [
+      entry,
+      {
+        height: entry.group.offsetHeight,
+        radius: getComputedStyle(entry.group).borderTopLeftRadius,
+      },
+    ]),
+  );
   // shortcut: hiding a list can clamp the column's scroll; it is put back here, but a close that ends
   // at the column's end still settles by the clamp. Upgrade if a short window makes it show.
   nav.scrollTop = scroll;
@@ -90,34 +112,47 @@ function move(nav: HTMLElement, open: boolean): void {
     duration: Number.parseFloat(token(open ? "--duration-enter" : "--duration-state")),
     easing: token("--ease-out"),
     fill: "forwards",
+    composite: "add",
   };
   for (const row of rows) {
-    const from = (seen.get(row) ?? 0) - row.offsetTop;
-    const to = (endTops.get(row) ?? 0) - row.offsetTop;
-    if (Math.abs(from) < 0.5 && Math.abs(to) < 0.5) continue;
-    flight.push(
-      row.animate({ transform: [`translateY(${from}px)`, `translateY(${to}px)`] }, timing),
-    );
+    const at = placed.get(row) ?? 0;
+    const end = tops.get(row) ?? at;
+    row.style.translate = `0 ${end - at}px`;
+    const push = (wasTop.get(row) ?? end) - end;
+    if (Math.abs(push) < 0.5) continue;
+    flight.push(row.animate({ transform: [`translateY(${push}px)`, "translateY(0)"] }, timing));
   }
   for (const entry of groups) {
-    const height = entry.group.offsetHeight;
-    const from = height - (shown.get(entry) ?? height);
-    const to = height - (endHeights.get(entry) ?? height);
-    if (Math.abs(from) >= 0.5 || Math.abs(to) >= 0.5) {
-      const radius = getComputedStyle(entry.group).borderTopLeftRadius;
-      const clip = (hidden: number): string => `inset(0 0 ${hidden}px 0 round ${radius})`;
-      flight.push(entry.group.animate({ clipPath: [clip(from), clip(to)] }, timing));
+    const { height, radius } = boxed.get(entry) ?? { height: 0, radius: "0" };
+    const end = heights.get(entry) ?? height;
+    entry.group.style.clipPath = `inset(0 0 ${height - end}px 0 round ${radius})`;
+    const push = end - (wasHeight.get(entry) ?? end);
+    if (Math.abs(push) >= 0.5) {
+      flight.push(
+        entry.group.animate({ clipPath: [`inset(0 0 ${push}px 0)`, "inset(0 0 0 0)"] }, timing),
+      );
     }
     const fade = expanded(entry) ? 1 : 0;
     if (!entry.panel.hidden && faded.get(entry) !== fade) {
-      flight.push(
-        entry.panel.animate({ opacity: [String(faded.get(entry)), String(fade)] }, timing),
+      // A cancelled fade's finished promise is replaced by one that never settles, so it leaves the flight.
+      const replaced = fades.get(entry);
+      replaced?.cancel();
+      flight = flight.filter((animation) => animation !== replaced);
+      const fading = entry.panel.animate(
+        { opacity: [String(faded.get(entry)), String(fade)] },
+        { ...timing, composite: "replace" },
       );
+      fades.set(entry, fading);
+      flight.push(fading);
     }
   }
-  const current = flight;
-  if (!current.length) settle();
-  else current[0]?.addEventListener("finish", () => current === flight && settle());
+  const mine = ++press;
+  const done = (): void => {
+    if (mine === press) settle();
+  };
+  if (!flight.length) done();
+  // settle() cancels the flight, which rejects these promises; it has ended all the same.
+  else Promise.all(flight.map((animation) => animation.finished.catch(() => {}))).then(done);
 }
 
 for (const entry of groups) {
