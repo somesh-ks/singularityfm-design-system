@@ -1456,7 +1456,8 @@
         "The page says where it sits with --toast-nav, --toast-dock, --toast-lift and --toast-inline-start/-end on the root, never with a rule on .toast."
       ],
       "imports": [
-        "@singularityfm/design-system/Toast"
+        "@singularityfm/design-system/Toast",
+        "@singularityfm/design-system/toastStore"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",

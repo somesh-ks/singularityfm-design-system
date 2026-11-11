@@ -78,14 +78,25 @@ const MANIFEST = JSON.parse(readFileSync(join(PACKAGE, "package.json"), "utf8"))
 /**
  * The import specifiers of a part's source files, read from the exports map so a renamed export
  * cannot leave the lookup naming one that does not resolve. The deprecated `.astro` paths are left out.
+ * A module reached only through the `./*` wildcard (a behaviour or store file) is named when the
+ * part's markup calls one of its exports, as Toast's `showToast(...)` calls toastStore's.
  */
-function importsOf(files: string[] | undefined): string[] {
+function importsOf(files: string[] | undefined, markup: string | undefined): string[] {
+  const exports = Object.entries(MANIFEST.exports).filter(([name]) => !name.endsWith(".astro"));
   const specifiers = (files ?? []).flatMap((file) => {
     const target = `./${posix(relative(PACKAGE, join(ROOT, file)))}`;
-    const key = Object.entries(MANIFEST.exports).find(
-      ([name, path]) => path === target && !name.endsWith(".astro"),
-    )?.[0];
-    return key ? [`${MANIFEST.name}/${key.slice(2)}`] : [];
+    const exact = exports.find(([, path]) => path === target)?.[0];
+    if (exact) return [`${MANIFEST.name}/${exact.slice(2)}`];
+    for (const [name, path] of exports) {
+      const [head = "", tail] = path.split("*");
+      if (tail === undefined || !target.startsWith(head) || !target.endsWith(tail)) continue;
+      const stem = target.slice(head.length, target.length - tail.length);
+      const called = [
+        ...readFileSync(join(ROOT, file), "utf8").matchAll(/^export (?:function|const) (\w+)/gm),
+      ].some(([, exported]) => new RegExp(`\\b${exported}\\(`).test(markup ?? ""));
+      return called ? [`${MANIFEST.name}/${name.slice(2).replace("*", stem)}`] : [];
+    }
+    return [];
   });
   return [...new Set(specifiers)];
 }
@@ -108,7 +119,7 @@ function derive(source: PartSource, sheets: Stylesheet[], reusable: Set<string>)
   }
   return {
     ...source,
-    imports: importsOf(source.files),
+    imports: importsOf(source.files, source.markup),
     styles: [...styles].sort(),
     usage,
     tokens: [...tokens].sort(),
