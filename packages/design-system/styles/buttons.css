@@ -309,6 +309,16 @@
   background: var(--color-surface-container);
 }
 
+/* A busy filled button keeps its fill: the spinner and its words say "working", not "unavailable", though
+   the page also marks it aria-disabled so a second press does nothing. After the disabled rule, at its
+   specificity. Keyed on data-busy, which a page sets for a request it sent; aria-busy alone (a stand-in's
+   Try again) keeps the disabled look. Moved from the reader's create.css and sheets.css. */
+.button-filled[data-busy="true"] {
+  background: var(--cta-bg);
+  color: var(--cta-fg);
+  cursor: progress;
+}
+
 /* Button, danger tone (text variant; was .confirm-delete in episode-actions.css): red only here,
    once the person has asked to delete. Usage: the confirm of a delete dialog, Delete and Delete
    source. After the disabled rule above, which it must outrank at the same specificity. */
