@@ -19,7 +19,7 @@
   transition: background-color var(--duration-state) var(--ease-out);
 }
 
-/* A switch that cannot be flipped reads as such. A disabled fieldset dims it the same way (manage.css), on the same element, so the two never stack. */
+/* A switch that cannot be flipped reads as such. A disabled fieldset disables it, so this one rule dims it there too, and nothing stacks. */
 .switch-input:disabled {
   opacity: var(--opacity-disabled);
   cursor: default;

@@ -68,6 +68,14 @@
   }
 }
 
+/* A search field that cannot be used dims like every disabled control. Its input is what a disabled
+   fieldset disables, so the pill reads it from there, as the filter chip does. Moved from the reader's
+   manage.css. */
+.search-field:has(> input:disabled) {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
 /* Forced colours drops the fill and the focus hairline (a box-shadow), which left the pill with no
    edge: a system-coloured border draws it. The pill keeps its height; the border is inside it. */
 @media (forced-colors: active) {

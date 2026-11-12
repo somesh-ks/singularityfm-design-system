@@ -19,6 +19,7 @@
     "rules",
     "!**/*.test.ts",
     "!**/golden.json",
+    "AGENTS.md",
     "COMPATIBILITY.md"
   ],
   "sideEffects": [
