@@ -6,7 +6,7 @@
  * `npm run system` writes both; system.test.ts fails when either is stale.
  */
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   aliasTarget,
@@ -19,7 +19,8 @@ import {
 } from "../buildTokens.js";
 import { PARTS } from "./parts.js";
 import { LLMS_PATH, PACKAGE, SYSTEM_PATH } from "./paths.js";
-import type { Part, PartSource, System, SystemToken } from "./types.js";
+import { propsTable } from "./props.js";
+import type { Component, Part, PartSource, System, SystemToken } from "./types.js";
 import { usageComment } from "./usage.js";
 
 /** Paths in the file are repo paths, as a part's `files` are. */
@@ -96,6 +97,48 @@ function importsOf(files: string[] | undefined, markup: string | undefined): str
     return [];
   });
   return [...new Set(specifiers)];
+}
+
+/** Each union of string literals the sources export by name: ButtonVariant -> filled, tonal, text. */
+function stringUnions(): Map<string, string[]> {
+  const unions = new Map<string, string[]>();
+  const src = join(PACKAGE, "src");
+  for (const file of readdirSync(src).filter((name) => /\.(ts|tsx)$/.test(name)))
+    for (const [, name = "", body = ""] of readFileSync(join(src, file), "utf8").matchAll(
+      /^export type (\w+) =\s*((?:\|?\s*"[^"]*"\s*)+);/gm,
+    ))
+      unions.set(
+        name,
+        [...body.matchAll(/"([^"]*)"/g)].map(([, value = ""]) => value),
+      );
+  return unions;
+}
+
+/**
+ * Every component the exports map names, with its props read from its source. An .astro path kept
+ * beside a .tsx (DS-3) is the same component, so the map's non-.astro name is the one listed.
+ */
+function components(): Component[] {
+  const listed = new Map<string, Component>();
+  const unions = stringUnions();
+  for (const [name, path] of Object.entries(MANIFEST.exports)) {
+    if (name.endsWith(".astro") || name.includes("*") || !/^\.\/src\/\w+\.(tsx|astro)$/.test(path))
+      continue;
+    const file = posix(relative(ROOT, join(PACKAGE, path)));
+    if (listed.has(file)) continue;
+    const { rows, element } = propsTable(readFileSync(join(ROOT, file), "utf8"));
+    listed.set(file, {
+      name: name.slice(2),
+      import: `${MANIFEST.name}/${name.slice(2)}`,
+      file,
+      props: rows.map((row) => {
+        const values = unions.get(row.type);
+        return values ? { ...row, values } : row;
+      }),
+      ...(element ? { element } : {}),
+    });
+  }
+  return [...listed.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function derive(source: PartSource, sheets: Stylesheet[], reusable: Set<string>): Part {
@@ -208,6 +251,7 @@ export function buildSystem(): System {
   return {
     generated: GENERATED,
     parts: PARTS.map((part) => derive(part, sheets, reusable)),
+    components: components(),
     tokens,
     properties: declaredProperties(tokens),
   };
