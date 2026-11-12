@@ -55,6 +55,7 @@ let restored: number | null = null;
 /** Ends any motion and puts every list where its chevron says. */
 function settle(): void {
   press++;
+  restored = null;
   for (const animation of flight) animation.cancel();
   flight = [];
   tops.clear();
@@ -131,8 +132,8 @@ function move(nav: HTMLElement, pressed: Group, open: boolean): void {
   // ignores the scroll event it raises. A write that changes nothing raises no event, so it is not
   // remembered, or the reader's next scroll near that value would be taken for it.
   if (nav.scrollTop !== scroll) {
-    restored = scroll;
     nav.scrollTop = scroll;
+    restored = nav.scrollTop;
   }
 
   // The furthest anything moves. A long list covers more ground in the same time, so its first frame is
@@ -215,7 +216,8 @@ function syncCurrent(): void {
 wide.addEventListener("change", () => {
   settle();
   syncCurrent();
-  reveal();
+  // A column the reader has scrolled keeps their place; one still at its top shows the current row.
+  if (!document.querySelector<HTMLElement>(".app-nav")?.scrollTop) reveal();
 });
 
 // The reader scrolling the column during a motion ends it at once: the rows' compensation was taken at
@@ -240,7 +242,7 @@ still.addEventListener("change", () => {
 function reveal(): void {
   const nav = document.querySelector<HTMLElement>(".app-nav");
   const here = nav?.querySelector<HTMLElement>('.guide-nav-subitem[aria-current="page"]');
-  if (!nav || !here || !wide.matches) return;
+  if (!nav || !here || !wide.matches || here.closest("[hidden]")) return;
   const box = nav.getBoundingClientRect();
   const row = here.getBoundingClientRect();
   if (row.top >= box.top && row.bottom <= box.bottom) return;

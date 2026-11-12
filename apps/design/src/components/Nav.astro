@@ -66,9 +66,9 @@ const updated = new Intl.DateTimeFormat("en-GB", {
                 </IconButton>
                 <ul class="guide-nav-sub" id={`nav-sub-${page.label.toLowerCase()}`} role="list" hidden={!open}>
                   {groups
-                    ? groups.map((group) => {
+                    ? groups.map((group, index) => {
                         // A list of its own, named by its caption, so a screen reader ties the pages to it.
-                        const caption = `nav-cap-${group.label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+                        const caption = `nav-cap-${page.label.toLowerCase()}-${index}`;
                         return (
                           <li class="guide-nav-section">
                             <span class="guide-nav-group-label" id={caption}>{group.label}</span>
