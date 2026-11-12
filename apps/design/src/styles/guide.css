@@ -765,7 +765,13 @@
     border-radius: inherit;
     background: var(--color-surface-container);
     opacity: 0;
-    transition: opacity var(--duration-state) var(--ease-out);
+  }
+
+  /* Under reduced motion the fill appears with its list, at once (nav.ts). */
+  @media (prefers-reduced-motion: no-preference) {
+    .guide-nav-group::before {
+      transition: opacity var(--duration-state) var(--ease-out);
+    }
   }
 
   /* Keyed to the chevron, not the list: a closing list stays in the page until its motion ends, and

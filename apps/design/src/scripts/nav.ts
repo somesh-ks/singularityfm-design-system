@@ -56,7 +56,10 @@ function settle(): void {
   tops.clear();
   heights.clear();
   fades.clear();
-  for (const entry of groups) entry.panel.hidden = !expanded(entry);
+  for (const entry of groups) {
+    entry.panel.hidden = !expanded(entry);
+    entry.panel.inert = !expanded(entry);
+  }
   for (const row of document.querySelectorAll<HTMLElement>(ROWS)) unhold(row);
 }
 
@@ -68,7 +71,7 @@ function settle(): void {
  * it); a list fades. Only transform, translate, clip-path and opacity change, so no frame lays out again.
  * A list that closes stays in the page until the motion ends.
  */
-function move(nav: HTMLElement, open: boolean): void {
+function move(nav: HTMLElement, pressed: Group, open: boolean): void {
   const rows = [...nav.querySelectorAll<HTMLElement>(ROWS)];
   // Where the last press sent everything, or where it stands at rest. offsetTop and offsetHeight
   // ignore transforms and clips, so the column must be at rest for them to be what is seen.
@@ -88,12 +91,14 @@ function move(nav: HTMLElement, open: boolean): void {
   const layOut = (final: boolean): void => {
     for (const entry of groups) {
       entry.panel.hidden = !(expanded(entry) || (!final && leaving.has(entry)));
+      // A list that is closing still shows its motion, but its links take no focus or reading.
+      entry.panel.inert = !expanded(entry);
     }
   };
   layOut(true);
   // A list that closes can leave less to scroll than the column has scrolled; when it leaves the page
   // the scroll clamps. The rows end where the clamp will put them, so settling moves nothing.
-  // shortcut: a scroll by the reader during the motion is not counted; upgrade if it shows.
+  // shortcut: a scroll or a resize by the reader during the motion is not counted; upgrade if it shows.
   // Measured from the last row's box, not scrollHeight, which counts a motion's translates.
   const last = rows.at(-1);
   const bottom = last
@@ -153,8 +158,9 @@ function move(nav: HTMLElement, open: boolean): void {
         entry.group.animate({ clipPath: [`inset(0 0 ${push}px 0)`, "inset(0 0 0 0)"] }, timing),
       );
     }
+    // Only the pressed group's fade changes target; another group's running fade already ends where it should.
     const fade = expanded(entry) ? 1 : 0;
-    if (!entry.panel.hidden && faded.get(entry) !== fade) {
+    if (entry === pressed && !entry.panel.hidden && faded.get(entry) !== fade) {
       // A cancelled fade's finished promise is replaced by one that never settles, so it leaves the flight.
       const replaced = fades.get(entry);
       replaced?.cancel();
@@ -182,7 +188,7 @@ for (const entry of groups) {
     entry.toggle.setAttribute("aria-expanded", String(open));
     const nav = entry.group.closest<HTMLElement>(".app-nav");
     // The bottom bar draws no list, and reduced motion opens it at once.
-    if (nav && wide.matches && !still.matches) move(nav, open);
+    if (nav && wide.matches && !still.matches) move(nav, entry, open);
     else settle();
   });
 }
