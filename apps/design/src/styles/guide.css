@@ -928,8 +928,20 @@
     letter-spacing: var(--text-label-tracking);
   }
 
+  /* A group of pages under Components is its caption over a list of its own (Nav.astro), spaced as the
+     one flat list was, so nesting changes what a screen reader hears and not where a row sits. */
+  .guide-nav-sub .guide-nav-section,
+  .guide-nav-sub .guide-nav-section-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
   /* Space above each caption after the first, so one section reads as ended by the next. */
-  .guide-nav-group-label:not(:first-child) {
+  .guide-nav-section:not(:first-child) > .guide-nav-group-label {
     padding-block-start: var(--space-6);
   }
 

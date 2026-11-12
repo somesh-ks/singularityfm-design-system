@@ -23,7 +23,7 @@ for (const toggle of document.querySelectorAll<HTMLButtonElement>("[data-nav-tog
  * through a second press and only takes on that press's own push, as a single press would give it.
  */
 let flight: Animation[] = [];
-/** Per press, so only the newest press's end settles the column. */
+/** Per press, so only the newest press's end settles the column; settle() moves it on too, so a press it already ended does nothing when its motion's promise lands. */
 let press = 0;
 /** Where each row and each group's visible height end up, as the last press laid them out. */
 const tops = new Map<HTMLElement, number>();
@@ -54,6 +54,7 @@ let restored: number | null = null;
 
 /** Ends any motion and puts every list where its chevron says. */
 function settle(): void {
+  press++;
   for (const animation of flight) animation.cancel();
   flight = [];
   tops.clear();
@@ -67,8 +68,8 @@ function settle(): void {
 }
 
 /**
- * Moves the column to what the chevrons now say. It lays the column out with every list that is open
- * or still leaving and reads where everything ends; that is the only layout. A row's inline translate
+ * Moves the column to what the chevrons now say. It lays the column out twice, as it will end and then
+ * with every list that is open or still leaving, and reads both; no frame of the motion lays out. A row's inline translate
  * holds it at its end and a layer of transform animates the difference away; a group's inline clip
  * holds its box at its end height and a layer of clip-path does the same (so its tonal fill grows with
  * it); a list fades. Only transform, translate, clip-path and opacity change, so no frame lays out again.
@@ -114,7 +115,7 @@ function move(nav: HTMLElement, pressed: Group, open: boolean): void {
   for (const row of rows) tops.set(row, row.offsetTop + clamp);
   for (const entry of groups) heights.set(entry, entry.group.offsetHeight);
   layOut(false);
-  // Every read of the layout in flight before the first write, so the press lays out once.
+  // Every read of the layout in flight before the first write, so the press lays out no more than twice.
   const placed = new Map(rows.map((row) => [row, row.offsetTop]));
   const boxed = new Map(
     groups.map((entry) => [
@@ -127,9 +128,12 @@ function move(nav: HTMLElement, pressed: Group, open: boolean): void {
   );
   // The final layout may have clamped the scroll; the layout in flight is as tall as before.
   // The script's own restore is not the reader's scroll: its value is remembered, and the listener
-  // ignores the scroll event that exact value raises.
-  restored = scroll;
-  nav.scrollTop = scroll;
+  // ignores the scroll event it raises. A write that changes nothing raises no event, so it is not
+  // remembered, or the reader's next scroll near that value would be taken for it.
+  if (Math.abs(nav.scrollTop - scroll) >= 1) {
+    restored = scroll;
+    nav.scrollTop = scroll;
+  }
 
   // The furthest anything moves. A long list covers more ground in the same time, so its first frame is
   // faster than a short list's; the duration grows with that reach (up to three times the token) to keep it even.
@@ -224,4 +228,23 @@ document.querySelector<HTMLElement>(".app-nav")?.addEventListener("scroll", (eve
   }
   if (flight.length) settle();
 });
+
+// Reduced motion turned on during a motion ends it, as a press under it would.
+still.addEventListener("change", () => {
+  if (still.matches) settle();
+});
+
+// Every link loads a new page, so the column starts at its top, and a page deep in a long list opened
+// with its own row out of sight. The column scrolls once, at load, to centre that row.
+function reveal(): void {
+  const nav = document.querySelector<HTMLElement>(".app-nav");
+  const here = nav?.querySelector<HTMLElement>('.guide-nav-subitem[aria-current="page"]');
+  if (!nav || !here || !wide.matches) return;
+  const box = nav.getBoundingClientRect();
+  const row = here.getBoundingClientRect();
+  if (row.top >= box.top && row.bottom <= box.bottom) return;
+  nav.scrollTop += row.top - box.top - (box.height - row.height) / 2;
+}
+
 syncCurrent();
+reveal();
