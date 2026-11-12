@@ -9,7 +9,7 @@ Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and 
 
 ## Find the part before you write anything
 
-1. Ask the lookup: `ds find "<what you need>"`. It names the part, what to import, the markup, when not to use it and the tokens it reads. `ds part <id>` shows one part, `ds token <words>` a token. `ds` is `tsx node_modules/@singularityfm/design-system/scripts/system/cli.ts` (an app usually wraps it as `pnpm run ds`).
+1. Ask the lookup: `ds find "<what you need>"`. It names the part, what to import, the markup, when not to use it and the tokens it reads. `ds part <id>` shows one part, `ds token <words>` a token. `ds` is the package's own command: `pnpm exec ds` (`npx ds` with npm). Add `--json` for data, and ask several at once with `ds batch "find <need>" "part <id>"`.
 2. No lookup? Read `tokens/llms.txt` (one page: every part, the colour roles, the scales). `tokens/system.json` holds everything.
 3. Nothing fits: stop and ask the owner. Do not invent a class, and do not restyle a part from a page.
 
@@ -32,4 +32,4 @@ Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and 
 
 ## Check your work
 
-`ds validate <files or globs>` runs the package's rules: raw colour, off-grid spacing, an unknown custom property, a component class typed by a page, a retired import, a raw pixel length. It exits 1 on an error. A biome user extends `@singularityfm/design-system/rules/biome-config.json` for the raw-colour rule.
+`ds validate <files or globs>` runs the package's rules: raw colour, off-grid spacing, an unknown custom property, a component class typed by a page, a retired import, a raw pixel length. It exits 1 on an error. `ds version` names the package and the build of `system.json` that answered. A biome user extends `@singularityfm/design-system/rules/biome-config.json` for the raw-colour rule.

@@ -41,6 +41,7 @@
   { "area": "inputs", "need": "let the user set playback volume by dragging", "part": "slider" },
   { "area": "inputs", "need": "a text input with a label for the user's name", "part": "field" },
   { "area": "inputs", "need": "a search box at the top of the library", "part": "search-field" },
+  { "area": "inputs", "need": "a swich", "part": "switch", "why": "a misspelt word is corrected" },
   {
     "area": "actions",
     "need": "a new form sheet needs one main Save button and a Cancel beside it",
