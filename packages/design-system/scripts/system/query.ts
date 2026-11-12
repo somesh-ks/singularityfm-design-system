@@ -1,6 +1,7 @@
 /** Answers "which part" and "which token" from a built system, so an agent need not grep stylesheets. */
 import { RETIRED_PATHS } from "../../rules/data.js";
-import type { Part, System, SystemToken } from "./types.js";
+
+import type { Component, Part, System, SystemToken } from "./types.js";
 
 // "action" is a stop word: nearly every part is one, so it ranked first whichever part names it most
 // often (the side column's Catch up beat Dialog for "confirm before an action that cannot be undone").
@@ -157,7 +158,22 @@ export function describeTokenLine(token: SystemToken): string {
 /** A path inside the package, as an app finds it under node_modules: the file lists hold repo paths. */
 const inPackage = (path: string): string => path.replace(/^packages\/design-system\//, "");
 
-export function describePart(part: Part): string {
+/** A component's props, one line each: `name?: type = default. What it does`. */
+export function describeProps(component: Component): string[] {
+  const lines = component.props.map((prop) => {
+    const type = prop.values ? prop.values.map((value) => `"${value}"`).join(" | ") : prop.type;
+    const head = `${prop.name}${prop.required ? "" : "?"}: ${type}${prop.default ? ` = ${prop.default}` : ""}`;
+    return `    ${head}${prop.description ? `. ${prop.description}` : ""}`;
+  });
+  if (component.element) lines.push(`    ...every attribute of a native ${component.element}`);
+  return [`  props of ${component.name}:`, ...lines];
+}
+
+/**
+ * The whole of a part. With `drawn` (its components, from componentsOf), it lists their props;
+ * without, it says where they are, so a `find` answer stays short.
+ */
+export function describePart(part: Part, drawn?: Component[]): string {
   const out: string[] = [
     `${part.id}: ${part.name}. ${part.summary}`,
     `  classes: ${part.classes.map((name) => `.${name}`).join(" ")}`,
@@ -170,6 +186,8 @@ export function describePart(part: Part): string {
   if (part.markup) out.push(`  markup: ${part.markup}`);
   for (const rule of part.rules ?? []) out.push(`  rule: ${rule}`);
   out.push(...experimentalLines(part));
+  if (drawn) for (const component of drawn) out.push(...describeProps(component));
+  else if (part.imports.length) out.push(`  props: \`ds part ${part.id}\``);
   if (part.tokens.length) out.push(`  tokens: ${part.tokens.join(" ")}`);
   if (part.usage) {
     const note = part.usage.length > 240 ? `${part.usage.slice(0, 239).trimEnd()}…` : part.usage;

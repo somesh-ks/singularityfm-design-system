@@ -1,9 +1,16 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildSystem, systemFiles } from "./build.js";
-import { LLMS_PATH, SYSTEM_PATH } from "./paths.js";
+import { LLMS_PATH, PARTS_DIR, SYSTEM_PATH } from "./paths.js";
 import { lookup, shownTokens } from "./query.js";
 import type { System } from "./types.js";
 import { usageComment } from "./usage.js";
@@ -24,7 +31,13 @@ describe("the design system file", () => {
   // Prevents publishing a lookup file that no longer says what the package ships: the library builds
   // it from its own files alone (DS-2), so a part or token edit without `npm run system` fails here.
   it("is what the package's own files build", () => {
-    for (const [path, text] of systemFiles()) expect(readFileSync(path, "utf8")).toBe(text);
+    const files = systemFiles();
+    for (const [path, text] of files) expect(readFileSync(path, "utf8")).toBe(text);
+    // A page left from a renamed or retired part would still be published and linked by nothing.
+    const pages = files
+      .filter(([path]) => path.startsWith(PARTS_DIR))
+      .map(([path]) => basename(path));
+    expect(readdirSync(PARTS_DIR).sort()).toEqual(pages.sort());
   });
 
   // Prevents a "not this, use that" pointing at a part that does not exist.

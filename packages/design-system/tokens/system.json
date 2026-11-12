@@ -333,7 +333,8 @@
         }
       ],
       "imports": [
-        "@singularityfm/design-system/IconButton"
+        "@singularityfm/design-system/IconButton",
+        "@singularityfm/design-system/Icon"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -385,7 +386,8 @@
       ],
       "markup": "<IconButton variant=\"tonal\" label=\"Share\"><Icon name=\"shareFat\" /></IconButton>",
       "imports": [
-        "@singularityfm/design-system/IconButton"
+        "@singularityfm/design-system/IconButton",
+        "@singularityfm/design-system/Icon"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css"
@@ -762,7 +764,7 @@
         "option group",
         "pick one"
       ],
-      "markup": "<SegmentedChoice name=\"length\" aria-labelledby=\"len\" defaultValue=\"3\" options={[{ value: \"3\", label: \"3 min\" }]} />",
+      "markup": "<SegmentedChoice name=\"length\" aria-label=\"Length\" defaultValue=\"3\" options={[{ value: \"3\", label: \"3 min\" }, { value: \"5\", label: \"5 min\" }]} />",
       "rules": [
         "Native radios with no client directive (DS-8)."
       ],
@@ -819,7 +821,7 @@
         "toggle views",
         "stories transcript"
       ],
-      "markup": "<SegmentedNav aria-label=\"View\" tabs={[{ value: \"stories\", label: \"Stories\" }]} />",
+      "markup": "<SegmentedNav aria-label=\"View\" tabs={[{ value: \"stories\", label: \"Stories\" }, { value: \"transcript\", label: \"Transcript\" }]} />",
       "rules": [
         "A native tablist with no client directive (DS-8): the page calls mountSegmentedNav(list, onSelect) from design-system/segmentedNav once for each, and draws the panels (each tab's controls)."
       ],
@@ -1363,7 +1365,8 @@
       ],
       "markup": "<Menu id=\"row-menu-3\" title=\"Daily\"><MenuItem><Icon name=\"pencilSimple\" />Edit</MenuItem><MenuItem tone=\"danger\"><Icon name=\"trash\" />Delete</MenuItem></Menu>",
       "rules": [
-        "A native popover with no client directive: its button opens it with popoverTarget (DS-8).",
+        "A native popover with no client directive: its button opens it with popoverTarget (DS-8); light dismiss and Escape close it, and the header's Close needs the page's menu script.",
+        "Menu draws its children as given: with five actions or more the host asks menuHasTiles() and wraps the first three in a row with menuTilesClass() itself.",
         "Under 40rem a menu is a sheet, never a small popover.",
         "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass()."
       ],
@@ -1377,7 +1380,8 @@
       ],
       "imports": [
         "@singularityfm/design-system/Menu",
-        "@singularityfm/design-system/MenuItem"
+        "@singularityfm/design-system/MenuItem",
+        "@singularityfm/design-system/Icon"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -1595,7 +1599,8 @@
       "imports": [
         "@singularityfm/design-system/Dialog",
         "@singularityfm/design-system/DialogActions",
-        "@singularityfm/design-system/DialogTitle"
+        "@singularityfm/design-system/DialogTitle",
+        "@singularityfm/design-system/Button"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -1857,8 +1862,10 @@
         "anchor links",
         "section nav"
       ],
+      "markup": "<SectionTabs sections={[{ slug: \"stories\", title: \"Stories\" }, { slug: \"sources\", title: \"Sources\" }]} />",
       "rules": [
-        "Drawn only for two sections or more."
+        "Drawn only for two sections or more.",
+        "Each section's slug names its target: the section the tab jumps to has id `c-<slug>`."
       ],
       "imports": [
         "@singularityfm/design-system/SectionTabs"
@@ -1918,7 +1925,9 @@
         "Label in regular weight, never bold.",
         "Sits in a `.rows.card-group`."
       ],
-      "imports": [],
+      "imports": [
+        "@singularityfm/design-system/Icon"
+      ],
       "styles": [
         "packages/design-system/styles/foundations.css",
         "packages/design-system/styles/primitives.css",
@@ -2198,6 +2207,1280 @@
       "styles": [],
       "usage": "",
       "tokens": []
+    }
+  ],
+  "components": [
+    {
+      "name": "Avatar",
+      "import": "@singularityfm/design-system/Avatar",
+      "file": "packages/design-system/src/Avatar.tsx",
+      "props": [
+        {
+          "name": "shape",
+          "type": "string",
+          "required": false,
+          "default": "\"cookie\"",
+          "description": "The shape's id (AVATAR_SHAPES). The app passes the one the reader picked, or the mood's first."
+        },
+        {
+          "name": "size",
+          "type": "AvatarSize",
+          "required": false,
+          "default": "\"md\"",
+          "description": "",
+          "values": [
+            "md",
+            "lg",
+            "xl"
+          ]
+        },
+        {
+          "name": "photo",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The reader's photo, where there is one: round with an accent ring, in place of the shape. The shape stands in if it fails to load, once hydrated (client:load)."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "A button that opens the profile, named for a screen reader. Without it the avatar is a picture."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the avatar where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        }
+      ]
+    },
+    {
+      "name": "Badge",
+      "import": "@singularityfm/design-system/Badge",
+      "file": "packages/design-system/src/Badge.tsx",
+      "props": [
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "\"\"",
+          "description": "For placing the badge where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The one word or one number it holds."
+        }
+      ]
+    },
+    {
+      "name": "Banner",
+      "import": "@singularityfm/design-system/Banner",
+      "file": "packages/design-system/src/Banner.tsx",
+      "props": [
+        {
+          "name": "tone",
+          "type": "BannerTone",
+          "required": true,
+          "default": "",
+          "description": "",
+          "values": [
+            "warning",
+            "danger",
+            "success"
+          ]
+        },
+        {
+          "name": "variant",
+          "type": "BannerVariant",
+          "required": false,
+          "default": "",
+          "description": "\"strip\" is a band across the width for a state of the device; the place that holds it makes room for it.",
+          "values": [
+            "block",
+            "strip"
+          ]
+        },
+        {
+          "name": "icon",
+          "type": "IconName",
+          "required": true,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "iconFrom",
+          "type": "IconName",
+          "required": false,
+          "default": "",
+          "description": "A strip only: the glyph the icon is drawn over and strikes through (Wi-Fi, then Offline)."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "body",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "bodyId",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "An id for the body line (the title when there is none), so a control the banner explains can point at it (aria-describedby)."
+        },
+        {
+          "name": "action",
+          "type": "{ label: string; href: string }",
+          "required": false,
+          "default": "",
+          "description": "One way on, as a text button. A link, so it works for any reader and without script."
+        }
+      ]
+    },
+    {
+      "name": "BrandMark",
+      "import": "@singularityfm/design-system/BrandMark",
+      "file": "packages/design-system/src/BrandMark.tsx",
+      "props": [
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "\"wordmark-mark\"",
+          "description": "Its class: wordmark-mark sizes it beside the app's name. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        }
+      ]
+    },
+    {
+      "name": "Button",
+      "import": "@singularityfm/design-system/Button",
+      "file": "packages/design-system/src/Button.tsx",
+      "props": [
+        {
+          "name": "variant",
+          "type": "ButtonVariant",
+          "required": true,
+          "default": "",
+          "description": "Filled, tonal or text (button.ts says what each is for).",
+          "values": [
+            "filled",
+            "tonal",
+            "text"
+          ]
+        },
+        {
+          "name": "tone",
+          "type": "ButtonTone",
+          "required": false,
+          "default": "",
+          "description": "The danger tone, for a text button that confirms a delete.",
+          "values": [
+            "danger"
+          ]
+        },
+        {
+          "name": "size",
+          "type": "ButtonSize",
+          "required": false,
+          "default": "",
+          "description": "Small: a shorter pill for a dense row or a popover (button.ts says when).",
+          "values": [
+            "small"
+          ]
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Draws a link instead of a button, for an action that goes to an address."
+        },
+        {
+          "name": "target",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "rel",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the button where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the button in its parent's slot with it; it is not an attribute of the button."
+        },
+        {
+          "name": "reserve",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The widest words the button may swap to (\"Saving…\"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": ""
+        }
+      ],
+      "element": "button"
+    },
+    {
+      "name": "ChapterAside",
+      "import": "@singularityfm/design-system/ChapterAside",
+      "file": "packages/design-system/src/ChapterAside.tsx",
+      "props": [
+        {
+          "name": "sections",
+          "type": "readonly SectionRef[]",
+          "required": true,
+          "default": "",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "Chip",
+      "import": "@singularityfm/design-system/Chip",
+      "file": "packages/design-system/src/Chip.tsx",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The words on the chip: the choice's name."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. It goes on the chip (the label); every other attribute goes on its checkbox. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the chip in its parent's slot with it; it is not an attribute of the checkbox."
+        }
+      ],
+      "element": "input"
+    },
+    {
+      "name": "ChipGroup",
+      "import": "@singularityfm/design-system/ChipGroup",
+      "file": "packages/design-system/src/ChipGroup.tsx",
+      "props": [
+        {
+          "name": "scroll",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "One row that scrolls sideways when the chips do not fit, as the Library's Show chips do."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the group where it stands (a card-group, a scroll fade), or a hook a page's rule or script finds it by. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the group in its parent's slot with it; it is not an attribute of the fieldset."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The Chips."
+        }
+      ]
+    },
+    {
+      "name": "Code",
+      "import": "@singularityfm/design-system/Code",
+      "file": "packages/design-system/src/Code.tsx",
+      "props": [
+        {
+          "name": "text",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The text, copied exactly as it is."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The text's accessible name, e.g. \"Prompt\"."
+        },
+        {
+          "name": "copy",
+          "type": "string",
+          "required": false,
+          "default": "\"Copy\"",
+          "description": ""
+        },
+        {
+          "name": "copied",
+          "type": "string",
+          "required": false,
+          "default": "\"Copied\"",
+          "description": ""
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the snippet where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        }
+      ]
+    },
+    {
+      "name": "Dialog",
+      "import": "@singularityfm/design-system/Dialog",
+      "file": "packages/design-system/src/Dialog.tsx",
+      "props": [
+        {
+          "name": "form",
+          "type": "Record<string, unknown>",
+          "required": false,
+          "default": "",
+          "description": "Attributes for a form body: the dialog then submits. Without it the body is a plain box. An Astro page writes them as HTML does (`novalidate`, `method: \"dialog\"`)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the dialog where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The question, its words and its DialogActions, inside the body."
+        },
+        {
+          "name": "after",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "What sits after the body, outside the form: a hidden part a script reads (data-copy)."
+        }
+      ],
+      "element": "dialog"
+    },
+    {
+      "name": "DialogActions",
+      "import": "@singularityfm/design-system/DialogActions",
+      "file": "packages/design-system/src/DialogActions.tsx",
+      "props": [
+        {
+          "name": "stacked",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Three answers in a column, the committing one first."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The answers: Buttons, Cancel first in a row."
+        }
+      ]
+    },
+    {
+      "name": "DialogTitle",
+      "import": "@singularityfm/design-system/DialogTitle",
+      "file": "packages/design-system/src/DialogTitle.tsx",
+      "props": []
+    },
+    {
+      "name": "Fab",
+      "import": "@singularityfm/design-system/Fab",
+      "file": "packages/design-system/src/Fab.tsx",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "What a press does, for a screen reader, in full (\"Add source to Design\"). The word beside the glyph is hidden from it, so this is the button's one name."
+        },
+        {
+          "name": "icon",
+          "type": "IconName",
+          "required": true,
+          "default": "",
+          "description": "The glyph it keeps when it folds."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Draws a link instead of a button, so the action works before any script (/create)."
+        },
+        {
+          "name": "target",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "rel",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For a hook a page's rule or script finds it by. Never its look or its place: it floats where fab.css puts it. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the button in its parent's slot with it; it is not an attribute of the button."
+        },
+        {
+          "name": "reserve",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The widest words the button will say beside its glyph (\"Resume · 88 min left\"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The word the extended button shows beside its glyph (\"Add\"); it folds away while reading."
+        }
+      ],
+      "element": "button"
+    },
+    {
+      "name": "Field",
+      "import": "@singularityfm/design-system/Field",
+      "file": "packages/design-system/src/Field.tsx",
+      "props": [
+        {
+          "name": "multiline",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Several lines that grow with the text; the corner arc is a pill's, shortened."
+        },
+        {
+          "name": "maxLines",
+          "type": "number",
+          "required": false,
+          "default": "",
+          "description": "How many lines a multiline field grows to before it scrolls inside; 6 when left out."
+        },
+        {
+          "name": "tonal",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The container's fill and no outline, for a form whose selects are tonal too (it writes data-tonal; an outlined Select there takes data-tonal itself). Experimental (DS-11): it may change or go in a minor release (field.ts says why it exists)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the field where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        }
+      ],
+      "element": "input"
+    },
+    {
+      "name": "Flag",
+      "import": "@singularityfm/design-system/Flag",
+      "file": "packages/design-system/src/Flag.tsx",
+      "props": [
+        {
+          "name": "region",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "An ISO 3166-1 code: the flag alone, at the 16 by 12 of a row of controls."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "required": false,
+          "default": "\"\"",
+          "description": "Text that may hold flag emoji: its flags drawn at the size of the words."
+        }
+      ]
+    },
+    {
+      "name": "Icon",
+      "import": "@singularityfm/design-system/Icon",
+      "file": "packages/design-system/src/Icon.tsx",
+      "props": [
+        {
+          "name": "name",
+          "type": "IconName",
+          "required": true,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "size",
+          "type": "IconSize",
+          "required": false,
+          "default": "\"md\"",
+          "description": "The glyph's box: medium beside words, large when it is the whole button.",
+          "values": [
+            "md",
+            "lg"
+          ]
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "\"\"",
+          "description": "A hook for the control that holds it (a rule that places the glyph, or swaps it). An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        }
+      ]
+    },
+    {
+      "name": "IconButton",
+      "import": "@singularityfm/design-system/IconButton",
+      "file": "packages/design-system/src/IconButton.tsx",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "What a press does, for a screen reader: the glyph has no words (\"Close\", \"Share\")."
+        },
+        {
+          "name": "variant",
+          "type": "IconButtonVariant",
+          "required": false,
+          "default": "\"standard\"",
+          "description": "Standard (the default); tonal, the circle beside a primary action; or filled, a glyph that is the primary action, experimental (DS-11). iconButton.ts says when.",
+          "values": [
+            "standard",
+            "tonal",
+            "filled"
+          ]
+        },
+        {
+          "name": "rowEnd",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "It ends a row: its glyph's ink lands where the words of the rows around it end (D187)."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Draws a link instead of a button, for a glyph that goes to an address (Back)."
+        },
+        {
+          "name": "target",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "rel",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the button where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the button in its parent's slot with it; it is not an attribute of the button."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The glyph: an Icon, or two that the button's state swaps between."
+        }
+      ],
+      "element": "button"
+    },
+    {
+      "name": "Link",
+      "import": "@singularityfm/design-system/Link",
+      "file": "packages/design-system/src/Link.tsx",
+      "props": [
+        {
+          "name": "href",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "Where it goes. A link always has an address; an action on this page is a Button."
+        },
+        {
+          "name": "variant",
+          "type": "LinkVariant",
+          "required": false,
+          "default": "\"text\"",
+          "description": "Text (the default), a link in a line of words, or source, a story's publisher (link.ts).",
+          "values": [
+            "text",
+            "source"
+          ]
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the link where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the link in its parent's slot with it; it is not an attribute of the link."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The words."
+        }
+      ]
+    },
+    {
+      "name": "Menu",
+      "import": "@singularityfm/design-system/Menu",
+      "file": "packages/design-system/src/Menu.tsx",
+      "props": [
+        {
+          "name": "id",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The popover's id: the button that opens it names it with popoverTarget."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The sheet's header on a phone, and the menu's name for a screen reader."
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "A quiet line under the title on a phone's sheet, such as a card's facts."
+        },
+        {
+          "name": "flush",
+          "type": "boolean",
+          "required": false,
+          "default": "",
+          "description": "No padding above and below the list, for a host that draws its own header and body in the menu's surface. Experimental (DS-11): it may change or go in a minor release (menu.ts says why it exists)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the popover under its own button (the anchor of a row or a story). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The rows: MenuItem, and a tiles row of them."
+        }
+      ]
+    },
+    {
+      "name": "MenuItem",
+      "import": "@singularityfm/design-system/MenuItem",
+      "file": "packages/design-system/src/MenuItem.tsx",
+      "props": [
+        {
+          "name": "tone",
+          "type": "MenuItemTone",
+          "required": false,
+          "default": "",
+          "description": "The danger tone, for the one row that destroys.",
+          "values": [
+            "danger"
+          ]
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the row where it stands, or a hook a script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the row in its parent's slot with it; it is not an attribute of the row."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The row's glyph first, then its words."
+        }
+      ],
+      "element": "button"
+    },
+    {
+      "name": "PlayChip",
+      "import": "@singularityfm/design-system/PlayChip",
+      "file": "packages/design-system/src/PlayChip.tsx",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The visible words: a length such as \"1:24\", or a state such as \"Playing\"."
+        },
+        {
+          "name": "state",
+          "type": "PlayChipState",
+          "required": false,
+          "default": "\"idle\"",
+          "description": "Where the item stands; the player rewrites it (buttons.css documents each).",
+          "values": [
+            "idle",
+            "current",
+            "played",
+            "preparing",
+            "error",
+            "unavailable"
+          ]
+        },
+        {
+          "name": "reserve",
+          "type": "string",
+          "required": false,
+          "default": "\"Play again\"",
+          "description": "The widest words the chip will ever show (\"Processing\"). The chip is as wide as these in every state, so nothing beside it moves when its words change; words longer than them are cut with an ellipsis. The default, \"Play again\", is the widest the library itself draws and covers a time, Loading, Playing, Paused and Try again."
+        },
+        {
+          "name": "primary",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The page's one main Play: the primary fill, and the pause glyph while it plays instead of the bars. Experimental (DS-11): it may change or go in a minor release (playChip.ts says why it exists)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the chip in its parent's slot with it; it is not an attribute of the button."
+        }
+      ],
+      "element": "button"
+    },
+    {
+      "name": "PlayingBars",
+      "import": "@singularityfm/design-system/PlayingBars",
+      "file": "packages/design-system/src/PlayingBars.tsx",
+      "props": [
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the bars where they stand, or a hook a page's rule finds them by (the reader's cover button sizes them to its glyph). Never their look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the bars in its parent's slot with it; it is not an attribute of the element."
+        }
+      ]
+    },
+    {
+      "name": "Ripple",
+      "import": "@singularityfm/design-system/Ripple",
+      "file": "packages/design-system/src/Ripple.tsx",
+      "props": []
+    },
+    {
+      "name": "RowExit",
+      "import": "@singularityfm/design-system/RowExit",
+      "file": "packages/design-system/src/RowExit.tsx",
+      "props": [
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "\"\"",
+          "description": "For placing the row (its own layout). Never how it leaves. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The row's content."
+        }
+      ]
+    },
+    {
+      "name": "SearchField",
+      "import": "@singularityfm/design-system/SearchField",
+      "file": "packages/design-system/src/SearchField.tsx",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The input's name for a screen reader (\"Search your library\"); the glyph and the hint show it."
+        },
+        {
+          "name": "clearable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "A Clear text button at the field's end, shown while it holds text. The page calls installSearchClear() from design-system/searchField once per page load. Experimental (DS-11): it may change or go in a minor release (searchField.ts says why it exists)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the field where it stands, or a hook a page's rule finds it by. Never its look. It goes on the outer element (the pill, or the wrapper of a clearable field); every other attribute goes on its input. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the field in its parent's slot with it; it is not an attribute of the input."
+        }
+      ],
+      "element": "input"
+    },
+    {
+      "name": "SectionTabs",
+      "import": "@singularityfm/design-system/SectionTabs",
+      "file": "packages/design-system/src/SectionTabs.tsx",
+      "props": [
+        {
+          "name": "sections",
+          "type": "readonly SectionRef[]",
+          "required": true,
+          "default": "",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "SegmentedChoice",
+      "import": "@singularityfm/design-system/SegmentedChoice",
+      "file": "packages/design-system/src/SegmentedChoice.tsx",
+      "props": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The radios' name, which a form posts with the chosen value."
+        },
+        {
+          "name": "options",
+          "type": "readonly SegmentedChoiceOption[]",
+          "required": true,
+          "default": "",
+          "description": "Two to four segments; any other attribute of one (data-*, disabled) goes on its radio."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The value chosen when it is first drawn; the radios then keep their own. An Astro page's."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The chosen value, as the state of a React island: pair it with onValueChange."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": false,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing it where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places it in its parent's slot with it; it is not an attribute of the fieldset."
+        }
+      ],
+      "element": "input"
+    },
+    {
+      "name": "SegmentedNav",
+      "import": "@singularityfm/design-system/SegmentedNav",
+      "file": "packages/design-system/src/SegmentedNav.tsx",
+      "props": [
+        {
+          "name": "tabs",
+          "type": "readonly SegmentedNavTab[]",
+          "required": true,
+          "default": "",
+          "description": "Two to four views."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string",
+          "required": false,
+          "default": "tabs[0]?.value",
+          "description": "The view chosen when it is drawn (the first by default); mountSegmentedNav() moves it after."
+        },
+        {
+          "name": "compact",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "A chip's height on 44px columns, to sit in a row of chips."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing it where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        }
+      ]
+    },
+    {
+      "name": "Select",
+      "import": "@singularityfm/design-system/Select",
+      "file": "packages/design-system/src/Select.tsx",
+      "props": [
+        {
+          "name": "variant",
+          "type": "SelectVariant",
+          "required": false,
+          "default": "\"outlined\"",
+          "description": "Outlined for a value in a form, tonal for a sort or a filter (select.ts says which is which).",
+          "values": [
+            "outlined",
+            "tonal"
+          ]
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "A name for a select that has no label of its own; read aloud, never drawn. Draws a label around it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the select where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "reserve",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "A tonal select's longest option text (\"Longest first\"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9)."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The options: `<option>` and `<optgroup>`, as a native select holds them."
+        }
+      ]
+    },
+    {
+      "name": "Sheet",
+      "import": "@singularityfm/design-system/Sheet",
+      "file": "packages/design-system/src/Sheet.tsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The sheet's name: an h2 whose id the dialog's aria-labelledby names."
+        },
+        {
+          "name": "titleId",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "close",
+          "type": "SheetClose",
+          "required": true,
+          "default": "",
+          "description": "The data attribute the sheet's script finds its Close button by.",
+          "values": [
+            "data-create-close",
+            "data-panel-close",
+            "data-dialog-close",
+            "data-menu-close"
+          ]
+        },
+        {
+          "name": "titleData",
+          "type": "Record<`data-${string}`, string | boolean>",
+          "required": false,
+          "default": "",
+          "description": "Any data attribute the title carries for its script, such as data-panel-title."
+        },
+        {
+          "name": "kind",
+          "type": "\"create\" | \"panel\"",
+          "required": false,
+          "default": "\"panel\"",
+          "description": "\"create\" is the New episode sheet; every other sheet is a \"panel\"."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the sheet where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The form or list, inside the scrolling body."
+        },
+        {
+          "name": "after",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "What sits after the body, outside its scroll: a sticky foot, a hidden part a script reads."
+        }
+      ],
+      "element": "dialog"
+    },
+    {
+      "name": "SheetHeader",
+      "import": "@singularityfm/design-system/SheetHeader",
+      "file": "packages/design-system/src/SheetHeader.tsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The sheet's name: an h2 whose id the dialog's aria-labelledby names."
+        },
+        {
+          "name": "titleId",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": ""
+        },
+        {
+          "name": "close",
+          "type": "SheetClose",
+          "required": true,
+          "default": "",
+          "description": "The data attribute the sheet's script finds its Close button by.",
+          "values": [
+            "data-create-close",
+            "data-panel-close",
+            "data-dialog-close",
+            "data-menu-close"
+          ]
+        },
+        {
+          "name": "titleData",
+          "type": "Record<`data-${string}`, string | boolean>",
+          "required": false,
+          "default": "{}",
+          "description": "Any data attribute the title carries for its script, such as data-panel-title."
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "A quiet line under the title: what the sheet is about, as a menu's item facts."
+        }
+      ]
+    },
+    {
+      "name": "Slider",
+      "import": "@singularityfm/design-system/Slider",
+      "file": "packages/design-system/src/Slider.tsx",
+      "props": [
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the slider where it stands (a width, a flex basis). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties | string",
+          "required": false,
+          "default": "",
+          "description": "Inline style, as an object or the string an Astro page writes; never its look."
+        },
+        {
+          "name": "hue",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "A hue: the rail is the whole spectrum, the thumb is the colour picked, and a swatch floats above it while it is held (D328). The caller keeps --range-fill on the field the slider is wrapped in."
+        },
+        {
+          "name": "wavy",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The track up to the thumb drifts (a wave in Expressive, a zigzag in Halloween) and the rest stays straight; Default draws the plain Slider. The caller keeps --range-fill on the field the input is wrapped in."
+        }
+      ],
+      "element": "input"
+    },
+    {
+      "name": "Switch",
+      "import": "@singularityfm/design-system/Switch",
+      "file": "packages/design-system/src/Switch.tsx",
+      "props": [
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the switch where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties | string",
+          "required": false,
+          "default": "",
+          "description": "Inline style, as an object or the string an Astro page writes; never its look."
+        }
+      ],
+      "element": "input"
+    },
+    {
+      "name": "Toast",
+      "import": "@singularityfm/design-system/Toast",
+      "file": "packages/design-system/src/Toast.tsx",
+      "props": []
     }
   ],
   "tokens": [
