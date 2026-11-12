@@ -250,6 +250,14 @@ try {
     problems.push("`ds find` did not name the Button's import");
   const { schema, version } = JSON.parse(pnpm(["exec", "ds", "version", "--json"], app));
   if (schema !== 1 || !version) problems.push("`ds version --json` gave no version");
+  // An agent branches on the exit code; a miss that exits 0 reads as a found part.
+  let missStatus = 0;
+  try {
+    pnpm(["exec", "ds", "find", "qqzzxx"], app);
+  } catch (error) {
+    missStatus = error.status;
+  }
+  if (missStatus !== 1) problems.push("`ds find` with no match did not exit 1");
   writeFileSync(join(app, "raw.css"), ".a { color: #fff; }\n");
   // A crash also exits non-zero, so the finding itself is what passes this.
   let finding = "";

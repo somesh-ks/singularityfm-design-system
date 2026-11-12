@@ -90,10 +90,13 @@ interface Answer {
 
 /** The commands that only read the system, so `batch` can run several in one call. */
 function read(system: System, command: string, argument: string): Answer | undefined {
+  if (["find", "part", "token"].includes(command) && argument.trim() === "")
+    return { text: USAGE, json: { error: "missing argument" }, code: 2 };
   switch (command) {
     case "find": {
       const found = lookup(system, argument);
-      return { text: answer(system, argument), json: { ...found }, code: 0 };
+      const hit = found.parts.length > 0 || found.tokens.length > 0;
+      return { text: answer(system, argument), json: { ...found }, code: hit ? 0 : 1 };
     }
     case "part": {
       const part = system.parts.find((candidate) => candidate.id === argument);
@@ -126,7 +129,7 @@ function read(system: System, command: string, argument: string): Answer | undef
             ? `No token matches "${argument}".`
             : hits.map(describeTokenLine).join("\n"),
         json: { tokens: hits },
-        code: 0,
+        code: hits.length > 0 ? 0 : 1,
       };
     }
     case "list":
