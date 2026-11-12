@@ -13,7 +13,10 @@ export const PLAY_CHIP: Guidance = {
   useWhen: ["Play an episode or a story and show idle, current, played, error or preparing."],
   dontUseWhen: [
     { when: "A person ticks a choice.", instead: "Chip" },
-    { when: "The page's one main Play floats over it on a phone.", instead: "FAB" },
+    {
+      when: "The page's one main Play floats over it on a phone.",
+      instead: "FAB",
+    },
     { when: "The action is not playing something.", instead: "Button.tonal" },
   ],
   experimental: [
@@ -21,7 +24,7 @@ export const PLAY_CHIP: Guidance = {
       option: "primary",
       hook: "chip-primary",
       reason:
-        "The page's one main Play (the hero's) takes the primary fill, idle and current, and shows the pause glyph while it plays, not the bars (owner, 2026-11-04: \"all should have the same color synchronized\"; D77). Only the fill and the glyph: its size and padding are the chip's.",
+        "The page's one main Play (the hero's) takes the primary fill, idle and current, and shows the pause glyph while it plays, not the bars (owner, 2026-11-04: \"all should have the same color synchronized\"; D77). It has a button's face, not a chip's (owner, 2026-11-12: \"a button instead, not a chip. And keep its size\"): a step under the touch size, a button's end padding and the filled button's press corner.",
       since: "2026-11-12",
     },
   ],
