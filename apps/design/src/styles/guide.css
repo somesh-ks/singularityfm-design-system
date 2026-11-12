@@ -1703,6 +1703,11 @@
   font-size: var(--font-size-reading);
 }
 
+/* An option's status beside its name (DS-11), as a count sits beside a fold's name. */
+.guide-experimental {
+  margin-inline-start: var(--space-2);
+}
+
 /* ---- the index's pictures: each card shows its component, still. The tile's own tint steps aside; the
    picture sits on the page's surface, and what is drawn here from tokens (the Wheel, the Drawer, the
    lists) is plain on purpose. */

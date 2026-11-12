@@ -72,6 +72,7 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: ICON_BUTTON.summary,
     useWhen: ICON_BUTTON.useWhen,
     dontUseWhen: ICON_BUTTON.dontUseWhen,
+    experimental: ICON_BUTTON.experimental,
     parts: ICON_BUTTON.variants,
   },
   {
@@ -107,6 +108,7 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: PLAY_CHIP.summary,
     useWhen: PLAY_CHIP.useWhen,
     dontUseWhen: PLAY_CHIP.dontUseWhen,
+    experimental: PLAY_CHIP.experimental,
     parts: {},
   },
   {
@@ -129,6 +131,7 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: ICON.summary,
     useWhen: ICON.useWhen,
     dontUseWhen: ICON.dontUseWhen,
+    experimental: ICON.experimental,
     parts: ICON.sizes,
   },
   {
@@ -217,6 +220,7 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: FIELD.summary,
     useWhen: FIELD.useWhen,
     dontUseWhen: FIELD.dontUseWhen,
+    experimental: FIELD.experimental,
     parts: {},
   },
   {
@@ -250,6 +254,7 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: SEARCH_FIELD.summary,
     useWhen: SEARCH_FIELD.useWhen,
     dontUseWhen: SEARCH_FIELD.dontUseWhen,
+    experimental: SEARCH_FIELD.experimental,
     parts: {},
   },
   {
@@ -272,6 +277,7 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: MENU.summary,
     useWhen: MENU.useWhen,
     dontUseWhen: MENU.dontUseWhen,
+    experimental: MENU.experimental,
     parts: MENU.tones,
   },
   {

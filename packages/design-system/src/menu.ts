@@ -44,11 +44,21 @@ export const MENU: Guidance & {
       ],
     },
   },
+  experimental: [
+    {
+      option: "flush",
+      hook: "menu-flush",
+      reason:
+        "A host that draws its own header and body in the menu's surface (the queue's popover, the emoji picker) keeps them flush with its edges, with no list padding above and below (owner, 2026-11-12: keep the queue popover and emoji picker as they are).",
+      since: "2026-11-12",
+    },
+  ],
 };
 
 /** Every class the Menu draws, for the registry and its test. */
 export const MENU_CLASSES: string[] = [
   "menu-list",
+  "menu-flush",
   "menu-sheet",
   "menu-sheet-items",
   "menu-item",
@@ -68,9 +78,13 @@ export const MENU_SELECTORS = {
   body: ".menu-sheet-items",
 } as const;
 
-/** The class that draws a menu's popover; `sheet` makes it a bottom sheet on a phone. */
-export const menuListClass = (sheet = true): string =>
-  sheet ? "menu-list menu-sheet" : "menu-list";
+/**
+ * The class that draws a menu's popover; `sheet` makes it a bottom sheet on a phone, and `flush`
+ * (experimental, DS-11) drops the list's padding above and below, for a host that draws its own header
+ * and body in it.
+ */
+export const menuListClass = (sheet = true, flush = false): string =>
+  ["menu-list", flush && "menu-flush", sheet && "menu-sheet"].filter(Boolean).join(" ");
 
 /** The sheet's own gap and icon rules alone, for a menu shown in place, not in the top layer. */
 export const menuSheetClass = (): string => "menu-sheet";

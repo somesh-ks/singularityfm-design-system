@@ -16,11 +16,21 @@ export const PLAY_CHIP: Guidance = {
     { when: "The page's one main Play floats over it on a phone.", instead: "FAB" },
     { when: "The action is not playing something.", instead: "Button.tonal" },
   ],
+  experimental: [
+    {
+      option: "primary",
+      hook: "chip-primary",
+      reason:
+        "The page's one main Play (the hero's) takes the primary fill, idle and current, and shows the pause glyph while it plays, not the bars (owner, 2026-11-04: \"all should have the same color synchronized\"; D77). Only the fill and the glyph: its size and padding are the chip's.",
+      since: "2026-11-12",
+    },
+  ],
 };
 
 /** Every class the Play chip draws, for the registry and its test. */
 export const PLAY_CHIP_CLASSES: string[] = [
   "chip",
+  "chip-primary",
   "chip-glyph",
   "chip-bars",
   "chip-check",
@@ -33,6 +43,9 @@ export const PLAY_CHIP_CLASSES: string[] = [
 
 /** Classes the Play chip replaced; none may be written again, in any app that draws the system. */
 export const PLAY_CHIP_RETIRED: string[] = [];
+
+/** The classes of a play chip; `primary` (experimental, DS-11) for the page's one main Play. */
+export const playChipClass = (primary = false): string => (primary ? "chip chip-primary" : "chip");
 
 /** A play chip on a page, for the script that writes its state. */
 export const PLAY_CHIP_SELECTOR = ".chip";

@@ -274,7 +274,8 @@
       "classes": [
         "icon-btn",
         "press",
-        "icon-btn-end"
+        "icon-btn-end",
+        "icon-btn-filled"
       ],
       "files": [
         "packages/design-system/src/IconButton.tsx",
@@ -320,7 +321,16 @@
       "rules": [
         "label is required: it is the button's accessible name (aria-label), as the glyph has no words.",
         "It draws `.press`: the press is a state layer; the glyph never scales.",
-        "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass()."
+        "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass().",
+        "A toggle sets aria-pressed and holds two glyphs, off then on (<Icon name=\"thumbsUp\" /><Icon name=\"thumbsUpFill\" />): the button shows the one its state calls for, and a standard one that is on takes the accent container."
+      ],
+      "experimental": [
+        {
+          "option": "variant=\"filled\"",
+          "hook": "icon-btn-filled",
+          "reason": "The queue's Start listening is a Play, so it wears the primary fill with its own hover and press (owner, 2026-11-04: \"every primary button one colour\").",
+          "since": "2026-11-12"
+        }
       ],
       "imports": [
         "@singularityfm/design-system/IconButton"
@@ -333,9 +343,16 @@
       "tokens": [
         "--button-radius",
         "--color-accent",
+        "--color-accent-container",
+        "--color-on-accent-container",
         "--color-on-surface",
         "--color-on-surface-disabled",
         "--color-on-surface-muted",
+        "--color-surface-container",
+        "--cta-bg",
+        "--cta-bg-hover",
+        "--cta-bg-pressed",
+        "--cta-fg",
         "--size-icon-lg",
         "--size-touch"
       ]
@@ -532,7 +549,7 @@
       ],
       "markup": "<Link variant=\"source\" href={url} target=\"_blank\" rel=\"noopener noreferrer\">{publisher}</Link>",
       "rules": [
-        "The player has its own copy, `.player-source-link` (player.css); do not add a third."
+        "One source link everywhere, the player's included: no page draws its own copy."
       ],
       "imports": [
         "@singularityfm/design-system/Link"
@@ -590,6 +607,14 @@
       "markup": "<PlayChip label=\"5 min\" aria-label=\"Play the briefing\" data-play-item={0} />",
       "rules": [
         "A native button with no client directive (DS-8): the player writes data-state, data-playing and [data-chip-label]."
+      ],
+      "experimental": [
+        {
+          "option": "primary",
+          "hook": "chip-primary",
+          "reason": "The page's one main Play (the hero's) takes the primary fill, idle and current, and shows the pause glyph while it plays, not the bars (owner, 2026-11-04: \"all should have the same color synchronized\"; D77). Only the fill and the glyph: its size and padding are the chip's.",
+          "since": "2026-11-12"
+        }
       ],
       "imports": [
         "@singularityfm/design-system/PlayChip"
@@ -825,7 +850,9 @@
       "kind": "field",
       "summary": "The rounded search pill, on the container tone, with its glyph.",
       "classes": [
-        "search-field"
+        "search-field",
+        "search-field-wrap",
+        "search-field-clear"
       ],
       "files": [
         "packages/design-system/src/SearchField.tsx",
@@ -851,12 +878,22 @@
       ],
       "markup": "<SearchField label=\"Search your library\" name=\"q\" placeholder=\"Search your library\" />",
       "rules": [
-        "A native input with no client directive (DS-8)."
+        "A native input with no client directive (DS-8).",
+        "clearable draws a Clear text button at its end; the page calls installSearchClear() (design-system/searchField) on each page load, and syncSearchClear(input) after it sets the text itself."
+      ],
+      "experimental": [
+        {
+          "option": "clearable",
+          "hook": "search-field-wrap",
+          "reason": "A Clear text button in the field (owner, 2026-10-08, ledger reading-library.md): the native one differs in every browser and is hidden, and without room for the button the typed text runs under it. On the Library, the Sources filter, Blocked outlets, Downloads and the emoji search.",
+          "since": "2026-11-12"
+        }
       ],
       "imports": [
         "@singularityfm/design-system/SearchField"
       ],
       "styles": [
+        "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/search-field.css"
       ],
       "usage": "The search field: a filled pill with the glyph inside it, as a search bar is in every Google app. The glyph and the placeholder say what it is. Focus lifts it (the overlay fill and a hairline; the design is flat, so no shadow); the ring is the keyboard's only (data-input, app.ts), so a tap, a click or typing never draws it. It is keyed off the pointer, not on the keyboard, so a page with no input script still shows keyboard users their place (2026-11-10). Library, Sources and every topic's page share this one field (2026-10-21; styles.test.ts holds them to it).",
@@ -868,7 +905,8 @@
         "--color-surface-container-focus",
         "--color-surface-container-hover",
         "--field-height",
-        "--shape-round"
+        "--shape-round",
+        "--size-touch"
       ]
     },
     {
@@ -909,7 +947,16 @@
       "markup": "<Icon name=\"plus\" size=\"lg\" />",
       "rules": [
         "Draw it with <Icon>; a script builds one with iconHtml() and an island with <Icon> from player/ui, both through iconClass().",
-        "A control that holds a glyph places it with its own rule; it never sets the glyph's size twice."
+        "A control that holds a glyph and needs another size sets --icon-size on itself (experimental), never a rule on the glyph.",
+        "A chevron in an icon button or a field with aria-haspopup turns as aria-expanded turns true; it needs no rule of its own."
+      ],
+      "experimental": [
+        {
+          "option": "--icon-size",
+          "hook": "--icon-size",
+          "reason": "A control that holds a glyph sets its size once, on itself, so no page rule names the glyph: the transport's Play larger than everything around it and its skips (2026-10-22), the cover's bare Play on the scrim (owner, 2026-10-31), the Library's status mark sized from its text (owner, 2026-11-02 and 2026-11-03), and the queue ring's end check in the ring's own size (owner, 2026-11-12: keep it as it is).",
+          "since": "2026-11-12"
+        }
       ],
       "imports": [
         "@singularityfm/design-system/Icon"
@@ -917,7 +964,7 @@
       "styles": [
         "packages/design-system/styles/icon.css"
       ],
-      "usage": "Phosphor: every glyph is one filled path, so an icon is just its colour and its size.",
+      "usage": "Phosphor: every glyph is one filled path, so an icon is just its colour and its size. --icon-size, experimental (DS-11, 2026-11-12): a control that holds a glyph sets its size once, on itself, so no page rule names the glyph (the transport's Play and skips, the cover's Play, the Library's status mark, the queue ring's end check: owner calls of 2026-10-22, 2026-10-31, 2026-11-02 and 2026-11-03, and 2026-11-12 for the ring). It inherits, so it is set on the control that holds the one glyph, never on a container of several controls. The registry lists it (icon.ts, ICON.experimental).",
       "tokens": [
         "--color-favorite",
         "--color-on-surface-muted",
@@ -1154,7 +1201,16 @@
       "rules": [
         "It needs no client directive: it is a native input, and types and submits before any script (DS-8).",
         "Draw it with <Field> (multiline for a textarea); a select or a script takes the class from fieldClass().",
-        "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element."
+        "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element.",
+        "A readonly field draws itself sunken, in quieter ink: no page rule."
+      ],
+      "experimental": [
+        {
+          "option": "tonal",
+          "hook": "data-tonal",
+          "reason": "The Topics panel's fields are tonal, as its selects and chips are (owner, 2026-10-21: \"one style now\"); on a card a text field takes the page's surface (owner, 2026-10-24). An outlined Select there passes data-tonal on to its select.",
+          "since": "2026-11-12"
+        }
       ],
       "imports": [
         "@singularityfm/design-system/Field"
@@ -1166,9 +1222,14 @@
       "tokens": [
         "--button-radius",
         "--color-accent",
+        "--color-border-hairline",
         "--color-danger",
         "--color-on-surface",
         "--color-on-surface-muted",
+        "--color-surface-container",
+        "--color-surface-container-hover",
+        "--color-surface-container-pressed",
+        "--color-surface-sunken",
         "--field-border",
         "--field-chevron-gap",
         "--field-height",
@@ -1306,11 +1367,20 @@
         "Under 40rem a menu is a sheet, never a small popover.",
         "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass()."
       ],
+      "experimental": [
+        {
+          "option": "flush",
+          "hook": "menu-flush",
+          "reason": "A host that draws its own header and body in the menu's surface (the queue's popover, the emoji picker) keeps them flush with its edges, with no list padding above and below (owner, 2026-11-12: keep the queue popover and emoji picker as they are).",
+          "since": "2026-11-12"
+        }
+      ],
       "imports": [
         "@singularityfm/design-system/Menu",
         "@singularityfm/design-system/MenuItem"
       ],
       "styles": [
+        "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/menu.css"
       ],
       "usage": "A popover lives in the top layer, so it is placed against the viewport, not the row. Where anchor positioning exists it hangs under the button, right edges level; elsewhere heroMenu.ts writes --menu-top and --menu-right from the button's box when it opens.",
@@ -1894,7 +1964,9 @@
       ],
       "imports": [],
       "styles": [
+        "packages/design-system/styles/field.css",
         "packages/design-system/styles/primitives.css",
+        "packages/design-system/styles/search-field.css",
         "packages/design-system/styles/select.css",
         "packages/design-system/styles/settings-rows.css"
       ],
@@ -1907,9 +1979,11 @@
         "--card-radius",
         "--color-border-hairline",
         "--color-on-surface",
+        "--color-surface",
         "--color-surface-container",
         "--color-surface-container-hover",
         "--color-surface-container-pressed",
+        "--color-surface-hover",
         "--color-surface-overlay",
         "--color-surface-overlay-hover",
         "--color-surface-overlay-pressed",

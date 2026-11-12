@@ -37,8 +37,8 @@
 }
 
 .icon-btn .icon-glyph {
-  width: var(--size-icon-lg);
-  height: var(--size-icon-lg);
+  width: var(--icon-size, var(--size-icon-lg));
+  height: var(--icon-size, var(--size-icon-lg));
 }
 
 /* An icon button that ends a row: its glyph's ink lands on the row's end, where the words of the
@@ -67,6 +67,33 @@
   background: var(--ghost-pressed);
 }
 
+/* A toggle icon button (aria-pressed) that holds two glyphs shows the first while off and the second
+   while on (outline and fill: a vote, Favorite's heart), swapped at once in one place. Weighed as
+   lightly as the glyph rules after it, which set no display. Counted among the glyphs alone (each is
+   an svg), so the halo Favorite's glow puts first (glow.ts) never shows both hearts. */
+:where(.icon-btn[aria-pressed]:not([aria-pressed="true"]))
+  > .icon-glyph:where(:not(:first-of-type)),
+:where(.icon-btn[aria-pressed="true"]) > .icon-glyph:where(:first-of-type:not(:last-of-type)) {
+  display: none;
+}
+
+/* A standard icon button that is on takes the accent container, as every chosen thing does (D72,
+   ledger 1.5): a story's like or dislike. After the hover and the press, which it outweighs, so the
+   container holds under the pointer. The tonal one keeps its own fill when on: its fill already marks
+   it as a control, and Favorite's heart says on by itself (owner, 2026-11-12: keep Favorite as it is).
+   The filled one keeps its primary fill for the same reason. Moved from the reader's
+   story-controls.css. */
+.icon-btn:not(.icon-btn-tonal, .icon-btn-filled)[aria-pressed="true"] {
+  background: var(--color-accent-container);
+  color: var(--color-on-accent-container);
+}
+
+@media (forced-colors: active) {
+  .icon-btn:not(.icon-btn-tonal, .icon-btn-filled)[aria-pressed="true"] {
+    color: Highlight;
+  }
+}
+
 /* The secondary icon button (2026-10-29, owner: "a circle as a secondary button"): an .icon-btn on the
    fill of the select chip (--color-surface-container), so it sits beside Play and a dropdown as one
    row in both themes. Usage: add it with .icon-btn for the companion of a primary action (Share
@@ -87,13 +114,53 @@
   background: var(--color-surface-container-pressed);
 }
 
+/* On a phone's menu sheet the tonal icon button takes the sheet's tile tone, as a tonal button on a
+   dialog does: in dark the container is the sheet's own colour and the circles vanished (owner review,
+   2026-11-02: the speed screen's - and +). The popover from 40rem is the overlay step, where the plain
+   fill shows. Moved from the reader's speed-panel.css. */
+@media (width < 40rem) {
+  .menu-sheet .icon-btn-tonal {
+    background: var(--sheet-tile-bg);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .menu-sheet .icon-btn-tonal:where(:not(:disabled, [aria-disabled="true"])):hover {
+      background: var(--sheet-tile-bg-hover);
+    }
+  }
+
+  .menu-sheet .icon-btn-tonal:where(:not(:disabled, [aria-disabled="true"])):active {
+    background: var(--sheet-tile-bg-pressed);
+  }
+}
+
+/* Icon button, filled, experimental (DS-11, 2026-11-12): the primary fill with its own hover and press,
+   for a glyph that is a primary action, the queue's Start listening (owner, 2026-11-04: "every primary
+   button one colour"); the ghost states would turn it grey under a pointer. The registry lists it
+   (iconButton.ts, ICON_BUTTON.experimental). Moved from the reader's queue.css. */
+.icon-btn-filled {
+  background: var(--cta-bg);
+  color: var(--cta-fg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .icon-btn-filled:where(:not(:disabled, [aria-disabled="true"])):hover {
+    background: var(--cta-bg-hover);
+    color: var(--cta-fg);
+  }
+}
+
+.icon-btn-filled:where(:not(:disabled, [aria-disabled="true"])):active {
+  background: var(--cta-bg-pressed);
+}
+
 /* A press on an icon button shows its state layer and nothing else: the glyph never scales or
    moves (owner, 2026-10-21; .press in foundations is layered, so this unlayered rule wins). Label
    buttons and nav tabs keep their own press. */
 :is(
   .icon-btn,
   .view-btn,
-  .search-clear,
+  .search-field-clear,
   .source-plus-btn,
   .toast-dismiss,
   .dock-btn,
@@ -305,7 +372,8 @@
 }
 
 .button-filled:is(:disabled, [aria-disabled="true"]),
-.button-tonal:is(:disabled, [aria-disabled="true"]) {
+.button-tonal:is(:disabled, [aria-disabled="true"]),
+.icon-btn-filled:is(:disabled, [aria-disabled="true"]) {
   background: var(--color-surface-container);
 }
 
@@ -358,11 +426,6 @@
     opacity var(--duration-state) var(--ease-out),
     transform var(--duration-state) var(--ease-out),
     filter var(--duration-state) var(--ease-out);
-}
-
-.swap-paused {
-  /* Optical center: a play triangle's mass sits left of its box. */
-  translate: 0.0625rem 0;
 }
 
 [data-playing="false"] .swap-playing,
@@ -671,6 +734,40 @@
 
 .chip[data-state="current"][data-playing="true"] .chip-bars {
   display: flex;
+}
+
+/* PlayChip, primary, experimental (DS-11, 2026-11-12): the page's one main Play takes the primary fill,
+   idle and current alike, as every primary button does (owner, 2026-11-04: "all should have the same
+   color synchronized"; D77: the hero's Play is the page's one filled action), and while it plays it is
+   the pause button: the pause glyph, not the bars a story's chip shows, so a page has one "this is
+   playing" mark per story and one way to pause. Its size, padding and corner are the chip's own.
+   Played, preparing and unavailable keep their meaning. The registry lists it (playChip.ts,
+   PLAY_CHIP.experimental). Moved from the reader's hero.css. */
+.chip-primary {
+  --chip-bg: var(--cta-bg);
+  --chip-bg-hover: var(--cta-bg-hover);
+  --chip-bg-pressed: var(--cta-bg-pressed);
+  --chip-fg: var(--cta-fg);
+  --chip-bg-current: var(--cta-bg);
+  --chip-bg-current-hover: var(--cta-bg-hover);
+  --chip-bg-current-pressed: var(--cta-bg-pressed);
+  --chip-fg-current: var(--cta-fg);
+}
+
+/* The layer over a filled control is its own ink: a press keeps the words in the fill's ink, never the
+   pressed accent a tonal chip's words take. */
+.chip-primary:where(
+  :not(:disabled, [aria-disabled="true"], [data-state="unavailable"], [data-state="played"])
+):active {
+  color: var(--cta-fg);
+}
+
+.chip-primary[data-state="current"][data-playing="true"] .chip-glyph > .swap {
+  display: grid;
+}
+
+.chip-primary[data-state="current"][data-playing="true"] .chip-bars {
+  display: none;
 }
 
 .chip:is([data-state="unavailable"], [aria-disabled="true"], :disabled) {

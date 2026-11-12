@@ -1,8 +1,8 @@
 /*
  * The search field: a filled pill with its glyph and its input, as the reader's Library, Sources and
  * topic pages and the style guide draw it. Moved here unchanged from the reader's library.css (D382
- * step 4e), which imports it first; the reader's clear button (.search-wrap, .search-clear) stays
- * there with the script that shows it.
+ * step 4e); its clear button (.search-field-wrap, .search-field-clear) followed on 2026-11-12, with the script
+ * that shows it (searchField.ts, installSearchClear).
  */
 
 /* The search field: a filled pill with the glyph inside it, as a search bar is in every Google app.
@@ -68,12 +68,74 @@
   }
 }
 
+/* On a card's container tone the pill steps up to the overlay tone, as a card's filter chips and tonal
+   select do (owner, 2026-10-24): white in light, one grey up in dark, where the container pill read as
+   a hole in the card. Its hover is the card's chip layer. Focus keeps its own step (above): this rule
+   weighs as much and comes after it, so it stands aside while the field has focus. Keyed on the
+   library's card (.card-group) alone; a page's own card joins by being one (D237, D253). Moved from
+   the reader's topics.css, where it took the page's own surface. */
+.card-group .search-field:not(:focus-within) {
+  background: var(--color-surface-overlay);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-group .search-field:hover:not(:focus-within) {
+    background: var(--card-chip-hover);
+  }
+}
+
 /* A search field that cannot be used dims like every disabled control. Its input is what a disabled
    fieldset disables, so the pill reads it from there, as the filter chip does. Moved from the reader's
    manage.css. */
 .search-field:has(> input:disabled) {
   opacity: var(--opacity-disabled);
   cursor: default;
+}
+
+/* SearchField, clearable, experimental (DS-11, 2026-11-12): a Clear text button over the field's end
+   (owner, 2026-10-08, ledger reading-library.md), for every pointer; the native one is hidden above, as
+   it differs in every browser. installSearchClear() shows it only while the field has text. Its 44px
+   box sits over the pill's end, and while it shows the text stops where it starts instead of running
+   under it. The registry lists it (searchField.ts, SEARCH_FIELD.experimental). Moved from the reader's
+   library.css. */
+.search-field-wrap {
+  position: relative;
+}
+
+.search-field-clear {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  display: grid;
+  place-items: center;
+  width: var(--size-touch);
+  height: var(--size-touch);
+  margin-block: auto;
+  border: 0;
+  border-radius: var(--shape-round);
+  background: none;
+  color: var(--color-on-surface-muted);
+}
+
+.search-field-clear[hidden] {
+  display: none;
+}
+
+.search-field-wrap:has(> .search-field-clear:not([hidden])) > .search-field {
+  padding-inline-end: var(--size-touch);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .search-field-clear:hover {
+    background: var(--ghost-hover);
+    color: var(--color-on-surface);
+  }
+}
+
+/* A press goes one step deeper than the hover (D317), and wins while a mouse is over the button. */
+.search-field-clear:active {
+  background: var(--ghost-pressed);
+  color: var(--color-on-surface);
 }
 
 /* Forced colours drops the fill and the focus hairline (a box-shadow), which left the pill with no

@@ -142,5 +142,17 @@
   { "area": "actions", "need": "primary call to action button", "part": "button-filled" },
   { "area": "actions", "need": "play button for an episode", "part": "play-chip" },
   { "area": "overlays", "need": "a confirmation modal before deleting a source", "part": "dialog" },
-  { "area": "tokens", "need": "shadow under a menu", "token": "--shadow-popover" }
+  { "area": "tokens", "need": "shadow under a menu", "token": "--shadow-popover" },
+  {
+    "area": "inputs",
+    "need": "a search field with a clear button",
+    "part": "search-field",
+    "why": "experimental clearable (DS-11)"
+  },
+  {
+    "area": "actions",
+    "need": "a round glyph button in the primary fill",
+    "part": "icon-btn",
+    "why": "experimental filled (DS-11)"
+  }
 ]

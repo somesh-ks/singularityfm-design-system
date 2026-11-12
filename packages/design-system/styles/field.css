@@ -121,6 +121,90 @@ select.field-input:focus-visible {
   }
 }
 
+/* Field, tonal, experimental (DS-11, 2026-11-12): the container's fill and no outline (a transparent
+   edge keeps the size, and forced colours draw it), with a state layer under the pointer, for a form
+   whose selects and chips are all tonal: the reader's Topics panel (owner, 2026-10-21: the text fields
+   were outlined while the selects were filled, "one style now"). A focused or failed text field keeps
+   its accent or danger edge on no fill. On a card's container tone a text field takes the page's own
+   surface, so it stays a field you can see (owner, 2026-10-24). Keyed on data-tonal, which Field's
+   `tonal` writes and an outlined Select passes on to its select. The registry lists it (field.ts,
+   FIELD.experimental). Moved from the reader's topics.css. */
+.field-input[data-tonal] {
+  transition:
+    border-color var(--duration-hover) var(--ease-hover),
+    background-color var(--duration-hover) var(--ease-hover);
+}
+
+select.field-input[data-tonal],
+:is(input, textarea).field-input[data-tonal]:not(
+  :focus-visible,
+  [readonly],
+  [aria-invalid]:not([aria-invalid="false"])
+) {
+  border-color: transparent;
+  background: var(--color-surface-container);
+}
+
+.card-group
+  :is(input, textarea).field-input[data-tonal]:not(
+    :focus-visible,
+    [readonly],
+    [aria-invalid]:not([aria-invalid="false"])
+  ) {
+  background: var(--color-surface);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  select.field-input[data-tonal]:where(:enabled):hover,
+  :is(input, textarea).field-input[data-tonal]:not(
+    :focus-visible,
+    [readonly],
+    [aria-invalid]:not([aria-invalid="false"])
+  ):where(:enabled):hover {
+    border-color: transparent;
+    background: var(--color-surface-container-hover);
+  }
+
+  .card-group
+    :is(input, textarea).field-input[data-tonal]:not(
+      :focus-visible,
+      [readonly],
+      [aria-invalid]:not([aria-invalid="false"])
+    ):where(:enabled):hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+select.field-input[data-tonal]:where(:enabled):active {
+  border-color: transparent;
+  background: var(--color-surface-container-pressed);
+}
+
+select.field-input[data-tonal]:focus-visible {
+  border-color: transparent;
+}
+
+/* A failed tonal select keeps its danger edge under the pointer, pressed and focused: the three rules
+   above clear the edge, and the edge is what says it failed. */
+select.field-input[data-tonal][aria-invalid]:not([aria-invalid="false"]) {
+  border-color: var(--color-danger);
+}
+
+/* A field that can be read and not changed (a built-in topic's name) is sunken, in quieter ink, so it
+   never looks like a field that waits for typing; the pointer's edge does not show on it. For every
+   field, after the hover it outweighs. Focused, it keeps the accent edge, as every field does, so the
+   keyboard can still see where it is, and a failed one keeps its danger edge. Moved from the reader's topics.css. */
+.field-input[readonly],
+.field-input[readonly]:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-on-surface-muted);
+}
+
+.field-input[readonly]:not(:focus-visible, [aria-invalid]:not([aria-invalid="false"])),
+.field-input[readonly]:not(:focus-visible, [aria-invalid]:not([aria-invalid="false"])):hover {
+  border-color: var(--color-border-hairline);
+}
+
 /* A field that cannot be edited dims like every disabled control. A disabled fieldset disables it, so
    this one rule dims it there too, and nothing stacks. */
 .field-input:disabled {

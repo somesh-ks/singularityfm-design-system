@@ -53,6 +53,8 @@ const PART_OF: Record<string, string> = {
   Drawer: "drawer",
   "Icon button.standard": "icon-btn",
   "Icon button.tonal": "icon-btn-tonal",
+  // An experimental variant is an option of the family's part, not a part of its own (DS-11).
+  "Icon button.filled": "icon-btn",
   "Link.text": "text-link",
   "Link.source": "source-link",
 };
@@ -101,6 +103,14 @@ const words: Record<string, { keywords: string[]; markup: string; rules?: string
   },
 };
 
+/** A component's experimental options (DS-11), as the lookup lists them; none leaves the key out. */
+const experimentalOf = (guidance: Guidance): Pick<PartSource, "experimental"> =>
+  guidance.experimental?.length ? { experimental: [...guidance.experimental] } : {};
+
+/** The classes of a component's experimental variants. */
+const experimentalHooks = (guidance: Guidance): Set<string> =>
+  new Set((guidance.experimental ?? []).map((item) => item.hook));
+
 /** The lookup file ends each situation itself, so the registry's full stops come off. */
 const sentences = (lines: readonly string[]): string[] =>
   lines.map((line) => line.replace(/\.$/, ""));
@@ -147,6 +157,7 @@ const control = (
   markup: extra.markup,
   rules: extra.rules,
   ...(extra.classes ? { classes: extra.classes } : {}),
+  ...experimentalOf(guidance),
 });
 
 export const componentParts = (): PartSource[] => [
@@ -213,51 +224,62 @@ export const componentParts = (): PartSource[] => [
       markup: extra?.markup,
     };
   }),
-  ...Object.entries(ICON_BUTTON.variants).map(([variant, guidance]): PartSource => {
-    const standard = variant === "standard";
-    const id = standard ? "icon-btn" : "icon-btn-tonal";
-    return {
-      id,
-      name: standard ? "Icon button" : "Tonal icon button",
-      kind: "action",
-      summary: standard ? ICON_BUTTON.summary : guidance.summary,
-      // The standard part stands for the family, so it carries the press and the row end too.
-      classes: standard ? ["icon-btn", "press", "icon-btn-end"] : ["icon-btn-tonal"],
-      files: [
-        "packages/design-system/src/IconButton.tsx",
-        "packages/design-system/src/iconButton.ts",
-      ],
-      when: sentences(standard ? [...ICON_BUTTON.useWhen, ...guidance.useWhen] : guidance.useWhen),
-      not: exclusions(
-        standard ? [...guidance.dontUseWhen, ...ICON_BUTTON.dontUseWhen] : guidance.dontUseWhen,
-        "icon-btn",
-      ),
-      keywords: standard
-        ? [
-            "icon button",
-            "icon-only",
-            "close",
-            "x",
-            "dots",
-            "more",
-            "glyph button",
-            "toolbar",
-            "back",
-            "arrow",
-          ]
-        : ["circle button", "share", "favorite"],
-      markup: standard
-        ? '<IconButton label="Close"><Icon name="close" size="lg" /></IconButton>'
-        : '<IconButton variant="tonal" label="Share"><Icon name="shareFat" /></IconButton>',
-      rules: standard
-        ? [
-            "label is required: it is the button's accessible name (aria-label), as the glyph has no words.",
-            "It draws `.press`: the press is a state layer; the glyph never scales.",
-            "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass().",
-          ]
-        : undefined,
-    };
-  }),
+  // An experimental variant (filled) is listed as an option of the standard part, which stands for
+  // the family, not as a part of its own: the lookup offers a stable part first (DS-11).
+  ...Object.entries(ICON_BUTTON.variants)
+    .filter(([variant]) => !experimentalHooks(ICON_BUTTON).has(`icon-btn-${variant}`))
+    .map(([variant, guidance]): PartSource => {
+      const standard = variant === "standard";
+      const id = standard ? "icon-btn" : `icon-btn-${variant}`;
+      return {
+        id,
+        name: standard ? "Icon button" : `${guidance.label} icon button`,
+        kind: "action",
+        summary: standard ? ICON_BUTTON.summary : guidance.summary,
+        // The standard part stands for the family, so it carries the press, the row end and the
+        // experimental variants too.
+        classes: standard
+          ? ["icon-btn", "press", "icon-btn-end", ...experimentalHooks(ICON_BUTTON)]
+          : [id],
+        files: [
+          "packages/design-system/src/IconButton.tsx",
+          "packages/design-system/src/iconButton.ts",
+        ],
+        when: sentences(
+          standard ? [...ICON_BUTTON.useWhen, ...guidance.useWhen] : guidance.useWhen,
+        ),
+        not: exclusions(
+          standard ? [...guidance.dontUseWhen, ...ICON_BUTTON.dontUseWhen] : guidance.dontUseWhen,
+          "icon-btn",
+        ),
+        keywords: standard
+          ? [
+              "icon button",
+              "icon-only",
+              "close",
+              "x",
+              "dots",
+              "more",
+              "glyph button",
+              "toolbar",
+              "back",
+              "arrow",
+            ]
+          : ["circle button", "share", "favorite"],
+        markup: standard
+          ? '<IconButton label="Close"><Icon name="close" size="lg" /></IconButton>'
+          : '<IconButton variant="tonal" label="Share"><Icon name="shareFat" /></IconButton>',
+        rules: standard
+          ? [
+              "label is required: it is the button's accessible name (aria-label), as the glyph has no words.",
+              "It draws `.press`: the press is a state layer; the glyph never scales.",
+              "rowEnd for one that ends a row; a script or an island (a Base UI Close) takes the classes from iconButtonClass().",
+              'A toggle sets aria-pressed and holds two glyphs, off then on (<Icon name="thumbsUp" /><Icon name="thumbsUpFill" />): the button shows the one its state calls for, and a standard one that is on takes the accent container.',
+            ]
+          : undefined,
+        ...(standard ? experimentalOf(ICON_BUTTON) : {}),
+      };
+    }),
   {
     id: "fab",
     name: "Floating action button",
@@ -296,7 +318,7 @@ export const componentParts = (): PartSource[] => [
         : '<Link variant="source" href={url} target="_blank" rel="noopener noreferrer">{publisher}</Link>',
       rules: text
         ? ["A link is a real <a href>; an action on this page is a Button."]
-        : ["The player has its own copy, `.player-source-link` (player.css); do not add a third."],
+        : ["One source link everywhere, the player's included: no page draws its own copy."],
     };
   }),
   control("play-chip", "Play chip", PLAY_CHIP, {
@@ -351,7 +373,7 @@ export const componentParts = (): PartSource[] => [
   }),
   control("search-field", "Search field", SEARCH_FIELD, {
     kind: "field",
-    classes: ["search-field"],
+    classes: ["search-field", "search-field-wrap", "search-field-clear"],
     files: [
       "packages/design-system/src/SearchField.tsx",
       "packages/design-system/src/searchField.ts",
@@ -359,7 +381,10 @@ export const componentParts = (): PartSource[] => [
     keywords: ["search bar", "filter input", "text filter"],
     markup:
       '<SearchField label="Search your library" name="q" placeholder="Search your library" />',
-    rules: ["A native input with no client directive (DS-8)."],
+    rules: [
+      "A native input with no client directive (DS-8).",
+      "clearable draws a Clear text button at its end; the page calls installSearchClear() (design-system/searchField) on each page load, and syncSearchClear(input) after it sets the text itself.",
+    ],
   }),
   control("icon", "Icon", ICON, {
     kind: "display",
@@ -370,7 +395,8 @@ export const componentParts = (): PartSource[] => [
     keywords: ["icon", "glyph", "phosphor", "symbol", "chevron", "plus", "check"],
     rules: [
       "Draw it with <Icon>; a script builds one with iconHtml() and an island with <Icon> from player/ui, both through iconClass().",
-      "A control that holds a glyph places it with its own rule; it never sets the glyph's size twice.",
+      "A control that holds a glyph and needs another size sets --icon-size on itself (experimental), never a rule on the glyph.",
+      "A chevron in an icon button or a field with aria-haspopup turns as aria-expanded turns true; it needs no rule of its own.",
     ],
   }),
   control("badge", "Badge", BADGE, {
@@ -419,6 +445,7 @@ export const componentParts = (): PartSource[] => [
       "It needs no client directive: it is a native input, and types and submits before any script (DS-8).",
       "Draw it with <Field> (multiline for a textarea); a select or a script takes the class from fieldClass().",
       "A disabled field dims like a disabled switch; a disabled fieldset dims it the same way, on the same element.",
+      "A readonly field draws itself sunken, in quieter ink: no page rule.",
     ],
   }),
   control("select", "Select", SELECT, {

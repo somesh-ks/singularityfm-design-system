@@ -83,6 +83,12 @@ export function findParts(system: System, need: string, limit = 3): PartHit[] {
       score += weigh(query, (part.keywords ?? []).join(" "), 3);
       for (const when of part.when) score += weigh(query, when, 2);
       score += weigh(query, part.summary, 1.5);
+      // An experimental option is found by its name, as a variant is ("clearable search field").
+      score += weigh(
+        query,
+        (part.experimental ?? []).map((item) => `${item.option} experimental`).join(" "),
+        2,
+      );
       // A need that reads like what a part is not for counts against it; the neighbor named there wins.
       // A word the part names itself by ("button" for a Filled button) is not evidence against it: its
       // "not" lines say "button" too, and four of them took 4 points off "primary call to action button".
@@ -135,6 +141,13 @@ export function findTokens(system: System, need: string, limit = 5): TokenHit[] 
 
 const oneLine = (text: string): string => text.replace(/\s+/g, " ").trim();
 
+/** A part's experimental options (DS-11), one line each: it may change or go in a minor release. */
+const experimentalLines = (part: Part): string[] =>
+  (part.experimental ?? []).map(
+    (item) =>
+      `  experimental: ${item.option} (status experimental since ${item.since}; may change or go in a minor release): ${oneLine(item.reason)}`,
+  );
+
 export function describeTokenLine(token: SystemToken): string {
   const value = token.dark ? `${token.light} | dark ${token.dark}` : token.light;
   const short = value.length > 60 ? `${value.slice(0, 57)}...` : value;
@@ -156,6 +169,7 @@ export function describePart(part: Part): string {
   for (const item of part.not ?? []) out.push(`  not when: ${item.when} -> ${item.use}`);
   if (part.markup) out.push(`  markup: ${part.markup}`);
   for (const rule of part.rules ?? []) out.push(`  rule: ${rule}`);
+  out.push(...experimentalLines(part));
   if (part.tokens.length) out.push(`  tokens: ${part.tokens.join(" ")}`);
   if (part.usage) {
     const note = part.usage.length > 240 ? `${part.usage.slice(0, 239).trimEnd()}…` : part.usage;
@@ -185,6 +199,7 @@ export function answer(system: System, need: string): string {
       else {
         out.push(`${part.id}: ${part.summary}`);
         out.push(`  use when: ${part.when.slice(0, 2).join("; ")}`);
+        out.push(...experimentalLines(part));
       }
     });
   }
