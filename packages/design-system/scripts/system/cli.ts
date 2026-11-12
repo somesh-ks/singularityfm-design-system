@@ -8,10 +8,10 @@ import { createHash } from "node:crypto";
 import { existsSync, globSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { declaredProperties, type Finding, validate } from "../../rules/index.js";
+import { componentsOf } from "./pages.js";
 import { PACKAGE, SYSTEM_PATH } from "./paths.js";
 import {
   answer,
-  componentsOf,
   describePart,
   describeProps,
   describeTokenLine,
@@ -130,7 +130,13 @@ function read(system: System, command: string, argument: string): Answer | undef
         .sort((x, y) => x.distance - y.distance)[0]?.id;
       return {
         text: `No part or component "${argument}".${near ? ` Did you mean ${near}?` : ""} Parts: ${ids.join(", ")}. Components: ${names.join(", ")}`,
-        json: { part: null, ...(near ? { didYouMean: near } : {}), parts: ids, components: names },
+        json: {
+          part: null,
+          ...(near ? { didYouMean: near } : {}),
+          parts: ids,
+          components: [],
+          componentNames: names,
+        },
         code: 1,
       };
     }

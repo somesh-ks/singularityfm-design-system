@@ -1,5 +1,6 @@
 /** Answers "which part" and "which token" from a built system, so an agent need not grep stylesheets. */
 import { RETIRED_PATHS } from "../../rules/data.js";
+
 import type { Component, Part, System, SystemToken } from "./types.js";
 
 // "action" is a stop word: nearly every part is one, so it ranked first whichever part names it most
@@ -166,13 +167,6 @@ export function describeProps(component: Component): string[] {
   });
   if (component.element) lines.push(`    ...every attribute of a native ${component.element}`);
   return [`  props of ${component.name}:`, ...lines];
-}
-
-/** The components a part imports, in its own order. */
-export function componentsOf(part: Part, components: Component[]): Component[] {
-  return part.imports.flatMap((name) =>
-    components.filter((component) => component.import === name),
-  );
 }
 
 /**
