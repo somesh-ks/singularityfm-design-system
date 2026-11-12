@@ -49,6 +49,9 @@ function unhold(element: HTMLElement): void {
   if (!element.style.length) element.removeAttribute("style");
 }
 
+/** The scroll the script last restored, so the scroll event it raises is not taken for the reader's. */
+let restored: number | null = null;
+
 /** Ends any motion and puts every list where its chevron says. */
 function settle(): void {
   for (const animation of flight) animation.cancel();
@@ -98,7 +101,7 @@ function move(nav: HTMLElement, pressed: Group, open: boolean): void {
   layOut(true);
   // A list that closes can leave less to scroll than the column has scrolled; when it leaves the page
   // the scroll clamps. The rows end where the clamp will put them, so settling moves nothing.
-  // shortcut: a scroll or a resize by the reader during the motion is not counted; upgrade if it shows.
+  // A reader's scroll during the motion ends it (see the scroll listener): the compensation is then never stale.
   // Measured from the last row's box, not scrollHeight, which counts a motion's translates.
   const last = rows.at(-1);
   const bottom = last
@@ -123,6 +126,9 @@ function move(nav: HTMLElement, pressed: Group, open: boolean): void {
     ]),
   );
   // The final layout may have clamped the scroll; the layout in flight is as tall as before.
+  // The script's own restore is not the reader's scroll: its value is remembered, and the listener
+  // ignores the scroll event that exact value raises.
+  restored = scroll;
   nav.scrollTop = scroll;
 
   // The furthest anything moves. A long list covers more ground in the same time, so its first frame is
@@ -205,5 +211,16 @@ function syncCurrent(): void {
 wide.addEventListener("change", () => {
   settle();
   syncCurrent();
+});
+
+// The reader scrolling the column during a motion ends it at once: the rows' compensation was taken at
+// the press, so a scroll would leave it stale. The script's own restore is ignored.
+document.querySelector<HTMLElement>(".app-nav")?.addEventListener("scroll", (event) => {
+  const nav = event.currentTarget as HTMLElement;
+  if (nav.scrollTop === restored) {
+    restored = null;
+    return;
+  }
+  if (flight.length) settle();
 });
 syncCurrent();
