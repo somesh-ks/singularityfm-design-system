@@ -66,18 +66,24 @@ const updated = new Intl.DateTimeFormat("en-GB", {
                 </IconButton>
                 <ul class="guide-nav-sub" id={`nav-sub-${page.label.toLowerCase()}`} role="list" hidden={!open}>
                   {groups
-                    ? groups.map((group) => (
-                        <Fragment>
-                          <li class="guide-nav-group-label" role="presentation">{group.label}</li>
-                          {group.pages.map((child) => (
-                            <li>
-                              <a class="guide-nav-subitem guide-nav-subitem-plain" href={href(child.path)} aria-current={child.path === current ? "page" : undefined}>
-                                <span>{child.label}</span>
-                              </a>
-                            </li>
-                          ))}
-                        </Fragment>
-                      ))
+                    ? groups.map((group, index) => {
+                        // A list of its own, named by its caption, so a screen reader ties the pages to it.
+                        const caption = `nav-cap-${page.label.toLowerCase()}-${index}`;
+                        return (
+                          <li class="guide-nav-section">
+                            <span class="guide-nav-group-label" id={caption}>{group.label}</span>
+                            <ul class="guide-nav-section-list" role="list" aria-labelledby={caption}>
+                              {group.pages.map((child) => (
+                                <li>
+                                  <a class="guide-nav-subitem guide-nav-subitem-plain" href={href(child.path)} aria-current={child.path === current ? "page" : undefined}>
+                                    <span>{child.label}</span>
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        );
+                      })
                     : children.map((child) => (
                         <li>
                           <a class="guide-nav-subitem" href={href(child.path)} aria-current={child.path === current ? "page" : undefined}>
