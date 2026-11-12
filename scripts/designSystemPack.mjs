@@ -238,7 +238,13 @@ try {
   if (!existsSync(join(installed, "flags/se.svg"))) problems.push("the tarball has no flags");
   // An agent reads these by path under node_modules and nothing imports them, so, like the flags, only
   // this check sees one missing from `files`.
-  for (const file of ["AGENTS.md", "tokens/llms.txt", "tokens/llms-full.txt", "tokens/system.json"])
+  for (const file of [
+    "AGENTS.md",
+    "tokens/llms.txt",
+    "tokens/llms-full.txt",
+    "tokens/foundations.md",
+    "tokens/system.json",
+  ])
     if (!existsSync(join(installed, file))) problems.push(`the tarball has no ${file}`);
   // Every page llms.txt links, read from the installed system.json, so one dropped page fails too.
   const installedSystem = join(installed, "tokens/system.json");

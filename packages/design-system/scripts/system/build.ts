@@ -17,9 +17,16 @@ import {
   type Token,
   type TokenDocument,
 } from "../buildTokens.js";
-import { renderLlmsFull, renderPartPage } from "./pages.js";
+import { FOUNDATIONS_LINK, renderLlmsFull, renderPartPage } from "./pages.js";
 import { PARTS } from "./parts.js";
-import { LLMS_FULL_PATH, LLMS_PATH, PACKAGE, PARTS_DIR, SYSTEM_PATH } from "./paths.js";
+import {
+  FOUNDATIONS_PATH,
+  LLMS_FULL_PATH,
+  LLMS_PATH,
+  PACKAGE,
+  PARTS_DIR,
+  SYSTEM_PATH,
+} from "./paths.js";
 import { propsTable } from "./props.js";
 import type { Component, Part, PartSource, System, SystemToken } from "./types.js";
 import { usageComment } from "./usage.js";
@@ -278,7 +285,8 @@ export function renderLlms(system: System): string {
     "> Components, tokens and rules for Singularity apps (`@singularityfm/design-system`). Pick a part here before writing a class or a value; a part that fits is used as it is, none fits means ask the owner. Never invent a control class.",
     "",
     `<!-- ${GENERATED} -->`,
-    'Ask `ds find "<need>"`, `ds part <id>` or `ds token <words>`, not this whole file (`pnpm exec ds` in an app, `pnpm run ds` here). Rules for an app: AGENTS.md. All pages in one file: llms-full.txt. Data: system.json.',
+    `Read ${FOUNDATIONS_LINK} first: the rules for every screen. ` +
+      'Then ask `ds find "<need>"`, `ds part <id>` or `ds token <words>`, not this whole file (`pnpm exec ds` in an app, `pnpm run ds` here). Rules for an app: AGENTS.md. All pages in one file: llms-full.txt. Data: system.json.',
     "",
     "## Parts",
     "An id links to its page (import, markup, props). What it is. Use: when. Not: situation → part instead.",
@@ -375,7 +383,7 @@ export function systemFiles(): [path: string, text: string][] {
   return [
     [SYSTEM_PATH, renderSystemJson(system)],
     [LLMS_PATH, llms],
-    [LLMS_FULL_PATH, renderLlmsFull(system, llms)],
+    [LLMS_FULL_PATH, renderLlmsFull(system, llms, readFileSync(FOUNDATIONS_PATH, "utf8"))],
     ...system.parts.map((part): [string, string] => [
       join(PARTS_DIR, `${part.id}.md`),
       renderPartPage(part, system.components),

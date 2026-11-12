@@ -8,7 +8,7 @@
 2. [docs/decisions/](docs/decisions/README.md): DS records from DS-1, and [app-records.md](docs/decisions/app-records.md) for the app's D-records that still govern the library.
 3. [COMPATIBILITY.md](packages/design-system/COMPATIBILITY.md) before any change to what the package ships.
 
-On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs/ledger/) (the owner's asks for components, tokens and type). The ledger core, the owner's taste, is in the app repo: [design-engineering-ledger.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design-engineering-ledger.md). Read it before UI work.
+On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs/ledger/) (the owner's asks for components, tokens and type). The owner's taste for every screen is [docs/ledger/taste.md](docs/ledger/taste.md) (DS-12), shipped short as `packages/design-system/tokens/foundations.md`; how to work with him is in the app's [ledger core](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design-engineering-ledger.md). Read both before UI work.
 
 ## Layout
 

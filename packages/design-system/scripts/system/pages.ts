@@ -14,6 +14,9 @@ const cell = (text: string): string => text.replace(/\|/g, "\\|").replace(/\s+/g
 /** Inline code that survives a backtick inside it (a template literal type): fenced by two. */
 const code = (text: string): string => (text.includes("`") ? `\`\` ${text} \`\`` : `\`${text}\``);
 
+/** How llms.txt links foundations.md; llms-full.txt, which holds its text, swaps it for a pointer. */
+export const FOUNDATIONS_LINK = "[foundations.md](foundations.md)";
+
 /** The components a part imports, in its own order. */
 export function componentsOf(part: Part, components: Component[]): Component[] {
   return part.imports.flatMap((name) =>
@@ -123,8 +126,11 @@ function renderComponentPage(component: Component, at: Placement): string {
   ].join("\n");
 }
 
-/** llms.txt, then every part page, then each component no part covers: one fetch holds the system. */
-export function renderLlmsFull(system: System, llms: string): string {
+/**
+ * llms.txt, then foundations.md, then every part page, then each component no part covers: one
+ * fetch holds the system. Foundations' headings go one level down, as the part pages' do.
+ */
+export function renderLlmsFull(system: System, llms: string, foundations: string): string {
   const covered = new Set(system.parts.flatMap((part) => part.imports));
   const pages = [
     ...system.parts.map((part) => renderPartPage(part, system.components, IN_FULL)),
@@ -132,5 +138,9 @@ export function renderLlmsFull(system: System, llms: string): string {
       .filter((component) => !covered.has(component.import))
       .map((component) => renderComponentPage(component, IN_FULL)),
   ];
-  return [llms.trimEnd(), ...pages.map((page) => page.trimEnd())].join("\n\n---\n\n").concat("\n");
+  // Headings only (a `#` at a line's start followed by a space), so a `#120` reference stays as it is.
+  const rules = foundations.replace(/^(#+) /gm, "#$1 ").trimEnd();
+  // The index's pointer to foundations.md points down the page here, where its text already is.
+  const index = llms.replace(FOUNDATIONS_LINK, "Foundations (below)").trimEnd();
+  return [index, rules, ...pages.map((page) => page.trimEnd())].join("\n\n---\n\n").concat("\n");
 }
