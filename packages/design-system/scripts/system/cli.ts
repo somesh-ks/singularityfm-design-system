@@ -130,7 +130,13 @@ function read(system: System, command: string, argument: string): Answer | undef
         .sort((x, y) => x.distance - y.distance)[0]?.id;
       return {
         text: `No part or component "${argument}".${near ? ` Did you mean ${near}?` : ""} Parts: ${ids.join(", ")}. Components: ${names.join(", ")}`,
-        json: { part: null, ...(near ? { didYouMean: near } : {}), parts: ids, components: names },
+        json: {
+          part: null,
+          ...(near ? { didYouMean: near } : {}),
+          parts: ids,
+          components: [],
+          componentNames: names,
+        },
         code: 1,
       };
     }
