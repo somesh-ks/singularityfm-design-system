@@ -84,7 +84,11 @@ export function findParts(system: System, need: string, limit = 3): PartHit[] {
       for (const when of part.when) score += weigh(query, when, 2);
       score += weigh(query, part.summary, 1.5);
       // A need that reads like what a part is not for counts against it; the neighbor named there wins.
-      for (const item of part.not ?? []) score -= weigh(query, item.when, 1);
+      // A word the part names itself by ("button" for a Filled button) is not evidence against it: its
+      // "not" lines say "button" too, and four of them took 4 points off "primary call to action button".
+      const own = new Set(terms(`${part.id} ${part.name} ${(part.keywords ?? []).join(" ")}`));
+      const against = query.filter((term) => !own.has(term));
+      for (const item of part.not ?? []) score -= weigh(against, item.when, 1);
       return { part, score };
     })
     .filter((hit) => hit.score > 0)
@@ -137,13 +141,17 @@ export function describeTokenLine(token: SystemToken): string {
   return `${token.name} = ${short}${token.role ? `. ${oneLine(token.role).slice(0, 140)}` : ""}`;
 }
 
+/** A path inside the package, as an app finds it under node_modules: the file lists hold repo paths. */
+const inPackage = (path: string): string => path.replace(/^packages\/design-system\//, "");
+
 export function describePart(part: Part): string {
   const out: string[] = [
     `${part.id}: ${part.name}. ${part.summary}`,
     `  classes: ${part.classes.map((name) => `.${name}`).join(" ")}`,
   ];
-  if (part.files?.length) out.push(`  files: ${part.files.join(", ")}`);
-  out.push(`  styled in: ${part.styles.join(", ")}`);
+  if (part.imports.length) out.push(`  import: ${part.imports.join(", ")}`);
+  if (part.files?.length) out.push(`  files: ${part.files.map(inPackage).join(", ")}`);
+  out.push(`  styled in: ${part.styles.map(inPackage).join(", ")}`);
   out.push(`  use when: ${part.when.join("; ")}`);
   for (const item of part.not ?? []) out.push(`  not when: ${item.when} -> ${item.use}`);
   if (part.markup) out.push(`  markup: ${part.markup}`);

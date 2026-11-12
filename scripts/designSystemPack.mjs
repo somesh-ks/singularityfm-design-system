@@ -236,6 +236,10 @@ try {
   if (shipped.some((file) => file.endsWith(".test.ts"))) problems.push("the tarball ships tests");
   // Flags are copied by the apps, never imported, so the build below cannot see a missing one.
   if (!existsSync(join(installed, "flags/se.svg"))) problems.push("the tarball has no flags");
+  // An agent reads these by path under node_modules and nothing imports them, so, like the flags, only
+  // this check sees one missing from `files`.
+  for (const file of ["AGENTS.md", "tokens/llms.txt", "tokens/system.json"])
+    if (!existsSync(join(installed, file))) problems.push(`the tarball has no ${file}`);
   pnpm(["exec", "astro", "build"], app);
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");

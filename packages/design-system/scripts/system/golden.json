@@ -138,5 +138,9 @@
   { "area": "tokens", "need": "color for an error message", "token": "--color-danger" },
   { "area": "tokens", "need": "focus ring for keyboard focus", "token": "--color-focus-ring" },
   { "area": "tokens", "need": "haptic for an error", "token": "haptic-error" },
-  { "area": "tokens", "need": "dim the page behind a dialog", "token": "--color-scrim" }
+  { "area": "tokens", "need": "dim the page behind a dialog", "token": "--color-scrim" },
+  { "area": "actions", "need": "primary call to action button", "part": "button-filled" },
+  { "area": "actions", "need": "play button for an episode", "part": "play-chip" },
+  { "area": "overlays", "need": "a confirmation modal before deleting a source", "part": "dialog" },
+  { "area": "tokens", "need": "shadow under a menu", "token": "--shadow-popover" }
 ]

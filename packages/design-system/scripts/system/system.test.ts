@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -35,6 +35,37 @@ describe("the design system file", () => {
     );
     expect(dangling).toEqual([]);
     expect(ids.size).toBe(system.parts.length);
+  });
+
+  // Prevents shipping the consumer's agent guide with an import or a file the package does not have, or
+  // dropping it from `files`: an agent reads it by path under node_modules, so a stale name sends every
+  // consuming team's agent to a path that does not resolve.
+  it("ships an agent guide that names only what the package has", () => {
+    const pkg = new URL("../../", import.meta.url);
+    const manifest = JSON.parse(readFileSync(new URL("package.json", pkg), "utf8")) as {
+      name: string;
+      files: string[];
+      exports: Record<string, string>;
+    };
+    const guide = readFileSync(new URL("AGENTS.md", pkg), "utf8");
+    expect(manifest.files).toContain("AGENTS.md");
+    // A name with an extension is a file under the package; one without is an import specifier.
+    const named = [...guide.matchAll(/@singularityfm\/design-system\/([A-Za-z][\w./-]*\w)/g)].map(
+      (match) => match[1] ?? "",
+    );
+    const imports = named.filter((name) => !/\.\w+$/.test(name));
+    const paths = [
+      ...named.filter((name) => /\.\w+$/.test(name)),
+      ...[...guide.matchAll(/\b((?:tokens|styles|scripts)\/[\w./-]*\w)/g)].map(
+        (match) => match[1] ?? "",
+      ),
+    ];
+    expect(imports.length).toBeGreaterThan(0);
+    const missing = [
+      ...imports.filter((name) => !(`./${name}` in manifest.exports)),
+      ...paths.filter((path) => !existsSync(new URL(path, pkg))),
+    ];
+    expect(missing).toEqual([]);
   });
 
   // Prevents publishing an opaque hex for a translucent color: the scrim was listed as #151618, which
