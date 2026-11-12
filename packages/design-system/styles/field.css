@@ -121,8 +121,8 @@ select.field-input:focus-visible {
   }
 }
 
-/* A field that cannot be edited dims like every disabled control. A disabled fieldset dims it the same
-   way (manage.css), on the same element, so the two never stack. */
+/* A field that cannot be edited dims like every disabled control. A disabled fieldset disables it, so
+   this one rule dims it there too, and nothing stacks. */
 .field-input:disabled {
   opacity: var(--opacity-disabled);
   cursor: default;
