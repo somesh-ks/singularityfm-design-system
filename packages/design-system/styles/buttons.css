@@ -69,9 +69,11 @@
 
 /* A toggle icon button (aria-pressed) that holds two glyphs shows the first while off and the second
    while on (outline and fill: a vote, Favorite's heart), swapped at once in one place. Weighed as
-   lightly as the glyph rules after it, which set no display. */
-:where(.icon-btn[aria-pressed]:not([aria-pressed="true"])) > .icon-glyph + .icon-glyph,
-:where(.icon-btn[aria-pressed="true"]) > .icon-glyph:where(:first-child:not(:last-child)) {
+   lightly as the glyph rules after it, which set no display. Counted among the glyphs alone (each is
+   an svg), so the halo Favorite's glow puts first (glow.ts) never shows both hearts. */
+:where(.icon-btn[aria-pressed]:not([aria-pressed="true"]))
+  > .icon-glyph:where(:not(:first-of-type)),
+:where(.icon-btn[aria-pressed="true"]) > .icon-glyph:where(:first-of-type:not(:last-of-type)) {
   display: none;
 }
 
@@ -79,14 +81,15 @@
    ledger 1.5): a story's like or dislike. After the hover and the press, which it outweighs, so the
    container holds under the pointer. The tonal one keeps its own fill when on: its fill already marks
    it as a control, and Favorite's heart says on by itself (owner, 2026-11-12: keep Favorite as it is).
-   Moved from the reader's story-controls.css. */
-.icon-btn:not(.icon-btn-tonal)[aria-pressed="true"] {
+   The filled one keeps its primary fill for the same reason. Moved from the reader's
+   story-controls.css. */
+.icon-btn:not(.icon-btn-tonal, .icon-btn-filled)[aria-pressed="true"] {
   background: var(--color-accent-container);
   color: var(--color-on-accent-container);
 }
 
 @media (forced-colors: active) {
-  .icon-btn:not(.icon-btn-tonal)[aria-pressed="true"] {
+  .icon-btn:not(.icon-btn-tonal, .icon-btn-filled)[aria-pressed="true"] {
     color: Highlight;
   }
 }
@@ -157,7 +160,7 @@
 :is(
   .icon-btn,
   .view-btn,
-  .search-clear,
+  .search-field-clear,
   .source-plus-btn,
   .toast-dismiss,
   .dock-btn,

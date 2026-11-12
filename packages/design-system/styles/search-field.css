@@ -1,7 +1,7 @@
 /*
  * The search field: a filled pill with its glyph and its input, as the reader's Library, Sources and
  * topic pages and the style guide draw it. Moved here unchanged from the reader's library.css (D382
- * step 4e); its clear button (.search-wrap, .search-clear) followed on 2026-11-12, with the script
+ * step 4e); its clear button (.search-field-wrap, .search-field-clear) followed on 2026-11-12, with the script
  * that shows it (searchField.ts, installSearchClear).
  */
 
@@ -70,15 +70,16 @@
 
 /* On a card's container tone the pill steps up to the overlay tone, as a card's filter chips and tonal
    select do (owner, 2026-10-24): white in light, one grey up in dark, where the container pill read as
-   a hole in the card. Its hover is the card's chip layer. The reader's topic card (.topic-panel) is a
-   card too, as settings-rows.css counts it. Moved from the reader's topics.css, where it took the
-   page's own surface. */
-:is(.card-group, .topic-panel) .search-field {
+   a hole in the card. Its hover is the card's chip layer. Focus keeps its own step (above): this rule
+   weighs as much and comes after it, so it stands aside while the field has focus. Keyed on the
+   library's card (.card-group) alone; a page's own card joins by being one (D237, D253). Moved from
+   the reader's topics.css, where it took the page's own surface. */
+.card-group .search-field:not(:focus-within) {
   background: var(--color-surface-overlay);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :is(.card-group, .topic-panel) .search-field:hover:not(:focus-within) {
+  .card-group .search-field:hover:not(:focus-within) {
     background: var(--card-chip-hover);
   }
 }
@@ -97,11 +98,11 @@
    box sits over the pill's end, and while it shows the text stops where it starts instead of running
    under it. The registry lists it (searchField.ts, SEARCH_FIELD.experimental). Moved from the reader's
    library.css. */
-.search-wrap {
+.search-field-wrap {
   position: relative;
 }
 
-.search-clear {
+.search-field-clear {
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;
@@ -116,23 +117,23 @@
   color: var(--color-on-surface-muted);
 }
 
-.search-clear[hidden] {
+.search-field-clear[hidden] {
   display: none;
 }
 
-.search-wrap:has(> .search-clear:not([hidden])) > .search-field {
+.search-field-wrap:has(> .search-field-clear:not([hidden])) > .search-field {
   padding-inline-end: var(--size-touch);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .search-clear:hover {
+  .search-field-clear:hover {
     background: var(--ghost-hover);
     color: var(--color-on-surface);
   }
 }
 
 /* A press goes one step deeper than the hover (D317), and wins while a mouse is over the button. */
-.search-clear:active {
+.search-field-clear:active {
   background: var(--ghost-pressed);
   color: var(--color-on-surface);
 }

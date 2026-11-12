@@ -74,27 +74,34 @@
   height: var(--icon-size, var(--size-icon-lg));
 }
 
+/* A chevron that says a list opens from a field is quiet, as a Select's own chevron is (select.css):
+   keyed on a listbox popup, the field-like trigger (the reader's multi-select). A button that opens a
+   menu or a dialog (a filled Button, a primary chip) keeps its label's ink on its chevron. */
+[aria-haspopup="listbox"] > .icon-glyph:is([data-icon="chevronDown"], [data-icon="chevronUp"]) {
+  color: var(--color-on-surface-muted);
+}
+
 /* A chevron in a control that opens a list or a region turns as it opens: down to up, or up to down,
    on the enter duration, at once under reduced motion. It is the turn the library's own selects draw
    (settings-rows.css, picker.css), keyed on aria-expanded so an icon button (the dock's expand) and a
    field that opens a list (aria-haspopup: the reader's multi-select) need no rule of their own. A
    control that turns its chevron by its own rule (the queue's fold, owner, 2026-11-04) is neither, and
-   stays out: a generic [aria-expanded] key turned it a second time (owner's stills, 2026-11-12). */
-:is(.icon-btn, [aria-haspopup]) > .icon-glyph[data-icon^="chevron"] {
+   stays out: a generic [aria-expanded] key turned it a second time (owner's stills, 2026-11-12). Only
+   a chevron that points down or up turns: a left or right one says where a row leads, and a half turn
+   would point it back. */
+:is(.icon-btn, [aria-haspopup])
+  > .icon-glyph:is([data-icon="chevronDown"], [data-icon="chevronUp"]) {
   transition: rotate var(--duration-enter) var(--ease-out);
 }
 
-:is(.icon-btn, [aria-haspopup])[aria-expanded="true"] > .icon-glyph[data-icon^="chevron"] {
+:is(.icon-btn, [aria-haspopup])[aria-expanded="true"]
+  > .icon-glyph:is([data-icon="chevronDown"], [data-icon="chevronUp"]) {
   rotate: 180deg;
 }
 
-/* A chevron that says a list opens from a field is quiet, as a Select's own chevron is (select.css). */
-[aria-haspopup]:not(.icon-btn) > .icon-glyph[data-icon^="chevron"] {
-  color: var(--color-on-surface-muted);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  :is(.icon-btn, [aria-haspopup]) > .icon-glyph[data-icon^="chevron"] {
+  :is(.icon-btn, [aria-haspopup])
+    > .icon-glyph:is([data-icon="chevronDown"], [data-icon="chevronUp"]) {
     transition: none;
   }
 }

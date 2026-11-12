@@ -47,10 +47,10 @@ export default function SearchField({
   );
   if (!clearable) return field;
   return (
-    <div className={["search-wrap", className].filter(Boolean).join(" ")}>
+    <div className={["search-field-wrap", className].filter(Boolean).join(" ")}>
       {field}
       <button
-        className="search-clear press press-subtle"
+        className="search-field-clear press press-subtle"
         type="button"
         aria-label="Clear text"
         hidden

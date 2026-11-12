@@ -851,8 +851,8 @@
       "summary": "The rounded search pill, on the container tone, with its glyph.",
       "classes": [
         "search-field",
-        "search-wrap",
-        "search-clear"
+        "search-field-wrap",
+        "search-field-clear"
       ],
       "files": [
         "packages/design-system/src/SearchField.tsx",
@@ -884,7 +884,7 @@
       "experimental": [
         {
           "option": "clearable",
-          "hook": "search-wrap",
+          "hook": "search-field-wrap",
           "reason": "A Clear text button in the field (owner, 2026-10-08, ledger reading-library.md): the native one differs in every browser and is hidden, and without room for the button the typed text runs under it. On the Library, the Sources filter, Blocked outlets, Downloads and the emoji search.",
           "since": "2026-11-12"
         }
@@ -1966,6 +1966,7 @@
       "styles": [
         "packages/design-system/styles/field.css",
         "packages/design-system/styles/primitives.css",
+        "packages/design-system/styles/search-field.css",
         "packages/design-system/styles/select.css",
         "packages/design-system/styles/settings-rows.css"
       ],

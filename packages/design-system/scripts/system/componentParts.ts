@@ -373,7 +373,7 @@ export const componentParts = (): PartSource[] => [
   }),
   control("search-field", "Search field", SEARCH_FIELD, {
     kind: "field",
-    classes: ["search-field", "search-wrap", "search-clear"],
+    classes: ["search-field", "search-field-wrap", "search-field-clear"],
     files: [
       "packages/design-system/src/SearchField.tsx",
       "packages/design-system/src/searchField.ts",

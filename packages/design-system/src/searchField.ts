@@ -16,7 +16,7 @@ export const SEARCH_FIELD: Guidance = {
   experimental: [
     {
       option: "clearable",
-      hook: "search-wrap",
+      hook: "search-field-wrap",
       reason:
         "A Clear text button in the field (owner, 2026-10-08, ledger reading-library.md): the native one differs in every browser and is hidden, and without room for the button the typed text runs under it. On the Library, the Sources filter, Blocked outlets, Downloads and the emoji search.",
       since: "2026-11-12",
@@ -25,13 +25,17 @@ export const SEARCH_FIELD: Guidance = {
 };
 
 /** Every class the Search field draws, for the registry and its test. */
-export const SEARCH_FIELD_CLASSES: string[] = ["search-field", "search-wrap", "search-clear"];
+export const SEARCH_FIELD_CLASSES: string[] = [
+  "search-field",
+  "search-field-wrap",
+  "search-field-clear",
+];
 
 /** Classes the Search field replaced; none may be written again, in any app that draws the system. */
 export const SEARCH_FIELD_RETIRED: string[] = [];
 
-const WRAP = ".search-wrap";
-const CLEAR = ".search-clear";
+const WRAP = ".search-field-wrap";
+const CLEAR = ".search-field-clear";
 
 let installed = false;
 
@@ -50,13 +54,26 @@ export function syncSearchClear(input: HTMLInputElement): void {
  * while the field has text, and a press empties the field, fires the input's `input` event, so the
  * page's own filter runs as it does for typing, and keeps the focus in the field for the next query.
  * Call it on each page load: the listeners go on the document once, and each call syncs the fields in
- * the page now (a value the browser restored).
+ * the page now (a value the browser restored). A form reset and a page shown again from the
+ * back-forward cache sync too.
  */
-export function installSearchClear(): void {
-  for (const input of document.querySelectorAll<HTMLInputElement>(`${WRAP} input`))
+const syncAll = (root: ParentNode = document): void => {
+  for (const input of root.querySelectorAll<HTMLInputElement>(`${WRAP} input`))
     syncSearchClear(input);
+};
+
+export function installSearchClear(): void {
+  syncAll();
   if (installed) return;
   installed = true;
+  // A form's reset empties its fields with no input event, and only after its reset event: sync a
+  // tick later. A page restored from the back-forward cache keeps its values and runs no load: sync
+  // on pageshow.
+  document.addEventListener("reset", (event) => {
+    const form = event.target;
+    if (form instanceof HTMLFormElement) setTimeout(() => syncAll(form));
+  });
+  addEventListener("pageshow", () => syncAll());
   document.addEventListener("input", (event) => {
     const input = event.target;
     if (input instanceof HTMLInputElement && input.closest(WRAP)) syncSearchClear(input);
