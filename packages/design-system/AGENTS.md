@@ -7,6 +7,10 @@ Add one line to your app's own AGENTS.md so this file is read:
 Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and follow it.
 ```
 
+## Read the foundations first
+
+`tokens/foundations.md` holds the rules for every screen: the grid, the text and colour roles, what never moves, the words, the phone. Read it before any UI.
+
 ## Find the part before you write anything
 
 1. Ask the lookup: `ds find "<what you need>"`. It names the part, what to import, the markup, when not to use it and the tokens it reads. `ds part <id>` shows one part with the props of each component it imports (`ds part Avatar` takes a component's name too), `ds token <words>` a token. `ds` is the package's own command: `pnpm exec ds` (`npx ds` with npm). Add `--json` for data, and ask several at once with `ds batch "find <need>" "part <id>"`.
