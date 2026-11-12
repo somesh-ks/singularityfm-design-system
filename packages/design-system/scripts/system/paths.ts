@@ -25,3 +25,6 @@ function packageRoot(): string {
 export const PACKAGE = packageRoot();
 export const SYSTEM_PATH = join(PACKAGE, "tokens/system.json");
 export const LLMS_PATH = join(PACKAGE, "tokens/llms.txt");
+export const LLMS_FULL_PATH = join(PACKAGE, "tokens/llms-full.txt");
+/** One markdown page per part: tokens/parts/<id>.md. */
+export const PARTS_DIR = join(PACKAGE, "tokens/parts");

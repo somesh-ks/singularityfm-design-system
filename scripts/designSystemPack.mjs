@@ -238,7 +238,13 @@ try {
   if (!existsSync(join(installed, "flags/se.svg"))) problems.push("the tarball has no flags");
   // An agent reads these by path under node_modules and nothing imports them, so, like the flags, only
   // this check sees one missing from `files`.
-  for (const file of ["AGENTS.md", "tokens/llms.txt", "tokens/system.json"])
+  for (const file of [
+    "AGENTS.md",
+    "tokens/llms.txt",
+    "tokens/llms-full.txt",
+    "tokens/system.json",
+    "tokens/parts/button-filled.md",
+  ])
     if (!existsSync(join(installed, file))) problems.push(`the tarball has no ${file}`);
   // `ds` runs as the bundle `prepack` builds, under plain Node from node_modules: only an installed run
   // shows a bundle that looks for system.json at a depth its own folder does not have.

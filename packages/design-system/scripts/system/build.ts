@@ -5,7 +5,7 @@
  * stylesheets, sources or bespoke list. Where an app uses a part is that app's report.
  * `npm run system` writes both; system.test.ts fails when either is stale.
  */
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -17,8 +17,9 @@ import {
   type Token,
   type TokenDocument,
 } from "../buildTokens.js";
+import { renderLlmsFull, renderPartPage } from "./pages.js";
 import { PARTS } from "./parts.js";
-import { LLMS_PATH, PACKAGE, SYSTEM_PATH } from "./paths.js";
+import { LLMS_FULL_PATH, LLMS_PATH, PACKAGE, PARTS_DIR, SYSTEM_PATH } from "./paths.js";
 import { propsTable } from "./props.js";
 import type { Component, Part, PartSource, System, SystemToken } from "./types.js";
 import { usageComment } from "./usage.js";
@@ -268,27 +269,25 @@ const firstSentence = (text: string, limit: number): string => {
 export function renderLlms(system: System): string {
   const lines: string[] = [
     "# Singularity design system",
-    `<!-- ${GENERATED} -->`,
     "",
-    "Pick a part from this list before writing a class or a value. A part that fits is used as it is; none fits means ask the owner. Never invent a control class.",
-    'Ask `ds find "<need>"`, `ds part <id>` or `ds token <words>`, not this whole file (`pnpm exec ds` in an app, `pnpm run ds` here). Rules for an app: AGENTS.md. Everything: tokens/system.json.',
+    "> Components, tokens and rules for Singularity apps (`@singularityfm/design-system`). Pick a part here before writing a class or a value; a part that fits is used as it is, none fits means ask the owner. Never invent a control class.",
+    "",
+    `<!-- ${GENERATED} -->`,
+    'Ask `ds find "<need>"`, `ds part <id>` or `ds token <words>`, not this whole file (`pnpm exec ds` in an app, `pnpm run ds` here). Rules for an app: AGENTS.md. All pages in one file: llms-full.txt. Data: system.json.',
     "",
     "## Parts",
-    "`id` classes: what it is. Use: when. Not: situation → part to use instead.",
+    "An id links to its page (import, markup, props). What it is. Use: when. Not: situation → part instead.",
   ];
   for (const part of system.parts) {
-    const classes = part.classes
-      .slice(0, 2)
-      .map((name) => `.${name}`)
-      .join(" ");
-    const use = part.when.slice(0, 2).join("; ");
+    // One case each: the page holds the rest, so the index keeps room under its budget.
+    const use = part.when[0] ?? "";
     const not = (part.not ?? [])
       .slice(0, 1)
       .map((item) => `${item.when} → ${item.use}`)
       .join("; ");
     const trial = (part.experimental ?? []).map((item) => item.option).join(", ");
     lines.push(
-      `- \`${part.id}\` ${classes}: ${part.summary} Use: ${use}.${not ? ` Not: ${not}.` : ""}${trial ? ` Experimental: ${trial}.` : ""}`,
+      `- [${part.id}](parts/${part.id}.md): ${part.summary} Use: ${use}.${not ? ` Not: ${not}.` : ""}${trial ? ` Experimental: ${trial}.` : ""}`,
     );
   }
   lines.push(
@@ -364,18 +363,30 @@ export function renderSystemJson(system: System): string {
   return `${JSON.stringify(system, null, 2)}\n`;
 }
 
-/** Both generated files and the text the code builds for each. */
+/** Every generated file and the text the code builds for each: the index, the data, a page per part. */
 export function systemFiles(): [path: string, text: string][] {
   const system = buildSystem();
+  const llms = renderLlms(system);
   return [
     [SYSTEM_PATH, renderSystemJson(system)],
-    [LLMS_PATH, renderLlms(system)],
+    [LLMS_PATH, llms],
+    [LLMS_FULL_PATH, renderLlmsFull(system, llms)],
+    ...system.parts.map((part): [string, string] => [
+      join(PARTS_DIR, `${part.id}.md`),
+      renderPartPage(part, system.components),
+    ]),
   ];
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  // A renamed or retired part leaves no page behind.
+  rmSync(PARTS_DIR, { recursive: true, force: true });
+  mkdirSync(PARTS_DIR, { recursive: true });
+  let pages = 0;
   for (const [path, text] of systemFiles()) {
     writeFileSync(path, text, "utf8");
-    console.log(`Wrote ${relative(ROOT, path)} (${text.length} bytes)`);
+    if (path.startsWith(PARTS_DIR)) pages++;
+    else console.log(`Wrote ${relative(ROOT, path)} (${Buffer.byteLength(text)} bytes)`);
   }
+  console.log(`Wrote ${pages} part pages to ${relative(ROOT, PARTS_DIR)}`);
 }
