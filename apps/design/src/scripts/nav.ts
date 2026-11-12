@@ -130,7 +130,7 @@ function move(nav: HTMLElement, pressed: Group, open: boolean): void {
   // The script's own restore is not the reader's scroll: its value is remembered, and the listener
   // ignores the scroll event it raises. A write that changes nothing raises no event, so it is not
   // remembered, or the reader's next scroll near that value would be taken for it.
-  if (Math.abs(nav.scrollTop - scroll) >= 1) {
+  if (nav.scrollTop !== scroll) {
     restored = scroll;
     nav.scrollTop = scroll;
   }
@@ -215,6 +215,7 @@ function syncCurrent(): void {
 wide.addEventListener("change", () => {
   settle();
   syncCurrent();
+  reveal();
 });
 
 // The reader scrolling the column during a motion ends it at once: the rows' compensation was taken at
