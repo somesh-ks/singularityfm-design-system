@@ -1,6 +1,7 @@
 ---
 import Badge from "@singularity/design-system/Badge";
 import Code from "@singularity/design-system/Code";
+import Link from "@singularity/design-system/Link";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
 import Select from "@singularity/design-system/Select";
 import Switch from "@singularity/design-system/Switch";
@@ -10,6 +11,7 @@ import ComponentPreview from "../../components/ComponentPreview.astro";
 import PageHead from "../../components/PageHead.astro";
 import Shell from "../../layouts/Shell.astro";
 import { allStates, codeFor, initialState, labelOf, SPECS, stateKey } from "../../lib/components";
+import { href } from "../../lib/sections";
 
 export function getStaticPaths() {
   return SPECS.map((spec) => ({ params: { slug: spec.slug }, props: { spec } }));
@@ -28,6 +30,19 @@ const propsOf = (
     ...(component?.element ? { element: component.element } : {}),
   };
 };
+
+// The parts this component and its subparts draw, each a markdown page an agent reads (llms.txt links
+// the same pages), so a reader who finds the component here can hand an agent its page.
+const imports = new Set(
+  [spec.file, ...(spec.subparts ?? []).map((part) => part.file)].flatMap((file) =>
+    system.components
+      .filter((component) => file && component.file.endsWith(`/${file}`))
+      .map((component) => component.import),
+  ),
+);
+const markdown = system.parts
+  .filter((part) => part.imports.some((name) => imports.has(name)))
+  .map((part) => part.id);
 
 const registered = REGISTRY.find((component) => component.name === spec.registry);
 const guidance = registered ?? spec.guidance;
@@ -200,7 +215,7 @@ const hasStage = !spec.noPreview;
               </tbody>
             </table>
           </div>
-          {table.element && <p class="guide-note guide-stage-note">Every attribute of a native {table.element} element is passed through.</p>}
+          {table.element && <p class="guide-note guide-stage-note">Every attribute of a native <code>&lt;{table.element}&gt;</code> element is passed through.</p>}
         </section>
       )
     }
@@ -236,6 +251,9 @@ const hasStage = !spec.noPreview;
                 ) : (
                   <p class="guide-note">It takes the attributes of its element and no props of its own.</p>
                 )}
+                {subtable.rows.length > 0 && subtable.element && (
+                  <p class="guide-note guide-stage-note">Every attribute of a native <code>&lt;{subtable.element}&gt;</code> element is passed through.</p>
+                )}
               </div>
             );
           })}
@@ -248,6 +266,20 @@ const hasStage = !spec.noPreview;
         <section aria-labelledby="classes">
           <h2 class="section-head text-heading" id="classes">Classes</h2>
           <p class="guide-prose">{registered.classes.map((name) => `.${name}`).join(", ")}, in {registered.sheet}.</p>
+        </section>
+      )
+    }
+
+    {
+      markdown.length > 0 && (
+        <section aria-labelledby="markdown">
+          <h2 class="section-head text-heading" id="markdown">For agents</h2>
+          <p class="guide-prose">
+            This guidance as markdown, one page per part:{" "}
+            {/* One line each: a line break inside the fragment would print a space before the comma. */}
+            {markdown.map((id, index) => <>{index > 0 ? ", " : ""}<Link href={href(`/parts/${id}.md`)}>{id}.md</Link></>)}.
+            Every part in one file: <Link href={href("/llms-full.txt")}>llms-full.txt</Link>.
+          </p>
         </section>
       )
     }

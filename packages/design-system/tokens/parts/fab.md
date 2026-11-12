@@ -42,7 +42,7 @@ The page's one primary action below 64rem: a glyph and a word, floating.
 | `reserve?` | `string` | - | The widest words the button will say beside its glyph ("Resume · 88 min left"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis. |
 | `children` | `ReactNode` | - | The word the extended button shows beside its glyph ("Add"); it folds away while reading. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ## Tokens it reads
 

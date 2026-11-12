@@ -34,6 +34,8 @@ A tonal track with one sliding pill: switch between views of the same content.
 | `compact?` | `boolean` | `false` | A chip's height on 44px columns, to sit in a row of chips. |
 | `className?` | `string` | - | For placing it where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 
+Every attribute of a native `<div>` element passes through.
+
 ## Tokens it reads
 
 `--chip-height` `--color-accent-container` `--color-accent-container-pressed` `--color-focus-ring` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-muted` `--color-surface-container` `--segmented-height` `--segmented-padding` `--size-touch`

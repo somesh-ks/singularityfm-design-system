@@ -43,7 +43,7 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 | `children?` | `ReactNode` | - | The form or list, inside the scrolling body. |
 | `after?` | `ReactNode` | - | What sits after the body, outside its scroll: a sticky foot, a hidden part a script reads. |
 
-Every attribute of a native `dialog` passes through.
+Every attribute of a native `<dialog>` element passes through.
 
 ## Props of SheetHeader
 

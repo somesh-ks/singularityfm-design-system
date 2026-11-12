@@ -36,6 +36,8 @@ A link inside a line of small text; the words stay inline, the target is 44px.
 | `slot?` | `string` | - | Astro places the link in its parent's slot with it; it is not an attribute of the link. |
 | `children` | `ReactNode` | - | The words. |
 
+Every attribute of a native `<a>` element passes through.
+
 ## Tokens it reads
 
 `--size-touch`

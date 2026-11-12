@@ -56,7 +56,7 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 | `slot?` | `string` | - | Astro places the row in its parent's slot with it; it is not an attribute of the row. |
 | `children?` | `ReactNode` | - | The row's glyph first, then its words. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ## Props of Icon
 

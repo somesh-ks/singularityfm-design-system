@@ -73,11 +73,32 @@ function defaults(source: string): Map<string, string> {
   return found;
 }
 
+/** The tag of a DOM interface, where it is not the interface's name in lower case. */
+const TAGS: Record<string, string> = { Anchor: "a", Paragraph: "p", OList: "ol", UList: "ul" };
+
+/**
+ * The element whose attributes the component passes on: the one its `Props` type takes them from
+ * (`Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, ...>`), not the first named in the file, which
+ * may type a child (SegmentedChoice's inputs). A heading's level comes from the tag it renders.
+ */
+function passedTo(source: string): string | undefined {
+  const props = /type\s+Props\s*=([^;]*?)(?:\{|;)/.exec(source)?.[1] ?? source;
+  const named = /ComponentProps<"(\w+)">/.exec(props)?.[1];
+  if (named) return named;
+  const dom = /HTMLAttributes<HTML(\w+)Element>/.exec(props)?.[1];
+  if (!dom) return undefined;
+  if (dom === "Heading") return /<(h[1-6])\b/.exec(source)?.[1];
+  return TAGS[dom] ?? dom.toLowerCase();
+}
+
 /** The props of the component whose source is given. */
 export function propsTable(source: string): PropsTable {
   const frontmatter = source.startsWith("---") ? (source.split("---")[1] ?? "") : source;
   const rows: PropRow[] = [];
-  const declared = /interface\s+(?:Props|\w+Props)\s*\{/.exec(frontmatter);
+  // The members sit in a `Props` interface, or in the object a `type Props = ... & {` alias adds.
+  const declared =
+    /interface\s+(?:Props|\w+Props)\s*\{/.exec(frontmatter) ??
+    /type\s+Props\s*=[^;{]*&\s*\{/.exec(frontmatter);
   const given = defaults(frontmatter);
   if (declared) {
     // Comments come out first, so a quote or a semicolon in one cannot split a member.
@@ -102,8 +123,6 @@ export function propsTable(source: string): PropsTable {
       });
     }
   }
-  const element =
-    /(?:HTMLAttributes|ComponentProps)<"(\w+)">/.exec(frontmatter)?.[1] ??
-    /(Button|Input)HTMLAttributes/.exec(frontmatter)?.[1]?.toLowerCase();
+  const element = passedTo(frontmatter);
   return { rows, ...(element ? { element } : {}) };
 }

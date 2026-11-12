@@ -36,6 +36,8 @@ The one link out of a story: the publisher's name, underlined on hover.
 | `slot?` | `string` | - | Astro places the link in its parent's slot with it; it is not an attribute of the link. |
 | `children` | `ReactNode` | - | The words. |
 
+Every attribute of a native `<a>` element passes through.
+
 ## Tokens it reads
 
 `--button-radius` `--color-accent` `--color-accent-pressed` `--size-icon-sm` `--size-touch`

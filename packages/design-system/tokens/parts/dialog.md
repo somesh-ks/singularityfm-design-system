@@ -38,7 +38,7 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 | `children?` | `ReactNode` | - | The question, its words and its DialogActions, inside the body. |
 | `after?` | `ReactNode` | - | What sits after the body, outside the form: a hidden part a script reads (data-copy). |
 
-Every attribute of a native `dialog` passes through.
+Every attribute of a native `<dialog>` element passes through.
 
 ## Props of DialogActions
 
@@ -49,7 +49,11 @@ Every attribute of a native `dialog` passes through.
 
 ## Props of DialogTitle
 
-No props of its own.
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `children?` | `ReactNode` | - | The question. |
+
+Every attribute of a native `<h2>` element passes through.
 
 ## Props of Button
 
@@ -66,7 +70,7 @@ No props of its own.
 | `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
 | `children?` | `ReactNode` | - | - |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ## Tokens it reads
 

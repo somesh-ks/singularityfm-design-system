@@ -38,7 +38,7 @@ A checkbox drawn as a pill; ticked it takes the accent container.
 | `className?` | `string` | - | For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. It goes on the chip (the label); every other attribute goes on its checkbox. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the checkbox. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through.
 
 ## Props of ChipGroup
 
@@ -48,6 +48,8 @@ Every attribute of a native `input` passes through.
 | `className?` | `string` | - | For placing the group where it stands (a card-group, a scroll fade), or a hook a page's rule or script finds it by. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the group in its parent's slot with it; it is not an attribute of the fieldset. |
 | `children` | `ReactNode` | - | The Chips. |
+
+Every attribute of a native `<fieldset>` element passes through.
 
 ## Tokens it reads
 

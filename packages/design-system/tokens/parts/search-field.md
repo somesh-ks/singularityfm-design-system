@@ -39,7 +39,7 @@ The rounded search pill, on the container tone, with its glyph.
 | `className?` | `string` | - | For placing the field where it stands, or a hook a page's rule finds it by. Never its look. It goes on the outer element (the pill, or the wrapper of a clearable field); every other attribute goes on its input. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the field in its parent's slot with it; it is not an attribute of the input. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through.
 
 ## Tokens it reads
 

@@ -35,7 +35,7 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 | `hue?` | `boolean` | `false` | A hue: the rail is the whole spectrum, the thumb is the colour picked, and a swatch floats above it while it is held (D328). The caller keeps --range-fill on the field the slider is wrapped in. |
 | `wavy?` | `boolean` | `false` | The track up to the thumb drifts (a wave in Expressive, a zigzag in Halloween) and the rest stays straight; Default draws the plain Slider. The caller keeps --range-fill on the field the input is wrapped in. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through.
 
 ## Tokens it reads
 

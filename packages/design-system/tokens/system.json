@@ -2529,7 +2529,8 @@
           "default": "",
           "description": "The Chips."
         }
-      ]
+      ],
+      "element": "fieldset"
     },
     {
       "name": "Code",
@@ -2634,7 +2635,16 @@
       "name": "DialogTitle",
       "import": "@singularityfm/design-system/DialogTitle",
       "file": "packages/design-system/src/DialogTitle.tsx",
-      "props": []
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "The question."
+        }
+      ],
+      "element": "h2"
     },
     {
       "name": "Fab",
@@ -2916,7 +2926,8 @@
           "default": "",
           "description": "The words."
         }
-      ]
+      ],
+      "element": "a"
     },
     {
       "name": "Menu",
@@ -3110,7 +3121,8 @@
           "default": "",
           "description": "The row's content."
         }
-      ]
+      ],
+      "element": "li"
     },
     {
       "name": "SearchField",
@@ -3217,7 +3229,7 @@
           "description": "Astro places it in its parent's slot with it; it is not an attribute of the fieldset."
         }
       ],
-      "element": "input"
+      "element": "fieldset"
     },
     {
       "name": "SegmentedNav",
@@ -3252,7 +3264,8 @@
           "default": "",
           "description": "For placing it where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
         }
-      ]
+      ],
+      "element": "div"
     },
     {
       "name": "Select",
@@ -3298,7 +3311,8 @@
           "default": "",
           "description": "The options: `<option>` and `<optgroup>`, as a native select holds them."
         }
-      ]
+      ],
+      "element": "select"
     },
     {
       "name": "Sheet",

@@ -35,7 +35,7 @@ A circle on the container fill, beside a primary action.
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 | `children` | `ReactNode` | - | The glyph: an Icon, or two that the button's state swaps between. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ## Props of Icon
 

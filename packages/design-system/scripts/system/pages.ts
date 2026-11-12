@@ -40,7 +40,7 @@ export function propsSection(component: Component, depth = 0): string[] {
     }
   }
   if (component.element)
-    out.push("", `Every attribute of a native \`${component.element}\` passes through.`);
+    out.push("", `Every attribute of a native \`<${component.element}>\` element passes through.`);
   return out;
 }
 

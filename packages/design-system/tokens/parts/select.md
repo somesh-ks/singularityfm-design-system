@@ -39,6 +39,8 @@ A native select with its own chevron.
 | `reserve?` | `string` | - | A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). |
 | `children?` | `ReactNode` | - | The options: `<option>` and `<optgroup>`, as a native select holds them. |
 
+Every attribute of a native `<select>` element passes through.
+
 ## Tokens it reads
 
 `--button-radius` `--chip-height` `--color-accent` `--color-accent-container` `--color-accent-container-hover` `--color-border-hairline` `--color-focus-ring` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-muted` `--color-surface-container` `--color-surface-container-hover` `--color-surface-container-pressed` `--color-surface-overlay` `--color-surface-overlay-hover` `--color-surface-overlay-pressed` `--field-chevron-gap` `--shadow-popover` `--shape-2xl` `--size-icon` `--size-icon-sm` `--size-touch`

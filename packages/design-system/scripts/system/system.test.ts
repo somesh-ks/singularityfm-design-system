@@ -11,6 +11,7 @@ import { basename, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildSystem, systemFiles } from "./build.js";
 import { FOUNDATIONS_PATH, LLMS_PATH, PARTS_DIR, SYSTEM_PATH } from "./paths.js";
+import { propsTable } from "./props.js";
 import { lookup, shownTokens } from "./query.js";
 import type { System } from "./types.js";
 import { usageComment } from "./usage.js";
@@ -110,6 +111,31 @@ describe("the design system file", () => {
       ),
     ];
     expect(missing).toEqual([]);
+  });
+
+  // Prevents a props table that hides or misnames what a component passes on: Link, Select and four
+  // others spread every attribute to their element and the table said nothing, and SegmentedChoice
+  // was said to take an input's attributes because its file types its inputs first, when its Props
+  // take a fieldset's. DialogTitle's props, in a type alias, were not read at all.
+  it("names the element each component passes its attributes to", () => {
+    const silent = system.components.filter(
+      (component) =>
+        !component.element &&
+        /\.\.\.(rest|passed)\b/.test(
+          readFileSync(new URL(`../../../../${component.file}`, import.meta.url), "utf8"),
+        ),
+    );
+    expect(silent.map((component) => component.name)).toEqual([]);
+    const source = `import type { FieldsetHTMLAttributes, InputHTMLAttributes } from "react";
+type Item = InputHTMLAttributes<HTMLInputElement>;
+type Props = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "role"> & {
+  /** The legend. */
+  label: string;
+};`;
+    expect(propsTable(source)).toMatchObject({
+      element: "fieldset",
+      rows: [{ name: "label", required: true }],
+    });
   });
 
   // Prevents publishing an opaque hex for a translucent color: the scrim was listed as #151618, which

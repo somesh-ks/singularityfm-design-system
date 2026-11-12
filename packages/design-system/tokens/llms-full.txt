@@ -202,7 +202,7 @@ The accent fill under its own words; the most prominent button.
 | `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
 | `children?` | `ReactNode` | - | - |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
@@ -264,7 +264,7 @@ The accent container under its own words, with no outline; quieter than Filled.
 | `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
 | `children?` | `ReactNode` | - | - |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
@@ -326,7 +326,7 @@ An accent label with no container until it is hovered or pressed; the quietest b
 | `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
 | `children?` | `ReactNode` | - | - |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
@@ -382,7 +382,7 @@ A Text button in the danger colour.
 | `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
 | `children?` | `ReactNode` | - | - |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
@@ -437,7 +437,7 @@ A shorter pill, same touch target.
 | `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
 | `children?` | `ReactNode` | - | - |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
@@ -509,7 +509,7 @@ A glyph in a round 44px target, quiet until used.
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 | `children` | `ReactNode` | - | The glyph: an Icon, or two that the button's state swaps between. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Props of Icon
 
@@ -572,7 +572,7 @@ A circle on the container fill, beside a primary action.
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 | `children` | `ReactNode` | - | The glyph: an Icon, or two that the button's state swaps between. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Props of Icon
 
@@ -642,7 +642,7 @@ The page's one primary action below 64rem: a glyph and a word, floating.
 | `reserve?` | `string` | - | The widest words the button will say beside its glyph ("Resume · 88 min left"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis. |
 | `children` | `ReactNode` | - | The word the extended button shows beside its glyph ("Add"); it folds away while reading. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
@@ -698,6 +698,8 @@ A link inside a line of small text; the words stay inline, the target is 44px.
 | `slot?` | `string` | - | Astro places the link in its parent's slot with it; it is not an attribute of the link. |
 | `children` | `ReactNode` | - | The words. |
 
+Every attribute of a native `<a>` element passes through.
+
 ### Tokens it reads
 
 `--size-touch`
@@ -751,6 +753,8 @@ The one link out of a story: the publisher's name, underlined on hover.
 | `className?` | `string` | - | For placing the link where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the link in its parent's slot with it; it is not an attribute of the link. |
 | `children` | `ReactNode` | - | The words. |
+
+Every attribute of a native `<a>` element passes through.
 
 ### Tokens it reads
 
@@ -811,7 +815,7 @@ The tonal pill that plays a briefing or one story, with its state.
 | `className?` | `string` | - | For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the button. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
@@ -869,7 +873,7 @@ A checkbox drawn as a pill; ticked it takes the accent container.
 | `className?` | `string` | - | For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. It goes on the chip (the label); every other attribute goes on its checkbox. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the checkbox. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through.
 
 ### Props of ChipGroup
 
@@ -879,6 +883,8 @@ Every attribute of a native `input` passes through.
 | `className?` | `string` | - | For placing the group where it stands (a card-group, a scroll fade), or a hook a page's rule or script finds it by. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the group in its parent's slot with it; it is not an attribute of the fieldset. |
 | `children` | `ReactNode` | - | The Chips. |
+
+Every attribute of a native `<fieldset>` element passes through.
 
 ### Tokens it reads
 
@@ -936,7 +942,7 @@ One pill of radio items: pick exactly one value.
 | `className?` | `string` | - | For placing it where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places it in its parent's slot with it; it is not an attribute of the fieldset. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<fieldset>` element passes through.
 
 ### Tokens it reads
 
@@ -989,6 +995,8 @@ A tonal track with one sliding pill: switch between views of the same content.
 | `defaultValue?` | `string` | `tabs[0]?.value` | The view chosen when it is drawn (the first by default); mountSegmentedNav() moves it after. |
 | `compact?` | `boolean` | `false` | A chip's height on 44px columns, to sit in a row of chips. |
 | `className?` | `string` | - | For placing it where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
+
+Every attribute of a native `<div>` element passes through.
 
 ### Tokens it reads
 
@@ -1047,7 +1055,7 @@ The rounded search pill, on the container tone, with its glyph.
 | `className?` | `string` | - | For placing the field where it stands, or a hook a page's rule finds it by. Never its look. It goes on the outer element (the pill, or the wrapper of a clearable field); every other attribute goes on its input. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the field in its parent's slot with it; it is not an attribute of the input. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through.
 
 ### Tokens it reads
 
@@ -1211,7 +1219,7 @@ A track and a thumb for one setting that is on or off.
 | `className?` | `string` | - | For placing the switch where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `style?` | `CSSProperties \| string` | - | Inline style, as an object or the string an Astro page writes; never its look. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through.
 
 ### Tokens it reads
 
@@ -1266,7 +1274,7 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 | `hue?` | `boolean` | `false` | A hue: the rail is the whole spectrum, the thumb is the colour picked, and a swatch floats above it while it is held (D328). The caller keeps --range-fill on the field the slider is wrapped in. |
 | `wavy?` | `boolean` | `false` | The track up to the thumb drifts (a wave in Expressive, a zigzag in Halloween) and the rest stays straight; Default draws the plain Slider. The caller keeps --range-fill on the field the input is wrapped in. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through.
 
 ### Tokens it reads
 
@@ -1330,7 +1338,7 @@ An outlined box for text a person types: one line, or several lines (multiline).
 | `tonal?` | `boolean` | `false` | The container's fill and no outline, for a form whose selects are tonal too (it writes data-tonal; an outlined Select there takes data-tonal itself). Experimental (DS-11): it may change or go in a minor release (field.ts says why it exists). |
 | `className?` | `string` | - | For placing the field where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through.
 
 ### Tokens it reads
 
@@ -1388,6 +1396,8 @@ A native select with its own chevron.
 | `className?` | `string` | - | For placing the select where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `reserve?` | `string` | - | A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). |
 | `children?` | `ReactNode` | - | The options: `<option>` and `<optgroup>`, as a native select holds them. |
+
+Every attribute of a native `<select>` element passes through.
 
 ### Tokens it reads
 
@@ -1463,7 +1473,7 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 | `slot?` | `string` | - | Astro places the row in its parent's slot with it; it is not an attribute of the row. |
 | `children?` | `ReactNode` | - | The row's glyph first, then its words. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Props of Icon
 
@@ -1638,7 +1648,7 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 | `children?` | `ReactNode` | - | The question, its words and its DialogActions, inside the body. |
 | `after?` | `ReactNode` | - | What sits after the body, outside the form: a hidden part a script reads (data-copy). |
 
-Every attribute of a native `dialog` passes through.
+Every attribute of a native `<dialog>` element passes through.
 
 ### Props of DialogActions
 
@@ -1649,7 +1659,11 @@ Every attribute of a native `dialog` passes through.
 
 ### Props of DialogTitle
 
-No props of its own.
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `children?` | `ReactNode` | - | The question. |
+
+Every attribute of a native `<h2>` element passes through.
 
 ### Props of Button
 
@@ -1666,7 +1680,7 @@ No props of its own.
 | `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
 | `children?` | `ReactNode` | - | - |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
@@ -1725,7 +1739,7 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 | `children?` | `ReactNode` | - | The form or list, inside the scrolling body. |
 | `after?` | `ReactNode` | - | What sits after the body, outside its scroll: a sticky foot, a hidden part a script reads. |
 
-Every attribute of a native `dialog` passes through.
+Every attribute of a native `<dialog>` element passes through.
 
 ### Props of SheetHeader
 
@@ -2250,3 +2264,5 @@ Import `@singularityfm/design-system/RowExit`. No part covers it yet, so `ds fin
 | --- | --- | --- | --- |
 | `className?` | `string` | `""` | For placing the row (its own layout). Never how it leaves. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `children?` | `ReactNode` | - | The row's content. |
+
+Every attribute of a native `<li>` element passes through.

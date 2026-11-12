@@ -165,7 +165,7 @@ export function describeProps(component: Component): string[] {
     const head = `${prop.name}${prop.required ? "" : "?"}: ${type}${prop.default ? ` = ${prop.default}` : ""}`;
     return `    ${head}${prop.description ? `. ${prop.description}` : ""}`;
   });
-  if (component.element) lines.push(`    ...every attribute of a native ${component.element}`);
+  if (component.element) lines.push(`    ...every attribute of a native <${component.element}>`);
   return [`  props of ${component.name}:`, ...lines];
 }
 
