@@ -217,7 +217,8 @@ wide.addEventListener("change", () => {
 // the press, so a scroll would leave it stale. The script's own restore is ignored.
 document.querySelector<HTMLElement>(".app-nav")?.addEventListener("scroll", (event) => {
   const nav = event.currentTarget as HTMLElement;
-  if (nav.scrollTop === restored) {
+  // Engines may land a fraction of a pixel off the value written, so the restore is matched within 1px.
+  if (restored !== null && Math.abs(nav.scrollTop - restored) < 1) {
     restored = null;
     return;
   }

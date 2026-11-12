@@ -46,6 +46,8 @@ Rewritten, never appended. As of 2026-11-11: 0.9.0 is on npm (every control fami
 - The app draws the React Avatar and Code. closed when: the app's bump imports `<pkg>/Avatar` in `AccountSlot.astro` and `profile.astro` with no directive, its queue's and admin health's string snippets (`codeSnippetHtml`, `wireCodeCopy`) still copy, and its screenshots and browser suites pass.
 - The app holds still too. closed when: the app's bump to the release with DS-9 passes `reserve` on its hero and story Play chips (the hero's "Preparing audio" becomes "Preparing") and its sort Select, deletes its own spinner and swap rules, and a browser journey shows the header's Play chip, heart and Share keep their boxes while a podcast prepares and plays.
 - The layout test runs on CI's runner. closed when: the first pull request with it passes `check` on `ubuntu-latest` through Chrome (`channel: "chrome"`).
+- The side column's accordion in WebKit: 28 of 34 frame-stepped checks pass. The failures are a same-group second press (a 65px per frame speed change against a 52.9px own push, where Chromium's baseline is 65px), a 3px first frame on a close, and a 48px jump on a scrolled close at 1024 wide that a direct probe does not reproduce. Chromium and Firefox pass 34 of 34. closed when: the frame-stepped harness passes 34 of 34 in WebKit, sampled as the probe is.
+- The side column on devices: the Toast's screen-reader announcement, the iPhone Select, the phone and forced-colours captions, and a live scroll during the motion in a real session. closed when: each is checked on the device or in a screen reader and the result is recorded here.
 
 ## Next
 
