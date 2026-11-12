@@ -737,42 +737,135 @@
     margin-inline-start: calc(var(--space-4) - (var(--size-touch) - var(--size-icon-lg)) / 2);
   }
 
+  /* The date flush with the icons above, with no end padding: "Updated 30 September 2026" is 183px
+     against the 175px the column leaves it, and that overrun scrolled the whole column sideways
+     (2026-11-10). The month is written short (Nav.astro), so every date holds one line at this size. */
   .guide-nav-foot .guide-updated {
-    padding-inline: var(--space-4);
+    max-inline-size: 100%;
+    padding-inline: var(--space-4) 0;
   }
 
   /* A page with pages under it sits in one tonal container with them while it is open, so they read
      as a section. The box is always there, a step past the column's rows with that step padded back,
      so the rows inside stay on the same left edge as the rows outside and opening shifts nothing;
-     only the fill comes and goes. */
+     only the fill comes and goes. The fill is a layer of its own that fades, so the script can grow
+     the box by its clip while the fill arrives (nav.ts). */
   .guide-nav-group {
+    isolation: isolate;
     margin-inline: calc(var(--space-1) * -1);
     padding: var(--space-1);
     border-radius: var(--radius-xl);
   }
 
-  .guide-nav-group:has(> .guide-nav-sub:not([hidden])) {
+  .guide-nav-group::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-beneath);
+    border-radius: inherit;
     background: var(--color-surface-container);
+    opacity: 0;
   }
 
-  /* The chevron sits on the row's end and turns when it opens. */
+  /* Under reduced motion the fill appears with its list, at once (nav.ts). */
+  @media (prefers-reduced-motion: no-preference) {
+    .guide-nav-group::before {
+      transition: opacity var(--duration-state) var(--ease-out);
+    }
+  }
+
+  /* Keyed to the chevron, not the list: a closing list stays in the page until its motion ends, and
+     the fill leaves with the press. */
+  .guide-nav-group:has(> .guide-nav-toggle[aria-expanded="true"])::before {
+    opacity: 1;
+  }
+
+  /* The page's own row runs under its chevron, so its words stop clear of it. */
+  .guide-nav-group > .app-nav-item {
+    padding-inline-end: calc(var(--size-touch) + var(--space-2));
+  }
+
+  /* The chevron sits on the row's end and turns when it opens. Its target ends with the row (the
+     group's padding past it), and its glyph is the system's chevron after a label (--size-icon-sm):
+     at the button's 24px it stood 2px from "Components", and its 44px target covered the word's last
+     letters, so a press there opened the list instead of the page (2026-11-10). */
   .guide-nav-toggle {
     position: absolute;
     inset-block-start: calc((var(--nav-side-item-height) - var(--size-touch)) / 2 + var(--space-1));
-    inset-inline-end: var(--space-2);
+    inset-inline-end: var(--space-1);
     display: inline-flex;
   }
 
   .guide-nav-toggle .icon-glyph {
-    transition: rotate var(--duration-state) var(--ease-out);
+    width: var(--size-icon-sm);
+    height: var(--size-icon-sm);
+  }
+
+  /* Where a long name reaches into the chevron's target, the words are drawn over it, so a press on a
+     word always goes to its page and only the space round the glyph opens the list. */
+  .guide-nav-group > .app-nav-item > span:last-child {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* One row, one target to the eye: the chevron shows no circle of its own. Pointing at it, pressing
+     it or reaching it by keyboard lights the whole row with the layer the link shows, so the row
+     never splits into a pill with a second box inside it (2026-11-10). Its own ring stays: a
+     keyboard still needs to see which of the row's two stops it is on. */
+  .guide-nav-entry > .guide-nav-toggle:is(:hover, :active) {
+    background: none;
+  }
+
+  .guide-nav-entry:has(> .guide-nav-toggle:focus-visible)
+    > .app-nav-item:not([aria-current="page"]) {
+    background: var(--ghost-hover);
+  }
+
+  /* On the current page's pill the chevron takes the pill's ink. */
+  .app-nav-item[aria-current="page"] ~ .guide-nav-toggle {
+    color: var(--nav-side-item-fg);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .guide-nav-entry:has(> .guide-nav-toggle:hover) > .app-nav-item:not([aria-current="page"]) {
+      background: var(--ghost-hover);
+    }
+
+    .guide-nav-entry:has(> .guide-nav-toggle:hover) > .app-nav-item[aria-current="page"] {
+      background: var(--nav-side-item-bg-hover);
+    }
+
+    /* A row that is not the current page brings its chevron to full ink under the pointer; the current
+       pill's chevron keeps the pill's. */
+    .guide-nav-entry:has(> .app-nav-item:not([aria-current="page"])):is(
+        :has(> .app-nav-item:hover),
+        :has(> .guide-nav-toggle:hover)
+      )
+      > .guide-nav-toggle {
+      color: var(--color-on-surface);
+    }
+  }
+
+  /* A press goes one step deeper than a hover, as the link's does: after the hover rules, which match
+     a held mouse too and weigh the same. */
+  .guide-nav-entry:has(> .guide-nav-toggle:active) > .app-nav-item:not([aria-current="page"]) {
+    background: var(--ghost-pressed);
   }
 
   .guide-nav-toggle[aria-expanded="true"] .icon-glyph {
     rotate: 180deg;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .guide-nav-toggle .icon-glyph {
+      transition: rotate var(--duration-enter) var(--ease-out);
+    }
+  }
+
+  /* One track the column's width: a long name wraps inside it instead of widening the column. */
   .guide-nav-sub:not([hidden]) {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-1);
     margin: var(--space-1) 0 0;
     padding: 0;
@@ -796,16 +889,35 @@
       color var(--duration-hover) var(--ease-hover);
   }
 
-  /* Components opens into more rows than a short window holds: the column scrolls, its foot staying at the end. */
+  .guide-nav-subitem > span {
+    min-inline-size: 0;
+    overflow-wrap: break-word;
+  }
+
+  /* Components opens into more rows than a short window holds: the column scrolls, its foot staying
+     at the end. It scrolls on the block axis only: nothing in it is wider than it (the list's one
+     track, the date above), and the inline axis is held so a stray pixel can never scroll it
+     sideways. The gutter is kept, so the rows keep one width whether a list is open or not, and the
+     column does not anchor its scroll, so opening a group above the fold moves only what is under it. */
+  /* One step more air on the left than the reader's column (shell.css), so the rows clear the edge. */
   .app-nav {
+    padding-inline: calc(var(--space-4) + var(--safe-left)) var(--space-2);
+    overflow-x: hidden;
     overflow-y: auto;
+    overflow-anchor: none;
     overscroll-behavior: contain;
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
   }
 
-  /* A page with no glyph of its own (a component): its words start where a glyph row's words do. */
+  .app-nav-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* A page with no glyph of its own (a component) sits flush under its group's caption, not indented
+     past a glyph: the caption separates the section, so the rows need no indent. */
   .guide-nav-subitem-plain {
-    padding-inline-start: calc(var(--space-4) + var(--size-icon-lg) + var(--space-4));
+    padding-inline-start: var(--space-4);
   }
 
   /* The heading of a group of pages under Components. */
@@ -814,6 +926,11 @@
     color: var(--color-on-surface-muted);
     font-size: var(--text-label-size);
     letter-spacing: var(--text-label-tracking);
+  }
+
+  /* Space above each caption after the first, so one section reads as ended by the next. */
+  .guide-nav-group-label:not(:first-child) {
+    padding-block-start: var(--space-6);
   }
 
   .guide-nav-subitem:focus-visible {
@@ -845,6 +962,26 @@
 
   .app-nav-item[data-group-current] .app-nav-icon-rest {
     display: block;
+  }
+}
+
+/* Forced colours drops the fill, so the current page under a group takes the system highlight and an
+   edge, as the reader's current section in its aside does (aside.css). */
+@media (width >= 64rem) and (forced-colors: active) {
+  .guide-nav-subitem[aria-current="page"] {
+    color: Highlight;
+  }
+
+  /* The edge at rest only: focused, the link keeps its ring (outlines are what forced colours draw). */
+  .guide-nav-subitem[aria-current="page"]:not(:focus-visible) {
+    outline: var(--stroke-hairline) solid Highlight;
+  }
+
+  /* The pressables' edge (foundations.css) would ring the chevron alone inside its row and cross the
+     longest names; the row is the one control here, so the glyph is its mark, as at rest. Forced
+     colours repaints a transparent edge, so the edge is taken away, not cleared. */
+  .guide-nav-toggle {
+    border: 0;
   }
 }
 

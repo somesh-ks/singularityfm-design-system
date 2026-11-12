@@ -13,10 +13,12 @@ interface Props {
 const { current } = Astro.props;
 // The day this build was made, as the reader's foot writes it (the reader's lib/buildDay.ts): the
 // guide leaves with the system, so it formats the day itself rather than import the reader's code.
+// The month is short ("10 Nov 2026"), unlike the reader's: the side column holds "30 September" on
+// one line only at a smaller size, and the owner kept the label size (2026-11-10).
 const updated = new Intl.DateTimeFormat("en-GB", {
   timeZone: "Europe/Stockholm",
   day: "numeric",
-  month: "long",
+  month: "short",
   year: "numeric",
 }).format(new Date());
 ---
