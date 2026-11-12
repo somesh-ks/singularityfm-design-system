@@ -130,7 +130,7 @@ Read this before any UI drawn with this package; then find each part with `ds fi
 
 ### Controls and words
 
-- Use the plainest control people already know. Glyphs come from `Icon` (Phosphor, mostly the outline weight); never draw or paste an SVG.
+- Use the plainest control people already know. Glyphs come from `Icon` (Phosphor: the regular weight, fill where a glyph must read solid, bold for plus and More); never draw or paste an SVG.
 - A control shows what it does by how it looks and answers. No instruction text the control makes obvious. A glyph names what a press does.
 - A control that cannot act stays in place, dimmed and named; it is never hidden.
 - The interface speaks only when the person can act: no saving chatter, no waiting copy. A status is three or four words; a failure is told once, with a plain cause and a short code.
