@@ -6,6 +6,12 @@ A sticky strip of links to the sections of one page.
 
 - `@singularityfm/design-system/SectionTabs`
 
+## Markup
+
+```astro
+<SectionTabs sections={[{ slug: "stories", title: "Stories" }, { slug: "sources", title: "Sources" }]} />
+```
+
 ## Use when
 
 - jump to the sections of a briefing or an episode
@@ -18,6 +24,7 @@ A sticky strip of links to the sections of one page.
 ## Rules
 
 - Drawn only for two sections or more.
+- Each section's slug names its target: the section the tab jumps to has id `c-<slug>`.
 
 ## Props of SectionTabs
 

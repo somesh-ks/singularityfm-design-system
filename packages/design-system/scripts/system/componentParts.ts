@@ -508,7 +508,8 @@ export const componentParts = (): PartSource[] => [
       "packages/design-system/src/menu.ts",
     ],
     rules: [
-      "A native popover with no client directive: its button opens it with popoverTarget (DS-8).",
+      "A native popover with no client directive: its button opens it with popoverTarget (DS-8); light dismiss and Escape close it, and the header's Close needs the page's menu script.",
+      "Menu draws its children as given: with five actions or more the host asks menuHasTiles() and wraps the first three in a row with menuTilesClass() itself.",
       "Under 40rem a menu is a sheet, never a small popover.",
       "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass().",
     ],
