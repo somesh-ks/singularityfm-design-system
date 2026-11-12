@@ -173,7 +173,7 @@ export function describePart(part: Part): string {
   if (part.tokens.length) out.push(`  tokens: ${part.tokens.join(" ")}`);
   if (part.usage) {
     const note = part.usage.length > 240 ? `${part.usage.slice(0, 239).trimEnd()}…` : part.usage;
-    out.push(`  owner's note: ${note} (full: packages/design-system/tokens/system.json)`);
+    out.push(`  owner's note: ${note} (full: tokens/system.json)`);
   }
   return out.join("\n");
 }
@@ -183,18 +183,110 @@ export function shownTokens(system: System, need: string): TokenHit[] {
   return findTokens(system, need).filter((hit) => hit.score >= 5);
 }
 
+/** The fewest single-letter edits (insert, delete, change, or swap two neighbours) from `a` to `b`. */
+export function editDistance(a: string, b: string): number {
+  const d = Array.from({ length: a.length + 1 }, (_, i) =>
+    Array.from({ length: b.length + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0)),
+  );
+  const at = (i: number, j: number): number => d[i]?.[j] ?? 0;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++) {
+      let best = Math.min(
+        at(i - 1, j) + 1,
+        at(i, j - 1) + 1,
+        at(i - 1, j - 1) + (a[i - 1] === b[j - 1] ? 0 : 1),
+      );
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1])
+        best = Math.min(best, at(i - 2, j - 2) + 1);
+      const row = d[i];
+      if (row) row[j] = best;
+    }
+  return at(a.length, b.length);
+}
+
+/**
+ * The need with each word the system never uses (nor any word of the same stem) swapped for the
+ * closest word it does, one edit away (two for a long word), so "buton" finds the Button. Undefined
+ * when no word changes.
+ */
+export function correctNeed(system: System, need: string): string | undefined {
+  const wordsOf = (texts: string[]): Set<string> =>
+    new Set(
+      texts
+        .join(" ")
+        .toLowerCase()
+        .split(/[^a-z]+/)
+        .filter((word) => word.length > 2),
+    );
+  // A part's or token's own names win a tie over a word from its prose: "tost" is Toast, not "most".
+  const names = wordsOf([
+    ...system.parts.flatMap((part) => [part.id, part.name, ...(part.keywords ?? [])]),
+    ...system.tokens.map((token) => token.name),
+  ]);
+  const prose = wordsOf(system.parts.flatMap((part) => [part.summary, ...part.when]));
+  const known = new Set([...names, ...prose]);
+  const stems = new Set([...known].map(stem));
+  const closest = (word: string, pool: Set<string>, reach: number): string | undefined => {
+    let best: string | undefined;
+    let bestDistance = reach + 1;
+    for (const candidate of pool) {
+      if (Math.abs(candidate.length - word.length) > reach) continue;
+      const distance = editDistance(word, candidate);
+      if (distance < bestDistance || (distance === bestDistance && best && candidate < best)) {
+        best = candidate;
+        bestDistance = distance;
+      }
+    }
+    return best;
+  };
+  let changed = false;
+  const words = need.split(/\s+/).map((word) => {
+    const bare = word.toLowerCase().replace(/[^a-z]/g, "");
+    if (bare.length < 4 || known.has(bare) || stems.has(stem(bare)) || STOP.has(bare)) return word;
+    const reach = bare.length >= 7 ? 2 : 1;
+    const best = closest(bare, names, reach) ?? closest(bare, prose, reach);
+    if (!best) return word;
+    changed = true;
+    return best;
+  });
+  return changed ? words.join(" ") : undefined;
+}
+
+/** What `ds find` found for a need, before it is put into words: the CLI's text and its JSON. */
+export interface Lookup {
+  need: string;
+  /** The need as searched, when a misspelt word was corrected. */
+  corrected?: string;
+  /** The import that replaces a retired path the need named. */
+  retired?: string;
+  parts: Part[];
+  tokens: SystemToken[];
+}
+
+export function lookup(system: System, need: string): Lookup {
+  const retired = replacementFor(need);
+  if (retired) return { need, retired, parts: [], tokens: [] };
+  const found = (text: string) => ({
+    parts: findParts(system, text).map((hit) => hit.part),
+    tokens: shownTokens(system, text).map((hit) => hit.token),
+  });
+  const first = found(need);
+  if (first.parts.length > 0 || first.tokens.length > 0) return { need, ...first };
+  // Only when nothing matched: a real word the system lacks ("call") would otherwise be "corrected".
+  const corrected = correctNeed(system, need);
+  return corrected ? { need, corrected, ...found(corrected) } : { need, ...first };
+}
+
 /** A short answer to a need: the best parts in a few lines each, then the tokens that fit. */
 export function answer(system: System, need: string): string {
-  const replacement = replacementFor(need);
-  if (replacement) return `${need.trim()} is retired: import ${replacement}.`;
-  const parts = findParts(system, need);
-  const tokens = shownTokens(system, need);
-  const out: string[] = [];
+  const { retired, corrected, parts, tokens } = lookup(system, need);
+  if (retired) return `${need.trim()} is retired: import ${retired}.`;
   if (parts.length === 0 && tokens.length === 0)
-    return `No part or token matches "${need}". Read packages/design-system/tokens/llms.txt; if nothing fits, ask the owner before inventing a class.`;
+    return `No part or token matches "${need}". Read the package's tokens/llms.txt; if nothing fits, ask the owner before inventing a class.`;
+  const out: string[] = corrected ? [`Showing results for "${corrected}".`] : [];
   if (parts.length > 0) {
     out.push("PARTS (best first; the first is usually the one):");
-    parts.forEach(({ part }, index) => {
+    parts.forEach((part, index) => {
       if (index === 0) out.push(describePart(part));
       else {
         out.push(`${part.id}: ${part.summary}`);
@@ -205,7 +297,13 @@ export function answer(system: System, need: string): string {
   }
   if (tokens.length > 0) {
     out.push("", "TOKENS:");
-    for (const { token } of tokens) out.push(describeTokenLine(token));
+    for (const token of tokens) out.push(describeTokenLine(token));
   }
+  out.push(
+    "",
+    parts.length > 0
+      ? `Next: draw it with the import above${parts[1] ? `, or \`ds part ${parts[1].id}\` for the next one` : ""}; then \`ds validate <your files>\`.`
+      : "Next: `ds token <group>` lists a token's whole group.",
+  );
   return out.join("\n");
 }

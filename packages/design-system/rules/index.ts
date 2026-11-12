@@ -236,7 +236,7 @@ export function rawColour(text: string, file: string): Finding[] {
     rule: "raw-colour",
     file,
     line: lineAt(text, index),
-    message: `${literal} is a raw colour; read a colour token (pnpm run ds token color)`,
+    message: `${literal} is a raw colour; read a colour token (ds token color)`,
     severity: "error",
   });
   if (isCode(file))
