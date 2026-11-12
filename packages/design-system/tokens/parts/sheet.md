@@ -37,7 +37,7 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 | `title` | `string` | - | The sheet's name: an h2 whose id the dialog's aria-labelledby names. |
 | `titleId` | `string` | - | - |
 | `close` | `"data-create-close" \| "data-panel-close" \| "data-dialog-close" \| "data-menu-close"` | - | The data attribute the sheet's script finds its Close button by. |
-| `titleData?` | `Record<`data-${string}`, string \| boolean>` | - | Any data attribute the title carries for its script, such as data-panel-title. |
+| `titleData?` | `` Record<`data-${string}`, string \| boolean> `` | - | Any data attribute the title carries for its script, such as data-panel-title. |
 | `kind?` | `"create" \| "panel"` | `"panel"` | "create" is the New episode sheet; every other sheet is a "panel". |
 | `className?` | `string` | - | For placing the sheet where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `children?` | `ReactNode` | - | The form or list, inside the scrolling body. |
@@ -52,7 +52,7 @@ Every attribute of a native `dialog` passes through.
 | `title` | `string` | - | The sheet's name: an h2 whose id the dialog's aria-labelledby names. |
 | `titleId` | `string` | - | - |
 | `close` | `"data-create-close" \| "data-panel-close" \| "data-dialog-close" \| "data-menu-close"` | - | The data attribute the sheet's script finds its Close button by. |
-| `titleData?` | `Record<`data-${string}`, string \| boolean>` | `{}` | Any data attribute the title carries for its script, such as data-panel-title. |
+| `titleData?` | `` Record<`data-${string}`, string \| boolean> `` | `{}` | Any data attribute the title carries for its script, such as data-panel-title. |
 | `subtitle?` | `string` | - | A quiet line under the title: what the sheet is about, as a menu's item facts. |
 
 ## Tokens it reads

@@ -11,6 +11,9 @@ const inPackage = (path: string): string => path.replace(/^packages\/design-syst
 /** A table cell: a pipe would end the cell, a newline the row. */
 const cell = (text: string): string => text.replace(/\|/g, "\\|").replace(/\s+/g, " ").trim();
 
+/** Inline code that survives a backtick inside it (a template literal type): fenced by two. */
+const code = (text: string): string => (text.includes("`") ? `\`\` ${text} \`\`` : `\`${text}\``);
+
 /** The components a part imports, in its own order. */
 export function componentsOf(part: Part, components: Component[]): Component[] {
   return part.imports.flatMap((name) =>
@@ -19,8 +22,8 @@ export function componentsOf(part: Part, components: Component[]): Component[] {
 }
 
 /** A component's props as a table, and the element it passes attributes to. */
-export function propsSection(component: Component): string[] {
-  const out = [`## Props of ${component.name}`, ""];
+export function propsSection(component: Component, depth = 0): string[] {
+  const out = [`${"#".repeat(2 + depth)} Props of ${component.name}`, ""];
   if (component.props.length === 0) out.push("No props of its own.");
   else {
     out.push("| Name | Type | Default | What it does |", "| --- | --- | --- | --- |");
@@ -29,7 +32,7 @@ export function propsSection(component: Component): string[] {
         ? prop.values.map((value) => `"${value}"`).join(" \\| ")
         : cell(prop.type);
       out.push(
-        `| \`${prop.name}${prop.required ? "" : "?"}\` | \`${type}\` | ${prop.default ? `\`${cell(prop.default)}\`` : "-"} | ${cell(prop.description) || "-"} |`,
+        `| ${code(`${prop.name}${prop.required ? "" : "?"}`)} | ${code(type)} | ${prop.default ? code(cell(prop.default)) : "-"} | ${cell(prop.description) || "-"} |`,
       );
     }
   }
@@ -38,56 +41,69 @@ export function propsSection(component: Component): string[] {
   return out;
 }
 
-export function renderPartPage(part: Part, components: Component[]): string {
-  const out = [`# ${part.name} (\`${part.id}\`)`, "", part.summary, ""];
+/**
+ * Where a page is read: on its own (tokens/parts, links to its siblings) or inside llms-full.txt,
+ * one folder up and one heading level down.
+ */
+interface Placement {
+  depth: number;
+  links: string;
+}
+const ALONE: Placement = { depth: 0, links: "" };
+const IN_FULL: Placement = { depth: 1, links: "parts/" };
+
+export function renderPartPage(part: Part, components: Component[], at: Placement = ALONE): string {
+  const h = (level: number, text: string): string => `${"#".repeat(level + at.depth)} ${text}`;
+  const out = [h(1, `${part.name} (\`${part.id}\`)`), "", part.summary, ""];
   if (part.imports.length > 0)
-    out.push("## Import", "", ...part.imports.map((name) => `- \`${name}\``), "");
-  if (part.markup) out.push("## Markup", "", "```astro", part.markup, "```", "");
-  out.push("## Use when", "", ...part.when.map((item) => `- ${item}`), "");
+    out.push(h(2, "Import"), "", ...part.imports.map((name) => `- \`${name}\``), "");
+  if (part.markup) out.push(h(2, "Markup"), "", "```astro", part.markup, "```", "");
+  out.push(h(2, "Use when"), "", ...part.when.map((item) => `- ${item}`), "");
   if (part.not?.length)
     out.push(
-      "## Not when",
+      h(2, "Not when"),
       "",
       ...part.not.map((item) =>
         item.use.startsWith("nothing")
           ? `- ${item.when}: ${item.use}`
-          : `- ${item.when}: use [\`${item.use}\`](${item.use}.md)`,
+          : `- ${item.when}: use [\`${item.use}\`](${at.links}${item.use}.md)`,
       ),
       "",
     );
-  if (part.rules?.length) out.push("## Rules", "", ...part.rules.map((rule) => `- ${rule}`), "");
+  if (part.rules?.length) out.push(h(2, "Rules"), "", ...part.rules.map((rule) => `- ${rule}`), "");
   if (part.experimental?.length)
     out.push(
-      "## Experimental options",
+      h(2, "Experimental options"),
       "",
       ...part.experimental.map(
         (item) => `- \`${item.option}\` (since ${item.since}): ${item.reason}`,
       ),
       "",
     );
-  for (const component of componentsOf(part, components)) out.push(...propsSection(component), "");
+  for (const component of componentsOf(part, components))
+    out.push(...propsSection(component, at.depth), "");
   if (part.tokens.length > 0)
-    out.push("## Tokens it reads", "", part.tokens.map((name) => `\`${name}\``).join(" "), "");
+    out.push(h(2, "Tokens it reads"), "", part.tokens.map((name) => `\`${name}\``).join(" "), "");
   out.push(
-    "## Where it is drawn",
+    h(2, "Where it is drawn"),
     "",
     `- Classes: ${part.classes.map((name) => `\`.${name}\``).join(" ")} (a page draws the component, never types these)`,
     `- Styled in: ${part.styles.map((path) => `\`${inPackage(path)}\``).join(", ")}`,
   );
   if (part.files?.length)
     out.push(`- Files: ${part.files.map((path) => `\`${inPackage(path)}\``).join(", ")}`);
-  if (part.usage) out.push("", "## Owner's note", "", part.usage);
+  if (part.usage) out.push("", h(2, "Owner's note"), "", part.usage);
   return `${out.join("\n").trimEnd()}\n`;
 }
 
 /** A component no part covers yet (Avatar, Flag), with its import and props. */
-function renderComponentPage(component: Component): string {
+function renderComponentPage(component: Component, at: Placement): string {
   return [
-    `# ${component.name}`,
+    `${"#".repeat(1 + at.depth)} ${component.name}`,
     "",
     `Import \`${component.import}\`. No part covers it yet, so \`ds find\` does not name it.`,
     "",
-    ...propsSection(component),
+    ...propsSection(component, at.depth),
     "",
   ].join("\n");
 }
@@ -96,15 +112,10 @@ function renderComponentPage(component: Component): string {
 export function renderLlmsFull(system: System, llms: string): string {
   const covered = new Set(system.parts.flatMap((part) => part.imports));
   const pages = [
-    ...system.parts.map((part) => renderPartPage(part, system.components)),
+    ...system.parts.map((part) => renderPartPage(part, system.components, IN_FULL)),
     ...system.components
       .filter((component) => !covered.has(component.import))
-      .map(renderComponentPage),
+      .map((component) => renderComponentPage(component, IN_FULL)),
   ];
-  return [
-    llms.trimEnd(),
-    ...pages.map((page) => page.replace(/^# /, "## ").replace(/\n## /g, "\n### ")),
-  ]
-    .join("\n\n---\n\n")
-    .concat("\n");
+  return [llms.trimEnd(), ...pages.map((page) => page.trimEnd())].join("\n\n---\n\n").concat("\n");
 }

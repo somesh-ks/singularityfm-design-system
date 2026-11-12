@@ -379,11 +379,13 @@ export function systemFiles(): [path: string, text: string][] {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  // Built before anything is removed, so a throw leaves the old files in place.
+  const files = systemFiles();
   // A renamed or retired part leaves no page behind.
   rmSync(PARTS_DIR, { recursive: true, force: true });
   mkdirSync(PARTS_DIR, { recursive: true });
   let pages = 0;
-  for (const [path, text] of systemFiles()) {
+  for (const [path, text] of files) {
     writeFileSync(path, text, "utf8");
     if (path.startsWith(PARTS_DIR)) pages++;
     else console.log(`Wrote ${relative(ROOT, path)} (${Buffer.byteLength(text)} bytes)`);

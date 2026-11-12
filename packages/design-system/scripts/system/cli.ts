@@ -8,10 +8,10 @@ import { createHash } from "node:crypto";
 import { existsSync, globSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { declaredProperties, type Finding, validate } from "../../rules/index.js";
+import { componentsOf } from "./pages.js";
 import { PACKAGE, SYSTEM_PATH } from "./paths.js";
 import {
   answer,
-  componentsOf,
   describePart,
   describeProps,
   describeTokenLine,

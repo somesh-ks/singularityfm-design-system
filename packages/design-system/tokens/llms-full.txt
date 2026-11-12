@@ -123,10 +123,10 @@ The accent fill under its own words; the most prominent button.
 
 ### Not when
 
-- Another filled button is on the same surface: make the second one Tonal: use [`button-tonal`](button-tonal.md)
-- The action dismisses or backs out (Cancel, Hide this): use [`button-text`](button-text.md)
-- Many rows repeat it: use a Text button or an Icon button in each row: use [`button-text`](button-text.md)
-- an action that only creates, in the side column: use [`btn-action-tonal`](btn-action-tonal.md)
+- Another filled button is on the same surface: make the second one Tonal: use [`button-tonal`](parts/button-tonal.md)
+- The action dismisses or backs out (Cancel, Hide this): use [`button-text`](parts/button-text.md)
+- Many rows repeat it: use a Text button or an Icon button in each row: use [`button-text`](parts/button-text.md)
+- an action that only creates, in the side column: use [`btn-action-tonal`](parts/btn-action-tonal.md)
 
 ### Rules
 
@@ -164,7 +164,6 @@ Every attribute of a native `button` passes through.
 
 Button, filled and tonal variants (design-system/Button.tsx): the one committing action of a sheet or an empty page, and its alternative. Both fill their row.
 
-
 ---
 
 ## Tonal button (`button-tonal`)
@@ -188,8 +187,8 @@ The accent container under its own words, with no outline; quieter than Filled.
 
 ### Not when
 
-- It is the only action that commits the surface: use [`button-filled`](button-filled.md)
-- It dismisses or backs out: use [`button-text`](button-text.md)
+- It is the only action that commits the surface: use [`button-filled`](parts/button-filled.md)
+- It dismisses or backs out: use [`button-text`](parts/button-text.md)
 
 ### Rules
 
@@ -227,7 +226,6 @@ Every attribute of a native `button` passes through.
 
 Button, tonal variant: the mood's container tone under its own words, with no outline, as the tonal icon button and the tonal select are. Quieter than the filled button and still a button, which an outlined box on the page's own surface was not. The accent container means chosen or current alone (owner, 2026-11-04): a control at rest takes the mood's container, grey in Default and tinted in a coloured mood, so no mood needs a grey it does not have.
 
-
 ---
 
 ## Text button (`button-text`)
@@ -252,8 +250,8 @@ An accent label with no container until it is hovered or pressed; the quietest b
 
 ### Not when
 
-- The action must be found at a glance on its own: use [`button-filled`](button-filled.md)
-- It has a glyph and no words: use [`icon-btn`](icon-btn.md)
+- The action must be found at a glance on its own: use [`button-filled`](parts/button-filled.md)
+- It has a glyph and no words: use [`icon-btn`](parts/icon-btn.md)
 
 ### Rules
 
@@ -290,7 +288,6 @@ Every attribute of a native `button` passes through.
 
 Button, text variant (design-system/Button.tsx): an accent label with no container until it is hovered or pressed. Usage: Cancel, Clear, Try again; the quiet action beside or under a filled button.
 
-
 ---
 
 ## Danger button (`button-danger`)
@@ -313,8 +310,8 @@ A Text button in the danger colour.
 
 ### Not when
 
-- The action is not destructive, or nobody has been asked to confirm: use [`button-text`](button-text.md)
-- It is the first control on a surface: red is for the second step, after the person has asked to delete: use [`button-text`](button-text.md)
+- The action is not destructive, or nobody has been asked to confirm: use [`button-text`](parts/button-text.md)
+- It is the first control on a surface: red is for the second step, after the person has asked to delete: use [`button-text`](parts/button-text.md)
 
 ### Props of Button
 
@@ -347,7 +344,6 @@ Every attribute of a native `button` passes through.
 
 Button, danger tone (text variant; was .confirm-delete in episode-actions.css): red only here, once the person has asked to delete. Usage: the confirm of a delete dialog, Delete and Delete source. After the disabled rule above, which it must outrank at the same specificity.
 
-
 ---
 
 ## Small button (`button-small`)
@@ -370,7 +366,7 @@ A shorter pill, same touch target.
 
 ### Not when
 
-- It commits a sheet: use [`button-filled`](button-filled.md)
+- It commits a sheet: use [`button-filled`](parts/button-filled.md)
 
 ### Props of Button
 
@@ -403,7 +399,6 @@ Every attribute of a native `button` passes through.
 
 Button, small size (size="small" on any variant): a shorter pill with less padding and label-size words, for a dense row or a popover where the full pill crowds the text around it (owner, 2026-11-04: Listen now in the queue). The pill is button.height-small; its target stays the touch size, as the chip's does. After the variants, so it wins at their specificity.
 
-
 ---
 
 ## Icon button (`icon-btn`)
@@ -429,10 +424,10 @@ A glyph in a round 44px target, quiet until used.
 
 ### Not when
 
-- It is the companion of a primary action: Share beside Play: use [`icon-btn-tonal`](icon-btn-tonal.md)
-- The action needs a word to be understood: use [`button-text`](button-text.md)
-- The action floats over the page: use [`fab`](fab.md)
-- A row would carry several of them: its actions go in a dots menu at its end: use [`menu`](menu.md)
+- It is the companion of a primary action: Share beside Play: use [`icon-btn-tonal`](parts/icon-btn-tonal.md)
+- The action needs a word to be understood: use [`button-text`](parts/button-text.md)
+- The action floats over the page: use [`fab`](parts/fab.md)
+- A row would carry several of them: its actions go in a dots menu at its end: use [`menu`](parts/menu.md)
 
 ### Rules
 
@@ -475,7 +470,6 @@ Every attribute of a native `button` passes through.
 
 The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label.
 
-
 ---
 
 ## Tonal icon button (`icon-btn-tonal`)
@@ -498,7 +492,7 @@ A circle on the container fill, beside a primary action.
 
 ### Not when
 
-- A lone toolbar glyph, or one in every row: use [`icon-btn`](icon-btn.md)
+- A lone toolbar glyph, or one in every row: use [`icon-btn`](parts/icon-btn.md)
 
 ### Props of IconButton
 
@@ -530,7 +524,6 @@ Every attribute of a native `button` passes through.
 
 The secondary icon button (2026-10-29, owner: "a circle as a secondary button"): an .icon-btn on the fill of the select chip (--color-surface-container), so it sits beside Play and a dropdown as one row in both themes. Usage: add it with .icon-btn for the companion of a primary action (Share beside Play); a lone toolbar glyph stays a plain .icon-btn. Its ink is full strength, not muted, because the fill already marks it as a control.
 
-
 ---
 
 ## Floating action button (`fab`)
@@ -553,9 +546,9 @@ The page's one primary action below 64rem: a glyph and a word, floating.
 
 ### Not when
 
-- The action sits in a form or a sheet: use [`button-filled`](button-filled.md)
-- From 64rem: the side column or the page carries the action as a button: use [`button-tonal`](button-tonal.md)
-- The action is one glyph with no word: use [`icon-btn`](icon-btn.md)
+- The action sits in a form or a sheet: use [`button-filled`](parts/button-filled.md)
+- From 64rem: the side column or the page carries the action as a button: use [`button-tonal`](parts/button-tonal.md)
+- The action is one glyph with no word: use [`icon-btn`](parts/icon-btn.md)
 
 ### Rules
 
@@ -593,7 +586,6 @@ Every attribute of a native `button` passes through.
 
 The FAB (Fab.tsx): the one primary action below 64rem, as Android draws a screen's primary action (D52), where making or adding is the next thing to do. Extended, the glyph and the word, at the top of a page and while scrolling back up; folded to the glyph while scrolling down to read (the app's script sets data-folded). It carries a word, so a press shows in its fill, never by scaling it. From 64rem the side column or the page carries the same action, and this one is not shown.
 
-
 ---
 
 ## Text link (`text-link`)
@@ -616,9 +608,9 @@ A link inside a line of small text; the words stay inline, the target is 44px.
 
 ### Not when
 
-- It stands alone as an action: use [`button-text`](button-text.md)
-- The control does something on this page: use [`button-text`](button-text.md)
-- It is the one action of a surface, even one that goes to an address: use [`button-filled`](button-filled.md)
+- It stands alone as an action: use [`button-text`](parts/button-text.md)
+- The control does something on this page: use [`button-text`](parts/button-text.md)
+- It is the one action of a surface, even one that goes to an address: use [`button-filled`](parts/button-filled.md)
 
 ### Rules
 
@@ -648,7 +640,6 @@ A link inside a line of small text; the words stay inline, the target is 44px.
 
 A link inside a line of small text (a settings hint): the words stay inline, the touch target is 44px tall through a hit layer centred on the line (D189 sweep, layout.spec.ts). Usage: class="text-link".
 
-
 ---
 
 ## Source link (`source-link`)
@@ -671,9 +662,9 @@ The one link out of a story: the publisher's name, underlined on hover.
 
 ### Not when
 
-- It sits inside a sentence: use [`text-link`](text-link.md)
-- The control does something on this page: use [`button-text`](button-text.md)
-- It is the one action of a surface, even one that goes to an address: use [`button-filled`](button-filled.md)
+- It sits inside a sentence: use [`text-link`](parts/text-link.md)
+- The control does something on this page: use [`button-text`](parts/button-text.md)
+- It is the one action of a surface, even one that goes to an address: use [`button-filled`](parts/button-filled.md)
 
 ### Rules
 
@@ -703,7 +694,6 @@ The one link out of a story: the publisher's name, underlined on hover.
 
 The one link out of a story or an episode highlight: the publisher's name (or its host) and an opens-elsewhere glyph. A link, not a button: no container, no fill. On hover an underline draws in under the name from its start (a background on the span, so it animates where text-decoration does not); a press deepens the words to the pressed accent. The padding is taken back at the start, so the words sit where they would without it and the target reaches past them; at the end it stays, so the target never runs past the column.
 
-
 ---
 
 ## Play chip (`play-chip`)
@@ -726,9 +716,9 @@ The tonal pill that plays a briefing or one story, with its state.
 
 ### Not when
 
-- A person ticks a choice: use [`filter-chip`](filter-chip.md)
-- The page's one main Play floats over it on a phone: use [`fab`](fab.md)
-- The action is not playing something: use [`button-tonal`](button-tonal.md)
+- A person ticks a choice: use [`filter-chip`](parts/filter-chip.md)
+- The page's one main Play floats over it on a phone: use [`fab`](parts/fab.md)
+- The action is not playing something: use [`button-tonal`](parts/button-tonal.md)
 
 ### Rules
 
@@ -765,7 +755,6 @@ Every attribute of a native `button` passes through.
 
 The tonal pill that plays a briefing or one story: a play mark and a short label on the container fill, with no outline.
 
-
 ---
 
 ## Chip (`filter-chip`)
@@ -790,11 +779,11 @@ A checkbox drawn as a pill; ticked it takes the accent container.
 
 ### Not when
 
-- Exactly one of a few values: use [`segmented-choice`](segmented-choice.md)
-- The control switches the view of the same content: use [`segmented-nav`](segmented-nav.md)
-- The choices are many, or long: they go in a list: use [`select`](select.md)
-- The pill plays a briefing or a story: use [`play-chip`](play-chip.md)
-- a long list of options: use [`multiselect`](multiselect.md)
+- Exactly one of a few values: use [`segmented-choice`](parts/segmented-choice.md)
+- The control switches the view of the same content: use [`segmented-nav`](parts/segmented-nav.md)
+- The choices are many, or long: they go in a list: use [`select`](parts/select.md)
+- The pill plays a briefing or a story: use [`play-chip`](parts/play-chip.md)
+- a long list of options: use [`multiselect`](parts/multiselect.md)
 
 ### Rules
 
@@ -833,7 +822,6 @@ Every attribute of a native `input` passes through.
 
 The filter chip: a checkbox drawn as a pill that takes the accent container when checked, its check taking no room (D95), in a row that scrolls sideways (the Library's Show filters).
 
-
 ---
 
 ## Segmented choice (`segmented-choice`)
@@ -856,9 +844,9 @@ One pill of radio items: pick exactly one value.
 
 ### Not when
 
-- Switching between views: use [`segmented-nav`](segmented-nav.md)
-- Several may be ticked together: use [`filter-chip`](filter-chip.md)
-- The values are more than four, or long: use [`select`](select.md)
+- Switching between views: use [`segmented-nav`](parts/segmented-nav.md)
+- Several may be ticked together: use [`filter-chip`](parts/filter-chip.md)
+- The values are more than four, or long: use [`select`](parts/select.md)
 
 ### Rules
 
@@ -892,7 +880,6 @@ Every attribute of a native `input` passes through.
 
 Selection duty (2026-10-20), as Material 3's segmented button: one pill outlined with a hairline, hairline dividers between the segments, the chosen one filled with the accent container and a check before its words, the others transparent. Radios in a fieldset, so the arrow keys, the group and its name come from the browser. Told apart from .segmented-nav at a glance: an outline, not a track, and a check, not a raised pill.
 
-
 ---
 
 ## Segmented navigation (`segmented-nav`)
@@ -915,8 +902,8 @@ A tonal track with one sliding pill: switch between views of the same content.
 
 ### Not when
 
-- Choosing the value of a setting: use [`segmented-choice`](segmented-choice.md)
-- jumping to sections of a long page: use [`tabs`](tabs.md)
+- Choosing the value of a setting: use [`segmented-choice`](parts/segmented-choice.md)
+- jumping to sections of a long page: use [`tabs`](parts/tabs.md)
 
 ### Rules
 
@@ -945,7 +932,6 @@ A tonal track with one sliding pill: switch between views of the same content.
 
 Navigation, used like tabs (2026-10-20): a tonal track with no outline and no check, and one pill in the accent container that slides under the active label, by transform alone. The design is flat, so the pill is told apart by colour, not by a shadow (2026-10-21); the choice control is told apart by its outline and check. The active label takes the pill's text colour, the others stay muted. Buttons in a tablist: segmentedNav.ts moves aria-selected and the roving tabindex, and answers Left, Right, Home and End.
 
-
 ---
 
 ## Search field (`search-field`)
@@ -968,8 +954,8 @@ The rounded search pill, on the container tone, with its glyph.
 
 ### Not when
 
-- A text field in a form: use [`field`](field.md)
-- A person picks one of a known list: use [`select`](select.md)
+- A text field in a form: use [`field`](parts/field.md)
+- A person picks one of a known list: use [`select`](parts/select.md)
 
 ### Rules
 
@@ -1005,7 +991,6 @@ Every attribute of a native `input` passes through.
 
 The search field: a filled pill with the glyph inside it, as a search bar is in every Google app. The glyph and the placeholder say what it is. Focus lifts it (the overlay fill and a hairline; the design is flat, so no shadow); the ring is the keyboard's only (data-input, app.ts), so a tap, a click or typing never draws it. It is keyed off the pointer, not on the keyboard, so a page with no input script still shows keyboard users their place (2026-11-10). Library, Sources and every topic's page share this one field (2026-10-21; styles.test.ts holds them to it).
 
-
 ---
 
 ## Icon (`icon`)
@@ -1028,8 +1013,8 @@ A filled Phosphor glyph in the colour of the text beside it.
 
 ### Not when
 
-- The glyph must act when pressed: use [`icon-btn`](icon-btn.md)
-- the glyph must act when pressed: use [`icon-btn`](icon-btn.md)
+- The glyph must act when pressed: use [`icon-btn`](parts/icon-btn.md)
+- the glyph must act when pressed: use [`icon-btn`](parts/icon-btn.md)
 
 ### Rules
 
@@ -1063,7 +1048,6 @@ A filled Phosphor glyph in the colour of the text beside it.
 
 Phosphor: every glyph is one filled path, so an icon is just its colour and its size. --icon-size, experimental (DS-11, 2026-11-12): a control that holds a glyph sets its size once, on itself, so no page rule names the glyph (the transport's Play and skips, the cover's Play, the Library's status mark, the queue ring's end check: owner calls of 2026-10-22, 2026-10-31, 2026-11-02 and 2026-11-03, and 2026-11-12 for the ring). It inherits, so it is set on the control that holds the one glyph, never on a container of several controls. The registry lists it (icon.ts, ICON.experimental).
 
-
 ---
 
 ## Badge (`badge`)
@@ -1087,9 +1071,9 @@ A grey label holding one word or one number beside a name.
 
 ### Not when
 
-- The state is good, worth a look or wrong: use [`banner`](banner.md)
-- The pill can be pressed or ticked: use [`filter-chip`](filter-chip.md)
-- the pill can be pressed or ticked: use [`filter-chip`](filter-chip.md)
+- The state is good, worth a look or wrong: use [`banner`](parts/banner.md)
+- The pill can be pressed or ticked: use [`filter-chip`](parts/filter-chip.md)
+- the pill can be pressed or ticked: use [`filter-chip`](parts/filter-chip.md)
 
 ### Rules
 
@@ -1116,7 +1100,6 @@ A grey label holding one word or one number beside a name.
 
 The Badge (design-system/Badge.tsx): a grey pill that holds one word or one number. One size, one fill. It is as wide as its words and no narrower than it is high, so a single digit stays round. Grey, so the blue stays with the controls (owner, 2026-10-30).
 
-
 ---
 
 ## Switch (`switch`)
@@ -1141,9 +1124,9 @@ A track and a thumb for one setting that is on or off.
 
 ### Not when
 
-- The choice is one of several values, or needs a Save to apply: use [`filter-chip`](filter-chip.md)
-- The control starts an action (Catch up, Delete) and has no state of its own: use [`button-text`](button-text.md)
-- Several options may be ticked together in a list: use [`filter-chip`](filter-chip.md)
+- The choice is one of several values, or needs a Save to apply: use [`filter-chip`](parts/filter-chip.md)
+- The control starts an action (Catch up, Delete) and has no state of its own: use [`button-text`](parts/button-text.md)
+- Several options may be ticked together in a list: use [`filter-chip`](parts/filter-chip.md)
 
 ### Rules
 
@@ -1172,7 +1155,6 @@ Every attribute of a native `input` passes through.
 
 One setting that is on or off, a checkbox with role="switch" drawn as a track; its ::before is the thumb.
 
-
 ---
 
 ## Slider (`slider`)
@@ -1195,8 +1177,8 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 
 ### Not when
 
-- There are two to five named options and none is between the others: use [`filter-chip`](filter-chip.md)
-- Only on and off are possible: use [`switch`](switch.md)
+- There are two to five named options and none is between the others: use [`filter-chip`](parts/filter-chip.md)
+- Only on and off are possible: use [`switch`](parts/switch.md)
 
 ### Rules
 
@@ -1228,7 +1210,6 @@ Every attribute of a native `input` passes through.
 
 A value between two ends, set by dragging a thumb or with the arrow keys. A native range. WebKit has no pseudo-element for the filled part of the track, so the track paints it as a gradient up to --range-fill, which the script keeps at (value - min) / (max - min) as a percentage. Firefox has ::-moz-range-progress and ignores the gradient. The two engines' pseudo-elements cannot share a rule: a selector one engine does not know drops the whole rule in the other.
 
-
 ---
 
 ## Field (`field`)
@@ -1252,10 +1233,10 @@ An outlined box for text a person types: one line, or several lines (multiline).
 
 ### Not when
 
-- The value is one of two to four short options: use [`segmented-choice`](segmented-choice.md)
-- A person picks one value from a list: use [`select`](select.md)
-- The setting is on or off and applies as soon as it is flipped: use [`switch`](switch.md)
-- The value is a number on a scale: use [`slider`](slider.md)
+- The value is one of two to four short options: use [`segmented-choice`](parts/segmented-choice.md)
+- A person picks one value from a list: use [`select`](parts/select.md)
+- The setting is on or off and applies as soon as it is flipped: use [`switch`](parts/switch.md)
+- The value is a number on a scale: use [`slider`](parts/slider.md)
 
 ### Rules
 
@@ -1293,7 +1274,6 @@ Every attribute of a native `input` passes through.
 
 The text field, and the select and textarea that share its looks: a filled pill (D186; a textarea 24px), the one control with an outline, which shows on focus.
 
-
 ---
 
 ## Select (`select`)
@@ -1317,8 +1297,8 @@ A native select with its own chevron.
 
 ### Not when
 
-- the value is one of two to four short options: use [`segmented-choice`](segmented-choice.md)
-- several values may be ticked together: use [`multiselect`](multiselect.md)
+- the value is one of two to four short options: use [`segmented-choice`](parts/segmented-choice.md)
+- several values may be ticked together: use [`multiselect`](parts/multiselect.md)
 
 ### Rules
 
@@ -1351,7 +1331,6 @@ A native select with its own chevron.
 
 The box and its text are the Field's (field.css, select.field-input); the wrapper holds the chevron a select draws for itself, in the muted ink, never taking a press.
 
-
 ---
 
 ## Menu (`menu`)
@@ -1377,8 +1356,8 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 
 ### Not when
 
-- The person picks one value from a list: use [`select`](select.md)
-- The only action is the one the button names: use [`button-text`](button-text.md)
+- The person picks one value from a list: use [`select`](parts/select.md)
+- The only action is the one the button names: use [`button-text`](parts/button-text.md)
 
 ### Rules
 
@@ -1426,7 +1405,6 @@ Every attribute of a native `button` passes through.
 
 A popover lives in the top layer, so it is placed against the viewport, not the row. Where anchor positioning exists it hangs under the button, right edges level; elsewhere heroMenu.ts writes --menu-top and --menu-right from the button's box when it opens.
 
-
 ---
 
 ## Banner (`banner`)
@@ -1449,9 +1427,9 @@ A tinted block with an icon, a title, an optional line and at most one text butt
 
 ### Not when
 
-- A banner in the page would be moved around by a page change (a cover between pages): use [`banner`](banner.md)
-- a message that clears itself: use [`toast`](toast.md)
-- a page with nothing to list: use [`empty-state`](empty-state.md)
+- A banner in the page would be moved around by a page change (a cover between pages): use [`banner`](parts/banner.md)
+- a message that clears itself: use [`toast`](parts/toast.md)
+- a page with nothing to list: use [`empty-state`](parts/empty-state.md)
 
 ### Rules
 
@@ -1485,7 +1463,6 @@ A tinted block with an icon, a title, an optional line and at most one text butt
 
 Banners, and the pages with nothing to list. A banner is flat: a tinted ground, an icon in the tone's colour, a title, a line of text and at most one text button. The tone sets the tint.
 
-
 ---
 
 ## Toast (`toast`)
@@ -1511,8 +1488,8 @@ showToast({ message: "Deleted", actionLabel: "Undo", onAction })
 
 ### Not when
 
-- A notice that must stay: use [`banner`](banner.md)
-- A person must decide before going on: use [`dialog`](dialog.md)
+- A notice that must stay: use [`banner`](parts/banner.md)
+- A person must decide before going on: use [`dialog`](parts/dialog.md)
 
 ### Rules
 
@@ -1536,7 +1513,6 @@ No props of its own.
 ### Owner's note
 
 The Toast (Toast.tsx). One quiet message at a time: a flat, inverse surface with a hairline radius, an optional leading icon (a check or an alert, so the outcome is not told by colour alone), the message at the label size, at most one text action in the accent and a close button, shown only to a mouse (below). A top-layer popover above whatever is docked at the bottom. Where it sits is the page's to say, by custom properties set on the root (never on .toast, so the component's rules stay the only ones that draw it): --toast-nav the navigation bar at the bottom; else --bottom-nav-height, else the safe area --toast-dock a docked bar above the navigation (the reader's mini player); 0 by default --toast-lift more room under it (the reader's run line); 0 by default --toast-inline-start the start inset it centres from; else --side-nav-width, else 0 --toast-inline-end the end inset; 0 by default
-
 
 ---
 
@@ -1562,8 +1538,8 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 
 ### Not when
 
-- The question needs fields to answer: use [`sheet`](sheet.md)
-- a form that slides in, with fields: use [`sheet`](sheet.md)
+- The question needs fields to answer: use [`sheet`](parts/sheet.md)
+- a form that slides in, with fields: use [`sheet`](parts/sheet.md)
 
 ### Rules
 
@@ -1602,7 +1578,6 @@ No props of its own.
 - Styled in: `styles/buttons.css`, `styles/dialog.css`
 - Files: `src/Dialog.tsx`, `src/DialogActions.tsx`, `src/DialogTitle.tsx`, `src/dialog.ts`
 
-
 ---
 
 ## Sheet (`sheet`)
@@ -1627,9 +1602,9 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 
 ### Not when
 
-- One question and its answers: use [`dialog`](dialog.md)
-- A short list of actions: use [`menu`](menu.md)
-- A form in a Base UI island: use [`drawer`](drawer.md)
+- One question and its answers: use [`dialog`](parts/dialog.md)
+- A short list of actions: use [`menu`](parts/menu.md)
+- A form in a Base UI island: use [`drawer`](parts/drawer.md)
 
 ### Rules
 
@@ -1644,7 +1619,7 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 | `title` | `string` | - | The sheet's name: an h2 whose id the dialog's aria-labelledby names. |
 | `titleId` | `string` | - | - |
 | `close` | `"data-create-close" \| "data-panel-close" \| "data-dialog-close" \| "data-menu-close"` | - | The data attribute the sheet's script finds its Close button by. |
-| `titleData?` | `Record<`data-${string}`, string \| boolean>` | - | Any data attribute the title carries for its script, such as data-panel-title. |
+| `titleData?` | `` Record<`data-${string}`, string \| boolean> `` | - | Any data attribute the title carries for its script, such as data-panel-title. |
 | `kind?` | `"create" \| "panel"` | `"panel"` | "create" is the New episode sheet; every other sheet is a "panel". |
 | `className?` | `string` | - | For placing the sheet where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `children?` | `ReactNode` | - | The form or list, inside the scrolling body. |
@@ -1659,7 +1634,7 @@ Every attribute of a native `dialog` passes through.
 | `title` | `string` | - | The sheet's name: an h2 whose id the dialog's aria-labelledby names. |
 | `titleId` | `string` | - | - |
 | `close` | `"data-create-close" \| "data-panel-close" \| "data-dialog-close" \| "data-menu-close"` | - | The data attribute the sheet's script finds its Close button by. |
-| `titleData?` | `Record<`data-${string}`, string \| boolean>` | `{}` | Any data attribute the title carries for its script, such as data-panel-title. |
+| `titleData?` | `` Record<`data-${string}`, string \| boolean> `` | `{}` | Any data attribute the title carries for its script, such as data-panel-title. |
 | `subtitle?` | `string` | - | A quiet line under the title: what the sheet is about, as a menu's item facts. |
 
 ### Tokens it reads
@@ -1671,7 +1646,6 @@ Every attribute of a native `dialog` passes through.
 - Classes: `.sheet-side` `.sheet-head` `.sheet-body` `.sheet-title` (a page draws the component, never types these)
 - Styled in: `styles/sheet.css`
 - Files: `src/Sheet.tsx`, `src/sheet.ts`, `src/SheetHeader.tsx`, `src/sheetHead.ts`
-
 
 ---
 
@@ -1691,8 +1665,8 @@ The island modal for a form: the whole screen on a phone, a panel at the right f
 
 ### Not when
 
-- The sheet is drawn by Astro or a script: use [`sheet`](sheet.md)
-- One question and its answers: use [`dialog`](dialog.md)
+- The sheet is drawn by Astro or a script: use [`sheet`](parts/sheet.md)
+- One question and its answers: use [`dialog`](parts/dialog.md)
 
 ### Rules
 
@@ -1712,7 +1686,6 @@ The island modal for a form: the whole screen on a phone, a panel at the right f
 ### Owner's note
 
 The Drawer's surface: a scrim over the page that fades as the sheet is swiped away, a viewport, and the popup that rests on the screen's edge.
-
 
 ---
 
@@ -1736,7 +1709,7 @@ A wave from the touch point that fills a control's touch area, then fades.
 
 ### Not when
 
-- A small control needs a press state: use [`icon-btn`](icon-btn.md)
+- A small control needs a press state: use [`icon-btn`](parts/icon-btn.md)
 
 ### Rules
 
@@ -1758,7 +1731,6 @@ No props of its own.
 - Styled in: `styles/ripple.css`
 - Files: `src/Ripple.tsx`, `src/ripple.ts`
 
-
 ---
 
 ## Tonal action (`btn-action-tonal`)
@@ -1771,7 +1743,7 @@ The one creating action in the side column (Catch up), on the action tone.
 
 ### Not when
 
-- any other button: use [`button-tonal`](button-tonal.md)
+- any other button: use [`button-tonal`](parts/button-tonal.md)
 
 ### Tokens it reads
 
@@ -1785,7 +1757,6 @@ The one creating action in the side column (Catch up), on the action tone.
 ### Owner's note
 
 Tonal action: the one creating action in the side column (Catch up, AppNav.astro). Usage: add it to the action's own element, which keeps its size and layout. It wears the primary fill, the filled button's and Play's (owner, 2026-11-04: "all should have the same color synchronized"); it was a third, saturated tone of its own (owner, 2026-10-27), which read as a second primary beside Play. The current row's accent container still means "you are here" alone. - A 16px rounded rectangle: the one recorded exception to the pill rule (D186), so its shape alone tells it from the pill-shaped current row beside it (--action-tonal-radius). - Flat: no elevation and no shadow (owner, 2026-10-27). - Hover and press take the primary fill's own steps (--cta-bg-hover, --cta-bg-pressed).
-
 
 ---
 
@@ -1804,7 +1775,7 @@ A sticky strip of links to the sections of one page.
 
 ### Not when
 
-- switching between two views: use [`segmented-nav`](segmented-nav.md)
+- switching between two views: use [`segmented-nav`](parts/segmented-nav.md)
 
 ### Rules
 
@@ -1830,7 +1801,6 @@ A sticky strip of links to the sections of one page.
 
 The bar sticks and carries the surface and the line under it; the strip inside it scrolls and fades its ends. A mask on the bar itself would fade its surface and line too, and what scrolls under a stuck strip would show through at its edges.
 
-
 ---
 
 ## Row action (`row-action`)
@@ -1851,8 +1821,8 @@ A row that is one link or button: the whole row responds as a rounded tile.
 
 ### Not when
 
-- a row that holds a switch or a select: use [`settings-row`](settings-row.md)
-- a destructive or non-navigating action: use [`button-text`](button-text.md)
+- a row that holds a switch or a select: use [`settings-row`](parts/settings-row.md)
+- a destructive or non-navigating action: use [`button-text`](parts/button-text.md)
 
 ### Rules
 
@@ -1872,7 +1842,6 @@ A row that is one link or button: the whole row responds as a rounded tile.
 
 A row that is one link or button: the whole row responds. Its fill is a rounded tile clear of the hairlines and reaching a little past the words, as a menu's options are, so a hovered row reads as one thing to press rather than a band across the page.
 
-
 ---
 
 ## Card group (`card-group`)
@@ -1887,7 +1856,7 @@ A group of rows in one rounded container on the container tone.
 
 ### Not when
 
-- a single stat or number: use [`stat-tiles`](stat-tiles.md)
+- a single stat or number: use [`stat-tiles`](parts/stat-tiles.md)
 
 ### Rules
 
@@ -1907,7 +1876,6 @@ A group of rows in one rounded container on the container tone.
 
 A group of settings rows in one rounded container on the container tone, as Material 3 groups an Android settings screen: the group is told apart from the page by tone alone, never by a shadow or a line. Put the class on the .rows list itself; the rows keep their own padding. Its words sit the card's padding in from its edge, and a row's hover tile keeps clear of the corners. 2026-10-22, "the padding around the list menus ... must be spacious": the words 24px in, the tiles 16px in on every side. The card adds half the inset above and below and each tile takes the other half inside its row, so the first and last tiles sit one inset from the edge, two tiles sit one inset apart, and the rows keep their 64px rhythm. 2026-10-24, the owner: "I want the padding to be less and the list items to be spacious to improve click area ... 4px padding is decent": the inset is 4px, a link row's box is its tile (one inset from the card's edges, its words still the padding in), so the whole tile is the target and nothing outside it is. The card adds the inset above and below and two rows sit one inset apart; each row keeps 64px.
 
-
 ---
 
 ## Settings row (`settings-row`)
@@ -1922,7 +1890,7 @@ A row with a label and an in-place control: a switch, a select or a value.
 
 ### Not when
 
-- a row that opens another page: use [`row-action`](row-action.md)
+- a row that opens another page: use [`row-action`](parts/row-action.md)
 
 ### Tokens it reads
 
@@ -1936,7 +1904,6 @@ A row with a label and an in-place control: a switch, a select or a value.
 ### Owner's note
 
 Label and description at the start, the control at the end. The row grammar adds the padding and the hairline; with that padding this minimum is the 48px floor, and most rows are taller.
-
 
 ---
 
@@ -1957,8 +1924,8 @@ A spot illustration, a title, one line and at most two actions, for a page with 
 
 ### Not when
 
-- a list that has items: use [`card-group`](card-group.md)
-- a notice above content that exists: use [`banner`](banner.md)
+- a list that has items: use [`card-group`](parts/card-group.md)
+- a notice above content that exists: use [`banner`](parts/banner.md)
 
 ### Rules
 
@@ -1968,7 +1935,6 @@ A spot illustration, a title, one line and at most two actions, for a page with 
 
 - Classes: `.empty` `.empty-actions` (a page draws the component, never types these)
 - Styled in:
-
 
 ---
 
@@ -1983,13 +1949,12 @@ A field-like trigger that opens a list of checkable choices.
 
 ### Not when
 
-- a few choices that fit on screen: use [`filter-chip`](filter-chip.md)
+- a few choices that fit on screen: use [`filter-chip`](parts/filter-chip.md)
 
 ### Where it is drawn
 
 - Classes: `.multiselect-trigger` (a page draws the component, never types these)
 - Styled in:
-
 
 ---
 
@@ -2004,7 +1969,7 @@ A tile per figure: the value large over its word in muted ink.
 
 ### Not when
 
-- a list of rows: use [`card-group`](card-group.md)
+- a list of rows: use [`card-group`](parts/card-group.md)
 
 ### Where it is drawn
 
@@ -2014,7 +1979,6 @@ A tile per figure: the value large over its word in muted ink.
 ### Owner's note
 
 A figure on a dashboard: a tile per stat, its value large over its word in muted ink, two columns on a phone and four from 40rem. The owner, 2026-10-27: the Costs page's stat pills became boxes, no pill for a figure. In a card a tile sits the card's padding in, so its corner is the card's less that padding (--card-content-radius, concentric), and it takes the overlay tone, as the card's chips do. On the 8pt grid: 16px in, a 24px value line and a 24px label line, 80px a tile. The value is the title step at regular weight, under the page's total it explains (owner, 2026-10-27: the heading-size medium value "competes with the main cost number"). Put .stat-tiles on the list and .stat-tile on each item, with .stat-tile-value and .stat-tile-label inside. Used by the Costs page (analytics.astro, costsPage.ts) and the Health page's summary (settings/health.astro).
-
 
 ---
 
@@ -2034,7 +1998,6 @@ A section header with more room above than below, so it belongs to what follows.
 ### Owner's note
 
 More room above a header than below it: the header belongs to what follows.
-
 
 ---
 
@@ -2059,7 +2022,6 @@ One quiet line of facts, separated by centered dots.
 
 One quiet line of facts, its parts separated by a centred dot.
 
-
 ---
 
 ## Cover (`cover`)
@@ -2074,7 +2036,6 @@ A generated cover image, drawn once per theme.
 
 - Classes: `.cover` (a page draws the component, never types these)
 - Styled in:
-
 
 ---
 
@@ -2092,7 +2053,6 @@ Import `@singularityfm/design-system/Avatar`. No part covers it yet, so `ds find
 | `label?` | `string` | - | A button that opens the profile, named for a screen reader. Without it the avatar is a picture. |
 | `className?` | `string` | - | For placing the avatar where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-
 ---
 
 ## BrandMark
@@ -2105,7 +2065,6 @@ Import `@singularityfm/design-system/BrandMark`. No part covers it yet, so `ds f
 | --- | --- | --- | --- |
 | `className?` | `string` | `"wordmark-mark"` | Its class: wordmark-mark sizes it beside the app's name. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-
 ---
 
 ## ChapterAside
@@ -2117,7 +2076,6 @@ Import `@singularityfm/design-system/ChapterAside`. No part covers it yet, so `d
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `sections` | `readonly SectionRef[]` | - | - |
-
 
 ---
 
@@ -2135,7 +2093,6 @@ Import `@singularityfm/design-system/Code`. No part covers it yet, so `ds find` 
 | `copied?` | `string` | `"Copied"` | - |
 | `className?` | `string` | - | For placing the snippet where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-
 ---
 
 ## Flag
@@ -2148,7 +2105,6 @@ Import `@singularityfm/design-system/Flag`. No part covers it yet, so `ds find` 
 | --- | --- | --- | --- |
 | `region?` | `string` | - | An ISO 3166-1 code: the flag alone, at the 16 by 12 of a row of controls. |
 | `text?` | `string` | `""` | Text that may hold flag emoji: its flags drawn at the size of the words. |
-
 
 ---
 
@@ -2163,7 +2119,6 @@ Import `@singularityfm/design-system/PlayingBars`. No part covers it yet, so `ds
 | `className?` | `string` | - | For placing the bars where they stand, or a hook a page's rule finds them by (the reader's cover button sizes them to its glyph). Never their look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the bars in its parent's slot with it; it is not an attribute of the element. |
 
-
 ---
 
 ## RowExit
@@ -2176,4 +2131,3 @@ Import `@singularityfm/design-system/RowExit`. No part covers it yet, so `ds fin
 | --- | --- | --- | --- |
 | `className?` | `string` | `""` | For placing the row (its own layout). Never how it leaves. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `children?` | `ReactNode` | - | The row's content. |
-
