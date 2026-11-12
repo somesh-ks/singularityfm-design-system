@@ -151,7 +151,8 @@ function move(nav: HTMLElement, pressed: Group, open: boolean): void {
   for (const entry of groups) {
     const { height, radius } = boxed.get(entry) ?? { height: 0, radius: "0" };
     const end = heights.get(entry) ?? height;
-    entry.group.style.clipPath = `inset(0 0 ${height - end}px 0 round ${radius})`;
+    // The clip cuts only the bottom edge; its top and sides reach a rem past the box, so a focus ring on the chevron is not cut.
+    entry.group.style.clipPath = `inset(-1rem -1rem ${height - end}px -1rem round ${radius})`;
     const push = end - (wasHeight.get(entry) ?? end);
     if (Math.abs(push) >= 0.5) {
       flight.push(
