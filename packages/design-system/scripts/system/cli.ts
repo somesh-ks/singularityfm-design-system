@@ -1,5 +1,5 @@
 /**
- * ds find "<what you need>" | part <id> | token <words> | list | batch "<command>"... | version
+ * ds find "<what you need>" | part <id or Component> | token <words> | list | batch "<command>"... | version
  *   | validate [--exceptions <file.json>] <files or globs>; --json on any of them answers in JSON.
  * Reads tokens/system.json, so it answers in milliseconds and never greps a stylesheet. An app runs
  * it as `pnpm exec ds`, the bundle the package's `bin` names (scripts/bundleCli.mjs).
@@ -11,7 +11,9 @@ import { declaredProperties, type Finding, validate } from "../../rules/index.js
 import { PACKAGE, SYSTEM_PATH } from "./paths.js";
 import {
   answer,
+  componentsOf,
   describePart,
+  describeProps,
   describeTokenLine,
   editDistance,
   findTokens,
@@ -29,7 +31,7 @@ function load(): System {
 
 const USAGE_VALIDATE = "Usage: ds validate [--exceptions <file.json>] <files or globs>";
 const USAGE =
-  'Usage: ds find "<need>" | part <id> | token <words> | list | batch "<command>"... | version | validate [--exceptions <file.json>] <files or globs>. Add --json for JSON.';
+  'Usage: ds find "<need>" | part <id or Component> | token <words> | list | batch "<command>"... | version | validate [--exceptions <file.json>] <files or globs>. Add --json for JSON.';
 
 /** A finding the caller exempts by name: one rule, in one file, on a line holding `text`. */
 interface Exemption {
@@ -100,15 +102,35 @@ function read(system: System, command: string, argument: string): Answer | undef
     }
     case "part": {
       const part = system.parts.find((candidate) => candidate.id === argument);
-      if (part) return { text: describePart(part), json: { part }, code: 0 };
+      if (part) {
+        const drawn = componentsOf(part, system.components);
+        return {
+          text: describePart(part, drawn),
+          json: { part, components: drawn },
+          code: 0,
+        };
+      }
+      // A component no part covers yet (Avatar, Flag) still answers with its import and props.
+      const component = system.components.find(
+        (candidate) => candidate.name.toLowerCase() === argument.toLowerCase(),
+      );
+      if (component)
+        return {
+          text: [`${component.name}: import ${component.import}`, ...describeProps(component)].join(
+            "\n",
+          ),
+          json: { part: null, components: [component] },
+          code: 0,
+        };
       const ids = system.parts.map((candidate) => candidate.id);
-      const near = ids
-        .map((id) => ({ id, distance: editDistance(argument, id) }))
+      const names = system.components.map((candidate) => candidate.name);
+      const near = [...ids, ...names]
+        .map((id) => ({ id, distance: editDistance(argument.toLowerCase(), id.toLowerCase()) }))
         .filter(({ distance }) => distance <= 2)
         .sort((x, y) => x.distance - y.distance)[0]?.id;
       return {
-        text: `No part "${argument}".${near ? ` Did you mean ${near}?` : ""} Parts: ${ids.join(", ")}`,
-        json: { part: null, ...(near ? { didYouMean: near } : {}), parts: ids },
+        text: `No part or component "${argument}".${near ? ` Did you mean ${near}?` : ""} Parts: ${ids.join(", ")}. Components: ${names.join(", ")}`,
+        json: { part: null, ...(near ? { didYouMean: near } : {}), parts: ids, components: names },
         code: 1,
       };
     }

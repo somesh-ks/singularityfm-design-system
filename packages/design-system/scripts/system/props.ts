@@ -1,7 +1,8 @@
 /**
  * A component's props, read from its own source so the table cannot drift from it: the members of its
  * Props interface (name, type, the comment above it) and the defaults its destructuring writes.
- * Attributes it passes through to the element are named in one line, not listed.
+ * Attributes it passes through to the element are named in one line, not listed. The system build
+ * writes them into tokens/system.json, where the style guide, `ds part` and an agent all read them.
  */
 export interface PropRow {
   name: string;
@@ -9,6 +10,8 @@ export interface PropRow {
   required: boolean;
   default: string;
   description: string;
+  /** The choices, when the type is a named union of strings the package exports (ButtonVariant). */
+  values?: string[];
 }
 
 export interface PropsTable {
