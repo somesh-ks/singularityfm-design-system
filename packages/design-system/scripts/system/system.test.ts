@@ -2,8 +2,9 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { buildSystem, LLMS_PATH, SYSTEM_PATH, systemFiles } from "./build.js";
-import { findParts, shownTokens } from "./query.js";
+import { buildSystem, systemFiles } from "./build.js";
+import { LLMS_PATH, SYSTEM_PATH } from "./paths.js";
+import { lookup, shownTokens } from "./query.js";
 import type { System } from "./types.js";
 import { usageComment } from "./usage.js";
 
@@ -114,7 +115,7 @@ describe("the lookup", () => {
           ? []
           : [`${row.need} -> ${row.token}, got ${names.join(", ") || "nothing"}`];
       }
-      const first = findParts(system, row.need, 3)[0]?.part.id ?? null;
+      const first = lookup(system, row.need).parts[0]?.id ?? null;
       return first === row.part ? [] : [`${row.need} -> ${row.part}, got ${first}`];
     });
     expect(misses).toEqual([]);

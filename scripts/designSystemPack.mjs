@@ -12,7 +12,7 @@
 // DialogTitle, DialogActions, Sheet and SheetHeader by their names and by their .astro shims, native
 // dialogs with no island (DS-3); and a sixth that draws a Menu, its rows and a Select, by their
 // names and by their .astro shims, native and with no island (DS-8); and a seventh that draws Avatar and Code by their
-// names and shims, the Code hydrated. The workspace link serves every file in the folder, so a path missing from `files`, a
+// names and shims, the Code hydrated; then it runs the installed `ds` command. The workspace link serves every file in the folder, so a path missing from `files`, a
 // broken exports entry or a lost astro peer (Astro then leaves the .astro source to Node) passes every
 // other check and fails only here.
 //
@@ -240,6 +240,25 @@ try {
   // this check sees one missing from `files`.
   for (const file of ["AGENTS.md", "tokens/llms.txt", "tokens/system.json"])
     if (!existsSync(join(installed, file))) problems.push(`the tarball has no ${file}`);
+  // `ds` runs as the bundle `prepack` builds, under plain Node from node_modules: only an installed run
+  // shows a bundle that looks for system.json at a depth its own folder does not have.
+  if (
+    !pnpm(["exec", "ds", "find", "primary button"], app).includes(
+      "@singularityfm/design-system/Button",
+    )
+  )
+    problems.push("`ds find` did not name the Button's import");
+  const { schema, version } = JSON.parse(pnpm(["exec", "ds", "version", "--json"], app));
+  if (schema !== 1 || !version) problems.push("`ds version --json` gave no version");
+  writeFileSync(join(app, "raw.css"), ".a { color: #fff; }\n");
+  // A crash also exits non-zero, so the finding itself is what passes this.
+  let finding = "";
+  try {
+    pnpm(["exec", "ds", "validate", "raw.css"], app);
+  } catch (error) {
+    finding = error.status === 1 ? String(error.stdout) : "";
+  }
+  if (!finding.includes("raw-colour")) problems.push("`ds validate` did not report a raw colour");
   pnpm(["exec", "astro", "build"], app);
   const html = readFileSync(join(app, "dist/index.html"), "utf8");
   const actions = readFileSync(join(app, "dist/actions/index.html"), "utf8");

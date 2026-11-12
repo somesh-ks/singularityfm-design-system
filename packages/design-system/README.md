@@ -48,7 +48,7 @@ CSS files have side effects; everything else can be tree-shaken.
 
 ## For agents
 
-[AGENTS.md](./AGENTS.md) is the guide for an agent that builds UI with the package: find the part first, import by name, tokens only, then `ds validate`. Add one line to your app's own `AGENTS.md` so it is read (the file says which). The lookup is `tokens/llms.txt` (one page), `tokens/system.json` (everything) and the `ds` command; the style guide serves the first two at `/design/llms.txt` and `/design/system.json`.
+[AGENTS.md](./AGENTS.md) is the guide for an agent that builds UI with the package: find the part first, import by name, tokens only, then `ds validate`. Add one line to your app's own `AGENTS.md` so it is read (the file says which). The lookup is `tokens/llms.txt` (one page), `tokens/system.json` (everything) and the `ds` command (`pnpm exec ds find "<need>"`); the style guide serves the first two at `/design/llms.txt` and `/design/system.json`.
 
 ## Versions
 
