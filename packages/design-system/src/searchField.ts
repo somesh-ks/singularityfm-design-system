@@ -46,7 +46,8 @@ let installed = false;
  */
 export function syncSearchClear(input: HTMLInputElement): void {
   const clear = input.closest(WRAP)?.querySelector<HTMLButtonElement>(CLEAR);
-  if (clear) clear.hidden = input.value === "";
+  // A field the reader cannot change offers no Clear.
+  if (clear) clear.hidden = input.value === "" || input.disabled || input.readOnly;
 }
 
 /**
@@ -81,8 +82,10 @@ export function installSearchClear(): void {
   document.addEventListener("click", (event) => {
     const clear = event.target instanceof Element ? event.target.closest(CLEAR) : null;
     const input = clear?.closest(WRAP)?.querySelector<HTMLInputElement>("input");
-    if (!input) return;
-    input.value = "";
+    if (!input || input.disabled || input.readOnly) return;
+    // Through the native setter: a React-controlled field reads its own value tracker, so a plain
+    // `input.value = ""` would make the input event look like no change and its onChange never runs.
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, "");
     input.dispatchEvent(new Event("input", { bubbles: true }));
     input.focus();
   });

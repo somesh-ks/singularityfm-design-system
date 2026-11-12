@@ -193,15 +193,15 @@ select.field-input[data-tonal][aria-invalid]:not([aria-invalid="false"]) {
 /* A field that can be read and not changed (a built-in topic's name) is sunken, in quieter ink, so it
    never looks like a field that waits for typing; the pointer's edge does not show on it. For every
    field, after the hover it outweighs. Focused, it keeps the accent edge, as every field does, so the
-   keyboard can still see where it is. Moved from the reader's topics.css. */
+   keyboard can still see where it is, and a failed one keeps its danger edge. Moved from the reader's topics.css. */
 .field-input[readonly],
 .field-input[readonly]:hover {
   background: var(--color-surface-sunken);
   color: var(--color-on-surface-muted);
 }
 
-.field-input[readonly]:not(:focus-visible),
-.field-input[readonly]:not(:focus-visible):hover {
+.field-input[readonly]:not(:focus-visible, [aria-invalid]:not([aria-invalid="false"])),
+.field-input[readonly]:not(:focus-visible, [aria-invalid]:not([aria-invalid="false"])):hover {
   border-color: var(--color-border-hairline);
 }
 
