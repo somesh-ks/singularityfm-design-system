@@ -18,7 +18,7 @@ A row with a label and an in-place control: a switch, a select or a value.
 
 ## Where it is drawn
 
-- Classes: `.settings-row` `.settings-label` `.settings-hint` (a page draws the component, never types these)
+- Classes: `.settings-row` `.settings-label` `.settings-hint` (typed on your own element)
 - Styled in: `styles/picker.css`, `styles/primitives.css`, `styles/settings-rows.css`
 
 ## Owner's note

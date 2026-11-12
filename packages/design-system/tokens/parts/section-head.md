@@ -8,7 +8,7 @@ A section header with more room above than below, so it belongs to what follows.
 
 ## Where it is drawn
 
-- Classes: `.section-head` (a page draws the component, never types these)
+- Classes: `.section-head` (typed on your own element)
 - Styled in: `styles/primitives.css`
 
 ## Owner's note

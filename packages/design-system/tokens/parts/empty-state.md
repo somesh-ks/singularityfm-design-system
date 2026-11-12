@@ -24,5 +24,5 @@ A spot illustration, a title, one line and at most two actions, for a page with 
 
 ## Where it is drawn
 
-- Classes: `.empty` `.empty-actions` (a page draws the component, never types these)
-- Styled in:
+- Classes: `.empty` `.empty-actions` (drawn by the app's own component the markup names; this package does not ship it yet)
+- Styled in: no stylesheet in this package yet

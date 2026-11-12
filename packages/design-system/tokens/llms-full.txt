@@ -408,6 +408,7 @@ A glyph in a round 44px target, quiet until used.
 ### Import
 
 - `@singularityfm/design-system/IconButton`
+- `@singularityfm/design-system/Icon`
 
 ### Markup
 
@@ -456,6 +457,14 @@ A glyph in a round 44px target, quiet until used.
 
 Every attribute of a native `button` passes through.
 
+### Props of Icon
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `name` | `IconName` | - | - |
+| `size?` | `"md" \| "lg"` | `"md"` | The glyph's box: medium beside words, large when it is the whole button. |
+| `className?` | `string` | `""` | A hook for the control that holds it (a rule that places the glyph, or swaps it). An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
+
 ### Tokens it reads
 
 `--button-radius` `--color-accent` `--color-accent-container` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-disabled` `--color-on-surface-muted` `--color-surface-container` `--cta-bg` `--cta-bg-hover` `--cta-bg-pressed` `--cta-fg` `--size-icon-lg` `--size-touch`
@@ -479,6 +488,7 @@ A circle on the container fill, beside a primary action.
 ### Import
 
 - `@singularityfm/design-system/IconButton`
+- `@singularityfm/design-system/Icon`
 
 ### Markup
 
@@ -509,6 +519,14 @@ A circle on the container fill, beside a primary action.
 | `children` | `ReactNode` | - | The glyph: an Icon, or two that the button's state swaps between. |
 
 Every attribute of a native `button` passes through.
+
+### Props of Icon
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `name` | `IconName` | - | - |
+| `size?` | `"md" \| "lg"` | `"md"` | The glyph's box: medium beside words, large when it is the whole button. |
+| `className?` | `string` | `""` | A hook for the control that holds it (a rule that places the glyph, or swaps it). An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
 ### Tokens it reads
 
@@ -835,7 +853,7 @@ One pill of radio items: pick exactly one value.
 ### Markup
 
 ```astro
-<SegmentedChoice name="length" aria-labelledby="len" defaultValue="3" options={[{ value: "3", label: "3 min" }]} />
+<SegmentedChoice name="length" aria-label="Length" defaultValue="3" options={[{ value: "3", label: "3 min" }, { value: "5", label: "5 min" }]} />
 ```
 
 ### Use when
@@ -893,7 +911,7 @@ A tonal track with one sliding pill: switch between views of the same content.
 ### Markup
 
 ```astro
-<SegmentedNav aria-label="View" tabs={[{ value: "stories", label: "Stories" }]} />
+<SegmentedNav aria-label="View" tabs={[{ value: "stories", label: "Stories" }, { value: "transcript", label: "Transcript" }]} />
 ```
 
 ### Use when
@@ -1341,6 +1359,7 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 
 - `@singularityfm/design-system/Menu`
 - `@singularityfm/design-system/MenuItem`
+- `@singularityfm/design-system/Icon`
 
 ### Markup
 
@@ -1390,6 +1409,14 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 | `children?` | `ReactNode` | - | The row's glyph first, then its words. |
 
 Every attribute of a native `button` passes through.
+
+### Props of Icon
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `name` | `IconName` | - | - |
+| `size?` | `"md" \| "lg"` | `"md"` | The glyph's box: medium beside words, large when it is the whole button. |
+| `className?` | `string` | `""` | A hook for the control that holds it (a rule that places the glyph, or swaps it). An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
 ### Tokens it reads
 
@@ -1525,6 +1552,7 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 - `@singularityfm/design-system/Dialog`
 - `@singularityfm/design-system/DialogActions`
 - `@singularityfm/design-system/DialogTitle`
+- `@singularityfm/design-system/Button`
 
 ### Markup
 
@@ -1567,6 +1595,23 @@ Every attribute of a native `dialog` passes through.
 ### Props of DialogTitle
 
 No props of its own.
+
+### Props of Button
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `variant` | `"filled" \| "tonal" \| "text"` | - | Filled, tonal or text (button.ts says what each is for). |
+| `tone?` | `"danger"` | - | The danger tone, for a text button that confirms a delete. |
+| `size?` | `"small"` | - | Small: a shorter pill for a dense row or a popover (button.ts says when). |
+| `href?` | `string` | - | Draws a link instead of a button, for an action that goes to an address. |
+| `target?` | `string` | - | - |
+| `rel?` | `string` | - | - |
+| `className?` | `string` | - | For placing the button where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
+| `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
+| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
+| `children?` | `ReactNode` | - | - |
+
+Every attribute of a native `button` passes through.
 
 ### Tokens it reads
 
@@ -1679,7 +1724,7 @@ The island modal for a form: the whole screen on a phone, a panel at the right f
 
 ### Where it is drawn
 
-- Classes: `.drawer-scrim` `.drawer-viewport` `.drawer-popup` `.drawer-panel` (a page draws the component, never types these)
+- Classes: `.drawer-scrim` `.drawer-viewport` `.drawer-popup` `.drawer-panel` (drawn by the app's own component the markup names; this package does not ship it yet)
 - Styled in: `styles/buttons.css`, `styles/drawer.css`, `styles/foundations.css`
 - Files: `src/drawer.ts`
 
@@ -1751,7 +1796,7 @@ The one creating action in the side column (Catch up), on the action tone.
 
 ### Where it is drawn
 
-- Classes: `.btn-action-tonal` (a page draws the component, never types these)
+- Classes: `.btn-action-tonal` (typed on your own element)
 - Styled in: `styles/buttons.css`
 
 ### Owner's note
@@ -1807,6 +1852,10 @@ The bar sticks and carries the surface and the line under it; the strip inside i
 
 A row that is one link or button: the whole row responds as a rounded tile.
 
+### Import
+
+- `@singularityfm/design-system/Icon`
+
 ### Markup
 
 ```astro
@@ -1829,13 +1878,21 @@ A row that is one link or button: the whole row responds as a rounded tile.
 - Label in regular weight, never bold.
 - Sits in a `.rows.card-group`.
 
+### Props of Icon
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `name` | `IconName` | - | - |
+| `size?` | `"md" \| "lg"` | `"md"` | The glyph's box: medium beside words, large when it is the whole button. |
+| `className?` | `string` | `""` | A hook for the control that holds it (a rule that places the glyph, or swaps it). An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
+
 ### Tokens it reads
 
 `--color-focus-ring` `--color-on-surface-muted` `--row-tile-radius` `--size-touch-comfortable`
 
 ### Where it is drawn
 
-- Classes: `.row-action` `.settings-text` `.settings-label` `.settings-hint` (a page draws the component, never types these)
+- Classes: `.row-action` `.settings-text` `.settings-label` `.settings-hint` (typed on your own element)
 - Styled in: `styles/foundations.css`, `styles/primitives.css`, `styles/settings-rows.css`
 
 ### Owner's note
@@ -1869,7 +1926,7 @@ A group of rows in one rounded container on the container tone.
 
 ### Where it is drawn
 
-- Classes: `.card-group` `.rows` (a page draws the component, never types these)
+- Classes: `.card-group` `.rows` (typed on your own element)
 - Styled in: `styles/field.css`, `styles/primitives.css`, `styles/search-field.css`, `styles/select.css`, `styles/settings-rows.css`
 
 ### Owner's note
@@ -1898,7 +1955,7 @@ A row with a label and an in-place control: a switch, a select or a value.
 
 ### Where it is drawn
 
-- Classes: `.settings-row` `.settings-label` `.settings-hint` (a page draws the component, never types these)
+- Classes: `.settings-row` `.settings-label` `.settings-hint` (typed on your own element)
 - Styled in: `styles/picker.css`, `styles/primitives.css`, `styles/settings-rows.css`
 
 ### Owner's note
@@ -1933,8 +1990,8 @@ A spot illustration, a title, one line and at most two actions, for a page with 
 
 ### Where it is drawn
 
-- Classes: `.empty` `.empty-actions` (a page draws the component, never types these)
-- Styled in:
+- Classes: `.empty` `.empty-actions` (drawn by the app's own component the markup names; this package does not ship it yet)
+- Styled in: no stylesheet in this package yet
 
 ---
 
@@ -1953,8 +2010,8 @@ A field-like trigger that opens a list of checkable choices.
 
 ### Where it is drawn
 
-- Classes: `.multiselect-trigger` (a page draws the component, never types these)
-- Styled in:
+- Classes: `.multiselect-trigger` (typed on your own element)
+- Styled in: no stylesheet in this package yet
 
 ---
 
@@ -1973,7 +2030,7 @@ A tile per figure: the value large over its word in muted ink.
 
 ### Where it is drawn
 
-- Classes: `.stat-tiles` (a page draws the component, never types these)
+- Classes: `.stat-tiles` (typed on your own element)
 - Styled in: `styles/primitives.css`
 
 ### Owner's note
@@ -1992,7 +2049,7 @@ A section header with more room above than below, so it belongs to what follows.
 
 ### Where it is drawn
 
-- Classes: `.section-head` (a page draws the component, never types these)
+- Classes: `.section-head` (typed on your own element)
 - Styled in: `styles/primitives.css`
 
 ### Owner's note
@@ -2015,7 +2072,7 @@ One quiet line of facts, separated by centered dots.
 
 ### Where it is drawn
 
-- Classes: `.meta` (a page draws the component, never types these)
+- Classes: `.meta` (typed on your own element)
 - Styled in: `styles/primitives.css`
 
 ### Owner's note
@@ -2034,8 +2091,8 @@ A generated cover image, drawn once per theme.
 
 ### Where it is drawn
 
-- Classes: `.cover` (a page draws the component, never types these)
-- Styled in:
+- Classes: `.cover` (typed on your own element)
+- Styled in: no stylesheet in this package yet
 
 ---
 

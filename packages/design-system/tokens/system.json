@@ -333,7 +333,8 @@
         }
       ],
       "imports": [
-        "@singularityfm/design-system/IconButton"
+        "@singularityfm/design-system/IconButton",
+        "@singularityfm/design-system/Icon"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -385,7 +386,8 @@
       ],
       "markup": "<IconButton variant=\"tonal\" label=\"Share\"><Icon name=\"shareFat\" /></IconButton>",
       "imports": [
-        "@singularityfm/design-system/IconButton"
+        "@singularityfm/design-system/IconButton",
+        "@singularityfm/design-system/Icon"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css"
@@ -762,7 +764,7 @@
         "option group",
         "pick one"
       ],
-      "markup": "<SegmentedChoice name=\"length\" aria-labelledby=\"len\" defaultValue=\"3\" options={[{ value: \"3\", label: \"3 min\" }]} />",
+      "markup": "<SegmentedChoice name=\"length\" aria-label=\"Length\" defaultValue=\"3\" options={[{ value: \"3\", label: \"3 min\" }, { value: \"5\", label: \"5 min\" }]} />",
       "rules": [
         "Native radios with no client directive (DS-8)."
       ],
@@ -819,7 +821,7 @@
         "toggle views",
         "stories transcript"
       ],
-      "markup": "<SegmentedNav aria-label=\"View\" tabs={[{ value: \"stories\", label: \"Stories\" }]} />",
+      "markup": "<SegmentedNav aria-label=\"View\" tabs={[{ value: \"stories\", label: \"Stories\" }, { value: \"transcript\", label: \"Transcript\" }]} />",
       "rules": [
         "A native tablist with no client directive (DS-8): the page calls mountSegmentedNav(list, onSelect) from design-system/segmentedNav once for each, and draws the panels (each tab's controls)."
       ],
@@ -1377,7 +1379,8 @@
       ],
       "imports": [
         "@singularityfm/design-system/Menu",
-        "@singularityfm/design-system/MenuItem"
+        "@singularityfm/design-system/MenuItem",
+        "@singularityfm/design-system/Icon"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -1595,7 +1598,8 @@
       "imports": [
         "@singularityfm/design-system/Dialog",
         "@singularityfm/design-system/DialogActions",
-        "@singularityfm/design-system/DialogTitle"
+        "@singularityfm/design-system/DialogTitle",
+        "@singularityfm/design-system/Button"
       ],
       "styles": [
         "packages/design-system/styles/buttons.css",
@@ -1918,7 +1922,9 @@
         "Label in regular weight, never bold.",
         "Sits in a `.rows.card-group`."
       ],
-      "imports": [],
+      "imports": [
+        "@singularityfm/design-system/Icon"
+      ],
       "styles": [
         "packages/design-system/styles/foundations.css",
         "packages/design-system/styles/primitives.css",

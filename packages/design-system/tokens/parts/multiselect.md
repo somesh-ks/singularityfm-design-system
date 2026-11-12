@@ -13,5 +13,5 @@ A field-like trigger that opens a list of checkable choices.
 
 ## Where it is drawn
 
-- Classes: `.multiselect-trigger` (a page draws the component, never types these)
-- Styled in:
+- Classes: `.multiselect-trigger` (typed on your own element)
+- Styled in: no stylesheet in this package yet

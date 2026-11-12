@@ -9,7 +9,7 @@ A tonal track with one sliding pill: switch between views of the same content.
 ## Markup
 
 ```astro
-<SegmentedNav aria-label="View" tabs={[{ value: "stories", label: "Stories" }]} />
+<SegmentedNav aria-label="View" tabs={[{ value: "stories", label: "Stories" }, { value: "transcript", label: "Transcript" }]} />
 ```
 
 ## Use when

@@ -16,7 +16,7 @@ The one creating action in the side column (Catch up), on the action tone.
 
 ## Where it is drawn
 
-- Classes: `.btn-action-tonal` (a page draws the component, never types these)
+- Classes: `.btn-action-tonal` (typed on your own element)
 - Styled in: `styles/buttons.css`
 
 ## Owner's note

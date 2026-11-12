@@ -28,7 +28,7 @@ The island modal for a form: the whole screen on a phone, a panel at the right f
 
 ## Where it is drawn
 
-- Classes: `.drawer-scrim` `.drawer-viewport` `.drawer-popup` `.drawer-panel` (a page draws the component, never types these)
+- Classes: `.drawer-scrim` `.drawer-viewport` `.drawer-popup` `.drawer-panel` (drawn by the app's own component the markup names; this package does not ship it yet)
 - Styled in: `styles/buttons.css`, `styles/drawer.css`, `styles/foundations.css`
 - Files: `src/drawer.ts`
 

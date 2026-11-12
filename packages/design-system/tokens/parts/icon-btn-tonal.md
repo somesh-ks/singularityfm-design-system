@@ -5,6 +5,7 @@ A circle on the container fill, beside a primary action.
 ## Import
 
 - `@singularityfm/design-system/IconButton`
+- `@singularityfm/design-system/Icon`
 
 ## Markup
 
@@ -35,6 +36,14 @@ A circle on the container fill, beside a primary action.
 | `children` | `ReactNode` | - | The glyph: an Icon, or two that the button's state swaps between. |
 
 Every attribute of a native `button` passes through.
+
+## Props of Icon
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `name` | `IconName` | - | - |
+| `size?` | `"md" \| "lg"` | `"md"` | The glyph's box: medium beside words, large when it is the whole button. |
+| `className?` | `string` | `""` | A hook for the control that holds it (a rule that places the glyph, or swaps it). An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
 ## Tokens it reads
 

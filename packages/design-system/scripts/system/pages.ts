@@ -52,6 +52,21 @@ interface Placement {
 const ALONE: Placement = { depth: 0, links: "" };
 const IN_FULL: Placement = { depth: 1, links: "parts/" };
 
+/**
+ * Who writes a part's classes. A component's are its own; a part with none (a card group, a settings
+ * row) is drawn by typing them, as its markup shows; a few are still drawn by the reader app's own
+ * component, which the markup names and this package does not ship.
+ */
+function whoDraws(part: Part): string {
+  const markup = part.markup ?? "";
+  const typed = part.classes.every((name) => new RegExp(`class="[^"]*\\b${name}\\b`).test(markup));
+  if (typed || (part.imports.length === 0 && !/<[A-Z]/.test(markup)))
+    return "typed on your own element";
+  if (part.imports.length === 0)
+    return "drawn by the app's own component the markup names; this package does not ship it yet";
+  return "a page draws the component, never types these";
+}
+
 export function renderPartPage(part: Part, components: Component[], at: Placement = ALONE): string {
   const h = (level: number, text: string): string => `${"#".repeat(level + at.depth)} ${text}`;
   const out = [h(1, `${part.name} (\`${part.id}\`)`), "", part.summary, ""];
@@ -87,8 +102,8 @@ export function renderPartPage(part: Part, components: Component[], at: Placemen
   out.push(
     h(2, "Where it is drawn"),
     "",
-    `- Classes: ${part.classes.map((name) => `\`.${name}\``).join(" ")} (a page draws the component, never types these)`,
-    `- Styled in: ${part.styles.map((path) => `\`${inPackage(path)}\``).join(", ")}`,
+    `- Classes: ${part.classes.map((name) => `\`.${name}\``).join(" ")} (${whoDraws(part)})`,
+    `- Styled in: ${part.styles.length > 0 ? part.styles.map((path) => `\`${inPackage(path)}\``).join(", ") : "no stylesheet in this package yet"}`,
   );
   if (part.files?.length)
     out.push(`- Files: ${part.files.map((path) => `\`${inPackage(path)}\``).join(", ")}`);

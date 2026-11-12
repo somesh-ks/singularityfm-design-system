@@ -8,5 +8,5 @@ A generated cover image, drawn once per theme.
 
 ## Where it is drawn
 
-- Classes: `.cover` (a page draws the component, never types these)
-- Styled in:
+- Classes: `.cover` (typed on your own element)
+- Styled in: no stylesheet in this package yet

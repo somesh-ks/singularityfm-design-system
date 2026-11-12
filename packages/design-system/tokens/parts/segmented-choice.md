@@ -9,7 +9,7 @@ One pill of radio items: pick exactly one value.
 ## Markup
 
 ```astro
-<SegmentedChoice name="length" aria-labelledby="len" defaultValue="3" options={[{ value: "3", label: "3 min" }]} />
+<SegmentedChoice name="length" aria-label="Length" defaultValue="3" options={[{ value: "3", label: "3 min" }, { value: "5", label: "5 min" }]} />
 ```
 
 ## Use when

@@ -13,7 +13,7 @@ A tile per figure: the value large over its word in muted ink.
 
 ## Where it is drawn
 
-- Classes: `.stat-tiles` (a page draws the component, never types these)
+- Classes: `.stat-tiles` (typed on your own element)
 - Styled in: `styles/primitives.css`
 
 ## Owner's note

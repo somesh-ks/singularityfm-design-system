@@ -97,7 +97,12 @@ function importsOf(files: string[] | undefined, markup: string | undefined): str
     }
     return [];
   });
-  return [...new Set(specifiers)];
+  // A component the markup draws inside the part (the Icon in an IconButton) is imported too.
+  const drawn = exports
+    .filter(([name, path]) => /^\.\/[A-Z]\w*$/.test(name) && path.endsWith(".tsx"))
+    .filter(([name]) => new RegExp(`<${name.slice(2)}[\\s/>]`).test(markup ?? ""))
+    .map(([name]) => `${MANIFEST.name}/${name.slice(2)}`);
+  return [...new Set([...specifiers, ...drawn])];
 }
 
 /** Each union of string literals the sources export by name: ButtonVariant -> filled, tonal, text. */

@@ -12,7 +12,7 @@ One quiet line of facts, separated by centered dots.
 
 ## Where it is drawn
 
-- Classes: `.meta` (a page draws the component, never types these)
+- Classes: `.meta` (typed on your own element)
 - Styled in: `styles/primitives.css`
 
 ## Owner's note
