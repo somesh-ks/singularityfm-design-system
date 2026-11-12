@@ -1,14 +1,27 @@
 /*
  * The Icon (design-system/Icon.tsx): one Phosphor glyph. Its size is the Icon's size prop; a
- * control that holds a glyph sizes it by its own rule (the dock, the transport, the chip).
+ * control that holds a glyph sets --icon-size on itself instead (below), never a rule on the glyph.
  */
 
-/* Phosphor: every glyph is one filled path, so an icon is just its colour and its size. */
+/* Phosphor: every glyph is one filled path, so an icon is just its colour and its size.
+   --icon-size, experimental (DS-11, 2026-11-12): a control that holds a glyph sets its size once, on
+   itself, so no page rule names the glyph (the transport's Play and skips, the cover's Play, the
+   Library's status mark, the queue ring's end check: owner calls of 2026-10-22, 2026-10-31,
+   2026-11-02 and 2026-11-03, and 2026-11-12 for the ring). It inherits, so it is set on the control
+   that holds the one glyph, never on a container of several controls. The registry lists it
+   (icon.ts, ICON.experimental). */
 .icon-glyph {
-  width: var(--size-icon);
-  height: var(--size-icon);
+  width: var(--icon-size, var(--size-icon));
+  height: var(--icon-size, var(--size-icon));
   flex: none;
   fill: currentColor;
+}
+
+/* Optical centre: a play triangle's mass sits left of its box, so every Play glyph takes a 1/16rem
+   nudge toward its point. Keyed on the glyph, so the swap, the FAB, the cover and the transport agree;
+   it was the swap's own rule (.swap-paused) and the reader's FAB's (create-sheet.css). */
+.icon-glyph[data-icon="play"] {
+  translate: 0.0625rem 0;
 }
 
 /* Weight (D268). An icon with a bold twin draws both paths and the icon.bold token (0 regular, 1 bold)
@@ -57,8 +70,33 @@
 }
 
 .icon-glyph-lg {
-  width: var(--size-icon-lg);
-  height: var(--size-icon-lg);
+  width: var(--icon-size, var(--size-icon-lg));
+  height: var(--icon-size, var(--size-icon-lg));
+}
+
+/* A chevron in a control that opens a list or a region turns as it opens: down to up, or up to down,
+   on the enter duration, at once under reduced motion. It is the turn the library's own selects draw
+   (settings-rows.css, picker.css), keyed on aria-expanded so an icon button (the dock's expand) and a
+   field that opens a list (aria-haspopup: the reader's multi-select) need no rule of their own. A
+   control that turns its chevron by its own rule (the queue's fold, owner, 2026-11-04) is neither, and
+   stays out: a generic [aria-expanded] key turned it a second time (owner's stills, 2026-11-12). */
+:is(.icon-btn, [aria-haspopup]) > .icon-glyph[data-icon^="chevron"] {
+  transition: rotate var(--duration-enter) var(--ease-out);
+}
+
+:is(.icon-btn, [aria-haspopup])[aria-expanded="true"] > .icon-glyph[data-icon^="chevron"] {
+  rotate: 180deg;
+}
+
+/* A chevron that says a list opens from a field is quiet, as a Select's own chevron is (select.css). */
+[aria-haspopup]:not(.icon-btn) > .icon-glyph[data-icon^="chevron"] {
+  color: var(--color-on-surface-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.icon-btn, [aria-haspopup]) > .icon-glyph[data-icon^="chevron"] {
+    transition: none;
+  }
 }
 
 /* Glyph ink. A Phosphor glyph's ink stops short of its box by its own margin, a fraction of the box:

@@ -1,4 +1,5 @@
 ---
+import Badge from "@singularity/design-system/Badge";
 import Code from "@singularity/design-system/Code";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
 import Select from "@singularity/design-system/Select";
@@ -29,6 +30,10 @@ const registered = REGISTRY.find((component) => component.name === spec.registry
 const guidance = registered ?? spec.guidance;
 const parts = Object.values(registered?.parts ?? {}) as { label?: string; summary: string }[];
 const table = spec.file ? propsTable(sourceOf(spec.file)) : undefined;
+// Its experimental options (DS-11): listed with their case and date, and a variant among them says so.
+const experimental = registered?.experimental ?? [];
+const isExperimental = (variant: string): boolean =>
+  experimental.some((item) => item.option === `variant="${variant}"`);
 
 const start = initialState(spec);
 const states = allStates(spec.controls);
@@ -139,8 +144,32 @@ const hasStage = !spec.noPreview;
           <h2 class="section-head text-heading" id="variants">Variants</h2>
           {Object.entries(registered?.parts ?? {}).map(([id, part]) => (
             <div class="guide-variant">
-              <h3 class="guide-variant-name">{(part as { label?: string }).label ?? id}</h3>
+              <h3 class="guide-variant-name">
+                {(part as { label?: string }).label ?? id}
+                {isExperimental(id) && <Badge className="guide-experimental">Experimental</Badge>}
+              </h3>
               <p class="guide-prose">{part.summary}</p>
+            </div>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      experimental.length > 0 && (
+        <section aria-labelledby="experimental">
+          <h2 class="section-head text-heading" id="experimental">Experimental options</h2>
+          <p class="guide-prose">
+            Kept for one screen's case (DS-11). Each may change or go in a minor release; it becomes
+            stable once two screens or more use it unchanged for four weeks and the owner agrees.
+          </p>
+          {experimental.map((item) => (
+            <div class="guide-variant">
+              <h3 class="guide-variant-name">
+                <code>{item.option}</code>
+                <Badge className="guide-experimental">Experimental</Badge>
+              </h3>
+              <p class="guide-prose">{item.reason} Since {item.since}.</p>
             </div>
           ))}
         </section>

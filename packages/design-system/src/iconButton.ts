@@ -6,7 +6,7 @@
  */
 import type { Guidance } from "./guidance.ts";
 
-export type IconButtonVariant = "standard" | "tonal";
+export type IconButtonVariant = "standard" | "tonal" | "filled";
 
 export const ICON_BUTTON: Guidance & {
   variants: Record<IconButtonVariant, Guidance & { label: string }>;
@@ -47,11 +47,34 @@ export const ICON_BUTTON: Guidance & {
         { when: "A lone toolbar glyph, or one in every row.", instead: "Icon button.standard" },
       ],
     },
+    filled: {
+      label: "Filled",
+      summary: "A circle in the primary fill: a glyph that is the primary action.",
+      useWhen: ["A lone glyph is the place's one primary action: the queue's Start listening."],
+      dontUseWhen: [
+        { when: "The primary action has words.", instead: "Button.filled" },
+        { when: "It is the companion of a primary action.", instead: "Icon button.tonal" },
+      ],
+    },
   },
+  experimental: [
+    {
+      option: 'variant="filled"',
+      hook: "icon-btn-filled",
+      reason:
+        'The queue\'s Start listening is a Play, so it wears the primary fill with its own hover and press (owner, 2026-11-04: "every primary button one colour").',
+      since: "2026-11-12",
+    },
+  ],
 };
 
 /** Every class the Icon button draws, for the registry and its test. */
-export const ICON_BUTTON_CLASSES: string[] = ["icon-btn", "icon-btn-tonal", "icon-btn-end"];
+export const ICON_BUTTON_CLASSES: string[] = [
+  "icon-btn",
+  "icon-btn-tonal",
+  "icon-btn-filled",
+  "icon-btn-end",
+];
 
 /** Classes the Icon button replaced; none may be written again, in any app that draws the system. */
 export const ICON_BUTTON_RETIRED: string[] = [];
@@ -61,6 +84,6 @@ export const ICON_BUTTON_RETIRED: string[] = [];
  * lands where the words of the rows around it end, D187). Always with .press, the system's press.
  */
 export const iconButtonClass = (variant: IconButtonVariant = "standard", rowEnd = false): string =>
-  ["icon-btn", variant === "tonal" && "icon-btn-tonal", rowEnd && "icon-btn-end", "press"]
+  ["icon-btn", variant !== "standard" && `icon-btn-${variant}`, rowEnd && "icon-btn-end", "press"]
     .filter(Boolean)
     .join(" ");

@@ -1,4 +1,5 @@
 /** The shape of the machine-readable design system (tokens/system.json). */
+import type { Experimental } from "../../src/guidance.js";
 
 export type PartKind =
   | "action"
@@ -31,6 +32,8 @@ export interface PartSource {
   markup?: string;
   /** Rules the tests do not hold. */
   rules?: string[];
+  /** Its options that are experimental (DS-11), from the component's registry entry; the rest are stable. */
+  experimental?: Experimental[];
 }
 
 export interface Part extends PartSource {

@@ -142,8 +142,10 @@
   max-width: 100%;
 }
 
-:is(.settings-view, .manage) .row-action .icon-glyph {
-  /* The glyph sits inside its box; this pulls its ink out to the switch's and the segments' edge. */
+:is(.settings-view, .manage) .row-action .icon-glyph[data-icon="chevronRight"] {
+  /* The glyph sits inside its box; this pulls its ink out to the switch's and the segments' edge.
+     The row's chevron alone: a mark the row holds (Topics' blocked mark) keeps its own size and colour,
+     where it had to undo this rule (the reader's topics.css). */
   margin-inline-end: calc(var(--size-icon) * var(--ink-end, 0) * -1);
   color: var(--color-on-surface-muted);
 }

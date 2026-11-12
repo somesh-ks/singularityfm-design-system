@@ -216,8 +216,10 @@ export function buildSystem(): System {
   };
 }
 
+/** A role's first clause: its sentence up to a colon or a semicolon, where the examples start. */
 const firstSentence = (text: string, limit: number): string => {
-  const sentence = text.replace(/\s+/g, " ").split(/(?<=[.!?])\s/)[0] ?? "";
+  const sentence =
+    (text.replace(/\s+/g, " ").split(/(?<=[.!?])\s/)[0] ?? "").split(/[:;]\s/)[0] ?? "";
   return sentence.length > limit ? `${sentence.slice(0, limit - 1).trimEnd()}…` : sentence;
 };
 
@@ -243,8 +245,9 @@ export function renderLlms(system: System): string {
       .slice(0, 1)
       .map((item) => `${item.when} → ${item.use}`)
       .join("; ");
+    const trial = (part.experimental ?? []).map((item) => item.option).join(", ");
     lines.push(
-      `- \`${part.id}\` ${classes}: ${part.summary} Use: ${use}.${not ? ` Not: ${not}.` : ""}`,
+      `- \`${part.id}\` ${classes}: ${part.summary} Use: ${use}.${not ? ` Not: ${not}.` : ""}${trial ? ` Experimental: ${trial}.` : ""}`,
     );
   }
   lines.push(
