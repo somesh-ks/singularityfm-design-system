@@ -26,6 +26,8 @@ interface ButtonProps {
    * script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve.
    * A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy
    * spinner's place (buttons.css), so give a busy button with a spinner no `reserve`.
+   * @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13).
+   *   Drop it: the words set the width. It still works until 1.0.0 removes it.
    */
   reserve?: string;
   children?: ReactNode;

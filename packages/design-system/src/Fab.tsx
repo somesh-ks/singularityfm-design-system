@@ -27,6 +27,8 @@ interface FabProps {
   /**
    * The widest words the button will say beside its glyph ("Resume · 88 min left"), for one whose
    * words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis.
+   * @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13).
+   *   Drop it: the words set the width. It still works until 1.0.0 removes it.
    */
   reserve?: string;
   /** The word the extended button shows beside its glyph ("Add"); it folds away while reading. */
