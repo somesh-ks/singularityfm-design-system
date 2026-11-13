@@ -11,7 +11,7 @@ import { basename, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildSystem, systemFiles } from "./build.js";
 import { FOUNDATIONS_PATH, LLMS_PATH, PARTS_DIR, SYSTEM_PATH } from "./paths.js";
-import { propsTable } from "./props.js";
+import { PROP_ORDER, propsTable } from "./props.js";
 import { lookup, shownTokens } from "./query.js";
 import type { System } from "./types.js";
 import { usageComment } from "./usage.js";
@@ -136,6 +136,18 @@ type Props = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "role"> & {
       element: "fieldset",
       rows: [{ name: "label", required: true }],
     });
+  });
+
+  // Prevents a props table in the order its source happened to declare: Slider listed className and
+  // style before what it is, Badge className before its words (owner, 2026-11-13). Every table reads
+  // in one order, and a prop that order does not name would fall to the end unnoticed.
+  it("gives every documented prop its place in the reading order", () => {
+    const unplaced = system.components.flatMap((component) =>
+      component.props
+        .filter((prop) => !PROP_ORDER.includes(prop.name))
+        .map((prop) => `${component.name}.${prop.name}`),
+    );
+    expect(unplaced).toEqual([]);
   });
 
   // Prevents publishing an opaque hex for a translucent color: the scrim was listed as #151618, which

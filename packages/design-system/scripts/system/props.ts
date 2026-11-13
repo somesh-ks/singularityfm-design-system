@@ -91,6 +91,78 @@ function passedTo(source: string): string | undefined {
   return TAGS[dom] ?? dom.toLowerCase();
 }
 
+/**
+ * The order every props table reads in, whatever order a source declares its props: what it says and
+ * shows, then how it looks, then where it goes and what it is wired to, then its value, then the hooks
+ * a page places it by (owner, 2026-11-13: "order the parameters right so it makes natural sense").
+ * A prop the list does not name fails system.test.ts, so a new one is given its place.
+ */
+export const PROP_ORDER: readonly string[] = [
+  // What it says and shows
+  "name",
+  "region",
+  "label",
+  "title",
+  "subtitle",
+  "text",
+  "body",
+  "icon",
+  "iconFrom",
+  "photo",
+  "action",
+  "sections",
+  "tabs",
+  "options",
+  "children",
+  "after",
+  // How it looks
+  "variant",
+  "tone",
+  "kind",
+  "size",
+  "shape",
+  "compact",
+  "primary",
+  "hue",
+  "wavy",
+  "scroll",
+  "multiline",
+  "maxLines",
+  "stacked",
+  "flush",
+  "clearable",
+  "tonal",
+  "rowEnd",
+  // Where it goes and what it is wired to
+  "href",
+  "target",
+  "rel",
+  "form",
+  "close",
+  "copy",
+  "copied",
+  "id",
+  "titleId",
+  "titleData",
+  "bodyId",
+  // Its value
+  "state",
+  "defaultValue",
+  "value",
+  "onValueChange",
+  // How a page places it
+  "reserve",
+  "className",
+  "slot",
+  "style",
+];
+
+/** A prop's place in PROP_ORDER; one the list does not name goes last, where the test finds it. */
+const place = (name: string): number => {
+  const at = PROP_ORDER.indexOf(name);
+  return at === -1 ? PROP_ORDER.length : at;
+};
+
 /** The props of the component whose source is given. */
 export function propsTable(source: string): PropsTable {
   const frontmatter = source.startsWith("---") ? (source.split("---")[1] ?? "") : source;
@@ -123,6 +195,7 @@ export function propsTable(source: string): PropsTable {
       });
     }
   }
+  rows.sort((a, b) => place(a.name) - place(b.name));
   const element = passedTo(frontmatter);
   return { rows, ...(element ? { element } : {}) };
 }

@@ -30,8 +30,8 @@ A tonal track with one sliding pill: switch between views of the same content.
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `tabs` | `readonly SegmentedNavTab[]` | - | Two to four views. |
-| `defaultValue?` | `string` | `tabs[0]?.value` | The view chosen when it is drawn (the first by default); mountSegmentedNav() moves it after. |
 | `compact?` | `boolean` | `false` | A chip's height on 44px columns, to sit in a row of chips. |
+| `defaultValue?` | `string` | `tabs[0]?.value` | The view chosen when it is drawn (the first by default); mountSegmentedNav() moves it after. |
 | `className?` | `string` | - | For placing it where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 
 Every attribute of a native `<div>` element passes through.

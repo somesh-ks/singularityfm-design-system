@@ -40,21 +40,21 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `id` | `string` | - | The popover's id: the button that opens it names it with popoverTarget. |
 | `title` | `string` | - | The sheet's header on a phone, and the menu's name for a screen reader. |
 | `subtitle?` | `string` | - | A quiet line under the title on a phone's sheet, such as a card's facts. |
-| `flush?` | `boolean` | - | No padding above and below the list, for a host that draws its own header and body in the menu's surface. Experimental (DS-11): it may change or go in a minor release (menu.ts says why it exists). |
-| `className?` | `string` | - | For placing the popover under its own button (the anchor of a row or a story). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `children?` | `ReactNode` | - | The rows: MenuItem, and a tiles row of them. |
+| `flush?` | `boolean` | - | No padding above and below the list, for a host that draws its own header and body in the menu's surface. Experimental (DS-11): it may change or go in a minor release (menu.ts says why it exists). |
+| `id` | `string` | - | The popover's id: the button that opens it names it with popoverTarget. |
+| `className?` | `string` | - | For placing the popover under its own button (the anchor of a row or a story). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 
 ## Props of MenuItem
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
+| `children?` | `ReactNode` | - | The row's glyph first, then its words. |
 | `tone?` | `"danger"` | - | The danger tone, for the one row that destroys. |
 | `className?` | `string` | - | For placing the row where it stands, or a hook a script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the row in its parent's slot with it; it is not an attribute of the row. |
-| `children?` | `ReactNode` | - | The row's glyph first, then its words. |
 
 Every attribute of a native `<button>` element passes through.
 

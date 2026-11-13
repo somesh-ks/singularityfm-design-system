@@ -34,13 +34,13 @@ The page's one primary action below 64rem: a glyph and a word, floating.
 | --- | --- | --- | --- |
 | `label` | `string` | - | What a press does, for a screen reader, in full ("Add source to Design"). The word beside the glyph is hidden from it, so this is the button's one name. |
 | `icon` | `IconName` | - | The glyph it keeps when it folds. |
+| `children` | `ReactNode` | - | The word the extended button shows beside its glyph ("Add"); it folds away while reading. |
 | `href?` | `string` | - | Draws a link instead of a button, so the action works before any script (/create). |
 | `target?` | `string` | - | - |
 | `rel?` | `string` | - | - |
+| `reserve?` | `string` | - | The widest words the button will say beside its glyph ("Resume · 88 min left"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis. |
 | `className?` | `string` | - | For a hook a page's rule or script finds it by. Never its look or its place: it floats where fab.css puts it. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
-| `reserve?` | `string` | - | The widest words the button will say beside its glyph ("Resume · 88 min left"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis. |
-| `children` | `ReactNode` | - | The word the extended button shows beside its glyph ("Add"); it folds away while reading. |
 
 Every attribute of a native `<button>` element passes through.
 

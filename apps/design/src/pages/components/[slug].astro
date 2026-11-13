@@ -58,7 +58,6 @@ const start = initialState(spec);
 const states = allStates(spec.controls);
 const startKey = stateKey(spec.controls, start);
 const hasStage = !spec.noPreview;
-const texts = spec.texts ?? [];
 // Real defaults a state is built from: an avatar's shapes and sizes are the choices the controls list.
 ---
 
@@ -86,7 +85,7 @@ const texts = spec.texts ?? [];
             })}
           </div>
           {spec.note && <p class="guide-note guide-stage-note">{spec.note}</p>}
-          {(spec.controls.length > 0 || texts.length > 0) && (
+          {spec.controls.length > 0 && (
             <div class="rows card-group guide-controls" role="group" aria-label="Preview controls">
               {spec.controls.map((control) =>
                 control.kind === "choice" ? (
@@ -100,25 +99,24 @@ const texts = spec.texts ?? [];
                       ))}
                     </Select>
                   </div>
-                ) : (
+                ) : control.kind === "toggle" ? (
                   <label class="settings-row">
                     <span class="settings-label">{control.label}</span>
                     <Switch data-control={control.id} />
                   </label>
+                ) : (
+                  <label class="settings-row">
+                    <span class="settings-label">{control.label}</span>
+                    <Field
+                      className="guide-control-text"
+                      defaultValue={control.sample}
+                      data-sample={control.sample}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                  </label>
                 ),
               )}
-              {texts.map((text) => (
-                <label class="settings-row">
-                  <span class="settings-label">{text.label}</span>
-                  <Field
-                    className="guide-control-text"
-                    defaultValue={text.sample}
-                    data-sample={text.sample}
-                    autoComplete="off"
-                    spellCheck={false}
-                  />
-                </label>
-              ))}
             </div>
           )}
         </section>

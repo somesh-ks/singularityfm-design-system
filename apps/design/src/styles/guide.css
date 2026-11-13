@@ -1657,8 +1657,30 @@
    the body size and holds the library's Select, Switch or Field at its end. Only layout lives here;
    what the stage shows is the component itself. */
 
+/* The controls sit in two columns where the card has room for two rows side by side, one where it
+   does not (owner, 2026-11-13: "use the space optimally"). Each column is at least a short label and
+   its control wide, and never more than two, so a wide page does not scatter them. The columns are
+   two card paddings apart, so one row's control never reads as the next one's label. */
 .guide-controls {
+  --guide-controls-gap: calc(var(--card-padding) * 2);
+  display: grid;
+  grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, max(20rem, (100% - var(--guide-controls-gap)) / 2)), 1fr)
+    );
+  column-gap: var(--guide-controls-gap);
+  row-gap: var(--card-inset);
   margin-block-start: var(--space-4);
+}
+
+/* The grid spaces the rows, so a row takes no margin of its own (a card stacks them with one). */
+.guide-controls.card-group > .settings-row + .settings-row {
+  margin-block-start: 0;
+}
+
+/* A name stays on one line; the field beside it gives way first. */
+.guide-controls .settings-label {
+  white-space: nowrap;
 }
 
 /* A text control is a field as wide as a short phrase, at the row's end like the others; on a narrow

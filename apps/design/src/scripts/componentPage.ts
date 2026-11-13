@@ -20,7 +20,7 @@ if (root) {
   );
   const states = Array.from(root.querySelectorAll<HTMLElement>("[data-combo]"));
 
-  // The editable words (a page's texts): every state draws each sample, so the text nodes that say one
+  // The editable words (a page's text controls): every state draws each sample, so the text nodes that say one
   // exactly are found once and rewritten as it is typed; the code says it in quotes or between tags.
   const fields = Array.from(root.querySelectorAll<HTMLInputElement>("input[data-sample]"));
   const words = new Map(fields.map((field) => [field.dataset.sample ?? "", field.value]));

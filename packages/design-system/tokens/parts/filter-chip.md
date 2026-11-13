@@ -44,10 +44,10 @@ Every attribute of a native `<input>` element passes through.
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
+| `children` | `ReactNode` | - | The Chips. |
 | `scroll?` | `boolean` | `false` | One row that scrolls sideways when the chips do not fit, as the Library's Show chips do. |
 | `className?` | `string` | - | For placing the group where it stands (a card-group, a scroll fade), or a hook a page's rule or script finds it by. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the group in its parent's slot with it; it is not an attribute of the fieldset. |
-| `children` | `ReactNode` | - | The Chips. |
 
 Every attribute of a native `<fieldset>` element passes through.
 

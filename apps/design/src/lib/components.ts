@@ -19,7 +19,11 @@ export const GROUPS = [
 
 export type GroupId = (typeof GROUPS)[number]["id"];
 
-/** One control of a page's controls strip: a choice (drawn as a Select) or a toggle (a Switch). */
+/**
+ * One control under a page's preview: a choice (drawn as a Select), a toggle (a Switch) or words (a
+ * Field). Words are not states: each names a sample the preview draws, and the page swaps it in the
+ * stage and the code as it is typed (componentPage.ts), so every state carries the words over.
+ */
 export type Control =
   | {
       kind: "choice";
@@ -27,7 +31,13 @@ export type Control =
       label: string;
       options: readonly { value: string; label: string }[];
     }
-  | { kind: "toggle"; id: string; label: string };
+  | { kind: "toggle"; id: string; label: string }
+  | { kind: "text"; label: string; sample: string };
+
+/** A control that picks a state, the ones the stage draws every combination of. */
+export type StateControl = Exclude<Control, { kind: "text" }>;
+const stateControls = (controls: readonly Control[]): StateControl[] =>
+  controls.filter((control): control is StateControl => control.kind !== "text");
 
 export type State = Readonly<Record<string, string>>;
 
@@ -55,13 +65,8 @@ export interface ComponentSpec {
     useWhen: readonly string[];
     dontUseWhen: readonly { when: string; instead?: string }[];
   };
+  /** In reading order: the words, then the look, then structure, then states, Disabled last. */
   controls: readonly Control[];
-  /**
-   * Words a person can rewrite under the preview, as a story's text controls do: each names a sample
-   * the preview draws, and the page swaps those words in the stage and the code as they are typed
-   * (componentPage.ts). They are not states: every state draws the sample, so the words carry over.
-   */
-  texts?: readonly { label: string; sample: string }[];
   /** The components the usage imports, in order. */
   imports: readonly string[];
   /** The usage for a state of the controls; absent where the page has nothing to show for it. */
@@ -88,6 +93,7 @@ const choice = (
   ),
 });
 const toggle = (id: string, label: string): Control => ({ kind: "toggle", id, label });
+const text = (label: string, sample: string): Control => ({ kind: "text", label, sample });
 const on = (state: State, id: string): boolean => state[id] === "on";
 
 /** Icons the Icon page offers: a spread of the set, not all of it. */
@@ -167,12 +173,12 @@ const jsx = (name: string, attrs: readonly string[], children?: string): string 
 export const SPECS: readonly ComponentSpec[] = [
   {
     slug: "button",
-    texts: [{ label: "Label", sample: SAMPLE.label }],
     name: "Button",
     group: "actions",
     registry: "Button",
     file: "Button.tsx",
     controls: [
+      text("Label", SAMPLE.label),
       choice("variant", "Variant", [
         ["filled", "Filled"],
         ["tonal", "Tonal"],
@@ -230,13 +236,12 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "fab",
-    texts: [{ label: "Label", sample: SAMPLE.label }],
     name: "Fab",
     label: "FAB",
     group: "actions",
     registry: "FAB",
     file: "Fab.tsx",
-    controls: [toggle("folded", "Folded")],
+    controls: [text("Label", SAMPLE.label), toggle("folded", "Folded")],
     imports: ["Fab"],
     code: (state) =>
       jsx(
@@ -253,13 +258,13 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "play-chip",
-    texts: [{ label: "Label", sample: SAMPLE.duration }],
     name: "PlayChip",
     label: "Play chip",
     group: "actions",
     registry: "Play chip",
     file: "PlayChip.tsx",
     controls: [
+      text("Label", SAMPLE.duration),
       choice("state", "State", [
         ["idle", "Idle"],
         ["current", "Current"],
@@ -289,18 +294,18 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "menu",
-    texts: [{ label: "Title", sample: SAMPLE.menu.title }],
     name: "Menu",
     group: "actions",
     registry: "Menu",
     file: "Menu.tsx",
     controls: [
+      text("Title", SAMPLE.menu.title),
+      toggle("subtitle", "Subtitle"),
       choice("items", "Actions", [
         ["3", "Three"],
         ["5", "Five"],
       ]),
       toggle("danger", "Danger row"),
-      toggle("subtitle", "Subtitle"),
     ],
     imports: ["Button", "Menu", "MenuItem", "Icon"],
     code: (state) => {
@@ -411,8 +416,8 @@ export const SPECS: readonly ComponentSpec[] = [
     registry: "Chip",
     file: "Chip.tsx",
     controls: [
-      toggle("ticked", "Ticked"),
       toggle("scroll", "One row that scrolls"),
+      toggle("ticked", "Ticked"),
       toggle("disabled", "Disabled"),
     ],
     imports: ["ChipGroup", "Chip"],
@@ -512,15 +517,13 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "link",
-    texts: [
-      { label: "Words", sample: SAMPLE.label },
-      { label: "Source", sample: SAMPLE.source },
-    ],
     name: "Link",
     group: "navigation",
     registry: "Link",
     file: "Link.tsx",
     controls: [
+      text("Words", SAMPLE.label),
+      text("Source", SAMPLE.source),
       choice("variant", "Variant", [
         ["text", "Text"],
         ["source", "Source"],
@@ -549,14 +552,14 @@ export const SPECS: readonly ComponentSpec[] = [
     registry: "Segmented navigation",
     file: "SegmentedNav.tsx",
     controls: [
+      choice("size", "Size", [
+        ["default", "Default"],
+        ["compact", "Compact"],
+      ]),
       choice("count", "Views", [
         ["2", "Two"],
         ["3", "Three"],
         ["4", "Four"],
-      ]),
-      choice("size", "Size", [
-        ["default", "Default"],
-        ["compact", "Compact"],
       ]),
     ],
     imports: ["SegmentedNav"],
@@ -648,12 +651,12 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "dialog",
-    texts: [{ label: "Title", sample: SAMPLE.dialog.title }],
     name: "Dialog",
     group: "overlays",
     registry: "Dialog",
     file: "Dialog.tsx",
     controls: [
+      text("Title", SAMPLE.dialog.title),
       choice("answers", "Answers", [
         ["two", "Two, in a row"],
         ["three", "Three, stacked"],
@@ -698,12 +701,12 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "sheet",
-    texts: [{ label: "Title", sample: SAMPLE.sheet }],
     name: "Sheet",
     group: "overlays",
     registry: "Sheet",
     file: "Sheet.tsx",
     controls: [
+      text("Title", SAMPLE.sheet),
       choice("kind", "Kind", [
         ["panel", "Panel"],
         ["create", "Create"],
@@ -738,27 +741,25 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "banner",
-    texts: [
-      { label: "Title", sample: SAMPLE.banner.title },
-      { label: "Body", sample: SAMPLE.banner.body },
-      { label: "Action", sample: SAMPLE.banner.action },
-    ],
     name: "Banner",
     group: "feedback",
     registry: "Banner",
     file: "Banner.tsx",
     controls: [
+      text("Title", SAMPLE.banner.title),
       choice("tone", "Tone", [
         ["warning", "Warning"],
         ["danger", "Danger"],
         ["success", "Success"],
       ]),
+      toggle("body", "Body line"),
+      text("Body", SAMPLE.banner.body),
+      toggle("action", "Action"),
+      text("Action words", SAMPLE.banner.action),
       choice("variant", "Variant", [
         ["block", "Block"],
         ["strip", "Strip"],
       ]),
-      toggle("body", "Body line"),
-      toggle("action", "Action"),
     ],
     imports: ["Banner"],
     code: (state) => {
@@ -775,12 +776,12 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "toast",
-    texts: [{ label: "Message", sample: SAMPLE.toast.message }],
     name: "Toast",
     group: "feedback",
     registry: "Toast",
     file: "Toast.tsx",
     controls: [
+      text("Message", SAMPLE.toast.message),
       choice("kind", "Kind", [
         ["plain", "Plain"],
         ["success", "Success"],
@@ -807,12 +808,12 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "badge",
-    texts: [{ label: "Label", sample: SAMPLE.badge }],
     name: "Badge",
     group: "feedback",
     registry: "Badge",
     file: "Badge.tsx",
     controls: [
+      text("Label", SAMPLE.badge),
       choice("content", "Content", [
         ["word", "A word"],
         ["number", "A number"],
@@ -959,7 +960,7 @@ export function regionEmoji(region: string): string {
 export function initialState(spec: ComponentSpec, extra: State = {}): State {
   return {
     ...Object.fromEntries(
-      spec.controls.map((control) => [
+      stateControls(spec.controls).map((control) => [
         control.id,
         control.kind === "toggle" ? "off" : (control.options[0]?.value ?? ""),
       ]),
@@ -971,7 +972,7 @@ export function initialState(spec: ComponentSpec, extra: State = {}): State {
 /** Every state of the controls, the first control varying slowest. */
 export function allStates(controls: readonly Control[]): State[] {
   let states: State[] = [{}];
-  for (const control of controls) {
+  for (const control of stateControls(controls)) {
     const values = control.kind === "toggle" ? ["off", "on"] : control.options.map((o) => o.value);
     states = states.flatMap((state) => values.map((value) => ({ ...state, [control.id]: value })));
   }
@@ -980,7 +981,9 @@ export function allStates(controls: readonly Control[]): State[] {
 
 /** The key a state is found by on the page: the control values in order. */
 export const stateKey = (controls: readonly Control[], state: State): string =>
-  controls.map((control) => state[control.id] ?? "").join("|");
+  stateControls(controls)
+    .map((control) => state[control.id] ?? "")
+    .join("|");
 
 /**
  * The import lines and the usage of a state, as a page prints them. A React component is imported by

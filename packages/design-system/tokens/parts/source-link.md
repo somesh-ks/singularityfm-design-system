@@ -30,11 +30,11 @@ The one link out of a story: the publisher's name, underlined on hover.
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `href` | `string` | - | Where it goes. A link always has an address; an action on this page is a Button. |
+| `children` | `ReactNode` | - | The words. |
 | `variant?` | `"text" \| "source"` | `"text"` | Text (the default), a link in a line of words, or source, a story's publisher (link.ts). |
+| `href` | `string` | - | Where it goes. A link always has an address; an action on this page is a Button. |
 | `className?` | `string` | - | For placing the link where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the link in its parent's slot with it; it is not an attribute of the link. |
-| `children` | `ReactNode` | - | The words. |
 
 Every attribute of a native `<a>` element passes through.
 
