@@ -4,6 +4,7 @@ Rewritten, never appended. As of 2026-11-11: 0.9.0 is on npm (every control fami
 
 ## Works
 
+- The ruleset (`.github/rulesets/main.json`) is live as "main stays green" and matches the file (2026-11-13). It holds a PR whose branch is behind `main` until `check` passes on the updated branch, and one with an open review thread; neither an owner nor an admin merge passes it, since it names no bypass actor (#50, #66).
 - The repository was made from `somesh-ks/singularityfm-app` by `extract.sh` (DS-1): the library's history back to 2026-10-06, the package in `packages/design-system/`, the style guide in `apps/design/`.
 - `pnpm run gate` runs green from a clean clone: typecheck, lint, unit tests, the docs check, the style guide's `ds validate`, the token and guide build, the pack-and-install test. CI runs the same in one job, `check`. The pack-and-install test starts pnpm through the program `pnpm run` was started from, so it no longer needs a `pnpm` executable on the PATH (Windows has only `pnpm.cmd`).
 - Releases are automatic: `release.yml` (guarded to this repository) opens the version pull request with the library's GitHub App token, so `check` runs on it, and merging it publishes. 0.1.1 to 0.9.0 are on npm. The repository went public on 2026-11-10, so npm adds provenance from the next release on its own.
@@ -34,7 +35,6 @@ Rewritten, never appended. As of 2026-11-11: 0.9.0 is on npm (every control fami
 - The library's keyboard rings on the search field, picker search and wheel are keyed off the pointer (`:not([data-input="pointer"])`) instead of on the keyboard, so a consumer with no input-mode script shows them; with one (the app's `app.ts`, the guide's `inputMode.ts`) nothing changes. closed when: the app's bump passes its screenshots and browser suites (a click into its search still draws no ring).
 - A Toast's role now follows the store, a render before its words. closed when: a screen reader announces an error toast that replaces a status toast (VoiceOver and NVDA).
 - The style guide's Vercel project builds from this repository. closed when: a push to main deploys news.someshks.work/design from this repository and `ignore-build.sh` skips a docs-only push.
-- The ruleset (`.github/rulesets/main.json`) is imported. closed when: a PR without a green `check` cannot merge.
 - The pack-and-install test runs on Windows. closed when: `pnpm run gate` passes in PowerShell on the owner's machine.
 - Five parts read empty in `system.json` (settings row, toast, empty state, multiselect, cover): their base rules live in the app's stylesheets, not the library's, so the library has no comment to read. closed when: each one's CSS moves into the library with its component, or the app writes its usage report (DS-2) and the part moves there.
 - "The primary fill" does not reach `--color-accent` in `ds find`: its role never says "primary". closed when: the accent's role names the primary fill and `golden.json` has a row for it.
