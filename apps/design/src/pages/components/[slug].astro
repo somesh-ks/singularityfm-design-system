@@ -1,6 +1,7 @@
 ---
 import Badge from "@singularity/design-system/Badge";
 import Code from "@singularity/design-system/Code";
+import Field from "@singularity/design-system/Field";
 import Link from "@singularity/design-system/Link";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
 import Select from "@singularity/design-system/Select";
@@ -57,6 +58,7 @@ const start = initialState(spec);
 const states = allStates(spec.controls);
 const startKey = stateKey(spec.controls, start);
 const hasStage = !spec.noPreview;
+const texts = spec.texts ?? [];
 // Real defaults a state is built from: an avatar's shapes and sizes are the choices the controls list.
 ---
 
@@ -68,29 +70,6 @@ const hasStage = !spec.noPreview;
     {
       hasStage && (
         <section aria-label="Preview" data-playground>
-          {spec.controls.length > 0 && (
-            <div class="guide-controls" role="group" aria-label="Preview controls">
-              {spec.controls.map((control) =>
-                control.kind === "choice" ? (
-                  <div class="guide-control">
-                    <span>{control.label}</span>
-                    <Select variant="tonal" label={control.label} data-control={control.id}>
-                      {control.options.map((option) => (
-                        <option value={option.value} selected={option.value === start[control.id]}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                ) : (
-                  <label class="guide-control">
-                    <span>{control.label}</span>
-                    <Switch data-control={control.id} />
-                  </label>
-                ),
-              )}
-            </div>
-          )}
           <div class="guide-stage">
             {states.map((state, index) => {
               const key = stateKey(spec.controls, state);
@@ -107,6 +86,41 @@ const hasStage = !spec.noPreview;
             })}
           </div>
           {spec.note && <p class="guide-note guide-stage-note">{spec.note}</p>}
+          {(spec.controls.length > 0 || texts.length > 0) && (
+            <div class="rows card-group guide-controls" role="group" aria-label="Preview controls">
+              {spec.controls.map((control) =>
+                control.kind === "choice" ? (
+                  <div class="settings-row">
+                    <span class="settings-label" aria-hidden="true">{control.label}</span>
+                    <Select variant="tonal" label={control.label} data-control={control.id}>
+                      {control.options.map((option) => (
+                        <option value={option.value} selected={option.value === start[control.id]}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                ) : (
+                  <label class="settings-row">
+                    <span class="settings-label">{control.label}</span>
+                    <Switch data-control={control.id} />
+                  </label>
+                ),
+              )}
+              {texts.map((text) => (
+                <label class="settings-row">
+                  <span class="settings-label">{text.label}</span>
+                  <Field
+                    className="guide-control-text"
+                    defaultValue={text.sample}
+                    data-sample={text.sample}
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                </label>
+              ))}
+            </div>
+          )}
         </section>
       )
     }

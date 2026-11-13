@@ -1401,7 +1401,7 @@ Every attribute of a native `<select>` element passes through.
 
 ### Tokens it reads
 
-`--button-radius` `--chip-height` `--color-accent` `--color-accent-container` `--color-accent-container-hover` `--color-border-hairline` `--color-focus-ring` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-muted` `--color-surface-container` `--color-surface-container-hover` `--color-surface-container-pressed` `--color-surface-overlay` `--color-surface-overlay-hover` `--color-surface-overlay-pressed` `--field-chevron-gap` `--shadow-popover` `--shape-2xl` `--size-icon` `--size-icon-sm` `--size-touch`
+`--button-radius` `--chip-height` `--color-accent` `--color-accent-container` `--color-accent-container-hover` `--color-border-hairline` `--color-focus-ring` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-muted` `--color-surface-container` `--color-surface-container-hover` `--color-surface-container-pressed` `--color-surface-overlay` `--color-surface-overlay-hover` `--color-surface-overlay-pressed` `--shadow-popover` `--shape-2xl` `--size-icon` `--size-icon-sm` `--size-touch`
 
 ### Where it is drawn
 

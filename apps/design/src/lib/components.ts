@@ -56,6 +56,12 @@ export interface ComponentSpec {
     dontUseWhen: readonly { when: string; instead?: string }[];
   };
   controls: readonly Control[];
+  /**
+   * Words a person can rewrite under the preview, as a story's text controls do: each names a sample
+   * the preview draws, and the page swaps those words in the stage and the code as they are typed
+   * (componentPage.ts). They are not states: every state draws the sample, so the words carry over.
+   */
+  texts?: readonly { label: string; sample: string }[];
   /** The components the usage imports, in order. */
   imports: readonly string[];
   /** The usage for a state of the controls; absent where the page has nothing to show for it. */
@@ -161,6 +167,7 @@ const jsx = (name: string, attrs: readonly string[], children?: string): string 
 export const SPECS: readonly ComponentSpec[] = [
   {
     slug: "button",
+    texts: [{ label: "Label", sample: SAMPLE.label }],
     name: "Button",
     group: "actions",
     registry: "Button",
@@ -223,6 +230,7 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "fab",
+    texts: [{ label: "Label", sample: SAMPLE.label }],
     name: "Fab",
     label: "FAB",
     group: "actions",
@@ -245,6 +253,7 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "play-chip",
+    texts: [{ label: "Label", sample: SAMPLE.duration }],
     name: "PlayChip",
     label: "Play chip",
     group: "actions",
@@ -280,6 +289,7 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "menu",
+    texts: [{ label: "Title", sample: SAMPLE.menu.title }],
     name: "Menu",
     group: "actions",
     registry: "Menu",
@@ -502,6 +512,10 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "link",
+    texts: [
+      { label: "Words", sample: SAMPLE.label },
+      { label: "Source", sample: SAMPLE.source },
+    ],
     name: "Link",
     group: "navigation",
     registry: "Link",
@@ -634,6 +648,7 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "dialog",
+    texts: [{ label: "Title", sample: SAMPLE.dialog.title }],
     name: "Dialog",
     group: "overlays",
     registry: "Dialog",
@@ -683,6 +698,7 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "sheet",
+    texts: [{ label: "Title", sample: SAMPLE.sheet }],
     name: "Sheet",
     group: "overlays",
     registry: "Sheet",
@@ -722,6 +738,11 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "banner",
+    texts: [
+      { label: "Title", sample: SAMPLE.banner.title },
+      { label: "Body", sample: SAMPLE.banner.body },
+      { label: "Action", sample: SAMPLE.banner.action },
+    ],
     name: "Banner",
     group: "feedback",
     registry: "Banner",
@@ -754,6 +775,7 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "toast",
+    texts: [{ label: "Message", sample: SAMPLE.toast.message }],
     name: "Toast",
     group: "feedback",
     registry: "Toast",
@@ -785,6 +807,7 @@ export const SPECS: readonly ComponentSpec[] = [
   },
   {
     slug: "badge",
+    texts: [{ label: "Label", sample: SAMPLE.badge }],
     name: "Badge",
     group: "feedback",
     registry: "Badge",

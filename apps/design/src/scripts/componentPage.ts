@@ -20,6 +20,38 @@ if (root) {
   );
   const states = Array.from(root.querySelectorAll<HTMLElement>("[data-combo]"));
 
+  // The editable words (a page's texts): every state draws each sample, so the text nodes that say one
+  // exactly are found once and rewritten as it is typed; the code says it in quotes or between tags.
+  const fields = Array.from(root.querySelectorAll<HTMLInputElement>("input[data-sample]"));
+  const words = new Map(fields.map((field) => [field.dataset.sample ?? "", field.value]));
+  const said: { node: Text; sample: string; edges: [string, string] }[] = [];
+  for (const state of states) {
+    const walker = document.createTreeWalker(state, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const text = node as Text;
+      const sample = text.data.trim();
+      if (!words.has(sample)) continue;
+      const at = text.data.indexOf(sample);
+      said.push({
+        node: text,
+        sample,
+        edges: [text.data.slice(0, at), text.data.slice(at + sample.length)],
+      });
+    }
+  }
+  const literal = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const reword = (code: string): string =>
+    [...words].reduce(
+      (out, [sample, value]) =>
+        out.replace(
+          new RegExp(`(["'>])${literal(sample)}(["'<])`, "g"),
+          (_, before: string, after: string) => `${before}${value}${after}`,
+        ),
+      code,
+    );
+  /** What a sample says now: the person's words where the page offers them. */
+  const say = (sample: string): string => words.get(sample) ?? sample;
+
   const show = (): void => {
     const key = controls
       .map((control) =>
@@ -28,15 +60,25 @@ if (root) {
       .join("|");
     for (const state of states) {
       state.hidden = state.dataset.combo !== key;
-      if (!state.hidden && snippet && state.dataset.code) snippet.textContent = state.dataset.code;
+      if (!state.hidden && snippet && state.dataset.code)
+        snippet.textContent = reword(state.dataset.code);
     }
   };
+  const rewrite = (): void => {
+    for (const { node, sample, edges } of said) node.data = `${edges[0]}${say(sample)}${edges[1]}`;
+    show();
+  };
+  for (const field of fields)
+    field.addEventListener("input", () => {
+      words.set(field.dataset.sample ?? "", field.value);
+      rewrite();
+    });
   // A segmented nav chooses as on an app page: its script, mounted once for each list (DS-8).
   for (const list of root.querySelectorAll<HTMLElement>('[role="tablist"]'))
     mountSegmentedNav(list, () => {});
-  // A reload keeps what the controls last said; the page draws the first state.
-  if (controls.length) {
-    show();
+  // A reload keeps what the controls last said (the words fields keep none: they say the samples).
+  if (controls.length || fields.length) {
+    rewrite();
     root.addEventListener("change", show);
   }
 
@@ -47,7 +89,7 @@ if (root) {
     if (toast) {
       const kind = toast.dataset.previewToast;
       showToast({
-        message: "Message",
+        message: say("Message"),
         kind: kind === "success" || kind === "error" ? kind : undefined,
         actionLabel: toast.dataset.previewToastAction === undefined ? undefined : "Action",
         onAction: () => {},
