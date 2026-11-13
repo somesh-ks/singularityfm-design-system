@@ -17,7 +17,7 @@ interface PlayChipProps {
    */
   reserve?: string;
   /**
-   * The page's one main Play: the primary fill on a button's face, a step under the touch size, and the pause glyph while it plays instead of the bars.
+   * The page's one main Play: the primary fill, and the pause glyph while it plays instead of the bars.
    * Experimental (DS-11): it may change or go in a minor release (playChip.ts says why it exists).
    */
   primary?: boolean;
