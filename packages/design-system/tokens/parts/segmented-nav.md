@@ -34,7 +34,7 @@ A tonal track with one sliding pill: switch between views of the same content.
 | `defaultValue?` | `string` | `tabs[0]?.value` | The view chosen when it is drawn (the first by default); mountSegmentedNav() moves it after. |
 | `className?` | `string` | - | For placing it where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 
-Every attribute of a native `<div>` element passes through.
+Every attribute of a native `<div>` element passes through, except `role` and `children`.
 
 ## Tokens it reads
 

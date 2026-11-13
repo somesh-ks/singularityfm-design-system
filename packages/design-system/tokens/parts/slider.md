@@ -35,7 +35,7 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 | `className?` | `string` | - | For placing the slider where it stands (a width, a flex basis). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `style?` | `CSSProperties \| string` | - | Inline style, as an object or the string an Astro page writes; never its look. |
 
-Every attribute of a native `<input>` element passes through.
+Every attribute of a native `<input>` element passes through, except `type`.
 
 ## Tokens it reads
 

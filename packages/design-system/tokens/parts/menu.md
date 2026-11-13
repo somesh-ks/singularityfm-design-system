@@ -56,7 +56,7 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 | `className?` | `string` | - | For placing the row where it stands, or a hook a script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the row in its parent's slot with it; it is not an attribute of the row. |
 
-Every attribute of a native `<button>` element passes through.
+Every attribute of a native `<button>` element passes through, except `role`.
 
 ## Props of Icon
 

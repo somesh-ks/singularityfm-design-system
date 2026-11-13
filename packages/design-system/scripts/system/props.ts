@@ -18,6 +18,8 @@ export interface PropsTable {
   rows: PropRow[];
   /** The element whose attributes it also takes, when it passes them on. */
   element?: string;
+  /** That element's attributes it drops by name (`Omit<..., "className">`), so a page does not promise them. */
+  except?: string[];
 }
 
 const OPENERS = "{([<";
@@ -89,7 +91,7 @@ const TAGS: Record<string, string> = {
  * (`Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, ...>`), not the first named in the file, which
  * may type a child (SegmentedChoice's inputs). A heading's level comes from the tag it renders.
  */
-function passedTo(source: string): string | undefined {
+function passedTo(source: string): { element?: string; except?: string[] } {
   // The Props declaration to its last line: an interface's closing brace, or an alias's line that
   // ends it with a semicolon. A file whose Props name no element (it types the attributes where the
   // function takes them) is read whole.
@@ -105,7 +107,14 @@ function passedTo(source: string): string | undefined {
     if (dom === "Heading") return /<(h[1-6])\b/.exec(source)?.[1];
     return TAGS[dom] ?? dom.toLowerCase();
   };
-  return tag(declared) ?? tag(source);
+  const element = tag(declared) ?? tag(source);
+  if (!element) return {};
+  // The attributes the Omit drops by name; `keyof SomeProps` only drops the component's own props.
+  const omitted =
+    /Omit<\s*(?:\w*HTMLAttributes<\w+>|ComponentProps<"\w+">)\s*,([^>]*)>/.exec(declared)?.[1] ??
+    "";
+  const except = [...omitted.matchAll(/"([\w-]+)"/g)].map((match) => match[1] ?? "");
+  return { element, ...(except.length ? { except } : {}) };
 }
 
 /**
@@ -215,6 +224,8 @@ export function propsTable(source: string): PropsTable {
     }
   }
   rows.sort((a, b) => place(a.name) - place(b.name));
-  const element = passedTo(frontmatter);
-  return { rows, ...(element ? { element } : {}) };
+  const { element, except } = passedTo(frontmatter);
+  // A dropped attribute the component takes back as its own prop (children) is in the table already.
+  const dropped = except?.filter((name) => !rows.some((row) => row.name === name)) ?? [];
+  return { rows, ...(element ? { element } : {}), ...(dropped.length ? { except: dropped } : {}) };
 }

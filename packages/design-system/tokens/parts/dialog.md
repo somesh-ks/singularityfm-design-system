@@ -38,7 +38,7 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 | `form?` | `Record<string, unknown>` | - | Attributes for a form body: the dialog then submits. Without it the body is a plain box. An Astro page writes them as HTML does (`novalidate`, `method: "dialog"`). |
 | `className?` | `string` | - | For placing the dialog where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-Every attribute of a native `<dialog>` element passes through.
+Every attribute of a native `<dialog>` element passes through, except `open` and `style`.
 
 ## Props of DialogActions
 
@@ -53,7 +53,7 @@ Every attribute of a native `<dialog>` element passes through.
 | --- | --- | --- | --- |
 | `children?` | `ReactNode` | - | The question. |
 
-Every attribute of a native `<h2>` element passes through.
+Every attribute of a native `<h2>` element passes through, except `className`.
 
 ## Props of Button
 

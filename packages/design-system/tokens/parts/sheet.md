@@ -43,7 +43,7 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 | `titleData?` | `` Record<`data-${string}`, string \| boolean> `` | - | Any data attribute the title carries for its script, such as data-panel-title. |
 | `className?` | `string` | - | For placing the sheet where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-Every attribute of a native `<dialog>` element passes through.
+Every attribute of a native `<dialog>` element passes through, except `open` and `style`.
 
 ## Props of SheetHeader
 

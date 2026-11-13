@@ -74,6 +74,8 @@ export interface Component {
   props: PropRow[];
   /** The element whose attributes it also passes through, when it does. */
   element?: string;
+  /** That element's attributes it does not take. */
+  except?: string[];
 }
 
 export interface System {

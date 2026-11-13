@@ -816,7 +816,7 @@ The tonal pill that plays a briefing or one story, with its state; or its glyph 
 | `className?` | `string` | - | For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the button. |
 
-Every attribute of a native `<button>` element passes through.
+Every attribute of a native `<button>` element passes through, except `aria-label`.
 
 ### Tokens it reads
 
@@ -874,7 +874,7 @@ A checkbox drawn as a pill; ticked it takes the accent container.
 | `className?` | `string` | - | For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. It goes on the chip (the label); every other attribute goes on its checkbox. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the checkbox. |
 
-Every attribute of a native `<input>` element passes through.
+Every attribute of a native `<input>` element passes through, except `type`.
 
 ### Props of ChipGroup
 
@@ -943,7 +943,7 @@ One pill of radio items: pick exactly one value.
 | `className?` | `string` | - | For placing it where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places it in its parent's slot with it; it is not an attribute of the fieldset. |
 
-Every attribute of a native `<fieldset>` element passes through.
+Every attribute of a native `<fieldset>` element passes through, except `role`.
 
 ### Tokens it reads
 
@@ -997,7 +997,7 @@ A tonal track with one sliding pill: switch between views of the same content.
 | `defaultValue?` | `string` | `tabs[0]?.value` | The view chosen when it is drawn (the first by default); mountSegmentedNav() moves it after. |
 | `className?` | `string` | - | For placing it where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 
-Every attribute of a native `<div>` element passes through.
+Every attribute of a native `<div>` element passes through, except `role` and `children`.
 
 ### Tokens it reads
 
@@ -1220,7 +1220,7 @@ A track and a thumb for one setting that is on or off.
 | `className?` | `string` | - | For placing the switch where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `style?` | `CSSProperties \| string` | - | Inline style, as an object or the string an Astro page writes; never its look. |
 
-Every attribute of a native `<input>` element passes through.
+Every attribute of a native `<input>` element passes through, except `type` and `role`.
 
 ### Tokens it reads
 
@@ -1275,7 +1275,7 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 | `className?` | `string` | - | For placing the slider where it stands (a width, a flex basis). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `style?` | `CSSProperties \| string` | - | Inline style, as an object or the string an Astro page writes; never its look. |
 
-Every attribute of a native `<input>` element passes through.
+Every attribute of a native `<input>` element passes through, except `type`.
 
 ### Tokens it reads
 
@@ -1339,7 +1339,7 @@ An outlined box for text a person types: one line, or several lines (multiline).
 | `tonal?` | `boolean` | `false` | The container's fill and no outline, for a form whose selects are tonal too (it writes data-tonal; an outlined Select there takes data-tonal itself). Experimental (DS-11): it may change or go in a minor release (field.ts says why it exists). |
 | `className?` | `string` | - | For placing the field where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-Every attribute of a native `<input>` element passes through.
+Every attribute of a native `<input>` element passes through, except `style`.
 
 ### Tokens it reads
 
@@ -1398,7 +1398,7 @@ A native select with its own chevron.
 | `reserve?` | `string` | - | A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the select where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 
-Every attribute of a native `<select>` element passes through.
+Every attribute of a native `<select>` element passes through, except `style`.
 
 ### Tokens it reads
 
@@ -1474,7 +1474,7 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 | `className?` | `string` | - | For placing the row where it stands, or a hook a script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the row in its parent's slot with it; it is not an attribute of the row. |
 
-Every attribute of a native `<button>` element passes through.
+Every attribute of a native `<button>` element passes through, except `role`.
 
 ### Props of Icon
 
@@ -1649,7 +1649,7 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 | `form?` | `Record<string, unknown>` | - | Attributes for a form body: the dialog then submits. Without it the body is a plain box. An Astro page writes them as HTML does (`novalidate`, `method: "dialog"`). |
 | `className?` | `string` | - | For placing the dialog where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-Every attribute of a native `<dialog>` element passes through.
+Every attribute of a native `<dialog>` element passes through, except `open` and `style`.
 
 ### Props of DialogActions
 
@@ -1664,7 +1664,7 @@ Every attribute of a native `<dialog>` element passes through.
 | --- | --- | --- | --- |
 | `children?` | `ReactNode` | - | The question. |
 
-Every attribute of a native `<h2>` element passes through.
+Every attribute of a native `<h2>` element passes through, except `className`.
 
 ### Props of Button
 
@@ -1740,7 +1740,7 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 | `titleData?` | `` Record<`data-${string}`, string \| boolean> `` | - | Any data attribute the title carries for its script, such as data-panel-title. |
 | `className?` | `string` | - | For placing the sheet where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-Every attribute of a native `<dialog>` element passes through.
+Every attribute of a native `<dialog>` element passes through, except `open` and `style`.
 
 ### Props of SheetHeader
 

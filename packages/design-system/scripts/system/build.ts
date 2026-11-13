@@ -139,7 +139,7 @@ function components(): Component[] {
       continue;
     const file = posix(relative(ROOT, join(PACKAGE, path)));
     if (listed.has(file)) continue;
-    const { rows, element } = propsTable(readFileSync(join(ROOT, file), "utf8"));
+    const { rows, element, except } = propsTable(readFileSync(join(ROOT, file), "utf8"));
     listed.set(file, {
       name: name.slice(2),
       import: `${MANIFEST.name}/${name.slice(2)}`,
@@ -149,6 +149,7 @@ function components(): Component[] {
         return values ? { ...row, values } : row;
       }),
       ...(element ? { element } : {}),
+      ...(except ? { except } : {}),
     });
   }
   return [...listed.values()].sort((a, b) => a.name.localeCompare(b.name));

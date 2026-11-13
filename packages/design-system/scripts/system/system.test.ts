@@ -116,7 +116,8 @@ describe("the design system file", () => {
   // Prevents a props table that hides or misnames what a component passes on: Link, Select and four
   // others spread every attribute to their element and the table said nothing, and SegmentedChoice
   // was said to take an input's attributes because its file types its inputs first, when its Props
-  // take a fieldset's. DialogTitle's props, in a type alias, were not read at all.
+  // take a fieldset's. DialogTitle's props, in a type alias, were not read at all, and its page then
+  // said every heading attribute passes when it drops className.
   it("names the element each component passes its attributes to", () => {
     const silent = system.components.filter(
       (component) =>
@@ -134,6 +135,7 @@ type Props = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "role"> & {
 };`;
     expect(propsTable(source)).toMatchObject({
       element: "fieldset",
+      except: ["role"],
       rows: [{ name: "label", required: true }],
     });
     // The same Props as an interface, and as an alias whose object comes first.

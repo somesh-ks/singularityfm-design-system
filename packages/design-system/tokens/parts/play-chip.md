@@ -42,7 +42,7 @@ The tonal pill that plays a briefing or one story, with its state; or its glyph 
 | `className?` | `string` | - | For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the button. |
 
-Every attribute of a native `<button>` element passes through.
+Every attribute of a native `<button>` element passes through, except `aria-label`.
 
 ## Tokens it reads
 

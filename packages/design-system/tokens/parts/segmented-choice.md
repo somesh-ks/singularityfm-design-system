@@ -38,7 +38,7 @@ One pill of radio items: pick exactly one value.
 | `className?` | `string` | - | For placing it where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places it in its parent's slot with it; it is not an attribute of the fieldset. |
 
-Every attribute of a native `<fieldset>` element passes through.
+Every attribute of a native `<fieldset>` element passes through, except `role`.
 
 ## Tokens it reads
 

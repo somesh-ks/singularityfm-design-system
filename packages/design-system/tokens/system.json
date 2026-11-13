@@ -2493,7 +2493,10 @@
           "description": "Astro places the chip in its parent's slot with it; it is not an attribute of the checkbox."
         }
       ],
-      "element": "input"
+      "element": "input",
+      "except": [
+        "type"
+      ]
     },
     {
       "name": "ChipGroup",
@@ -2607,7 +2610,11 @@
           "description": "For placing the dialog where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
         }
       ],
-      "element": "dialog"
+      "element": "dialog",
+      "except": [
+        "open",
+        "style"
+      ]
     },
     {
       "name": "DialogActions",
@@ -2643,7 +2650,10 @@
           "description": "The question."
         }
       ],
-      "element": "h2"
+      "element": "h2",
+      "except": [
+        "className"
+      ]
     },
     {
       "name": "Fab",
@@ -2750,7 +2760,10 @@
           "description": "For placing the field where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
         }
       ],
-      "element": "input"
+      "element": "input",
+      "except": [
+        "style"
+      ]
     },
     {
       "name": "Flag",
@@ -3014,7 +3027,10 @@
           "description": "Astro places the row in its parent's slot with it; it is not an attribute of the row."
         }
       ],
-      "element": "button"
+      "element": "button",
+      "except": [
+        "role"
+      ]
     },
     {
       "name": "PlayChip",
@@ -3072,7 +3088,10 @@
           "description": "Astro places the chip in its parent's slot with it; it is not an attribute of the button."
         }
       ],
-      "element": "button"
+      "element": "button",
+      "except": [
+        "aria-label"
+      ]
     },
     {
       "name": "PlayingBars",
@@ -3228,7 +3247,10 @@
           "description": "Astro places it in its parent's slot with it; it is not an attribute of the fieldset."
         }
       ],
-      "element": "fieldset"
+      "element": "fieldset",
+      "except": [
+        "role"
+      ]
     },
     {
       "name": "SegmentedNav",
@@ -3264,7 +3286,11 @@
           "description": "For placing it where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
         }
       ],
-      "element": "div"
+      "element": "div",
+      "except": [
+        "role",
+        "children"
+      ]
     },
     {
       "name": "Select",
@@ -3311,7 +3337,10 @@
           "description": "For placing the select where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
         }
       ],
-      "element": "select"
+      "element": "select",
+      "except": [
+        "style"
+      ]
     },
     {
       "name": "Sheet",
@@ -3381,7 +3410,11 @@
           "description": "For placing the sheet where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it."
         }
       ],
-      "element": "dialog"
+      "element": "dialog",
+      "except": [
+        "open",
+        "style"
+      ]
     },
     {
       "name": "SheetHeader",
@@ -3465,7 +3498,10 @@
           "description": "Inline style, as an object or the string an Astro page writes; never its look."
         }
       ],
-      "element": "input"
+      "element": "input",
+      "except": [
+        "type"
+      ]
     },
     {
       "name": "Switch",
@@ -3487,7 +3523,11 @@
           "description": "Inline style, as an object or the string an Astro page writes; never its look."
         }
       ],
-      "element": "input"
+      "element": "input",
+      "except": [
+        "type",
+        "role"
+      ]
     },
     {
       "name": "Toast",
