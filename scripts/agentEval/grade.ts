@@ -41,7 +41,7 @@ export function exportTarget(subpath: string, exportsMap: Record<string, string>
     const [head = "", tail = ""] = pattern.split("*");
     if (!key.startsWith(head) || !key.endsWith(tail) || key.length <= head.length + tail.length)
       continue;
-    return (exportsMap[pattern] ?? "").replace(
+    return (exportsMap[pattern] ?? "").replaceAll(
       "*",
       key.slice(head.length, key.length - tail.length),
     );
