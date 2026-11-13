@@ -135,6 +135,7 @@ const cases: Case[] = [
     states: [
       ...PLAY_STATES.map((state) => [state, dataState(state)] as [string, string]),
       ["playing", "el.dataset.state='current';el.dataset.playing='true'"],
+      ["buffering", "el.dataset.state='preparing';el.dataset.playing='true'"],
     ],
     hover: true,
   },

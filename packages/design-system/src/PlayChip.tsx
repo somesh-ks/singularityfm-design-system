@@ -7,8 +7,9 @@ import { type PlayChipState, playChipClass } from "./playChip.ts";
 interface PlayChipProps {
   /**
    * The visible words: a length such as "1:24", or a state such as "Playing". Leave it out for the
-   * glyph alone, a round button that never changes size, whose name is its aria-label: a story's Play
-   * and the hero's (owner, 2026-11-13: "the play button in the hero should be just the icon button").
+   * glyph alone, a round button that never changes size, whose name is its aria-label (then required,
+   * and the page's player rewrites it with each state): a story's Play and the hero's (owner,
+   * 2026-11-13: "the play button in the hero should be just the icon button").
    */
   label?: string;
   /** Where the item stands; the player rewrites it (buttons.css documents each). */
@@ -34,7 +35,12 @@ interface PlayChipProps {
   slot?: string;
 }
 
-type Props = PlayChipProps & Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof PlayChipProps>;
+/** With no words, the name is all a screen reader has, so it is required. */
+type Named = { label: string } | { label?: undefined; "aria-label": string };
+
+type Props = PlayChipProps &
+  Named &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof PlayChipProps | "aria-label">;
 
 /**
  * The Play chip (D237, DS-8): a native button, React-rendered with no client directive, so it
@@ -77,9 +83,6 @@ export default function PlayChip({
         <span className="chip-text" data-reserve={reserve}>
           <span className="chip-label" data-chip-label="">
             {label}
-          </span>
-          <span className="chip-again" aria-hidden="true">
-            Play again
           </span>
         </span>
       )}

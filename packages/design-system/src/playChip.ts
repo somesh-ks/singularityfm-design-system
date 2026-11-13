@@ -34,7 +34,7 @@ export const PLAY_CHIP: Guidance = {
 export const PLAY_CHIP_CLASSES: string[] = [
   "chip",
   "chip-primary",
-  "chip-icon",
+  "chip-glyph-only",
   "chip-glyph",
   "chip-bars",
   "chip-check",
@@ -42,7 +42,7 @@ export const PLAY_CHIP_CLASSES: string[] = [
   "chip-refresh",
   "chip-text",
   "chip-label",
-  // Deprecated (DS-13): it no longer shows; the played chip's replay glyph says Play again. 1.0.0 removes it.
+  // Deprecated (DS-13): PlayChip no longer draws it; the played chip's replay glyph says Play again. 1.0.0 removes it.
   "chip-again",
 ];
 
@@ -51,10 +51,10 @@ export const PLAY_CHIP_RETIRED: string[] = [];
 
 /**
  * The classes of a play chip; `primary` (experimental, DS-11) for the page's one main Play, and
- * `glyphOnly` for one drawn with no words (`chip-icon`, a round button the size of an icon button).
+ * `glyphOnly` for one drawn with no words (`chip-glyph-only`, a round button the size of an icon button).
  */
 export const playChipClass = (primary = false, glyphOnly = false): string =>
-  ["chip", primary && "chip-primary", glyphOnly && "chip-icon"].filter(Boolean).join(" ");
+  ["chip", primary && "chip-primary", glyphOnly && "chip-glyph-only"].filter(Boolean).join(" ");
 
 /** A play chip on a page, for the script that writes its state. */
 export const PLAY_CHIP_SELECTOR = ".chip";

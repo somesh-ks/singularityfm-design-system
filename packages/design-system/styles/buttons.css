@@ -439,11 +439,11 @@
 
 /*
  * The tonal pill that plays a briefing or one story: a play mark and a short label on the container
- * fill, with no outline. Markup:
+ * fill, with no outline; or the mark alone, a circle (.chip-glyph-only, DS-13). PlayChip.tsx draws it:
  *
  *   <button class="chip" data-state="idle" data-playing="false">
- *     <span class="chip-glyph"> play and pause icons, .chip-bars, a check icon, .spinner </span>
- *     <span class="chip-label num">1:24</span>
+ *     <span class="chip-glyph"> play and pause icons, .chip-bars, check, replay and refresh, .spinner </span>
+ *     <span class="chip-text"><span class="chip-label" data-chip-label>1:24</span></span>
  *   </button>
  *
  * data-state: idle (plays from here), current (this is what is loaded), played, preparing (audio is
@@ -696,9 +696,11 @@
 
 /* The waiting words shimmer (owner, 2026-11-10: "Processing" with a shimmer): a light band crosses the
    letters, nothing else. A mask dims the words to 70% and lets the band through at full, so the words
-   keep whatever colour their chip gives them (the hero's fill, a story's accent, any mood). Still and at
+   keep whatever colour their chip gives them (the hero's fill, a story's accent, any mood). A chip with no
+   words shimmers its glyph instead (DS-13), until it buffers and the spinner takes the slot. Still and at
    full strength under reduced motion and forced colours. */
-.chip[data-state="preparing"] .chip-label {
+.chip[data-state="preparing"] .chip-label,
+.chip-glyph-only[data-state="preparing"]:not([data-playing="true"]) .chip-glyph {
   --chip-sheen: 2400ms;
   -webkit-mask: var(--sheen-mask) 0 0 / 250% 100%;
   mask: var(--sheen-mask) 0 0 / 250% 100%;
@@ -706,7 +708,8 @@
 }
 
 @media (prefers-reduced-motion: reduce), (forced-colors: active) {
-  .chip[data-state="preparing"] .chip-label {
+  .chip[data-state="preparing"] .chip-label,
+  .chip-glyph-only[data-state="preparing"] .chip-glyph {
     -webkit-mask: none;
     mask: none;
     animation: none;
@@ -759,31 +762,14 @@
 /* The glyph alone (PlayChip with no label; owner, 2026-11-13: "the play button in the hero should be
    just the icon button, and the same in chapters"). A circle the size of an icon button, its glyph at an
    icon button's size, so it stands beside Favorite and Share as one of them. Every state keeps the one
-   slot, so nothing moves as it plays, loads or fails. Its name is its aria-label. */
-.chip-icon {
+   slot, so nothing moves as it plays, loads or fails. Its name is its aria-label, which the page's player
+   writes with each state, as it writes a chip's words. */
+.chip-glyph-only {
   --chip-height: var(--size-touch);
   --chip-glyph: var(--size-icon-lg);
   --chip-icon: var(--size-icon-lg);
   min-inline-size: var(--size-touch);
   padding-inline: 0;
-}
-
-/* With no words to shimmer, a glyph-only chip shimmers its mark while the audio is made (the owner's
-   "Processing" shimmer, 2026-11-10, with no loading circle). Still under reduced motion and forced
-   colours. */
-.chip-icon[data-state="preparing"]:not([data-playing="true"]) .chip-glyph {
-  --chip-sheen: 2400ms;
-  -webkit-mask: var(--sheen-mask) 0 0 / 250% 100%;
-  mask: var(--sheen-mask) 0 0 / 250% 100%;
-  animation: sheen var(--chip-sheen) var(--ease-linear) infinite;
-}
-
-@media (prefers-reduced-motion: reduce), (forced-colors: active) {
-  .chip-icon[data-state="preparing"] .chip-glyph {
-    -webkit-mask: none;
-    mask: none;
-    animation: none;
-  }
 }
 
 .chip:is([data-state="unavailable"], [aria-disabled="true"], :disabled) {
