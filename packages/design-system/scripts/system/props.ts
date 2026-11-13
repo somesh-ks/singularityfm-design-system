@@ -18,6 +18,8 @@ export interface PropsTable {
   rows: PropRow[];
   /** The element whose attributes it also takes, when it passes them on. */
   element?: string;
+  /** That element's attributes it drops by name (`Omit<..., "className">`), so a page does not promise them. */
+  except?: string[];
 }
 
 const OPENERS = "{([<";
@@ -73,11 +75,130 @@ function defaults(source: string): Map<string, string> {
   return found;
 }
 
+/** The tag of a DOM interface, where it is not the interface's name in lower case. */
+const TAGS: Record<string, string> = {
+  Anchor: "a",
+  Image: "img",
+  OList: "ol",
+  Paragraph: "p",
+  TableCell: "td",
+  TableRow: "tr",
+  UList: "ul",
+};
+
+/**
+ * The element whose attributes the component passes on: the one its `Props` type takes them from
+ * (`Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, ...>`), not the first named in the file, which
+ * may type a child (SegmentedChoice's inputs). A heading's level comes from the tag it renders.
+ */
+function passedTo(source: string): { element?: string; except?: string[] } {
+  // The Props declaration to its last line: an interface's closing brace, or an alias's line that
+  // ends it with a semicolon. A file whose Props name no element (it types the attributes where the
+  // function takes them) is read whole.
+  const start = /^(?:export\s+)?(?:type\s+Props\s*=|interface\s+Props\b)/m.exec(source)?.index;
+  const rest = start === undefined ? "" : source.slice(start);
+  const end = /^(?:\}|\S.*;)\s*$/m.exec(rest);
+  const declared = end ? rest.slice(0, end.index + end[0].length) : rest;
+  const tag = (text: string): string | undefined => {
+    const named = /ComponentProps<"(\w+)">/.exec(text)?.[1];
+    if (named) return named;
+    const dom = /HTMLAttributes<HTML(\w+)Element>/.exec(text)?.[1];
+    if (!dom) return undefined;
+    if (dom === "Heading") return /<(h[1-6])\b/.exec(source)?.[1];
+    return TAGS[dom] ?? dom.toLowerCase();
+  };
+  const element = tag(declared) ?? tag(source);
+  if (!element) return {};
+  // The attributes the Omit drops by name; `keyof SomeProps` only drops the component's own props.
+  const omitted =
+    /Omit<\s*(?:\w*HTMLAttributes<\w+>|ComponentProps<"\w+">)\s*,([^>]*)>/.exec(declared)?.[1] ??
+    "";
+  const except = [...omitted.matchAll(/"([\w-]+)"/g)].map((match) => match[1] ?? "");
+  return { element, ...(except.length ? { except } : {}) };
+}
+
+/**
+ * The order every props table reads in, whatever order a source declares its props: what it says and
+ * shows, then how it looks, then where it goes and what it is wired to, then its value, then the hooks
+ * a page places it by (owner, 2026-11-13: "order the parameters right so it makes natural sense").
+ * A prop the list does not name fails system.test.ts, so a new one is given its place.
+ */
+export const PROP_ORDER: readonly string[] = [
+  // What it says and shows
+  "name",
+  "region",
+  "label",
+  "title",
+  "subtitle",
+  "text",
+  "body",
+  "icon",
+  "iconFrom",
+  "photo",
+  "action",
+  "sections",
+  "tabs",
+  "options",
+  "children",
+  "after",
+  // How it looks
+  "variant",
+  "tone",
+  "kind",
+  "size",
+  "shape",
+  "compact",
+  "primary",
+  "hue",
+  "wavy",
+  "scroll",
+  "multiline",
+  "maxLines",
+  "stacked",
+  "flush",
+  "clearable",
+  "tonal",
+  "rowEnd",
+  // Where it goes and what it is wired to
+  "href",
+  "target",
+  "rel",
+  "form",
+  "close",
+  "copy",
+  "copied",
+  "id",
+  "titleId",
+  "titleData",
+  "bodyId",
+  // Its value
+  "state",
+  "defaultValue",
+  "value",
+  "onValueChange",
+  // How a page places it
+  "reserve",
+  "className",
+  "slot",
+  "style",
+];
+
+/** A prop's place in PROP_ORDER; one the list does not name goes last, where the test finds it. */
+const place = (name: string): number => {
+  const at = PROP_ORDER.indexOf(name);
+  return at === -1 ? PROP_ORDER.length : at;
+};
+
 /** The props of the component whose source is given. */
 export function propsTable(source: string): PropsTable {
   const frontmatter = source.startsWith("---") ? (source.split("---")[1] ?? "") : source;
   const rows: PropRow[] = [];
-  const declared = /interface\s+(?:Props|\w+Props)\s*\{/.exec(frontmatter);
+  // The members sit in a `Props` interface (which may extend an element's attributes), or in the
+  // object a `type Props =` alias joins to them, before or after the `&`.
+  const declared =
+    /interface\s+(?:Props|\w+Props)(?:\s+extends[^{]*)?\s*\{/.exec(frontmatter) ??
+    /type\s+Props\s*=\s*\{/.exec(frontmatter) ??
+    /type\s+Props\s*=[^;{]*&\s*\{/.exec(frontmatter);
   const given = defaults(frontmatter);
   if (declared) {
     // Comments come out first, so a quote or a semicolon in one cannot split a member.
@@ -102,8 +223,9 @@ export function propsTable(source: string): PropsTable {
       });
     }
   }
-  const element =
-    /(?:HTMLAttributes|ComponentProps)<"(\w+)">/.exec(frontmatter)?.[1] ??
-    /(Button|Input)HTMLAttributes/.exec(frontmatter)?.[1]?.toLowerCase();
-  return { rows, ...(element ? { element } : {}) };
+  rows.sort((a, b) => place(a.name) - place(b.name));
+  const { element, except } = passedTo(frontmatter);
+  // A dropped attribute the component takes back as its own prop (children) is in the table already.
+  const dropped = except?.filter((name) => !rows.some((row) => row.name === name)) ?? [];
+  return { rows, ...(element ? { element } : {}), ...(dropped.length ? { except: dropped } : {}) };
 }

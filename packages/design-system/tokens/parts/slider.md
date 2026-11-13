@@ -30,12 +30,12 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `className?` | `string` | - | For placing the slider where it stands (a width, a flex basis). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
-| `style?` | `CSSProperties \| string` | - | Inline style, as an object or the string an Astro page writes; never its look. |
 | `hue?` | `boolean` | `false` | A hue: the rail is the whole spectrum, the thumb is the colour picked, and a swatch floats above it while it is held (D328). The caller keeps --range-fill on the field the slider is wrapped in. |
 | `wavy?` | `boolean` | `false` | The track up to the thumb drifts (a wave in Expressive, a zigzag in Halloween) and the rest stays straight; Default draws the plain Slider. The caller keeps --range-fill on the field the input is wrapped in. |
+| `className?` | `string` | - | For placing the slider where it stands (a width, a flex basis). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
+| `style?` | `CSSProperties \| string` | - | Inline style, as an object or the string an Astro page writes; never its look. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through, except `type`.
 
 ## Tokens it reads
 
