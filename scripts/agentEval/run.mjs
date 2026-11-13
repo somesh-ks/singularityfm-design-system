@@ -13,7 +13,7 @@
 // the setup's AGENTS.md. Claude Code may edit files and run pnpm, npx, ls and cat; `agy` has no such
 // list outside its global settings, so it runs with every tool approved inside its terminal sandbox.
 // Options: --agents claude,antigravity  --tasks id,id  --version <package version> (default: npm
-//   latest)  --model <Claude model, default claude-sonnet-5-5>  --agy-model <Antigravity model,
+//   latest)  --model <Claude model, default claude-haiku-5-5>  --agy-model <Antigravity model,
 //   default its own>  --timeout <minutes per task, default 15>
 //   --user-settings (Claude Code only: also load your own settings and plugins, to compare a run with
 //   them)  --out <folder> (default scripts/agentEval/runs, gitignored).
@@ -235,8 +235,8 @@ function agentCall(agent, prompt) {
     args.includes("--user-settings") ? "user,project,local" : "project,local",
   );
   // Pinned, so a baseline and a later run use the same model whatever the CLI's own default is, and
-  // a mid-size one, so a full run costs what a working session does (owner, 2026-11-13).
-  call.push("--model", option("model", "claude-sonnet-5-5"));
+  // the small one, so a full run costs little and the docs carry more of the result (owner, 2026-11-13).
+  call.push("--model", option("model", "claude-haiku-5-5"));
   return { call, input: prompt };
 }
 
