@@ -1,5 +1,19 @@
 # @singularityfm/design-system
 
+## 0.11.0
+
+### Minor Changes
+
+- d047d39: A control hugs its words (DS-13). `reserve` on PlayChip, Button, Fab and Select is deprecated: drop it, the words set the width (it still works until 1.0.0). PlayChip no longer draws `chip-again` (deprecated; 1.0.0 removes the class). PlayChip with no `label` is its glyph alone (`chip-glyph-only`), a circle as tall as the chip named by its aria-label (required then; a page's player rewrites it with each state), that keeps one box in every state and shimmers its glyph while preparing: use it for the hero's Play and a story's. Looks different: a PlayChip with words no longer has a 7rem floor or a "Play again" reserve, its digits are tabular in every state, and a played chip under a pointer keeps its words (the replay glyph says Play again).
+- 53f2a4f: The lookup is a command now: `pnpm exec ds find "<need>"` (also `part`, `token`, `list`, `validate`) replaces `tsx node_modules/@singularityfm/design-system/scripts/system/cli.ts`, with `--json` on every command, `ds batch` for several lookups in one call, `ds version`, and a corrected search when a word is misspelt. A usage error (unknown command, missing argument) exits 2; no match exits 1.
+- 5204135: Ship `tokens/foundations.md`: the rules for every screen (grid, text and colour roles, what never moves, words, the phone), under 4 KB. The package's AGENTS.md and `llms.txt` have an agent read it first, and `llms-full.txt` includes it. The style guide serves it at `/design/foundations.md`.
+- c47b207: Each part has a markdown page, `tokens/parts/<id>.md` (import, markup, when and when not, props, tokens), and `tokens/llms-full.txt` holds every page in one file. `tokens/llms.txt` takes the llmstxt.org shape: each part id links to its page, and each part keeps one "use when" case there (its page has the rest). The style guide serves them at `/design/parts/<id>.md` and `/design/llms-full.txt`.
+  
+  `ds part --json` on a miss now keeps `components` a list of component records (empty) and lists the names under `componentNames`, as every other path does.
+- b46e15c: `tokens/system.json` lists every component under `components`, with its import and the props its source declares (a named union of strings carries its `values`). `ds part <id>` shows the props of each component the part imports, and `ds part <Component>` answers for a component no part covers yet, such as Avatar or Flag.
+- 1f01533: Three 0.10.0 rules now meet the reader's house rules. A SearchField's forced-colours edge is `ButtonBorder`, as the picker's search is, in place of `FieldText`, so its border colour can change in a forced-colours theme. A readonly Field's hover rules sit behind the fine-pointer gate. A SearchField on a `.card-group` takes the overlay tone with no `:focus` in its selector: the focus step comes after it and wins.
+- d047d39: Looks different: an icon button's glyph, a glyph-only PlayChip's and the Code copy button's are the regular icon (`--size-icon`), not the large one, so air stands round the glyph in its circle. A page that set `--icon-size` keeps its own size. The pause glyph's bars and a chip's playing bars are thinner, and the outlined heart takes its control's ink instead of the muted one, so it matches the line icons beside it.
+
 ## 0.10.0
 
 ### Minor Changes
