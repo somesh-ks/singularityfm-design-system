@@ -48,10 +48,12 @@ if (unknown.length)
 const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
 const out = join(option("out", join(HERE, "runs")), stamp);
 
-// Windows starts `pnpm.cmd`, `claude.cmd` and `agy.cmd` only through a shell. No command or
-// argument here holds a quote, so quoting each one (the command too: Node's own path has a space in
-// Program Files) is enough for cmd.
-const quoted = (words) => (WINDOWS ? words.map((word) => `"${word}"`) : words);
+// Windows starts `pnpm.cmd`, `claude.cmd` and `agy.cmd` only through a shell. Every argument is
+// quoted (none here holds a quote). A command is quoted only when it holds a space (Node's own path in
+// Program Files): cmd runs a quoted bare name such as "npm" with `%~dp0` inside npm.cmd pointing at
+// the working folder, not at Node's, and npm then fails to find itself (owner's run, 2026-11-13).
+const quoted = (words) =>
+  WINDOWS ? words.map((word, index) => (index > 0 || /\s/.test(word) ? `"${word}"` : word)) : words;
 function run(command, commandArgs, cwd, input) {
   const [program, ...rest] = quoted([command, ...commandArgs]);
   return execFileSync(program, rest, {
