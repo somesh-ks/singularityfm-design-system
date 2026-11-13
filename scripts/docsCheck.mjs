@@ -6,7 +6,8 @@
 // - a path to app code written as `apps/web/...`, `apps/admin/...` or `packages/<app package>/...` in a
 //   doc written for this repository (AGENTS.md, README.md, docs/state.md, docs/decisions/): it reads as
 //   a file here. The ledger and the specs keep such paths: their rows record where a fix was made;
-// - an en or em dash in authored text (AGENTS.md, house rule).
+// - an en or em dash in authored text (AGENTS.md, house rule);
+// - an agent-readiness scorecard whose summary line does not follow from its table (readiness.ts).
 //
 // Usage: node scripts/docsCheck.mjs [--fix --app-tree <file>]
 //   --fix rewrites a broken relative link to the app repository when <file> (one path per line, the app
@@ -14,6 +15,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, normalize, relative } from "node:path";
+import { readinessProblems } from "./readiness.ts";
 
 const ROOT = join(import.meta.dirname, "..");
 const APP = "https://github.com/somesh-ks/singularityfm-app/blob/main/";
@@ -71,6 +73,12 @@ for (const file of files.filter((name) => DASH_FILES.test(name) && name !== "pnp
   lines.forEach((line, index) => {
     if (DASH.test(line)) problems.push(`${file}:${index + 1}: en or em dash`);
   });
+}
+
+const SCORECARD = "docs/agent-readiness.md";
+if (existsSync(join(ROOT, SCORECARD))) {
+  for (const problem of readinessProblems(readFileSync(join(ROOT, SCORECARD), "utf8")))
+    problems.push(`${SCORECARD}: ${problem}`);
 }
 
 if (fix) console.log(`docs check: ${fixed} links now point at singularityfm-app`);
