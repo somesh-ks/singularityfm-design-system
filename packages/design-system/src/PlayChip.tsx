@@ -36,7 +36,7 @@ interface PlayChipProps {
 }
 
 /** With no words, the name is all a screen reader has, so it is required. */
-type Named = { label: string } | { label?: undefined; "aria-label": string };
+type Named = { label: string; "aria-label"?: string } | { label?: undefined; "aria-label": string };
 
 type Props = PlayChipProps &
   Named &
