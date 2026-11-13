@@ -11,6 +11,19 @@ export type Written = { path: string; text: string };
 const OUTSIDE_UI =
   /^(@mui\/|@radix-ui\/|@headlessui\/|@chakra-ui\/|@mantine\/|antd$|react-bootstrap|bootstrap|lucide-react|@heroicons\/|react-icons|@\/components\/ui\/)/;
 
+/**
+ * The text with its comments blanked, so an import or class left in a comment earns no credit and
+ * draws no violation. A `//` after a colon or a quote is kept: it starts a URL, not a comment.
+ */
+// shortcut: a regex, not a parser, so `//` or `/*` inside a string literal still counts as a
+// comment; upgrade to the TypeScript or Astro compiler if a run is ever graded wrong by it.
+function code(text: string): string {
+  return text
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/(^|[^:"'`])\/\/.*$/gm, "$1");
+}
+
 function specifiers(text: string): string[] {
   const found = [
     ...text.matchAll(/\bimport\s+(?:[^'"]*?\sfrom\s+)?["']([^"']+)["']/g),
@@ -65,7 +78,8 @@ export function gradeFiles(
   resolves: (subpath: string) => boolean,
   expect: Expect[],
 ): FileGrade {
-  const all = files.flatMap((file) => specifiers(file.text));
+  const sources = files.map((file) => code(file.text));
+  const all = sources.flatMap(specifiers);
   const own = all.filter((spec) => spec === PACKAGE || spec.startsWith(`${PACKAGE}/`));
   const invented = own.filter((spec) => !resolves(spec.slice(PACKAGE.length + 1)));
   const outsideUi = all.filter((spec) => OUTSIDE_UI.test(spec));
@@ -78,7 +92,7 @@ export function gradeFiles(
           ?.replace(/\.(astro|tsx?)$/, "") ?? "",
     ),
   );
-  const classes = new Set(files.flatMap((file) => [...classesIn(file.text)]));
+  const classes = new Set(sources.flatMap((text) => [...classesIn(text)]));
   const missed = expect
     .filter(
       (want) =>

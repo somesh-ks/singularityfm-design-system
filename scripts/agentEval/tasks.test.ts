@@ -90,5 +90,17 @@ describe("the agent test's grading", () => {
       `${name}/styles/card.css`,
     ]);
     expect(grade.met).toBe(1);
+    // An import left in a comment earns nothing: the agent did not use the part.
+    const commented = [
+      `// import Toast from "${name}/Toast";`,
+      `/* import Dialog from "${name}/Dialog"; */`,
+      `<!-- <div class="empty-state"></div> -->`,
+    ].join("\n");
+    const none = gradeFiles([{ path: "b.astro", text: commented }], resolves, [
+      { components: ["Toast"] },
+      { components: ["Dialog"] },
+      { classes: ["empty-state"] },
+    ]);
+    expect(none.met).toBe(0);
   });
 });

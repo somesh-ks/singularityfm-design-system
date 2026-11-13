@@ -206,8 +206,19 @@ function claude(prompt, cwd) {
     const child = spawn(program, rest, {
       cwd,
       shell: WINDOWS,
+      // Its own process group on macOS and Linux, so the timeout reaches the tools it started too.
+      detached: !WINDOWS,
       stdio: ["pipe", "pipe", "pipe"],
+      // Auto memory would carry a note from one task into the next and skew the later scores.
+      env: { ...process.env, CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1" },
     });
+    let settled = false;
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(transcript);
+    };
     let transcript = "";
     // Decoded as a stream, so a character split across two chunks survives; stderr is drained so a
     // chatty run cannot fill its pipe and stall.
@@ -216,14 +227,24 @@ function claude(prompt, cwd) {
     child.stdout.on("data", (chunk) => {
       transcript += chunk;
     });
+    const group = (signal) => {
+      try {
+        process.kill(-child.pid, signal);
+      } catch {
+        // The group has already exited.
+      }
+    };
+    // A tool that keeps the pipes open would hold `close` back forever, so after a grace period
+    // the group is killed and the run settles with what it wrote.
     const timer = setTimeout(() => {
       if (WINDOWS) tryRun("taskkill", ["/pid", String(child.pid), "/T", "/F"], cwd);
-      else child.kill("SIGTERM");
+      else group("SIGTERM");
+      setTimeout(() => {
+        if (!WINDOWS && !settled) group("SIGKILL");
+        settle();
+      }, 10_000).unref();
     }, timeoutMinutes * 60_000);
-    child.on("close", () => {
-      clearTimeout(timer);
-      resolve(transcript);
-    });
+    child.on("close", settle);
     child.stdin.end(prompt);
   });
 }
@@ -243,13 +264,22 @@ function changedFiles(dir) {
   );
 }
 
+/** A record as written to disk: persisted keys are snake_case. */
+const snake = (row) =>
+  Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [
+      key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`),
+      value,
+    ]),
+  );
+
 const rows = [];
 mkdirSync(out, { recursive: true });
 for (const setup of setups) {
   const app = setup === "app" ? readerApp() : bareApp(setup === "bare-guide");
   try {
     const installed = join(app.root, "node_modules", PACKAGE);
-    const { exports: exportsMap } = JSON.parse(
+    const { exports: exportsMap, version: installedVersion } = JSON.parse(
       readFileSync(join(installed, "package.json"), "utf8"),
     );
     const resolves = (subpath) => {
@@ -292,6 +322,8 @@ for (const setup of setups) {
       const row = {
         setup,
         task: task.id,
+        // The reader app keeps the version its lockfile pins, which can differ from the others.
+        package: installedVersion,
         ...runStats(transcript),
         minutes,
         ...grade,
@@ -300,7 +332,7 @@ for (const setup of setups) {
         compiled,
       };
       rows.push(row);
-      writeFileSync(join(out, setup, `${task.id}.json`), JSON.stringify(row, null, 2));
+      writeFileSync(join(out, setup, `${task.id}.json`), JSON.stringify(snake(row), null, 2));
       git(app.dir, "reset", "-q", "--hard");
       git(app.dir, "clean", "-qfd");
     }
@@ -309,13 +341,13 @@ for (const setup of setups) {
   }
 }
 
-writeFileSync(join(out, "summary.json"), JSON.stringify({ version, rows }, null, 2));
+writeFileSync(join(out, "summary.json"), JSON.stringify({ rows: rows.map(snake) }, null, 2));
 const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] ?? 0;
 const lines = [
-  `Package ${version}, ${stamp}, model ${rows[0]?.model ?? "?"}. Medians are over finished runs; tokens count cache reads.`,
+  `${stamp}, model ${rows[0]?.model ?? "?"}. Medians are over finished runs; tokens count cache reads.`,
   "",
-  "| Setup | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |",
-  "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+  "| Setup | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |",
+  "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
 ];
 for (const setup of setups) {
   const mine = rows.filter((row) => row.setup === setup);
@@ -326,7 +358,7 @@ for (const setup of setups) {
     ? "?"
     : sum((row) => row.validateErrors);
   lines.push(
-    `| ${setup} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes))} | ${median(done.map((row) => row.tokens))} | ${median(done.map((row) => row.toolCalls))} |`,
+    `| ${setup} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes))} | ${median(done.map((row) => row.tokens))} | ${median(done.map((row) => row.toolCalls))} |`,
   );
 }
 writeFileSync(join(out, "summary.md"), `${lines.join("\n")}\n`);
