@@ -1,16 +1,21 @@
-// The agent test (DS-14, plan v2 step 3): give Claude Code each task in tasks.json, in up to three
-// setups, and grade what it wrote with no model call. It runs on the owner's computer, on his own
-// Claude sign-in (no API key), and keeps transcripts there; only the summary rows get committed.
+// The agent test (DS-14, DS-15, plan v2 step 3): give a coding agent each task in tasks.json, in up
+// to three setups, and grade what it wrote with no model call. It runs on the owner's computer, on his
+// own sign-ins (no API key), and keeps transcripts there; only the summary rows get committed.
 //
 //   node scripts/agentEval/run.mjs --app <path to singularityfm-app>   all three setups
 //   node scripts/agentEval/run.mjs --setups bare-guide,bare            no app checkout needed
+//   node scripts/agentEval/run.mjs --app <path> --agents claude,antigravity   both agents, same setups
 //
 // Setups: `app` is the reader as it is (a worktree of its origin/main, its own AGENTS.md, hooks and
 // project settings); `bare-guide` is a new Astro app with the package installed and the one line the
 // package's guide asks an app to add; `bare` is the same app without that line.
-// Options: --tasks id,id  --version <package version> (default: npm latest)  --model <name>
-//   --timeout <minutes per task, default 15>  --user-settings (also load your own Claude settings and
-//   plugins, to compare a run with them)  --out <folder> (default scripts/agentEval/runs, gitignored).
+// Agents: `claude` (Claude Code, the default) and `antigravity` (the Antigravity CLI, `agy`). Both read
+// the setup's AGENTS.md. Claude Code may edit files and run pnpm, npx, ls and cat; `agy` has no such
+// list outside its global settings, so it runs with every tool approved inside its terminal sandbox.
+// Options: --agents claude,antigravity  --tasks id,id  --version <package version> (default: npm
+//   latest)  --model <name> (passed to every agent listed)  --timeout <minutes per task, default 15>
+//   --user-settings (Claude Code only: also load your own settings and plugins, to compare a run with
+//   them)  --out <folder> (default scripts/agentEval/runs, gitignored).
 //
 // Each task gets the same suffix: build it as a page at a named path, add no dependency. Grading reads
 // the changed files: imports the package does not export, other UI libraries, the expected part, `ds
@@ -35,12 +40,17 @@ const { tasks: allTasks } = JSON.parse(readFileSync(join(HERE, "tasks.json"), "u
 const wanted = option("tasks");
 const tasks = wanted ? allTasks.filter((task) => wanted.split(",").includes(task.id)) : allTasks;
 const timeoutMinutes = Number(option("timeout", "15"));
+const AGENTS = ["claude", "antigravity"];
+const agents = option("agents", "claude").split(",");
+const unknown = agents.filter((agent) => !AGENTS.includes(agent));
+if (unknown.length)
+  throw new Error(`--agents takes ${AGENTS.join(", ")}; not ${unknown.join(", ")}`);
 const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
 const out = join(option("out", join(HERE, "runs")), stamp);
 
-// Windows starts `pnpm.cmd` and `claude.cmd` only through a shell. No command or argument here holds
-// a quote, so quoting each one (the command too: Node's own path has a space in Program Files) is
-// enough for cmd.
+// Windows starts `pnpm.cmd`, `claude.cmd` and `agy.cmd` only through a shell. No command or
+// argument here holds a quote, so quoting each one (the command too: Node's own path has a space in
+// Program Files) is enough for cmd.
 const quoted = (words) => (WINDOWS ? words.map((word) => `"${word}"`) : words);
 function run(command, commandArgs, cwd, input) {
   const [program, ...rest] = quoted([command, ...commandArgs]);
@@ -182,9 +192,27 @@ function readerApp() {
   });
 }
 
-/** One Claude Code run, prompt on stdin, transcript as stream-json; killed at the timeout. */
-function claude(prompt, cwd) {
-  const claudeArgs = [
+/** The command line for one run of an agent and what goes on its stdin. */
+function agentCall(agent, prompt) {
+  if (agent === "antigravity") {
+    // The prompt goes in as a stream-json `user` event, so no shell quoting touches it; closing stdin
+    // after it ends the session once the turn is done. Every tool is approved, so it runs in the
+    // terminal sandbox (workspace and temp folders, no network) where the platform has one; `agy`
+    // runs without it where it has none, and the push block in runAgent is what stays.
+    const call = [
+      "agy",
+      "--input-format",
+      "stream-json",
+      "--output-format",
+      "stream-json",
+      "--dangerously-skip-permissions",
+      "--sandbox",
+    ];
+    if (option("model")) call.push("--model", option("model"));
+    return { call, input: `${JSON.stringify({ event: "user", message: { content: prompt } })}\n` };
+  }
+  const call = [
+    "claude",
     "-p",
     "--output-format",
     "stream-json",
@@ -192,40 +220,59 @@ function claude(prompt, cwd) {
     "--permission-mode",
     "acceptEdits",
   ];
-  claudeArgs.push(
+  call.push(
     "--allowedTools",
     "Read,Edit,Write,Glob,Grep,Bash(pnpm:*),Bash(npx:*),Bash(ls:*),Bash(cat:*)",
   );
-  claudeArgs.push(
+  call.push(
     "--setting-sources",
     args.includes("--user-settings") ? "user,project,local" : "project,local",
   );
-  if (option("model")) claudeArgs.push("--model", option("model"));
+  if (option("model")) call.push("--model", option("model"));
+  return { call, input: prompt };
+}
+
+/** One agent run, its transcript as stream-json and its stderr; killed at the timeout. */
+function runAgent(agent, prompt, cwd) {
+  const { call, input } = agentCall(agent, prompt);
   return new Promise((resolve) => {
-    const [program, ...rest] = quoted(["claude", ...claudeArgs]);
+    const [program, ...rest] = quoted(call);
     const child = spawn(program, rest, {
       cwd,
       shell: WINDOWS,
       // Its own process group on macOS and Linux, so the timeout reaches the tools it started too.
       detached: !WINDOWS,
       stdio: ["pipe", "pipe", "pipe"],
-      // Auto memory would carry a note from one task into the next and skew the later scores.
-      env: { ...process.env, CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1" },
+      env: {
+        ...process.env,
+        // Auto memory would carry a note from one task into the next and skew the later scores.
+        CLAUDE_CODE_DISABLE_AUTO_MEMORY: "1",
+        // A push from the reader's worktree would reach the owner's real repository; git reads this
+        // for every command the agent starts, and the owner's own git config is left as it is.
+        GIT_CONFIG_COUNT: "1",
+        GIT_CONFIG_KEY_0: "remote.origin.pushurl",
+        GIT_CONFIG_VALUE_0: "agent-test-no-push",
+      },
     });
     let settled = false;
     const settle = () => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
-      resolve(transcript);
+      resolve({ transcript, errors });
     };
     let transcript = "";
-    // Decoded as a stream, so a character split across two chunks survives; stderr is drained so a
-    // chatty run cannot fill its pipe and stall.
+    let errors = "";
+    // Decoded as a stream, so a character split across two chunks survives; stderr is read as it
+    // comes, so a chatty run cannot fill its pipe and stall, and kept, so a failed sign-in or a
+    // refused tool is on record.
     child.stdout.setEncoding("utf8");
-    child.stderr.resume();
+    child.stderr.setEncoding("utf8");
     child.stdout.on("data", (chunk) => {
       transcript += chunk;
+    });
+    child.stderr.on("data", (chunk) => {
+      errors += chunk;
     });
     const group = (signal) => {
       try {
@@ -245,7 +292,16 @@ function claude(prompt, cwd) {
       }, 10_000).unref();
     }, timeoutMinutes * 60_000);
     child.on("close", settle);
-    child.stdin.end(prompt);
+    // A missing `agy` or `claude`, or one that exits before reading its prompt, ends this run with
+    // the reason on record instead of stopping the whole test with the worktree left behind.
+    child.on("error", (error) => {
+      errors += `${error.message}\n`;
+      settle();
+    });
+    child.stdin.on("error", (error) => {
+      errors += `${error.message}\n`;
+    });
+    child.stdin.end(input);
   });
 }
 
@@ -289,15 +345,19 @@ for (const setup of setups) {
     const ds = join(installed, "bin/ds.mjs");
     // A tree that fails `astro check` before any task cannot say whether a task broke it.
     const checks = tryRun("pnpm", ["exec", "astro", "check"], app.root).ok;
-    for (const task of tasks) {
+    for (const [agent, task] of agents.flatMap((agent) => tasks.map((task) => [agent, task]))) {
       const page = `${app.pages}/eval/${task.id}.astro`;
       const prompt = `${task.prompt}\n\nBuild it as a page at ${page} in this project. Do not add dependencies.`;
-      console.log(`${setup} / ${task.id} ...`);
+      console.log(`${setup} / ${agent} / ${task.id} ...`);
       const started = Date.now();
-      const transcript = await claude(prompt, app.dir);
+      const { transcript, errors } = await runAgent(agent, prompt, app.dir);
       const minutes = Math.round((Date.now() - started) / 6000) / 10;
-      mkdirSync(join(out, setup), { recursive: true });
-      writeFileSync(join(out, setup, `${task.id}.jsonl`), transcript);
+      const folder = join(out, setup, agent);
+      mkdirSync(folder, { recursive: true });
+      writeFileSync(join(folder, `${task.id}.jsonl`), transcript);
+      if (errors) writeFileSync(join(folder, `${task.id}.stderr.txt`), errors);
+      if (!transcript.trim())
+        console.log(`  ${agent} wrote no transcript; its stderr is beside the others in ${folder}`);
       const paths = changedFiles(app.dir);
       const files = paths.map((path) => ({
         path,
@@ -321,10 +381,11 @@ for (const setup of setups) {
       const compiled = checks ? tryRun("pnpm", ["exec", "astro", "check"], app.root).ok : null;
       const row = {
         setup,
+        agent,
         task: task.id,
         // The reader app keeps the version its lockfile pins, which can differ from the others.
         package: installedVersion,
-        ...runStats(transcript),
+        ...runStats(transcript, agent),
         minutes,
         ...grade,
         files: paths,
@@ -332,7 +393,7 @@ for (const setup of setups) {
         compiled,
       };
       rows.push(row);
-      writeFileSync(join(out, setup, `${task.id}.json`), JSON.stringify(snake(row), null, 2));
+      writeFileSync(join(folder, `${task.id}.json`), JSON.stringify(snake(row), null, 2));
       git(app.dir, "reset", "-q", "--hard");
       git(app.dir, "clean", "-qfd");
     }
@@ -344,13 +405,13 @@ for (const setup of setups) {
 writeFileSync(join(out, "summary.json"), JSON.stringify({ rows: rows.map(snake) }, null, 2));
 const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] ?? 0;
 const lines = [
-  `${stamp}, model ${rows[0]?.model ?? "?"}. Medians are over finished runs; tokens count cache reads.`,
+  `${stamp}. Medians are over finished runs; tokens count cache reads. Paste the rows under the scorecard's.`,
   "",
-  "| Setup | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |",
-  "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+  "| Date | Setup | Agent | Model | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |",
+  "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
 ];
-for (const setup of setups) {
-  const mine = rows.filter((row) => row.setup === setup);
+for (const [setup, agent] of setups.flatMap((setup) => agents.map((agent) => [setup, agent]))) {
+  const mine = rows.filter((row) => row.setup === setup && row.agent === agent);
   const count = (pick) => mine.filter(pick).length;
   const sum = (pick) => mine.reduce((total, row) => total + pick(row), 0);
   const done = mine.filter((row) => row.finished);
@@ -358,7 +419,7 @@ for (const setup of setups) {
     ? "?"
     : sum((row) => row.validateErrors);
   lines.push(
-    `| ${setup} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes))} | ${median(done.map((row) => row.tokens))} | ${median(done.map((row) => row.toolCalls))} |`,
+    `| ${stamp.slice(0, 10)} | ${setup} | ${agent} | ${mine.find((row) => row.model)?.model ?? "?"} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes))} | ${median(done.map((row) => row.tokens))} | ${median(done.map((row) => row.toolCalls))} |`,
   );
 }
 writeFileSync(join(out, "summary.md"), `${lines.join("\n")}\n`);
