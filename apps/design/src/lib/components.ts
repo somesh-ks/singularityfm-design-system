@@ -202,7 +202,7 @@ export const SPECS: readonly ComponentSpec[] = [
       if (state.size === "small") attrs.push('size="small"');
       if (state.element === "link") attrs.push('href="/path"');
       else if (on(state, "disabled")) attrs.push("disabled");
-      return jsx("Button", attrs, state.variant === "danger" ? SAMPLE.danger : SAMPLE.label);
+      return jsx("Button", attrs, SAMPLE.label);
     },
     note: "A link is a Button with an href; a link cannot be disabled, so the switch applies to the button.",
   },
