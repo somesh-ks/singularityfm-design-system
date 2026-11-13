@@ -33,7 +33,12 @@ export const PARTS: PartSource[] = [
     when: ["jump to the sections of a briefing or an episode", "tabs inside a card"],
     not: [{ when: "switching between two views", use: "segmented-nav" }],
     keywords: ["anchor links", "section nav"],
-    rules: ["Drawn only for two sections or more."],
+    markup:
+      '<SectionTabs sections={[{ slug: "stories", title: "Stories" }, { slug: "sources", title: "Sources" }]} />',
+    rules: [
+      "Drawn only for two sections or more.",
+      "Each section's slug names its target: the section the tab jumps to has id `c-<slug>`.",
+    ],
   },
   {
     id: "row-action",

@@ -3,7 +3,8 @@ import type { IconName } from "@singularity/design-system/icons";
 /**
  * The owner's taste as reusable rules, mined from the design-engineering ledger, the decisions and
  * his own messages. The words behind each rule live in those records, named by D-number. A rule
- * changes only when he says so.
+ * changes only when he says so, and a rule an agent must follow on every screen changes in the
+ * package's tokens/foundations.md in the same PR (DS-12).
  */
 
 export interface TasteValue {

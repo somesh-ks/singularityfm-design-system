@@ -1,6 +1,6 @@
 {
   "name": "@singularityfm/design-system",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Singularity's design system: React components (Base UI where they have behaviour), stylesheets, tokens, fonts and flags.",
   "license": "MIT",
   "repository": {
@@ -9,7 +9,11 @@
     "directory": "packages/design-system"
   },
   "type": "module",
+  "bin": {
+    "ds": "./bin/ds.mjs"
+  },
   "files": [
+    "bin",
     "src",
     "styles",
     "tokens",
@@ -33,6 +37,7 @@
   },
   "scripts": {
     "build": "tsx scripts/buildTokens.ts",
+    "prepack": "node scripts/bundleCli.mjs",
     "test": "vitest run"
   },
   "exports": {
@@ -98,6 +103,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "astro": "^7.4.4",
+    "esbuild": "0.28.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tsx": "^4.23.15",

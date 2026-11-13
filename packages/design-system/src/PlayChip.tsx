@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes } from "react";
 import { passedAttributes } from "./attributes.ts";
 import Icon from "./Icon.tsx";
 import PlayingBars from "./PlayingBars.tsx";
-import type { PlayChipState } from "./playChip.ts";
+import { type PlayChipState, playChipClass } from "./playChip.ts";
 
 interface PlayChipProps {
   /** The visible words: a length such as "1:24", or a state such as "Playing". */
@@ -16,6 +16,11 @@ interface PlayChipProps {
    * Loading, Playing, Paused and Try again.
    */
   reserve?: string;
+  /**
+   * The page's one main Play: the primary fill, and the pause glyph while it plays instead of the bars.
+   * Experimental (DS-11): it may change or go in a minor release (playChip.ts says why it exists).
+   */
+  primary?: boolean;
   /**
    * For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. An
    * Astro page passes className too: @astrojs/react drops a `class` prop.
@@ -38,6 +43,7 @@ export default function PlayChip({
   label,
   state = "idle",
   reserve = "Play again",
+  primary = false,
   className,
   type = "button",
   slot: _slot,
@@ -45,7 +51,7 @@ export default function PlayChip({
 }: Props) {
   return (
     <button
-      className={["chip", className].filter(Boolean).join(" ")}
+      className={[playChipClass(primary), className].filter(Boolean).join(" ")}
       type={type}
       data-state={state}
       data-playing="false"

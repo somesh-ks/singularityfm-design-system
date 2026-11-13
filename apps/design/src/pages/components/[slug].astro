@@ -1,14 +1,15 @@
 ---
+import Badge from "@singularity/design-system/Badge";
 import Code from "@singularity/design-system/Code";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
 import Select from "@singularity/design-system/Select";
 import Switch from "@singularity/design-system/Switch";
 import Toast from "@singularity/design-system/Toast";
+import system from "@singularity/design-system/tokens/system.json";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import PageHead from "../../components/PageHead.astro";
 import Shell from "../../layouts/Shell.astro";
 import { allStates, codeFor, initialState, labelOf, SPECS, stateKey } from "../../lib/components";
-import { propsTable } from "../../lib/propsTable";
 
 export function getStaticPaths() {
   return SPECS.map((spec) => ({ params: { slug: spec.slug }, props: { spec } }));
@@ -16,19 +17,26 @@ export function getStaticPaths() {
 
 const { spec } = Astro.props;
 
-// The library's own sources, read for the props tables: the table is the Props interface, not a copy.
-const sources = import.meta.glob("../../../../../packages/design-system/src/*.{astro,tsx}", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-}) as Record<string, string>;
-const sourceOf = (file: string): string =>
-  Object.entries(sources).find(([path]) => path.endsWith(`/${file}`))?.[1] ?? "";
+// The props tables come from system.json, which the package builds from each component's own Props
+// interface, so the guide, `ds part` and an agent read the same rows.
+const propsOf = (
+  file: string,
+): { rows: (typeof system.components)[number]["props"]; element?: string } => {
+  const component = system.components.find((candidate) => candidate.file.endsWith(`/${file}`));
+  return {
+    rows: component?.props ?? [],
+    ...(component?.element ? { element: component.element } : {}),
+  };
+};
 
 const registered = REGISTRY.find((component) => component.name === spec.registry);
 const guidance = registered ?? spec.guidance;
 const parts = Object.values(registered?.parts ?? {}) as { label?: string; summary: string }[];
-const table = spec.file ? propsTable(sourceOf(spec.file)) : undefined;
+const table = spec.file ? propsOf(spec.file) : undefined;
+// Its experimental options (DS-11): listed with their case and date, and a variant among them says so.
+const experimental = registered?.experimental ?? [];
+const isExperimental = (variant: string): boolean =>
+  experimental.some((item) => item.option === `variant="${variant}"`);
 
 const start = initialState(spec);
 const states = allStates(spec.controls);
@@ -139,8 +147,32 @@ const hasStage = !spec.noPreview;
           <h2 class="section-head text-heading" id="variants">Variants</h2>
           {Object.entries(registered?.parts ?? {}).map(([id, part]) => (
             <div class="guide-variant">
-              <h3 class="guide-variant-name">{(part as { label?: string }).label ?? id}</h3>
+              <h3 class="guide-variant-name">
+                {(part as { label?: string }).label ?? id}
+                {isExperimental(id) && <Badge className="guide-experimental">Experimental</Badge>}
+              </h3>
               <p class="guide-prose">{part.summary}</p>
+            </div>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      experimental.length > 0 && (
+        <section aria-labelledby="experimental">
+          <h2 class="section-head text-heading" id="experimental">Experimental options</h2>
+          <p class="guide-prose">
+            Kept for one screen's case (DS-11). Each may change or go in a minor release; it becomes
+            stable once two screens or more use it unchanged for four weeks and the owner agrees.
+          </p>
+          {experimental.map((item) => (
+            <div class="guide-variant">
+              <h3 class="guide-variant-name">
+                <code>{item.option}</code>
+                <Badge className="guide-experimental">Experimental</Badge>
+              </h3>
+              <p class="guide-prose">{item.reason} Since {item.since}.</p>
             </div>
           ))}
         </section>
@@ -178,7 +210,7 @@ const hasStage = !spec.noPreview;
         <section aria-labelledby="subparts">
           <h2 class="section-head text-heading" id="subparts">Subparts</h2>
           {spec.subparts?.map((part) => {
-            const subtable = propsTable(sourceOf(part.file));
+            const subtable = propsOf(part.file);
             return (
               <div class="guide-variant">
                 <h3 class="guide-variant-name">{part.name}</h3>

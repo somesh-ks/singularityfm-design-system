@@ -1,6 +1,6 @@
 # Look, tokens and type
 
-Ledger section 3, one surface. Read [the core](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design-engineering-ledger.md) first (taste in section 1, how to work in section 2, the phone in section 11). Each row: the ask, what was built, the decision; if a decision and a row disagree, the decision wins.
+Ledger section 3, one surface. Read [taste.md](taste.md) first (sections 1 and 11), and the app's [ledger core](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design-engineering-ledger.md) for how to work with the owner (section 2). Each row: the ask, what was built, the decision; if a decision and a row disagree, the decision wins.
 
 ## Look, tokens and type
 - **Look.** Hand-written CSS from DTCG tokens, Base UI for accessible parts; Tailwind and shadcn rejected as a templated look (D4). The first ask was "a light ui library to keep things elegant and high quality" (2026-10-05).

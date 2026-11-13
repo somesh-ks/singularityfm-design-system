@@ -7,10 +7,14 @@ Add one line to your app's own AGENTS.md so this file is read:
 Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and follow it.
 ```
 
+## Read the foundations first
+
+`tokens/foundations.md` holds the rules for every screen: the grid, the text and colour roles, what never moves, the words, the phone. Read it before any UI.
+
 ## Find the part before you write anything
 
-1. Ask the lookup: `ds find "<what you need>"`. It names the part, what to import, the markup, when not to use it and the tokens it reads. `ds part <id>` shows one part, `ds token <words>` a token. `ds` is `tsx node_modules/@singularityfm/design-system/scripts/system/cli.ts` (an app usually wraps it as `pnpm run ds`).
-2. No lookup? Read `tokens/llms.txt` (one page: every part, the colour roles, the scales). `tokens/system.json` holds everything.
+1. Ask the lookup: `ds find "<what you need>"`. It names the part, what to import, the markup, when not to use it and the tokens it reads. `ds part <id>` shows one part with the props of each component it imports (`ds part Avatar` takes a component's name too), `ds token <words>` a token. `ds` is the package's own command: `pnpm exec ds` (`npx ds` with npm). Add `--json` for data, and ask several at once with `ds batch "find <need>" "part <id>"`.
+2. No lookup? Read `tokens/llms.txt` (one page: every part, the colour roles, the scales), then the part's page it links (`tokens/parts/<id>.md`: import, markup, props, tokens). `tokens/llms-full.txt` is every page in one file; `tokens/system.json` holds the data. Without the package, the style guide serves the same files under news.someshks.work/design/.
 3. Nothing fits: stop and ask the owner. Do not invent a class, and do not restyle a part from a page.
 
 ## Rules
@@ -21,6 +25,7 @@ Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and 
 - Text roles are the `--text-*` tokens and the `.text-*` classes. Icons are `Icon`; flags are `Flag`, never an emoji.
 - A control's box does not change with its state. Reserve room (`reserve` on `PlayChip`, `Button`, `Fab`) instead of measuring.
 - Leave a rule or markup that carries a rationale comment alone.
+- An option the lookup marks experimental (DS-11: `Field` `tonal`, `Menu` `flush`, ...) may change or go in a minor release: use it only where its reason fits, and prefer a stable option.
 - `@singularityfm/design-system/<Name>.astro` paths are retired: import `<Name>`.
 
 ## Setup the package expects
@@ -31,4 +36,4 @@ Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and 
 
 ## Check your work
 
-`ds validate <files or globs>` runs the package's rules: raw colour, off-grid spacing, an unknown custom property, a component class typed by a page, a retired import, a raw pixel length. It exits 1 on an error. A biome user extends `@singularityfm/design-system/rules/biome-config.json` for the raw-colour rule.
+`ds validate <files or globs>` runs the package's rules: raw colour, off-grid spacing, an unknown custom property, a component class typed by a page, a retired import, a raw pixel length. It exits 1 on an error. `ds version` names the package and the build of `system.json` that answered. A biome user extends `@singularityfm/design-system/rules/biome-config.json` for the raw-colour rule.

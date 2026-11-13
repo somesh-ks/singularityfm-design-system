@@ -1,5 +1,6 @@
 import { readdirSync } from "node:fs";
 import { COMPONENTS } from "@singularity/design-system/registry";
+import system from "@singularity/design-system/tokens/system.json";
 import { describe, expect, it } from "vitest";
 import { SPECS } from "./components";
 
@@ -21,6 +22,15 @@ describe("the guide's component pages", () => {
     expect(files.filter((file) => !shown.has(file))).toEqual([]);
     // A renamed file a spec still names would drop that page's props table without failing the build.
     expect([...shown].filter((file) => file !== undefined && !files.includes(file))).toEqual([]);
+    // The props tables read system.json, which lists only what the exports map names: a file it
+    // misses would show an empty table.
+    expect(
+      [...shown].filter(
+        (file) =>
+          file !== undefined &&
+          !system.components.some((component) => component.file.endsWith(`/${file}`)),
+      ),
+    ).toEqual([]);
     expect(
       COMPONENTS.map((component) => component.name).filter(
         (name) => !SPECS.some((spec) => spec.registry === name),

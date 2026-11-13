@@ -1,4 +1,6 @@
 /** The shape of the machine-readable design system (tokens/system.json). */
+import type { Experimental } from "../../src/guidance.js";
+import type { PropRow } from "./props.js";
 
 export type PartKind =
   | "action"
@@ -31,6 +33,8 @@ export interface PartSource {
   markup?: string;
   /** Rules the tests do not hold. */
   rules?: string[];
+  /** Its options that are experimental (DS-11), from the component's registry entry; the rest are stable. */
+  experimental?: Experimental[];
 }
 
 export interface Part extends PartSource {
@@ -59,10 +63,25 @@ export interface SystemToken {
   reducedMotion?: string;
 }
 
+/** A component the package exports, with the props its own source declares. */
+export interface Component {
+  /** The export name: "Button". */
+  name: string;
+  /** What to import: "@singularityfm/design-system/Button". */
+  import: string;
+  /** Its source, as a repo path. */
+  file: string;
+  props: PropRow[];
+  /** The element whose attributes it also passes through, when it does. */
+  element?: string;
+}
+
 export interface System {
   /** Where the file comes from and how to refresh it. */
   generated: string;
   parts: Part[];
+  /** Every component the package exports, with its props. A part's imports name them. */
+  components: Component[];
   tokens: SystemToken[];
   /** Custom properties the stylesheets declare beside the tokens, by name. */
   properties: string[];
