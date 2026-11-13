@@ -1,6 +1,6 @@
 # State
 
-Rewritten, never appended. As of 2026-11-13: 0.11.0 is on npm; the app pins 0.9.1. The repository is public (owner, 2026-11-10), so CodeRabbit reviews line by line.
+Rewritten, never appended. As of 2026-11-13: 0.12.0 is on npm; the app pins 0.9.1. The repository is public (owner, 2026-11-10), so CodeRabbit reviews line by line.
 
 ## Works
 
@@ -59,5 +59,5 @@ The order is the design system master plan's (owner, 2026-11-08). DS-8 drew ever
 1. The app's page overrides move into library variants, each drawing as it does today (owner's call open; stills show no change).
 2. The Play button stays the app's own icon-only button (owner, 2026-11-11), so it needs no Fab variant.
 3. `release.yml` opens a version pull request from pending changesets; it merges itself once `check` is green, and merging it publishes.
-4. Agent readiness (DS-14; plan v2: https://claude.ai/artifact/CUefDiCgrGCqxPvM1SzEdX). `ds` is a package `bin`, `system.json` carries every component's props, part pages, `llms-full.txt` and `foundations.md` ship (DS-12). In order: a scorecard page on the agent-ready rubric with a summary check; a Claude-only baseline run on the owner's computer; the app's hand-kept control docs replaced by links; CI checks with no model calls (every component findable, every prop described, unknown imports, the library passes its own `ds validate`); one docs shape per component with accessibility, composition and examples; a patterns layer with the empty state and sheet form fields moved in; a thin skill in a Claude Code plugin; axe and keyboard flows in this repository's CI. Closed when: the strict rescore puts every criterion of categories 1 to 4 at 2 or more, or names the accepted gap.
+4. Agent readiness (DS-14; plan v2: https://claude.ai/artifact/CUefDiCgrGCqxPvM1SzEdX). `ds` is a package `bin`, `system.json` carries every component's props, part pages, `llms-full.txt` and `foundations.md` ship (DS-12). Done: the scorecard ([agent-readiness.md](agent-readiness.md), tier 0 at 0.12.0, checked by `docsCheck`). Next, in order: a Claude-only baseline run on the owner's computer; the app's hand-kept control docs replaced by links; CI checks with no model calls (every component findable, every prop described, unknown imports, the library passes its own `ds validate`); one docs shape per component with accessibility, composition and examples; a patterns layer with the empty state and sheet form fields moved in; a thin skill in a Claude Code plugin; axe and keyboard flows in this repository's CI. Closed when: the strict rescore puts every criterion of categories 1 to 4 at 2 or more, or names the accepted gap.
 5. 1.0.0 retires the `.astro` shims once COMPATIBILITY.md's window has passed (a major, under the same merge rule).
