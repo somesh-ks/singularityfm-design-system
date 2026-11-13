@@ -31,14 +31,14 @@ A tinted block with an icon, a title, an optional line and at most one text butt
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `tone` | `"warning" \| "danger" \| "success"` | - | - |
-| `variant?` | `"block" \| "strip"` | - | "strip" is a band across the width for a state of the device; the place that holds it makes room for it. |
-| `icon` | `IconName` | - | - |
-| `iconFrom?` | `IconName` | - | A strip only: the glyph the icon is drawn over and strikes through (Wi-Fi, then Offline). |
 | `title` | `string` | - | - |
 | `body?` | `string` | - | - |
-| `bodyId?` | `string` | - | An id for the body line (the title when there is none), so a control the banner explains can point at it (aria-describedby). |
+| `icon` | `IconName` | - | - |
+| `iconFrom?` | `IconName` | - | A strip only: the glyph the icon is drawn over and strikes through (Wi-Fi, then Offline). |
 | `action?` | `{ label: string; href: string }` | - | One way on, as a text button. A link, so it works for any reader and without script. |
+| `variant?` | `"block" \| "strip"` | - | "strip" is a band across the width for a state of the device; the place that holds it makes room for it. |
+| `tone` | `"warning" \| "danger" \| "success"` | - | - |
+| `bodyId?` | `string` | - | An id for the body line (the title when there is none), so a control the banner explains can point at it (aria-describedby). |
 
 ## Tokens it reads
 

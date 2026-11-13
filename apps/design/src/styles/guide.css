@@ -780,19 +780,32 @@
     opacity: 1;
   }
 
-  /* The page's own row runs under its chevron, so its words stop clear of it. */
-  .guide-nav-group > .app-nav-item {
-    padding-inline-end: calc(var(--size-touch) + var(--space-2));
+  /* The column is a step wider than the reader's (shell.css): it holds a chevron after the longest
+     name, "Components", with the same room either side of the name as the glyph before it has (owner,
+     2026-11-13: the chevron stood 2px from the word). */
+  :root {
+    --side-nav-width: calc(var(--nav-side-width) + var(--space-4) + var(--safe-left));
   }
 
-  /* The chevron sits on the row's end and turns when it opens. Its target ends with the row (the
-     group's padding past it), and its glyph is the system's chevron after a label (--size-icon-sm):
-     at the button's 24px it stood 2px from "Components", and its 44px target covered the word's last
-     letters, so a press there opened the list instead of the page (2026-11-10). */
+  /* The page's own row runs under its chevron, so its words stop one icon gap short of the glyph. */
+  .guide-nav-group > .app-nav-item {
+    padding-inline-end: calc(var(--space-4) + var(--size-icon-sm) + var(--space-4));
+  }
+
+  /* The chevron sits on the row's end and turns when it opens. Its glyph is the system's chevron after
+     a label (--size-icon-sm), as far in from the row's end as the page's glyph is from its start; its
+     44px target is centred on it and stops short of the words, so a press on a word goes to its page
+     (2026-11-10: at the button's 24px it stood 2px from "Components" and its target covered the
+     word's last letters). */
   .guide-nav-toggle {
     position: absolute;
     inset-block-start: calc((var(--nav-side-item-height) - var(--size-touch)) / 2 + var(--space-1));
-    inset-inline-end: var(--space-1);
+    inset-inline-end: calc(
+      var(--space-1) +
+      var(--space-4) -
+      (var(--size-touch) - var(--size-icon-sm)) /
+      2
+    );
     display: inline-flex;
   }
 
@@ -1638,26 +1651,44 @@
 }
 
 /* ------------------------------------------------------------------ component pages
-   A page's live preview: a controls strip over a stage. Only layout lives here; the controls are the
-   library's Select and Switch, and what the stage shows is the component itself. */
+   A page's live preview: a stage over its controls, as a story's canvas sits over its controls panel
+   (owner, 2026-11-13: the controls go under the preview, their names read at the size of what they
+   set, and the words can be edited). The controls are a settings card: each row names a control in
+   the body size and holds the library's Select, Switch or Field at its end. Only layout lives here;
+   what the stage shows is the component itself. */
 
+/* The controls sit in two columns where the card has room for two rows side by side, one where it
+   does not (owner, 2026-11-13: "use the space optimally"). Each column is at least a short label and
+   its control wide, and never more than two, so a wide page does not scatter them. The columns are
+   two card paddings apart, so one row's control never reads as the next one's label. */
 .guide-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-6);
-  margin-block-end: var(--space-4);
-  /* The select chips are as tall as a field, as in the toolbar above. */
-  --chip-height: var(--field-height);
+  --guide-controls-gap: calc(var(--card-padding) * 2);
+  display: grid;
+  grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, max(20rem, (100% - var(--guide-controls-gap)) / 2)), 1fr)
+    );
+  column-gap: var(--guide-controls-gap);
+  row-gap: var(--card-inset);
+  margin-block-start: var(--space-4);
 }
 
-.guide-control {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--size-touch);
-  color: var(--color-on-surface-muted);
-  font-size: var(--font-size-label);
+/* The grid spaces the rows, so a row takes no margin of its own (a card stacks them with one). */
+.guide-controls.card-group > .settings-row + .settings-row {
+  margin-block-start: 0;
+}
+
+/* A name stays on one line; the field beside it gives way first. */
+.guide-controls .settings-label {
+  white-space: nowrap;
+}
+
+/* A text control is a field as wide as a short phrase, at the row's end like the others; on a narrow
+   row it gives way before its name does. */
+.guide-controls .guide-control-text {
+  inline-size: auto;
+  flex: 0 1 24ch;
+  min-inline-size: 0;
 }
 
 .guide-stage {

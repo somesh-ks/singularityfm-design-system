@@ -11,6 +11,7 @@ import { basename, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildSystem, systemFiles } from "./build.js";
 import { FOUNDATIONS_PATH, LLMS_PATH, PARTS_DIR, SYSTEM_PATH } from "./paths.js";
+import { PROP_ORDER, propsTable } from "./props.js";
 import { lookup, shownTokens } from "./query.js";
 import type { System } from "./types.js";
 import { usageComment } from "./usage.js";
@@ -110,6 +111,56 @@ describe("the design system file", () => {
       ),
     ];
     expect(missing).toEqual([]);
+  });
+
+  // Prevents a props table that hides or misnames what a component passes on: Link, Select and four
+  // others spread every attribute to their element and the table said nothing, and SegmentedChoice
+  // was said to take an input's attributes because its file types its inputs first, when its Props
+  // take a fieldset's. DialogTitle's props, in a type alias, were not read at all, and its page then
+  // said every heading attribute passes when it drops className.
+  it("names the element each component passes its attributes to", () => {
+    const silent = system.components.filter(
+      (component) =>
+        !component.element &&
+        /\.\.\.(rest|passed)\b/.test(
+          readFileSync(new URL(`../../../../${component.file}`, import.meta.url), "utf8"),
+        ),
+    );
+    expect(silent.map((component) => component.name)).toEqual([]);
+    const source = `import type { FieldsetHTMLAttributes, InputHTMLAttributes } from "react";
+type Item = InputHTMLAttributes<HTMLInputElement>;
+type Props = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "role"> & {
+  /** The legend. */
+  label: string;
+};`;
+    expect(propsTable(source)).toMatchObject({
+      element: "fieldset",
+      except: ["role"],
+      rows: [{ name: "label", required: true }],
+    });
+    // The same Props as an interface, and as an alias whose object comes first.
+    const item = "type Item = InputHTMLAttributes<HTMLInputElement>;\n";
+    const label = { element: "fieldset", rows: [{ name: "label", required: true }] };
+    expect(
+      propsTable(
+        `${item}interface Props extends FieldsetHTMLAttributes<HTMLFieldSetElement> {\n  label: string;\n}`,
+      ),
+    ).toMatchObject(label);
+    expect(
+      propsTable(`${item}type Props = {\n  label: string;\n} & ComponentProps<"fieldset">;`),
+    ).toMatchObject(label);
+  });
+
+  // Prevents a props table in the order its source happened to declare: Slider listed className and
+  // style before what it is, Badge className before its words (owner, 2026-11-13). Every table reads
+  // in one order, and a prop that order does not name would fall to the end unnoticed.
+  it("gives every documented prop its place in the reading order", () => {
+    const unplaced = system.components.flatMap((component) =>
+      component.props
+        .filter((prop) => !PROP_ORDER.includes(prop.name))
+        .map((prop) => `${component.name}.${prop.name}`),
+    );
+    expect(unplaced).toEqual([]);
   });
 
   // Prevents publishing an opaque hex for a translucent color: the scrim was listed as #151618, which

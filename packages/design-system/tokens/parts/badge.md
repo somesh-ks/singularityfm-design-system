@@ -31,8 +31,8 @@ A grey label holding one word or one number beside a name.
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `className?` | `string` | `""` | For placing the badge where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `children?` | `ReactNode` | - | The one word or one number it holds. |
+| `className?` | `string` | `""` | For placing the badge where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
 ## Tokens it reads
 

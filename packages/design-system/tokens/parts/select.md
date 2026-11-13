@@ -33,15 +33,17 @@ A native select with its own chevron.
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `variant?` | `"outlined" \| "tonal"` | `"outlined"` | Outlined for a value in a form, tonal for a sort or a filter (select.ts says which is which). |
 | `label?` | `string` | - | A name for a select that has no label of its own; read aloud, never drawn. Draws a label around it. |
-| `className?` | `string` | - | For placing the select where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
-| `reserve?` | `string` | - | A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `children?` | `ReactNode` | - | The options: `<option>` and `<optgroup>`, as a native select holds them. |
+| `variant?` | `"outlined" \| "tonal"` | `"outlined"` | Outlined for a value in a form, tonal for a sort or a filter (select.ts says which is which). |
+| `reserve?` | `string` | - | A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
+| `className?` | `string` | - | For placing the select where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
+
+Every attribute of a native `<select>` element passes through, except `style`.
 
 ## Tokens it reads
 
-`--button-radius` `--chip-height` `--color-accent` `--color-accent-container` `--color-accent-container-hover` `--color-border-hairline` `--color-focus-ring` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-muted` `--color-surface-container` `--color-surface-container-hover` `--color-surface-container-pressed` `--color-surface-overlay` `--color-surface-overlay-hover` `--color-surface-overlay-pressed` `--field-chevron-gap` `--shadow-popover` `--shape-2xl` `--size-icon` `--size-icon-sm` `--size-touch`
+`--button-radius` `--chip-height` `--color-accent` `--color-accent-container` `--color-accent-container-hover` `--color-border-hairline` `--color-focus-ring` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-muted` `--color-surface-container` `--color-surface-container-hover` `--color-surface-container-pressed` `--color-surface-overlay` `--color-surface-overlay-hover` `--color-surface-overlay-pressed` `--shadow-popover` `--shape-2xl` `--size-icon` `--size-icon-sm` `--size-touch`
 
 ## Where it is drawn
 

@@ -44,7 +44,7 @@ An outlined box for text a person types: one line, or several lines (multiline).
 | `tonal?` | `boolean` | `false` | The container's fill and no outline, for a form whose selects are tonal too (it writes data-tonal; an outlined Select there takes data-tonal itself). Experimental (DS-11): it may change or go in a minor release (field.ts says why it exists). |
 | `className?` | `string` | - | For placing the field where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
-Every attribute of a native `input` passes through.
+Every attribute of a native `<input>` element passes through, except `style`.
 
 ## Tokens it reads
 

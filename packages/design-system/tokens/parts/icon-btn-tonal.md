@@ -26,6 +26,7 @@ A circle on the container fill, beside a primary action.
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `label` | `string` | - | What a press does, for a screen reader: the glyph has no words ("Close", "Share"). |
+| `children` | `ReactNode` | - | The glyph: an Icon, or two that the button's state swaps between. |
 | `variant?` | `"standard" \| "tonal" \| "filled"` | `"standard"` | Standard (the default); tonal, the circle beside a primary action; or filled, a glyph that is the primary action, experimental (DS-11). iconButton.ts says when. |
 | `rowEnd?` | `boolean` | `false` | It ends a row: its glyph's ink lands where the words of the rows around it end (D187). |
 | `href?` | `string` | - | Draws a link instead of a button, for a glyph that goes to an address (Back). |
@@ -33,9 +34,8 @@ A circle on the container fill, beside a primary action.
 | `rel?` | `string` | - | - |
 | `className?` | `string` | - | For placing the button where it stands, or a hook a page's rule or script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
-| `children` | `ReactNode` | - | The glyph: an Icon, or two that the button's state swaps between. |
 
-Every attribute of a native `button` passes through.
+Every attribute of a native `<button>` element passes through.
 
 ## Props of Icon
 
