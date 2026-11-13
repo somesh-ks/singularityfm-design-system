@@ -790,7 +790,9 @@ html[data-nav-arrived] .app-nav-item:not([aria-current="page"]) .app-nav-indicat
 .banner-stack {
   position: sticky;
   inset-block-start: 0;
-  z-index: calc(var(--z-header) + 1);
+  /* Above the player (--z-mini), so the strip stays on top of everything that fills the window
+     (owner, 2026-11-13); under sheets and dialogs, which take the screen. */
+  z-index: calc(var(--z-mini) + 1);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
