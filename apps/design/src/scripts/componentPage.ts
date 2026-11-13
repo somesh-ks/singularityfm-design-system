@@ -7,6 +7,7 @@
 import { mountSegmentedNav } from "@singularity/design-system/segmentedNav";
 import { installSelectSheet } from "@singularity/design-system/selectSheet";
 import { showToast } from "@singularity/design-system/toastStore";
+import { inCode } from "../lib/codeWords";
 
 // A phone opens a Select's list as the standard bottom sheet (selectSheet.ts): the page installs it once.
 installSelectSheet();
@@ -53,19 +54,12 @@ if (root) {
   const quoted = words.size
     ? new RegExp(`(["'>])(${[...words.keys()].map(literal).join("|")})(["'<])`, "g")
     : undefined;
-  // The words are written as the code would need them: between tags a brace or bracket is a literal
-  // ({"{"}), in a JSX attribute a quote is an entity, in a JavaScript string it is escaped.
-  const escaped = (value: string, open: string, preceding: string): string => {
-    if (open === ">") return value.replace(/[{}<>]/g, (char) => `{"${char}"}`);
-    if (preceding === "=") return value.replaceAll(open, open === '"' ? "&quot;" : "&#39;");
-    return value.replace(/\\/g, "\\\\").replaceAll(open, `\\${open}`);
-  };
   const reword = (code: string): string =>
     quoted
       ? code.replace(
           quoted,
           (_, open: string, sample: string, close: string, at: number, whole: string) =>
-            `${open}${escaped(words.get(sample) ?? sample, open, whole[at - 1] ?? "")}${close}`,
+            `${open}${inCode(words.get(sample) ?? sample, open, whole[at - 1] ?? "")}${close}`,
         )
       : code;
   /** What a sample says now: the person's words where the page offers them. */
