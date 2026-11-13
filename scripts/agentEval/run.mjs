@@ -90,9 +90,12 @@ function inTemp(prefix, make) {
 /** A new Astro app with the package installed, committed so each task starts from the same tree. */
 const bareApp = (withGuideLine) =>
   inTemp("ds-agent-", (dir) => {
-    const peers = JSON.parse(
+    // npm 12 answers a `view <name>@<version> <field> --json` with a one-item array; older npm with
+    // the object itself.
+    const viewed = JSON.parse(
       run("npm", ["view", `${PACKAGE}@${version}`, "peerDependencies", "--json"], HERE),
     );
+    const peers = Array.isArray(viewed) ? (viewed[0] ?? {}) : viewed;
     mkdirSync(join(dir, "src/pages"), { recursive: true });
     mkdirSync(join(dir, "src/layouts"), { recursive: true });
     const write = (path, text) => writeFileSync(join(dir, path), text);
