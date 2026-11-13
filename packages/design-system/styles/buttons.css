@@ -534,12 +534,14 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: var(--chip-ring);
+  gap: calc(var(--chip-ring) * 2);
   height: var(--chip-icon);
 }
 
+/* Thin bars, near the line icons' weight beside them (owner, 2026-11-13: "the solid fill icons are
+   too thick"). */
 .chip-bars > i {
-  width: calc(var(--chip-ring) * 2);
+  width: calc(var(--chip-ring) * 1.5);
   height: 100%;
   border-radius: var(--chip-ring);
   background: currentColor;
