@@ -18,10 +18,13 @@ const OUTSIDE_UI =
 // shortcut: a regex, not a parser, so `//` or `/*` inside a string literal still counts as a
 // comment; upgrade to the TypeScript or Astro compiler if a run is ever graded wrong by it.
 function code(text: string): string {
-  return text
-    .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/(^|[^:"'`])\/\/.*$/gm, "$1");
+  // Repeated until none is left, so a comment rebuilt by the cut (`<!-<!-- -->- -->`) goes too.
+  let html = text;
+  for (let last = ""; last !== html; ) {
+    last = html;
+    html = html.replace(/<!--[\s\S]*?-->/g, "");
+  }
+  return html.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`])\/\/.*$/gm, "$1");
 }
 
 function specifiers(text: string): string[] {
