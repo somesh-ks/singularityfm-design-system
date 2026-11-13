@@ -69,7 +69,8 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       href={state.element === "link" ? "#" : undefined}
       disabled={state.element === "link" ? undefined : on("disabled")}
     >
-      {state.variant === "danger" ? SAMPLE.danger : SAMPLE.label}
+      {/* The Label control names every variant, the danger one included, so typed words never revert. */}
+      {SAMPLE.label}
     </Button>
   )
 }
