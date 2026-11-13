@@ -62,7 +62,7 @@ export default function PlayChip({
 }: Props) {
   return (
     <button
-      className={[playChipClass(primary, label === undefined), className].filter(Boolean).join(" ")}
+      className={[playChipClass(primary, !label), className].filter(Boolean).join(" ")}
       type={type}
       data-state={state}
       data-playing="false"
@@ -79,7 +79,7 @@ export default function PlayChip({
         <Icon name="refresh" className="chip-refresh" />
         <span className="spinner" />
       </span>
-      {label !== undefined && (
+      {label && (
         <span className="chip-text" data-reserve={reserve}>
           <span className="chip-label" data-chip-label="">
             {label}

@@ -91,6 +91,12 @@ const label = (words: string) =>
 const dataState = (state: string) => `el.dataset.state=${JSON.stringify(state)}`;
 
 const PLAY_STATES = ["idle", "current", "played", "preparing", "error", "unavailable"];
+// The glyph alone in every state it can hold, playing and buffering included.
+const GLYPH_STATES: [string, string][] = [
+  ...PLAY_STATES.map((state) => [state, dataState(state)] as [string, string]),
+  ["playing", "el.dataset.state='current';el.dataset.playing='true'"],
+  ["buffering", "el.dataset.state='preparing';el.dataset.playing='true'"],
+];
 // The words the player wrote on the hero's chip, which a deprecated `reserve` still holds (DS-13).
 const HERO_WORDS = ["3 min", "88 min left", "13 min left", "Loading", "Processing", "Try again"];
 
@@ -122,21 +128,13 @@ const cases: Case[] = [
   {
     name: "PlayChip: the glyph alone, every state",
     el: h(PlayChip, { "aria-label": "Play" }),
-    states: [
-      ...PLAY_STATES.map((state) => [state, dataState(state)] as [string, string]),
-      ["playing", "el.dataset.state='current';el.dataset.playing='true'"],
-      ["buffering", "el.dataset.state='preparing';el.dataset.playing='true'"],
-    ],
+    states: GLYPH_STATES,
     hover: true,
   },
   {
     name: "PlayChip: the hero's glyph alone, every state",
     el: h(PlayChip, { "aria-label": "Play", primary: true }),
-    states: [
-      ...PLAY_STATES.map((state) => [state, dataState(state)] as [string, string]),
-      ["playing", "el.dataset.state='current';el.dataset.playing='true'"],
-      ["buffering", "el.dataset.state='preparing';el.dataset.playing='true'"],
-    ],
+    states: GLYPH_STATES,
     hover: true,
   },
   {

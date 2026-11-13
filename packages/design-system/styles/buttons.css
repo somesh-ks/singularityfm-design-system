@@ -712,7 +712,7 @@
 
 @media (prefers-reduced-motion: reduce), (forced-colors: active) {
   .chip[data-state="preparing"] .chip-label,
-  .chip-glyph-only[data-state="preparing"] .chip-glyph {
+  .chip-glyph-only[data-state="preparing"]:not([data-playing="true"]) .chip-glyph {
     -webkit-mask: none;
     mask: none;
     animation: none;

@@ -110,7 +110,7 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
   slug === "play-chip" && (
     <div class="card-group">
       <PlayChip
-        label={SAMPLE.duration}
+        label={on("glyph") ? undefined : SAMPLE.duration}
         state={state.state as PlayChipState}
         data-playing={on("playing") ? "true" : "false"}
         aria-label={SAMPLE.label}
