@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { System } from "../../packages/design-system/scripts/system/types.ts";
-import { exportTarget, gradeFiles } from "./grade.ts";
+import { exportTarget, gradeFiles, runStats } from "./grade.ts";
 
 const PKG = join(import.meta.dirname, "../../packages/design-system");
 const { tasks } = JSON.parse(readFileSync(join(import.meta.dirname, "tasks.json"), "utf8")) as {
@@ -110,5 +110,68 @@ describe("the agent test's grading", () => {
       { classes: ["empty-state"] },
     ]);
     expect(none.met).toBe(0);
+  });
+});
+
+describe("the agent test's transcripts", () => {
+  // Prevents an Antigravity run reading as unfinished, `ds` unused and the guide unread because its
+  // stream has another shape than Claude Code's. Event shapes: antigravity.google/docs/cli/headless.
+  it("reads an Antigravity stream as well as a Claude Code one", () => {
+    const step = (index: number, state: string, tool: Record<string, unknown>) => ({
+      event: "step_update",
+      step_update: {
+        step_index: index,
+        state,
+        step_type: "tool",
+        tool_name: tool.name,
+        tool_info: tool,
+      },
+    });
+    const ds = {
+      name: "run_command",
+      parameters: { CommandLine: 'pnpm exec ds find "empty list"' },
+    };
+    const guide = {
+      name: "view_file",
+      parameters: {
+        AbsolutePath: "C:\\app\\node_modules\\@singularityfm\\design-system\\AGENTS.md",
+      },
+    };
+    const transcript = [
+      {
+        event: "init",
+        init: { cwd: "/app", tools: ["run_command"], permission_mode: "always-proceed" },
+      },
+      step(1, "ACTIVE", ds),
+      step(1, "DONE", ds),
+      step(2, "DONE", guide),
+      {
+        event: "result",
+        result: {
+          status: "SUCCESS",
+          num_turns: 1,
+          usage: { input_tokens: 9, output_tokens: 1, total_tokens: 10 },
+        },
+      },
+    ]
+      .map((event) => JSON.stringify(event))
+      .join("\n");
+    const stats = runStats(transcript, "antigravity");
+    expect([stats.finished, stats.usedDs, stats.readGuide, stats.toolCalls]).toEqual([
+      true,
+      true,
+      true,
+      2,
+    ]);
+    expect(stats.tokens).toBeGreaterThan(0);
+    // Claude Code's partial-message events also carry an `event` key; its run must not read as one.
+    const claude = [
+      { type: "system", subtype: "init", model: "m" },
+      { type: "stream_event", event: { type: "message_start" } },
+      { type: "result", num_turns: 1, usage: { input_tokens: 1 } },
+    ]
+      .map((event) => JSON.stringify(event))
+      .join("\n");
+    expect(runStats(claude, "claude").finished).toBe(true);
   });
 });

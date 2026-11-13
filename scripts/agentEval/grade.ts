@@ -156,10 +156,97 @@ type Event = {
   num_turns?: number;
   is_error?: boolean;
   usage?: Record<string, number>;
+  // Antigravity CLI (`agy`) events name their type in `event` and carry a payload under that name.
+  event?: string;
+  init?: { model?: string };
+  step_update?: {
+    step_index?: number;
+    step_type?: string;
+    tool_info?: { name?: string; parameters?: Record<string, unknown> };
+  };
+  result?: { status?: string; num_turns?: number; usage?: Record<string, number> };
 };
 
-/** Reads `claude -p --output-format stream-json --verbose` output, one JSON event per line. */
-export function runStats(transcript: string): RunStats {
+/** What one run did, read from either agent's stream before it is judged. */
+type Trace = Omit<RunStats, "usedDs" | "readGuide"> & {
+  commands: string[];
+  /** Every path or command a tool was given, where a read of the guide would show. */
+  touched: string[];
+};
+
+const sumTokens = (usage: Record<string, number>) =>
+  Object.entries(usage)
+    .filter(([key]) => key.endsWith("_tokens"))
+    .reduce((sum, [, value]) => sum + (typeof value === "number" ? value : 0), 0);
+
+/** `claude -p --output-format stream-json --verbose`. */
+function claudeTrace(events: Event[]): Trace {
+  const tools = events.flatMap((event) =>
+    event.type === "assistant"
+      ? (event.message?.content ?? []).filter((block) => block.type === "tool_use")
+      : [],
+  );
+  const commands = tools
+    .filter((tool) => tool.name === "Bash")
+    .map((tool) => String(tool.input?.command ?? ""));
+  const result = events.findLast((event) => event.type === "result");
+  return {
+    model: events.find((event) => event.subtype === "init")?.model ?? "",
+    turns: result?.num_turns ?? 0,
+    tokens: sumTokens(result?.usage ?? {}),
+    toolCalls: tools.length,
+    commands,
+    touched: [
+      ...tools.map((tool) => String(tool.input?.file_path ?? tool.input?.path ?? "")),
+      ...commands,
+    ],
+    finished: result !== undefined && result.is_error !== true,
+  };
+}
+
+/**
+ * `agy --output-format stream-json`: a tool step is sent while it runs and again when done, so calls
+ * are counted by step. Its `total_tokens` already holds the cache reads, which Claude Code's usage
+ * counts apart, so the two totals measure the same thing.
+ */
+function antigravityTrace(events: Event[]): Trace {
+  const steps = events.flatMap((event) =>
+    event.event === "step_update" && event.step_update?.step_type === "tool"
+      ? [event.step_update]
+      : [],
+  );
+  const calls = steps.flatMap((step) => (step.tool_info ? [step.tool_info] : []));
+  const commands = calls
+    .filter((call) => call.name === "run_command")
+    .map((call) => String(call.parameters?.CommandLine ?? ""));
+  const result = events.findLast((event) => event.event === "result")?.result;
+  return {
+    // Reported only when `--model` set it; otherwise the CLI's default ran.
+    model: events.find((event) => event.event === "init")?.init?.model ?? "agy default",
+    turns: result?.num_turns ?? 0,
+    tokens:
+      result?.usage?.total_tokens ??
+      (result?.usage?.input_tokens ?? 0) + (result?.usage?.output_tokens ?? 0),
+    toolCalls: new Set(steps.map((step) => step.step_index)).size,
+    commands,
+    // Paths only, as for Claude Code: the text of a file it writes is not a read of the guide.
+    touched: [
+      ...calls.flatMap((call) =>
+        Object.entries(call.parameters ?? {})
+          .filter(([key]) => /(path|file|dir|directory|uri|url)$/i.test(key))
+          .map(([, value]) => String(value)),
+      ),
+      ...commands,
+    ],
+    finished: result?.status === "SUCCESS",
+  };
+}
+
+/**
+ * Reads a run's stream-json, one JSON event per line. The caller names the agent: Claude Code's
+ * partial-message events carry an `event` key too, so the shape alone does not tell them apart.
+ */
+export function runStats(transcript: string, agent: "claude" | "antigravity"): RunStats {
   const events: Event[] = transcript
     .split("\n")
     .filter((line) => line.startsWith("{"))
@@ -170,30 +257,15 @@ export function runStats(transcript: string): RunStats {
         return [];
       }
     });
-  const tools = events.flatMap((event) =>
-    event.type === "assistant"
-      ? (event.message?.content ?? []).filter((block) => block.type === "tool_use")
-      : [],
-  );
-  const commands = tools
-    .filter((tool) => tool.name === "Bash")
-    .map((tool) => String(tool.input?.command ?? ""));
-  const reads = tools.map((tool) => String(tool.input?.file_path ?? tool.input?.path ?? ""));
-  const result = events.findLast((event) => event.type === "result");
-  const usage = result?.usage ?? {};
+  const { commands, touched, ...trace } =
+    agent === "antigravity" ? antigravityTrace(events) : claudeTrace(events);
   return {
-    model: events.find((event) => event.subtype === "init")?.model ?? "",
-    turns: result?.num_turns ?? 0,
-    tokens: Object.entries(usage)
-      .filter(([key]) => key.endsWith("_tokens"))
-      .reduce((sum, [, value]) => sum + (typeof value === "number" ? value : 0), 0),
-    toolCalls: tools.length,
+    ...trace,
     usedDs: commands.some((command) =>
       /(^|[\s;&|/])ds(\.mjs)?\s+(find|part|token|list|batch|validate|version)\b/.test(command),
     ),
-    readGuide: [...reads, ...commands].some((text) =>
+    readGuide: touched.some((text) =>
       /design-system[\\/](AGENTS\.md|tokens[\\/](foundations\.md|llms|parts[\\/]))/.test(text),
     ),
-    finished: result !== undefined && result.is_error !== true,
   };
 }

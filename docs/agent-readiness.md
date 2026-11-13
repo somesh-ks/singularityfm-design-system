@@ -107,17 +107,20 @@ What other systems and studies found, kept short; each figure is its publisher's
 
 ## The agent test
 
-A score says the files exist; this says whether they help. `scripts/agentEval/run.mjs` gives Claude Code each task in [tasks.json](../scripts/agentEval/tasks.json) (8 intent tasks from the owner's real asks, frozen 2026-11-13, none naming a part) in three setups: the reader app as it is, a new Astro app with the package and the one guide line its AGENTS.md asks for, and the same app without that line. It grades with no model call: the expected part used, imports the package does not export, other UI libraries, `ds validate` errors, `astro check`, and from the transcript the time, tokens, tool calls, whether `ds` ran and whether the guide was opened. `tasks.test.ts` fails when a task names a part or when anything the package gives an agent quotes a task.
+A score says the files exist; this says whether they help. `scripts/agentEval/run.mjs` gives a coding agent (Claude Code, and the Antigravity CLI when asked, DS-15) each task in [tasks.json](../scripts/agentEval/tasks.json) (8 intent tasks from the owner's real asks, frozen 2026-11-13, none naming a part) in three setups: the reader app as it is, a new Astro app with the package and the one guide line its AGENTS.md asks for, and the same app without that line. It grades with no model call: the expected part used, imports the package does not export, other UI libraries, `ds validate` errors, `astro check`, and from the transcript the time, tokens, tool calls, whether `ds` ran and whether the guide was opened. `tasks.test.ts` fails when a task names a part or when anything the package gives an agent quotes a task.
 
-It runs on the owner's computer on his own Claude sign-in, no API key; transcripts stay there and only the summary row comes here. In PowerShell, from a clone of this repository with Node 24 and pnpm:
+It runs on the owner's computer on his own sign-ins, no API key; transcripts stay there and only the summary rows come here. In PowerShell, from a clone of this repository with Node 24 and pnpm:
 
 ```powershell
 node scripts/agentEval/run.mjs --app C:\path\to\singularityfm-app
+node scripts/agentEval/run.mjs --app C:\path\to\singularityfm-app --agents claude,antigravity
 ```
 
-About 24 runs of 2 to 4 minutes each, unattended. `--setups bare-guide,bare` skips the app; `--user-settings` adds your own Claude settings and plugins, to compare a run with them. The summary prints at the end and is saved beside the transcripts in `scripts/agentEval/runs/`.
+About 24 runs of 2 to 4 minutes each per agent, unattended. `--setups bare-guide,bare` skips the app; `--user-settings` adds your own Claude settings and plugins, to compare a run with them. The summary prints at the end and is saved beside the transcripts in `scripts/agentEval/runs/`.
 
-| Date | Package | Model | Setup | Right part | Invented imports | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes | Tool calls |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+The Antigravity runs need `agy` signed in once in a normal session. Both agents read the setup's AGENTS.md, but they are not held to the same tools: Claude Code may edit files and run pnpm, npx, ls and cat, while `agy` has no such list outside its global settings, so it runs with every tool approved, inside its terminal sandbox (workspace and temp folders, no network) where your system has one. For both, a `git push` from the test's copy of the reader goes nowhere. `agy` also loads your global Antigravity rules, and any memory it keeps between conversations, which Claude Code's runs leave out. Compare the two agents on the same setup, and read a gap as the agent plus its defaults, not the model alone. The summary's rows paste straight under the table below.
+
+| Date | Setup | Agent | Model | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 No full run yet. A smoke run of one task (undo-delete, app with the guide line, 2026-11-13, in the cloud session) used Toast, wrote no invented import, compiled, ran `ds` and read the guide, but then read the package's source files (toastStore.ts, Toast.tsx, menu and row-exit sources) over 2.6 minutes and 26 tool calls, which suggests the docs did not say how to wire the undo.
