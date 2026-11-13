@@ -138,12 +138,15 @@ type Props = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "role"> & {
     });
     // The same Props as an interface, and as an alias whose object comes first.
     const item = "type Item = InputHTMLAttributes<HTMLInputElement>;\n";
+    const label = { element: "fieldset", rows: [{ name: "label", required: true }] };
     expect(
-      propsTable(`${item}interface Props extends FieldsetHTMLAttributes<HTMLFieldSetElement> {}`),
-    ).toMatchObject({ element: "fieldset" });
+      propsTable(
+        `${item}interface Props extends FieldsetHTMLAttributes<HTMLFieldSetElement> {\n  label: string;\n}`,
+      ),
+    ).toMatchObject(label);
     expect(
       propsTable(`${item}type Props = {\n  label: string;\n} & ComponentProps<"fieldset">;`),
-    ).toMatchObject({ element: "fieldset" });
+    ).toMatchObject(label);
   });
 
   // Prevents a props table in the order its source happened to declare: Slider listed className and

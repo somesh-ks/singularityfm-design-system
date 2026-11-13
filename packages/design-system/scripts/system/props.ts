@@ -184,9 +184,11 @@ const place = (name: string): number => {
 export function propsTable(source: string): PropsTable {
   const frontmatter = source.startsWith("---") ? (source.split("---")[1] ?? "") : source;
   const rows: PropRow[] = [];
-  // The members sit in a `Props` interface, or in the object a `type Props = ... & {` alias adds.
+  // The members sit in a `Props` interface (which may extend an element's attributes), or in the
+  // object a `type Props =` alias joins to them, before or after the `&`.
   const declared =
-    /interface\s+(?:Props|\w+Props)\s*\{/.exec(frontmatter) ??
+    /interface\s+(?:Props|\w+Props)(?:\s+extends[^{]*)?\s*\{/.exec(frontmatter) ??
+    /type\s+Props\s*=\s*\{/.exec(frontmatter) ??
     /type\s+Props\s*=[^;{]*&\s*\{/.exec(frontmatter);
   const given = defaults(frontmatter);
   if (declared) {
