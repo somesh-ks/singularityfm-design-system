@@ -33,7 +33,10 @@ const propsOf = (
 };
 
 // The parts this component and its subparts draw, each a markdown page an agent reads (llms.txt links
-// the same pages), so a reader who finds the component here can hand an agent its page.
+// the same pages), so a reader who finds the component here can hand an agent its page. A part is the
+// component's when it imports it first: the Dialog part also imports Button, and is not a Button.
+// shortcut: a part that leads with a component it only holds (row-action, an Icon) still lists on that
+// page; name each part's component in system.json if that misleads an agent.
 const imports = new Set(
   [spec.file, ...(spec.subparts ?? []).map((part) => part.file)].flatMap((file) =>
     system.components
@@ -42,7 +45,7 @@ const imports = new Set(
   ),
 );
 const markdown = system.parts
-  .filter((part) => part.imports.some((name) => imports.has(name)))
+  .filter((part) => imports.has(part.imports[0] ?? ""))
   .map((part) => part.id);
 
 const registered = REGISTRY.find((component) => component.name === spec.registry);

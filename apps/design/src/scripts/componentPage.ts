@@ -25,6 +25,15 @@ if (root) {
   const fields = Array.from(root.querySelectorAll<HTMLInputElement>("input[data-sample]"));
   const words = new Map(fields.map((field) => [field.dataset.sample ?? "", field.value]));
   const said: { node: Text; sample: string; edges: [string, string] }[] = [];
+  // A control named by its words (a FAB's aria-label) is renamed with them, so its name is what it says.
+  const named = states.flatMap((state) =>
+    Array.from(state.querySelectorAll<HTMLElement>("[aria-label]")).filter((element) =>
+      words.has(element.getAttribute("aria-label") ?? ""),
+    ),
+  );
+  const names = new Map(
+    named.map((element) => [element, element.getAttribute("aria-label") ?? ""]),
+  );
   for (const state of states) {
     const walker = document.createTreeWalker(state, NodeFilter.SHOW_TEXT);
     for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -40,15 +49,18 @@ if (root) {
     }
   }
   const literal = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // One pass for every sample, so words typed in one field that equal another's sample stay as typed.
+  const quoted = words.size
+    ? new RegExp(`(["'>])(${[...words.keys()].map(literal).join("|")})(["'<])`, "g")
+    : undefined;
   const reword = (code: string): string =>
-    [...words].reduce(
-      (out, [sample, value]) =>
-        out.replace(
-          new RegExp(`(["'>])${literal(sample)}(["'<])`, "g"),
-          (_, before: string, after: string) => `${before}${value}${after}`,
-        ),
-      code,
-    );
+    quoted
+      ? code.replace(
+          quoted,
+          (_, before: string, sample: string, after: string) =>
+            `${before}${words.get(sample) ?? sample}${after}`,
+        )
+      : code;
   /** What a sample says now: the person's words where the page offers them. */
   const say = (sample: string): string => words.get(sample) ?? sample;
 
@@ -66,6 +78,7 @@ if (root) {
   };
   const rewrite = (): void => {
     for (const { node, sample, edges } of said) node.data = `${edges[0]}${say(sample)}${edges[1]}`;
+    for (const [element, sample] of names) element.setAttribute("aria-label", say(sample));
     show();
   };
   for (const field of fields)
@@ -89,9 +102,9 @@ if (root) {
     if (toast) {
       const kind = toast.dataset.previewToast;
       showToast({
-        message: say("Message"),
+        message: say(toast.dataset.previewToastMessage ?? ""),
         kind: kind === "success" || kind === "error" ? kind : undefined,
-        actionLabel: toast.dataset.previewToastAction === undefined ? undefined : "Action",
+        actionLabel: toast.dataset.previewToastAction,
         onAction: () => {},
       });
       return;

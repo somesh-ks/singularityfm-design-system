@@ -74,7 +74,15 @@ function defaults(source: string): Map<string, string> {
 }
 
 /** The tag of a DOM interface, where it is not the interface's name in lower case. */
-const TAGS: Record<string, string> = { Anchor: "a", Paragraph: "p", OList: "ol", UList: "ul" };
+const TAGS: Record<string, string> = {
+  Anchor: "a",
+  Image: "img",
+  OList: "ol",
+  Paragraph: "p",
+  TableCell: "td",
+  TableRow: "tr",
+  UList: "ul",
+};
 
 /**
  * The element whose attributes the component passes on: the one its `Props` type takes them from
@@ -82,13 +90,22 @@ const TAGS: Record<string, string> = { Anchor: "a", Paragraph: "p", OList: "ol",
  * may type a child (SegmentedChoice's inputs). A heading's level comes from the tag it renders.
  */
 function passedTo(source: string): string | undefined {
-  const props = /type\s+Props\s*=([^;]*?)(?:\{|;)/.exec(source)?.[1] ?? source;
-  const named = /ComponentProps<"(\w+)">/.exec(props)?.[1];
-  if (named) return named;
-  const dom = /HTMLAttributes<HTML(\w+)Element>/.exec(props)?.[1];
-  if (!dom) return undefined;
-  if (dom === "Heading") return /<(h[1-6])\b/.exec(source)?.[1];
-  return TAGS[dom] ?? dom.toLowerCase();
+  // The Props declaration to its last line: an interface's closing brace, or an alias's line that
+  // ends it with a semicolon. A file whose Props name no element (it types the attributes where the
+  // function takes them) is read whole.
+  const start = /^(?:export\s+)?(?:type\s+Props\s*=|interface\s+Props\b)/m.exec(source)?.index;
+  const rest = start === undefined ? "" : source.slice(start);
+  const end = /^(?:\}|\S.*;)\s*$/m.exec(rest);
+  const declared = end ? rest.slice(0, end.index + end[0].length) : rest;
+  const tag = (text: string): string | undefined => {
+    const named = /ComponentProps<"(\w+)">/.exec(text)?.[1];
+    if (named) return named;
+    const dom = /HTMLAttributes<HTML(\w+)Element>/.exec(text)?.[1];
+    if (!dom) return undefined;
+    if (dom === "Heading") return /<(h[1-6])\b/.exec(source)?.[1];
+    return TAGS[dom] ?? dom.toLowerCase();
+  };
+  return tag(declared) ?? tag(source);
 }
 
 /**

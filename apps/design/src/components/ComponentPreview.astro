@@ -339,7 +339,8 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
     <Button
       variant="tonal"
       data-preview-toast={state.kind ?? "plain"}
-      data-preview-toast-action={on("action") ? "" : undefined}
+      data-preview-toast-message={SAMPLE.toast.message}
+      data-preview-toast-action={on("action") ? SAMPLE.toast.action : undefined}
     >
       Show toast
     </Button>
