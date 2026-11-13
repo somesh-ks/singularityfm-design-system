@@ -74,15 +74,17 @@ describe("the agent test's grading", () => {
     };
     const name = "@singularityfm/design-system";
     const text = [
-      "Button",
-      "toastStore",
-      "styles/tokens.css",
-      "Card",
-      "src/Button.tsx",
-      "styles/card.css",
-    ]
-      .map((path, index) => `import x${index} from "${name}/${path}";`)
-      .join("\n");
+      "---",
+      ...[
+        "Button",
+        "toastStore",
+        "styles/tokens.css",
+        "Card",
+        "src/Button.tsx",
+        "styles/card.css",
+      ].map((path, index) => `import x${index} from "${name}/${path}";`),
+      "---",
+    ].join("\n");
     const grade = gradeFiles([{ path: "a.astro", text }], resolves, [{ components: ["Button"] }]);
     expect(grade.invented.sort()).toEqual([
       `${name}/Card`,
@@ -90,10 +92,16 @@ describe("the agent test's grading", () => {
       `${name}/styles/card.css`,
     ]);
     expect(grade.met).toBe(1);
-    // An import left in a comment earns nothing: the agent did not use the part.
+    // An import left in a comment or written inside a string earns nothing: the agent did not use
+    // the part.
     const commented = [
+      "---",
       `// import Toast from "${name}/Toast";`,
       `/* import Dialog from "${name}/Dialog"; */`,
+      `const example = \`import Toast from "${name}/Toast";\`;`,
+      `const label = "hello"// import Dialog from "${name}/Dialog";`,
+      "---",
+      `<p>import Toast from "${name}/Toast";</p>`,
       `<!-- <div class="empty-state"></div> -->`,
     ].join("\n");
     const none = gradeFiles([{ path: "b.astro", text: commented }], resolves, [

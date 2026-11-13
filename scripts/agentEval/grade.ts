@@ -1,6 +1,8 @@
 // Mechanical grading for the agent test (DS-14): what an agent wrote, and how it went about it, read
 // from its files and its transcript with no model call. run.mjs calls these after each task.
 
+import ts from "typescript";
+
 export const PACKAGE = "@singularityfm/design-system";
 
 /** One expectation: any of these components imported, or any of these classes used. */
@@ -11,28 +13,50 @@ export type Written = { path: string; text: string };
 const OUTSIDE_UI =
   /^(@mui\/|@radix-ui\/|@headlessui\/|@chakra-ui\/|@mantine\/|antd$|react-bootstrap|bootstrap|lucide-react|@heroicons\/|react-icons|@\/components\/ui\/)/;
 
-/**
- * The text with its comments blanked, so an import or class left in a comment earns no credit and
- * draws no violation. A `//` after a colon or a quote is kept: it starts a URL, not a comment.
- */
-// shortcut: a regex, not a parser, so `//` or `/*` inside a string literal still counts as a
-// comment; upgrade to the TypeScript or Astro compiler if a run is ever graded wrong by it.
-function code(text: string): string {
-  // Repeated until none is left, so a comment rebuilt by the cut (`<!-<!-- -->- -->`) goes too.
+/** The text with its HTML comments cut, repeated until none is left, so a comment the cut rebuilds
+ * (`<!-<!-- -->- -->`) goes too. */
+function withoutHtmlComments(text: string): string {
   let html = text;
   for (let last = ""; last !== html; ) {
     last = html;
     html = html.replace(/<!--[\s\S]*?-->/g, "");
   }
-  return html.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`])\/\/.*$/gm, "$1");
+  return html;
 }
 
-function specifiers(text: string): string[] {
-  const found = [
-    ...text.matchAll(/\bimport\s+(?:[^'"]*?\sfrom\s+)?["']([^"']+)["']/g),
-    ...text.matchAll(/\bimport\(\s*["']([^"']+)["']\s*\)/g),
-  ];
-  return found.map((match) => match[1] ?? "");
+/**
+ * The text with its comments blanked, so a class left in a comment earns no credit. A `//` after a
+ * colon or a quote is kept: it starts a URL, not a comment.
+ */
+// shortcut: a regex, not a parser, so `//` or `/*` inside a string literal still counts as a
+// comment. It reads only classes and CSS `@import`s (imports go through the TypeScript scanner
+// below); upgrade to the Astro compiler if a run is ever graded wrong by it.
+function code(text: string): string {
+  return withoutHtmlComments(text)
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/(^|[^:"'`])\/\/.*$/gm, "$1");
+}
+
+/**
+ * What a file imports. Script is read by the TypeScript scanner, so an import in a comment or a
+ * string is not one; an Astro file's script is its frontmatter and its `<script>` blocks, and the
+ * page text around them imports nothing. A stylesheet's `@import`s are read from its text.
+ */
+function specifiers(file: Written): string[] {
+  if (file.path.endsWith(".css"))
+    return [...code(file.text).matchAll(/@import\s+(?:url\(\s*)?["']([^"']+)["']/g)].map(
+      (m) => m[1] ?? "",
+    );
+  const text = withoutHtmlComments(file.text);
+  const scripts = file.path.endsWith(".astro")
+    ? [
+        /^\s*---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1] ?? "",
+        ...[...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script[^>]*>/gi)].map((m) => m[1] ?? ""),
+      ]
+    : [file.text];
+  return scripts.flatMap((script) =>
+    ts.preProcessFile(script, true, true).importedFiles.map((ref) => ref.fileName),
+  );
 }
 
 function classesIn(text: string): Set<string> {
@@ -81,8 +105,7 @@ export function gradeFiles(
   resolves: (subpath: string) => boolean,
   expect: Expect[],
 ): FileGrade {
-  const sources = files.map((file) => code(file.text));
-  const all = sources.flatMap(specifiers);
+  const all = files.flatMap(specifiers);
   const own = all.filter((spec) => spec === PACKAGE || spec.startsWith(`${PACKAGE}/`));
   const invented = own.filter((spec) => !resolves(spec.slice(PACKAGE.length + 1)));
   const outsideUi = all.filter((spec) => OUTSIDE_UI.test(spec));
@@ -95,7 +118,7 @@ export function gradeFiles(
           ?.replace(/\.(astro|tsx?)$/, "") ?? "",
     ),
   );
-  const classes = new Set(sources.flatMap((text) => [...classesIn(text)]));
+  const classes = new Set(files.flatMap((file) => [...classesIn(code(file.text))]));
   const missed = expect
     .filter(
       (want) =>
