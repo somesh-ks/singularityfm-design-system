@@ -51,7 +51,7 @@ export const PLAY_CHIP_RETIRED: string[] = [];
 
 /**
  * The classes of a play chip; `primary` (experimental, DS-11) for the page's one main Play, and
- * `glyphOnly` for one drawn with no words (`chip-glyph-only`, a round button the size of an icon button).
+ * `glyphOnly` for one drawn with no words (`chip-glyph-only`, a round button as tall as the chip).
  */
 export const playChipClass = (primary = false, glyphOnly = false): string =>
   ["chip", primary && "chip-primary", glyphOnly && "chip-glyph-only"].filter(Boolean).join(" ");

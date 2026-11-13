@@ -760,16 +760,21 @@
 }
 
 /* The glyph alone (PlayChip with no label; owner, 2026-11-13: "the play button in the hero should be
-   just the icon button, and the same in chapters"). A circle the size of an icon button, its glyph at an
-   icon button's size, so it stands beside Favorite and Share as one of them. Every state keeps the one
+   just the icon button, and the same in chapters"). A circle as tall as the chip, with the chip's touch
+   target, its glyph at an icon button's size, so it stands beside the hero's Favorite and Share circles
+   as one of them. Every state keeps the one
    slot, so nothing moves as it plays, loads or fails. Its name is its aria-label, which the page's player
    writes with each state, as it writes a chip's words. */
 .chip-glyph-only {
-  --chip-height: var(--size-touch);
   --chip-glyph: var(--size-icon-lg);
   --chip-icon: var(--size-icon-lg);
-  min-inline-size: var(--size-touch);
+  min-inline-size: var(--chip-height);
   padding-inline: 0;
+}
+
+/* Its target is a touch wide as well as tall: the chip's reaches past the border only up and down. */
+.chip-glyph-only::after {
+  inset-inline: calc((var(--size-touch) - var(--chip-height)) / -2 - var(--stroke-hairline));
 }
 
 .chip:is([data-state="unavailable"], [aria-disabled="true"], :disabled) {
