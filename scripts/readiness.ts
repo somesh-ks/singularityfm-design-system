@@ -19,7 +19,9 @@ export const CRITERIA = [
 ];
 
 const ROW = /^\|\s*(\d\.\d)\s*\|[^|]*\|\s*(\d)\s*\|/;
-const CATEGORY = /^\|\s*(\d)\.\s[^|]*\|\s*(\d)\s*\|\s*(\d(?:\.5)?)\s*\|/;
+// A category row is found by its label alone, so a floor or median in the wrong shape is reported,
+// not skipped.
+const CATEGORY = /^\|\s*(\d)\.\s[^|]*\|([^|]*)\|([^|]*)\|/;
 const SUMMARY = /^Summary: floor (\d), retrieval (\d), median (\d), tier (\d)\.$/m;
 
 type Rollup = { floor: number; retrieval: number; median: number; tier: number };
@@ -87,8 +89,9 @@ export function readinessProblems(text: string): string[] {
     if (!match) continue;
     const category = match[1] ?? "";
     const values = [...scores].filter(([id]) => id.startsWith(`${category}.`)).map(([, s]) => s);
-    const [low, mid] = [Number(match[2]), Number(match[3])];
-    if (low !== Math.min(...values) || mid !== median(values))
+    const [low, mid] = [(match[2] ?? "").trim(), (match[3] ?? "").trim()];
+    // Compared as text, so an empty cell or a stray word fails like a wrong number.
+    if (low !== String(Math.min(...values)) || mid !== String(median(values)))
       problems.push(
         `category ${category} says floor ${low}, median ${mid}; the table gives ${Math.min(...values)}, ${median(values)}`,
       );

@@ -33,6 +33,9 @@ describe("the agent-readiness scorecard", () => {
     const rows = (floor: number) => [`| 4. Composition and layout | ${floor} | 2 |`];
     expect(readinessProblems(page({ "4.1": 0 }, summary, rows(0)))).toEqual([]);
     expect(readinessProblems(page({ "4.1": 0 }, summary, rows(2)))).toHaveLength(1);
+    // A median no table could give (1.6) must fail too, not drop the row from the check.
+    const odd = [`| 4. Composition and layout | 0 | 1.6 |`];
+    expect(readinessProblems(page({ "4.1": 0 }, summary, odd))).toHaveLength(1);
   });
 
   // Prevents a summary computed over fewer than 31 rows: a criterion deleted or pasted twice in an
