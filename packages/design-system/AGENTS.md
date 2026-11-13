@@ -23,7 +23,7 @@ Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and 
 - In an Astro page pass `className`, not `class`: `@astrojs/react` drops `class`.
 - Colour, spacing, type, corners, shadow and motion come from tokens (`var(--color-surface)`, `var(--space-4)`, `var(--shape-md)`). No hex, no `oklch()` literal, no pixel length. Spacing keeps the 8pt grid.
 - Text roles are the `--text-*` tokens and the `.text-*` classes. Icons are `Icon`; flags are `Flag`, never an emoji.
-- A control's box does not change with its state. Reserve room (`reserve` on `PlayChip`, `Button`, `Fab`) instead of measuring.
+- A control hugs its words; only its glyph slot is fixed, so a mark that swaps moves nothing (DS-13). Never reserve or measure a width (`reserve` is deprecated).
 - Leave a rule or markup that carries a rationale comment alone.
 - An option the lookup marks experimental (DS-11: `Field` `tonal`, `Menu` `flush`, ...) may change or go in a minor release: use it only where its reason fits, and prefer a stable option.
 - `@singularityfm/design-system/<Name>.astro` paths are retired: import `<Name>`.

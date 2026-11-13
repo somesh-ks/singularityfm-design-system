@@ -7,7 +7,7 @@ Read this before any UI drawn with this package; then find each part with `ds fi
 - Spacing keeps the 8pt grid: `--space-2` and up. The half step, `--space-1`, only where a part already uses it.
 - No pixel lengths: a token, rem, em, ch or a calc() of them. The 1px hairline is `--stroke-hairline`.
 - Every control's target is at least `--size-touch`, a field's `--size-touch-comfortable`; a mood may enlarge them.
-- A box never changes with its state. A width that must hold comes from the content (`reserve` on `Button`, `Fab`, `PlayChip`), never a measured number. A check takes no room. Any layout shift is a bug.
+- A control hugs its words, never a reserved or measured width. A glyph's slot is fixed, so a mark that swaps moves nothing; a check takes no room. Any layout shift is a bug.
 
 ## Type
 

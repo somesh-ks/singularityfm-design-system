@@ -64,7 +64,7 @@ Every attribute of a native `<button>` element passes through.
 
 ## Tokens it reads
 
-`--button-radius` `--color-accent` `--color-accent-container` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-disabled` `--color-on-surface-muted` `--color-surface-container` `--cta-bg` `--cta-bg-hover` `--cta-bg-pressed` `--cta-fg` `--size-icon-lg` `--size-touch`
+`--button-radius` `--color-accent` `--color-accent-container` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-disabled` `--color-on-surface-muted` `--color-surface-container` `--cta-bg` `--cta-bg-hover` `--cta-bg-pressed` `--cta-fg` `--size-icon` `--size-touch`
 
 ## Where it is drawn
 
@@ -74,4 +74,4 @@ Every attribute of a native `<button>` element passes through.
 
 ## Owner's note
 
-The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label.
+The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label. Its glyph is the regular icon, not the large one, so air stands round it in the circle (owner, 2026-11-13: "icon buttons have more padding around the icon").

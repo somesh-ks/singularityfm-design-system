@@ -41,7 +41,7 @@ A filled Phosphor glyph in the colour of the text beside it.
 
 ## Tokens it reads
 
-`--color-favorite` `--color-on-surface-muted` `--icon-bold` `--size-icon` `--size-icon-lg`
+`--color-favorite` `--icon-bold` `--size-icon` `--size-icon-lg`
 
 ## Where it is drawn
 

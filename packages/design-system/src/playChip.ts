@@ -9,8 +9,11 @@ import type { Guidance } from "./guidance.ts";
 export type PlayChipState = "idle" | "current" | "played" | "preparing" | "error" | "unavailable";
 
 export const PLAY_CHIP: Guidance = {
-  summary: "The tonal pill that plays a briefing or one story, with its state.",
-  useWhen: ["Play an episode or a story and show idle, current, played, error or preparing."],
+  summary: "The tonal pill that plays a briefing or one story, with its state; or its glyph alone.",
+  useWhen: [
+    "Play an episode or a story and show idle, current, played, error or preparing.",
+    "The glyph alone (no label): a story's Play and the hero's, a round button that never changes size.",
+  ],
   dontUseWhen: [
     { when: "A person ticks a choice.", instead: "Chip" },
     { when: "The page's one main Play floats over it on a phone.", instead: "FAB" },
@@ -31,6 +34,7 @@ export const PLAY_CHIP: Guidance = {
 export const PLAY_CHIP_CLASSES: string[] = [
   "chip",
   "chip-primary",
+  "chip-glyph-only",
   "chip-glyph",
   "chip-bars",
   "chip-check",
@@ -38,14 +42,19 @@ export const PLAY_CHIP_CLASSES: string[] = [
   "chip-refresh",
   "chip-text",
   "chip-label",
+  // Deprecated (DS-13): PlayChip no longer draws it; the played chip's replay glyph says Play again. 1.0.0 removes it.
   "chip-again",
 ];
 
 /** Classes the Play chip replaced; none may be written again, in any app that draws the system. */
 export const PLAY_CHIP_RETIRED: string[] = [];
 
-/** The classes of a play chip; `primary` (experimental, DS-11) for the page's one main Play. */
-export const playChipClass = (primary = false): string => (primary ? "chip chip-primary" : "chip");
+/**
+ * The classes of a play chip; `primary` (experimental, DS-11) for the page's one main Play, and
+ * `glyphOnly` for one drawn with no words (`chip-glyph-only`, a round button as tall as the chip).
+ */
+export const playChipClass = (primary = false, glyphOnly = false): string =>
+  ["chip", primary && "chip-primary", glyphOnly && "chip-glyph-only"].filter(Boolean).join(" ");
 
 /** A play chip on a page, for the script that writes its state. */
 export const PLAY_CHIP_SELECTOR = ".chip";

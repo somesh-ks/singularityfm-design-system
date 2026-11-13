@@ -274,16 +274,17 @@ export const SPECS: readonly ComponentSpec[] = [
         ["unavailable", "Unavailable"],
       ]),
       toggle("playing", "Playing"),
+      toggle("glyph", "Glyph only"),
     ],
     imports: ["PlayChip"],
     code: (state) => {
-      const attrs = [`label="${SAMPLE.duration}"`];
+      const attrs = on(state, "glyph") ? [] : [`label="${SAMPLE.duration}"`];
       if (state.state !== "idle") attrs.push(`state="${state.state}"`);
       if (on(state, "playing")) attrs.push('data-playing="true"');
       attrs.push(`aria-label="${SAMPLE.label}"`);
       return jsx("PlayChip", attrs);
     },
-    note: "A native button, so it needs no client directive. The player writes data-state, data-playing and the words as it plays; Playing shows its bars while the state is Current. On the stage it sits as on a card (card-group), one step up from the container tone.",
+    note: "A native button, so it needs no client directive. The player writes data-state, data-playing and the words as it plays; Playing shows its bars while the state is Current. Glyph only drops the words: a circle of the same height, named by its aria-label, for the hero's Play and a story's (DS-13). On the stage it sits as on a card (card-group), one step up from the container tone.",
     subparts: [
       {
         file: "PlayingBars.tsx",

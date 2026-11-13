@@ -17,7 +17,7 @@ An id links to its page (import, markup, props). What it is. Use: when. Not: sit
 - [fab](parts/fab.md): The page's one primary action below 64rem: a glyph and a word, floating. Use: One creating action a phone needs in reach: Catch up, Add a source. Not: The action sits in a form or a sheet → button-filled.
 - [text-link](parts/text-link.md): A link inside a line of small text; the words stay inline, the target is 44px. Use: A link inside a hint, a sentence or a breadcrumb. Not: It stands alone as an action → button-text.
 - [source-link](parts/source-link.md): The one link out of a story: the publisher's name, underlined on hover. Use: Name the publisher a story or a highlight came from. Not: It sits inside a sentence → text-link.
-- [play-chip](parts/play-chip.md): The tonal pill that plays a briefing or one story, with its state. Use: Play an episode or a story and show idle, current, played, error or preparing. Not: A person ticks a choice → filter-chip. Experimental: primary.
+- [play-chip](parts/play-chip.md): The tonal pill that plays a briefing or one story, with its state; or its glyph alone. Use: Play an episode or a story and show idle, current, played, error or preparing. Not: A person ticks a choice → filter-chip. Experimental: primary.
 - [filter-chip](parts/filter-chip.md): A checkbox drawn as a pill; ticked it takes the accent container. Use: Tick several topics or categories to include. Not: Exactly one of a few values → segmented-choice.
 - [segmented-choice](parts/segmented-choice.md): One pill of radio items: pick exactly one value. Use: Choose one of two to four short values: Length, Format, Tone. Not: Switching between views → segmented-nav.
 - [segmented-nav](parts/segmented-nav.md): A tonal track with one sliding pill: switch between views of the same content. Use: Switch the view of one page or panel without leaving it: a topic's Sources and Preferences. Not: Choosing the value of a setting → segmented-choice.
@@ -111,7 +111,7 @@ Read this before any UI drawn with this package; then find each part with `ds fi
 - Spacing keeps the 8pt grid: `--space-2` and up. The half step, `--space-1`, only where a part already uses it.
 - No pixel lengths: a token, rem, em, ch or a calc() of them. The 1px hairline is `--stroke-hairline`.
 - Every control's target is at least `--size-touch`, a field's `--size-touch-comfortable`; a mood may enlarge them.
-- A box never changes with its state. A width that must hold comes from the content (`reserve` on `Button`, `Fab`, `PlayChip`), never a measured number. A check takes no room. Any layout shift is a bug.
+- A control hugs its words, never a reserved or measured width. A glyph's slot is fixed, so a mark that swaps moves nothing; a check takes no room. Any layout shift is a bug.
 
 ### Type
 
@@ -198,7 +198,7 @@ The accent fill under its own words; the most prominent button.
 | `href?` | `string` | - | Draws a link instead of a button, for an action that goes to an address. |
 | `target?` | `string` | - | - |
 | `rel?` | `string` | - | - |
-| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
+| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the button where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 
@@ -260,7 +260,7 @@ The accent container under its own words, with no outline; quieter than Filled.
 | `href?` | `string` | - | Draws a link instead of a button, for an action that goes to an address. |
 | `target?` | `string` | - | - |
 | `rel?` | `string` | - | - |
-| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
+| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the button where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 
@@ -322,7 +322,7 @@ An accent label with no container until it is hovered or pressed; the quietest b
 | `href?` | `string` | - | Draws a link instead of a button, for an action that goes to an address. |
 | `target?` | `string` | - | - |
 | `rel?` | `string` | - | - |
-| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
+| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the button where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 
@@ -378,7 +378,7 @@ A Text button in the danger colour.
 | `href?` | `string` | - | Draws a link instead of a button, for an action that goes to an address. |
 | `target?` | `string` | - | - |
 | `rel?` | `string` | - | - |
-| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
+| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the button where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 
@@ -433,7 +433,7 @@ A shorter pill, same touch target.
 | `href?` | `string` | - | Draws a link instead of a button, for an action that goes to an address. |
 | `target?` | `string` | - | - |
 | `rel?` | `string` | - | - |
-| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
+| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the button where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 
@@ -521,7 +521,7 @@ Every attribute of a native `<button>` element passes through.
 
 ### Tokens it reads
 
-`--button-radius` `--color-accent` `--color-accent-container` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-disabled` `--color-on-surface-muted` `--color-surface-container` `--cta-bg` `--cta-bg-hover` `--cta-bg-pressed` `--cta-fg` `--size-icon-lg` `--size-touch`
+`--button-radius` `--color-accent` `--color-accent-container` `--color-on-accent-container` `--color-on-surface` `--color-on-surface-disabled` `--color-on-surface-muted` `--color-surface-container` `--cta-bg` `--cta-bg-hover` `--cta-bg-pressed` `--cta-fg` `--size-icon` `--size-touch`
 
 ### Where it is drawn
 
@@ -531,7 +531,7 @@ Every attribute of a native `<button>` element passes through.
 
 ### Owner's note
 
-The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label.
+The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label. Its glyph is the regular icon, not the large one, so air stands round it in the circle (owner, 2026-11-13: "icon buttons have more padding around the icon").
 
 ---
 
@@ -638,7 +638,7 @@ The page's one primary action below 64rem: a glyph and a word, floating.
 | `href?` | `string` | - | Draws a link instead of a button, so the action works before any script (/create). |
 | `target?` | `string` | - | - |
 | `rel?` | `string` | - | - |
-| `reserve?` | `string` | - | The widest words the button will say beside its glyph ("Resume · 88 min left"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis. |
+| `reserve?` | `string` | - | The widest words the button will say beside its glyph ("Resume · 88 min left"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For a hook a page's rule or script finds it by. Never its look or its place: it floats where fab.css puts it. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 
@@ -774,7 +774,7 @@ The one link out of a story or an episode highlight: the publisher's name (or it
 
 ## Play chip (`play-chip`)
 
-The tonal pill that plays a briefing or one story, with its state.
+The tonal pill that plays a briefing or one story, with its state; or its glyph alone.
 
 ### Import
 
@@ -789,6 +789,7 @@ The tonal pill that plays a briefing or one story, with its state.
 ### Use when
 
 - Play an episode or a story and show idle, current, played, error or preparing
+- The glyph alone (no label): a story's Play and the hero's, a round button that never changes size
 
 ### Not when
 
@@ -808,10 +809,10 @@ The tonal pill that plays a briefing or one story, with its state.
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `label` | `string` | - | The visible words: a length such as "1:24", or a state such as "Playing". |
+| `label?` | `string` | - | The visible words: a length such as "1:24", or a state such as "Playing". Leave it out for the glyph alone, a round button that never changes size, whose name is its aria-label (then required, and the page's player rewrites it with each state): a story's Play and the hero's (owner, 2026-11-13: "the play button in the hero should be just the icon button"). |
 | `primary?` | `boolean` | `false` | The page's one main Play: the primary fill, and the pause glyph while it plays instead of the bars. Experimental (DS-11): it may change or go in a minor release (playChip.ts says why it exists). |
 | `state?` | `"idle" \| "current" \| "played" \| "preparing" \| "error" \| "unavailable"` | `"idle"` | Where the item stands; the player rewrites it (buttons.css documents each). |
-| `reserve?` | `string` | `"Play again"` | The widest words the chip will ever show ("Processing"). The chip is as wide as these in every state, so nothing beside it moves when its words change; words longer than them are cut with an ellipsis. The default, "Play again", is the widest the library itself draws and covers a time, Loading, Playing, Paused and Try again. |
+| `reserve?` | `string` | - | The widest words the chip will ever show ("Processing"). The chip is as wide as these in every state; words longer than them are cut with an ellipsis. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the button. |
 
@@ -829,7 +830,7 @@ Every attribute of a native `<button>` element passes through.
 
 ### Owner's note
 
-The tonal pill that plays a briefing or one story: a play mark and a short label on the container fill, with no outline.
+The tonal pill that plays a briefing or one story: a play mark and a short label on the container fill, with no outline; or the mark alone, a circle (.chip-glyph-only, DS-13). PlayChip.tsx draws it: <button class="chip" data-state="idle" data-playing="false"> <span class="chip-glyph"> play and pause icons, .chip-bars, check, replay and refresh, .spinner </span> <span class="chip-text"><span class="chip-label" data-chip-label>1:24</span></span> </button> data-state: idle (plays from here), current (this is what is loaded), played, preparing (audio is being made), unavailable. data-playing says whether the loaded audio is running. The glyph slot holds every mark; the state picks which one shows, so script only ever writes two attributes and the label.
 
 ---
 
@@ -1116,7 +1117,7 @@ A filled Phosphor glyph in the colour of the text beside it.
 
 ### Tokens it reads
 
-`--color-favorite` `--color-on-surface-muted` `--icon-bold` `--size-icon` `--size-icon-lg`
+`--color-favorite` `--icon-bold` `--size-icon` `--size-icon-lg`
 
 ### Where it is drawn
 
@@ -1394,7 +1395,7 @@ A native select with its own chevron.
 | `label?` | `string` | - | A name for a select that has no label of its own; read aloud, never drawn. Draws a label around it. |
 | `children?` | `ReactNode` | - | The options: `<option>` and `<optgroup>`, as a native select holds them. |
 | `variant?` | `"outlined" \| "tonal"` | `"outlined"` | Outlined for a value in a form, tonal for a sort or a filter (select.ts says which is which). |
-| `reserve?` | `string` | - | A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). |
+| `reserve?` | `string` | - | A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the select where it stands (a width, a margin). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 
 Every attribute of a native `<select>` element passes through.
@@ -1676,7 +1677,7 @@ Every attribute of a native `<h2>` element passes through.
 | `href?` | `string` | - | Draws a link instead of a button, for an action that goes to an address. |
 | `target?` | `string` | - | - |
 | `rel?` | `string` | - | - |
-| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. |
+| `reserve?` | `string` | - | The widest words the button may swap to ("Saving…"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `className?` | `string` | - | For placing the button where it stands (a margin, a grid area). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 

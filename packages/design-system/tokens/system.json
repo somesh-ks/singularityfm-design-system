@@ -340,7 +340,7 @@
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/foundations.css"
       ],
-      "usage": "The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label.",
+      "usage": "The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label. Its glyph is the regular icon, not the large one, so air stands round it in the circle (owner, 2026-11-13: \"icon buttons have more padding around the icon\").",
       "tokens": [
         "--button-radius",
         "--color-accent",
@@ -354,7 +354,7 @@
         "--cta-bg-hover",
         "--cta-bg-pressed",
         "--cta-fg",
-        "--size-icon-lg",
+        "--size-icon",
         "--size-touch"
       ]
     },
@@ -573,7 +573,7 @@
       "id": "play-chip",
       "name": "Play chip",
       "kind": "action",
-      "summary": "The tonal pill that plays a briefing or one story, with its state.",
+      "summary": "The tonal pill that plays a briefing or one story, with its state; or its glyph alone.",
       "classes": [
         "chip",
         "chip-glyph",
@@ -584,7 +584,8 @@
         "packages/design-system/src/playChip.ts"
       ],
       "when": [
-        "Play an episode or a story and show idle, current, played, error or preparing"
+        "Play an episode or a story and show idle, current, played, error or preparing",
+        "The glyph alone (no label): a story's Play and the hero's, a round button that never changes size"
       ],
       "not": [
         {
@@ -624,7 +625,7 @@
       "styles": [
         "packages/design-system/styles/buttons.css"
       ],
-      "usage": "The tonal pill that plays a briefing or one story: a play mark and a short label on the container fill, with no outline.",
+      "usage": "The tonal pill that plays a briefing or one story: a play mark and a short label on the container fill, with no outline; or the mark alone, a circle (.chip-glyph-only, DS-13). PlayChip.tsx draws it: <button class=\"chip\" data-state=\"idle\" data-playing=\"false\"> <span class=\"chip-glyph\"> play and pause icons, .chip-bars, check, replay and refresh, .spinner </span> <span class=\"chip-text\"><span class=\"chip-label\" data-chip-label>1:24</span></span> </button> data-state: idle (plays from here), current (this is what is loaded), played, preparing (audio is being made), unavailable. data-playing says whether the loaded audio is running. The glyph slot holds every mark; the state picks which one shows, so script only ever writes two attributes and the label.",
       "tokens": [
         "--chip-bg",
         "--chip-bg-current",
@@ -969,7 +970,6 @@
       "usage": "Phosphor: every glyph is one filled path, so an icon is just its colour and its size. --icon-size, experimental (DS-11, 2026-11-12): a control that holds a glyph sets its size once, on itself, so no page rule names the glyph (the transport's Play and skips, the cover's Play, the Library's status mark, the queue ring's end check: owner calls of 2026-10-22, 2026-10-31, 2026-11-02 and 2026-11-03, and 2026-11-12 for the ring). It inherits, so it is set on the control that holds the one glyph, never on a container of several controls. The registry lists it (icon.ts, ICON.experimental).",
       "tokens": [
         "--color-favorite",
-        "--color-on-surface-muted",
         "--icon-bold",
         "--size-icon",
         "--size-icon-lg"
@@ -2433,7 +2433,7 @@
           "type": "string",
           "required": false,
           "default": "",
-          "description": "The widest words the button may swap to (\"Saving…\"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`."
+          "description": "The widest words the button may swap to (\"Saving…\"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. @deprecated Buttons hug their words (owner, 2026-11-13: \"in general buttons should hug text\"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it."
         },
         {
           "name": "className",
@@ -2697,7 +2697,7 @@
           "type": "string",
           "required": false,
           "default": "",
-          "description": "The widest words the button will say beside its glyph (\"Resume · 88 min left\"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis."
+          "description": "The widest words the button will say beside its glyph (\"Resume · 88 min left\"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis. @deprecated Buttons hug their words (owner, 2026-11-13: \"in general buttons should hug text\"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it."
         },
         {
           "name": "className",
@@ -3024,9 +3024,9 @@
         {
           "name": "label",
           "type": "string",
-          "required": true,
+          "required": false,
           "default": "",
-          "description": "The visible words: a length such as \"1:24\", or a state such as \"Playing\"."
+          "description": "The visible words: a length such as \"1:24\", or a state such as \"Playing\". Leave it out for the glyph alone, a round button that never changes size, whose name is its aria-label (then required, and the page's player rewrites it with each state): a story's Play and the hero's (owner, 2026-11-13: \"the play button in the hero should be just the icon button\")."
         },
         {
           "name": "primary",
@@ -3054,8 +3054,8 @@
           "name": "reserve",
           "type": "string",
           "required": false,
-          "default": "\"Play again\"",
-          "description": "The widest words the chip will ever show (\"Processing\"). The chip is as wide as these in every state, so nothing beside it moves when its words change; words longer than them are cut with an ellipsis. The default, \"Play again\", is the widest the library itself draws and covers a time, Loading, Playing, Paused and Try again."
+          "default": "",
+          "description": "The widest words the chip will ever show (\"Processing\"). The chip is as wide as these in every state; words longer than them are cut with an ellipsis. @deprecated Buttons hug their words (owner, 2026-11-13: \"in general buttons should hug text\"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it."
         },
         {
           "name": "className",
@@ -3301,7 +3301,7 @@
           "type": "string",
           "required": false,
           "default": "",
-          "description": "A tonal select's longest option text (\"Longest first\"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9)."
+          "description": "A tonal select's longest option text (\"Longest first\"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). @deprecated Buttons hug their words (owner, 2026-11-13: \"in general buttons should hug text\"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it."
         },
         {
           "name": "className",
@@ -5900,14 +5900,14 @@
       "tier": "semantic",
       "type": "dimension",
       "light": "1.25rem",
-      "role": "A glyph beside a label."
+      "role": "A glyph beside a label, or alone in an icon button or a glyph-only chip, with air round it in the circle (owner, 2026-11-13)."
     },
     {
       "name": "--size-icon-lg",
       "tier": "semantic",
       "type": "dimension",
       "light": "1.5rem",
-      "role": "A glyph that stands alone in a target."
+      "role": "A glyph that stands alone in a large target: the floating button, a navigation item."
     },
     {
       "name": "--breakpoint-wide",

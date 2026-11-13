@@ -23,7 +23,7 @@ Patterns from about 150 asks, strongest first.
    - A page that scrolls itself at each turn (D94).
    - The bottom stack drifting apart (#120).
    
-   The code answers with fixed-width chips, hidden sizer copies, `scrollbar-gutter: stable` and checks that take no room. Treat any layout shift as a bug.
+   The code answers with fixed glyph slots, controls that hug their words (DS-13), `scrollbar-gutter: stable` and checks that take no room. Treat any layout shift as a bug.
 3. **Live and quiet.** No waiting copy, no chatter about saving:
    - "Live curated" removed (D75).
    - The age banner removed (2026-10-11).

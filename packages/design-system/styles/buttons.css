@@ -29,7 +29,8 @@
 }
 
 /* The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that
-   have a label. */
+   have a label. Its glyph is the regular icon, not the large one, so air stands round it in the circle
+   (owner, 2026-11-13: "icon buttons have more padding around the icon"). */
 .icon-btn {
   padding-inline: 0;
   border-radius: var(--radius-round);
@@ -37,17 +38,17 @@
 }
 
 .icon-btn .icon-glyph {
-  width: var(--icon-size, var(--size-icon-lg));
-  height: var(--icon-size, var(--size-icon-lg));
+  width: var(--icon-size, var(--size-icon));
+  height: var(--icon-size, var(--size-icon));
 }
 
 /* An icon button that ends a row: its glyph's ink lands on the row's end, where the words of the
    rows around it end, and its target hangs out past it (D187). */
 .icon-btn-end {
   margin-inline-end: calc(
-    (var(--size-touch) - var(--size-icon-lg)) /
+    (var(--size-touch) - var(--icon-size, var(--size-icon))) /
     -2 -
-    var(--size-icon-lg) *
+    var(--icon-size, var(--size-icon)) *
     var(--ink-end, 0)
   );
 }
@@ -439,11 +440,11 @@
 
 /*
  * The tonal pill that plays a briefing or one story: a play mark and a short label on the container
- * fill, with no outline. Markup:
+ * fill, with no outline; or the mark alone, a circle (.chip-glyph-only, DS-13). PlayChip.tsx draws it:
  *
  *   <button class="chip" data-state="idle" data-playing="false">
- *     <span class="chip-glyph"> play and pause icons, .chip-bars, a check icon, .spinner </span>
- *     <span class="chip-label num">1:24</span>
+ *     <span class="chip-glyph"> play and pause icons, .chip-bars, check, replay and refresh, .spinner </span>
+ *     <span class="chip-text"><span class="chip-label" data-chip-label>1:24</span></span>
  *   </button>
  *
  * data-state: idle (plays from here), current (this is what is loaded), played, preparing (audio is
@@ -458,10 +459,8 @@
   justify-content: center;
   gap: var(--chip-gap);
   min-height: var(--chip-height);
-  /* One width for every state, so what stands beside the chip never moves as it plays. 7rem fits
-     the widest story label ("Loading", 110px) in the page font; the longer briefing labels
-     ("13 min left") are wider and keep their own size. */
-  min-inline-size: 7rem;
+  /* It hugs its words: no width of its own (owner, 2026-11-13: "in general buttons should hug text";
+     DS-13). A 7rem floor here held "0:22" in the middle of a wide pill. */
   padding-inline: var(--chip-padding-start) var(--chip-padding-end);
   /* No outline: the transparent border keeps the pill's size where forced colours draw one. */
   border: var(--stroke-hairline) solid transparent;
@@ -535,12 +534,14 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: var(--chip-ring);
+  gap: calc(var(--chip-ring) * 2);
   height: var(--chip-icon);
 }
 
+/* Thin bars, near the line icons' weight beside them (owner, 2026-11-13: "the solid fill icons are
+   too thick"). */
 .chip-bars > i {
-  width: calc(var(--chip-ring) * 2);
+  width: calc(var(--chip-ring) * 1.5);
   height: 100%;
   border-radius: var(--chip-ring);
   background: currentColor;
@@ -641,10 +642,10 @@
   text-overflow: ellipsis;
 }
 
-/* Fixed-width digits only where the number ticks: a chip's time while it plays. A still label such
-   as "1 min" keeps the font's own figures, which space it evenly. Moved unchanged from the reader's
-   reader.css with the Play chip (D237). */
-.chip[data-playing="true"] .chip-label {
+/* Fixed-width digits in every state, so a time that ticks never wobbles and starting to play never
+   changes the words' width (DS-13: they once switched to tabular only while playing, which moved the
+   chip a fraction as it started, once the reserve that hid it was gone). */
+.chip-label {
   font-variant-numeric: tabular-nums;
 }
 
@@ -653,22 +654,10 @@
   display: none;
 }
 
+/* Under a pointer a played chip's check turns to the replay glyph, in the same slot. Its words stay:
+   "Play again" in their place made the chip wider than its words (DS-13), and the glyph already says
+   what a press does (D92). */
 @media (hover: hover) {
-  .chip[data-state="played"] .chip-again {
-    display: block;
-    visibility: hidden;
-  }
-
-  .chip[data-state="played"]:hover .chip-label,
-  .chip[data-state="played"]:focus-visible .chip-label {
-    visibility: hidden;
-  }
-
-  .chip[data-state="played"]:hover .chip-again,
-  .chip[data-state="played"]:focus-visible .chip-again {
-    visibility: visible;
-  }
-
   .chip[data-state="played"]:hover .chip-check,
   .chip[data-state="played"]:focus-visible .chip-check {
     display: none;
@@ -710,9 +699,11 @@
 
 /* The waiting words shimmer (owner, 2026-11-10: "Processing" with a shimmer): a light band crosses the
    letters, nothing else. A mask dims the words to 70% and lets the band through at full, so the words
-   keep whatever colour their chip gives them (the hero's fill, a story's accent, any mood). Still and at
+   keep whatever colour their chip gives them (the hero's fill, a story's accent, any mood). A chip with no
+   words shimmers its glyph instead (DS-13), until it buffers and the spinner takes the slot. Still and at
    full strength under reduced motion and forced colours. */
-.chip[data-state="preparing"] .chip-label {
+.chip[data-state="preparing"] .chip-label,
+.chip-glyph-only[data-state="preparing"]:not([data-playing="true"]) .chip-glyph {
   --chip-sheen: 2400ms;
   -webkit-mask: var(--sheen-mask) 0 0 / 250% 100%;
   mask: var(--sheen-mask) 0 0 / 250% 100%;
@@ -720,7 +711,8 @@
 }
 
 @media (prefers-reduced-motion: reduce), (forced-colors: active) {
-  .chip[data-state="preparing"] .chip-label {
+  .chip[data-state="preparing"] .chip-label,
+  .chip-glyph-only[data-state="preparing"]:not([data-playing="true"]) .chip-glyph {
     -webkit-mask: none;
     mask: none;
     animation: none;
@@ -768,6 +760,24 @@
 
 .chip-primary[data-state="current"][data-playing="true"] .chip-bars {
   display: none;
+}
+
+/* The glyph alone (PlayChip with no label; owner, 2026-11-13: "the play button in the hero should be
+   just the icon button, and the same in chapters"). A circle as tall as the chip, with the chip's touch
+   target, its glyph at an icon button's size (the regular icon, with air round it), so it stands beside
+   the hero's Favorite and Share circles as one of them. Every state keeps the one
+   slot, so nothing moves as it plays, loads or fails. Its name is its aria-label, which the page's player
+   writes with each state, as it writes a chip's words. */
+.chip-glyph-only {
+  --chip-glyph: var(--size-icon);
+  --chip-icon: var(--size-icon);
+  min-inline-size: var(--chip-height);
+  padding-inline: 0;
+}
+
+/* Its target is a touch wide as well as tall: the chip's reaches past the border only up and down. */
+.chip-glyph-only::after {
+  inset-inline: calc((var(--size-touch) - var(--chip-height)) / -2 - var(--stroke-hairline));
 }
 
 .chip:is([data-state="unavailable"], [aria-disabled="true"], :disabled) {
