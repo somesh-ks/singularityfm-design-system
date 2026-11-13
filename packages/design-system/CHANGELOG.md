@@ -1,5 +1,15 @@
 # @singularityfm/design-system
 
+## 0.12.0
+
+### Minor Changes
+
+- 0e11b1a: The tonal Select's chip is tighter and even: 12px from each end, with the chevron 8px after the words (was 16px ends and a 16px gap). No markup change.
+
+### Patch Changes
+
+- 0e11b1a: Every props table (system.json, the part pages, llms-full.txt and `ds` answers) lists a component's props in one reading order: what it says, how it looks, wiring, value, then placement, and names the native attributes a component does not pass on (DialogTitle drops `className`, Switch `type` and `role`; system.json's `except`). No prop changed.
+
 ## 0.11.0
 
 ### Minor Changes
