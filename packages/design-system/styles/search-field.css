@@ -24,6 +24,16 @@
   transition: background-color var(--duration-hover) var(--ease-hover);
 }
 
+/* On a card's container tone the pill steps up to the overlay tone, as a card's filter chips and tonal
+   select do (owner, 2026-10-24): white in light, one grey up in dark, where the container pill read as
+   a hole in the card. Its hover is the card's chip layer (below). Focus keeps its own step: the focus
+   rule weighs as much as this one and comes after it, so a focused field never takes the overlay
+   (owner, 2026-11-06). Keyed on the library's card (.card-group) alone; a page's own card joins by
+   being one (D237, D253). Moved from the reader's topics.css, where it took the page's own surface. */
+.card-group .search-field {
+  background: var(--color-surface-overlay);
+}
+
 /* Focus steps the pill a quiet shade toward its text, in the mood's hue, with a control-weight
    hairline inside it, since the step alone sits close to the pill. It was the overlay surface,
    which is white in every light mood and glared on the page (owner, 2026-11-06). */
@@ -66,19 +76,7 @@
   .search-field:hover:not(:focus-within) {
     background: var(--color-surface-container-hover);
   }
-}
 
-/* On a card's container tone the pill steps up to the overlay tone, as a card's filter chips and tonal
-   select do (owner, 2026-10-24): white in light, one grey up in dark, where the container pill read as
-   a hole in the card. Its hover is the card's chip layer. Focus keeps its own step (above): this rule
-   weighs as much and comes after it, so it stands aside while the field has focus. Keyed on the
-   library's card (.card-group) alone; a page's own card joins by being one (D237, D253). Moved from
-   the reader's topics.css, where it took the page's own surface. */
-.card-group .search-field:not(:focus-within) {
-  background: var(--color-surface-overlay);
-}
-
-@media (hover: hover) and (pointer: fine) {
   .card-group .search-field:hover:not(:focus-within) {
     background: var(--card-chip-hover);
   }
@@ -142,6 +140,6 @@
    edge: a system-coloured border draws it. The pill keeps its height; the border is inside it. */
 @media (forced-colors: active) {
   .search-field {
-    border: var(--stroke-hairline) solid FieldText;
+    border: var(--stroke-hairline) solid ButtonBorder;
   }
 }
