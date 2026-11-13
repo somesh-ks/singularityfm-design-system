@@ -1,6 +1,6 @@
 # Play chip (`play-chip`)
 
-The tonal pill that plays a briefing or one story, with its state.
+The tonal pill that plays a briefing or one story, with its state; or its glyph alone.
 
 ## Import
 
@@ -15,6 +15,7 @@ The tonal pill that plays a briefing or one story, with its state.
 ## Use when
 
 - Play an episode or a story and show idle, current, played, error or preparing
+- The glyph alone (no label): a story's Play and the hero's, a round button that never changes size
 
 ## Not when
 
@@ -34,9 +35,9 @@ The tonal pill that plays a briefing or one story, with its state.
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `label` | `string` | - | The visible words: a length such as "1:24", or a state such as "Playing". |
+| `label?` | `string` | - | The visible words: a length such as "1:24", or a state such as "Playing". Leave it out for the glyph alone, a round button that never changes size, whose name is its aria-label: a story's Play and the hero's (owner, 2026-11-13: "the play button in the hero should be just the icon button"). |
 | `state?` | `"idle" \| "current" \| "played" \| "preparing" \| "error" \| "unavailable"` | `"idle"` | Where the item stands; the player rewrites it (buttons.css documents each). |
-| `reserve?` | `string` | `"Play again"` | The widest words the chip will ever show ("Processing"). The chip is as wide as these in every state, so nothing beside it moves when its words change; words longer than them are cut with an ellipsis. The default, "Play again", is the widest the library itself draws and covers a time, Loading, Playing, Paused and Try again. |
+| `reserve?` | `string` | - | The widest words the chip will ever show ("Processing"). The chip is as wide as these in every state; words longer than them are cut with an ellipsis. @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it. |
 | `primary?` | `boolean` | `false` | The page's one main Play: the primary fill, and the pause glyph while it plays instead of the bars. Experimental (DS-11): it may change or go in a minor release (playChip.ts says why it exists). |
 | `className?` | `string` | - | For placing the chip where it stands, or a hook a page's rule finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the button. |

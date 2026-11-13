@@ -573,7 +573,7 @@
       "id": "play-chip",
       "name": "Play chip",
       "kind": "action",
-      "summary": "The tonal pill that plays a briefing or one story, with its state.",
+      "summary": "The tonal pill that plays a briefing or one story, with its state; or its glyph alone.",
       "classes": [
         "chip",
         "chip-glyph",
@@ -584,7 +584,8 @@
         "packages/design-system/src/playChip.ts"
       ],
       "when": [
-        "Play an episode or a story and show idle, current, played, error or preparing"
+        "Play an episode or a story and show idle, current, played, error or preparing",
+        "The glyph alone (no label): a story's Play and the hero's, a round button that never changes size"
       ],
       "not": [
         {
@@ -2441,7 +2442,7 @@
           "type": "string",
           "required": false,
           "default": "",
-          "description": "The widest words the button may swap to (\"Saving…\"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`."
+          "description": "The widest words the button may swap to (\"Saving…\"). It is as wide as these and its own words in every state, so a button that hugs its words never changes width when they change (DS-9). A script that swaps the words writes `[data-button-label]`, not the button, which would drop the reserve. A `reserve` button holds words only: a `.spinner` child is read as one of them and is not given the busy spinner's place (buttons.css), so give a busy button with a spinner no `reserve`. @deprecated Buttons hug their words (owner, 2026-11-13: \"in general buttons should hug text\"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it."
         },
         {
           "name": "children",
@@ -2695,7 +2696,7 @@
           "type": "string",
           "required": false,
           "default": "",
-          "description": "The widest words the button will say beside its glyph (\"Resume · 88 min left\"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis."
+          "description": "The widest words the button will say beside its glyph (\"Resume · 88 min left\"), for one whose words change. It is as wide as these in every state (DS-9); longer words end in an ellipsis. @deprecated Buttons hug their words (owner, 2026-11-13: \"in general buttons should hug text\"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it."
         },
         {
           "name": "children",
@@ -3014,9 +3015,9 @@
         {
           "name": "label",
           "type": "string",
-          "required": true,
+          "required": false,
           "default": "",
-          "description": "The visible words: a length such as \"1:24\", or a state such as \"Playing\"."
+          "description": "The visible words: a length such as \"1:24\", or a state such as \"Playing\". Leave it out for the glyph alone, a round button that never changes size, whose name is its aria-label: a story's Play and the hero's (owner, 2026-11-13: \"the play button in the hero should be just the icon button\")."
         },
         {
           "name": "state",
@@ -3037,8 +3038,8 @@
           "name": "reserve",
           "type": "string",
           "required": false,
-          "default": "\"Play again\"",
-          "description": "The widest words the chip will ever show (\"Processing\"). The chip is as wide as these in every state, so nothing beside it moves when its words change; words longer than them are cut with an ellipsis. The default, \"Play again\", is the widest the library itself draws and covers a time, Loading, Playing, Paused and Try again."
+          "default": "",
+          "description": "The widest words the chip will ever show (\"Processing\"). The chip is as wide as these in every state; words longer than them are cut with an ellipsis. @deprecated Buttons hug their words (owner, 2026-11-13: \"in general buttons should hug text\"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it."
         },
         {
           "name": "primary",
@@ -3289,7 +3290,7 @@
           "type": "string",
           "required": false,
           "default": "",
-          "description": "A tonal select's longest option text (\"Longest first\"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9)."
+          "description": "A tonal select's longest option text (\"Longest first\"); an outlined select ignores it. Where the browser draws the closed select as its chosen option (appearance: base-select) it is as wide as that option, so it grows and shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9). @deprecated Buttons hug their words (owner, 2026-11-13: \"in general buttons should hug text\"; DS-13). Drop it: the words set the width. It still works until 1.0.0 removes it."
         },
         {
           "name": "children",
