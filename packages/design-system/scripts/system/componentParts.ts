@@ -354,7 +354,7 @@ export const componentParts = (): PartSource[] => [
     ],
     keywords: ["radio", "length", "one of", "option group", "pick one"],
     markup:
-      '<SegmentedChoice name="length" aria-labelledby="len" defaultValue="3" options={[{ value: "3", label: "3 min" }]} />',
+      '<SegmentedChoice name="length" aria-label="Length" defaultValue="3" options={[{ value: "3", label: "3 min" }, { value: "5", label: "5 min" }]} />',
     rules: ["Native radios with no client directive (DS-8)."],
   }),
   control("segmented-nav", "Segmented navigation", SEGMENTED_NAV, {
@@ -366,7 +366,8 @@ export const componentParts = (): PartSource[] => [
     ],
     not: [{ when: "jumping to sections of a long page", use: "tabs" }],
     keywords: ["tablist", "view switcher", "toggle views", "stories transcript"],
-    markup: '<SegmentedNav aria-label="View" tabs={[{ value: "stories", label: "Stories" }]} />',
+    markup:
+      '<SegmentedNav aria-label="View" tabs={[{ value: "stories", label: "Stories" }, { value: "transcript", label: "Transcript" }]} />',
     rules: [
       "A native tablist with no client directive (DS-8): the page calls mountSegmentedNav(list, onSelect) from design-system/segmentedNav once for each, and draws the panels (each tab's controls).",
     ],
@@ -507,7 +508,8 @@ export const componentParts = (): PartSource[] => [
       "packages/design-system/src/menu.ts",
     ],
     rules: [
-      "A native popover with no client directive: its button opens it with popoverTarget (DS-8).",
+      "A native popover with no client directive: its button opens it with popoverTarget (DS-8); light dismiss and Escape close it, and the header's Close needs the page's menu script.",
+      "Menu draws its children as given: with five actions or more the host asks menuHasTiles() and wraps the first three in a row with menuTilesClass() itself.",
       "Under 40rem a menu is a sheet, never a small popover.",
       "A script finds one with MENU_SELECTORS (design-system/menu.ts); a string builder or an island takes menuListClass() and menuItemClass().",
     ],
