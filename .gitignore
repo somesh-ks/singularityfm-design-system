@@ -10,3 +10,4 @@ dist/
 .claude/worktrees/
 .claude/settings.local.json
 packages/design-system/bin/
+scripts/agentEval/runs/
