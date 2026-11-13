@@ -340,7 +340,7 @@
         "packages/design-system/styles/buttons.css",
         "packages/design-system/styles/foundations.css"
       ],
-      "usage": "The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label.",
+      "usage": "The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that have a label. Its glyph is the regular icon, not the large one, so air stands round it in the circle (owner, 2026-11-13: \"icon buttons have more padding around the icon\").",
       "tokens": [
         "--button-radius",
         "--color-accent",
@@ -354,7 +354,7 @@
         "--cta-bg-hover",
         "--cta-bg-pressed",
         "--cta-fg",
-        "--size-icon-lg",
+        "--size-icon",
         "--size-touch"
       ]
     },
@@ -5888,14 +5888,14 @@
       "tier": "semantic",
       "type": "dimension",
       "light": "1.25rem",
-      "role": "A glyph beside a label."
+      "role": "A glyph beside a label, or alone in an icon button or a glyph-only chip, with air round it in the circle (owner, 2026-11-13)."
     },
     {
       "name": "--size-icon-lg",
       "tier": "semantic",
       "type": "dimension",
       "light": "1.5rem",
-      "role": "A glyph that stands alone in a target."
+      "role": "A glyph that stands alone in a large target: the floating button, a navigation item."
     },
     {
       "name": "--breakpoint-wide",

@@ -734,7 +734,7 @@
   }
 
   .guide-nav-foot .icon-btn {
-    margin-inline-start: calc(var(--space-4) - (var(--size-touch) - var(--size-icon-lg)) / 2);
+    margin-inline-start: calc(var(--space-4) - (var(--size-touch) - var(--size-icon)) / 2);
   }
 
   /* The date flush with the icons above, with no end padding: "Updated 30 September 2026" is 183px

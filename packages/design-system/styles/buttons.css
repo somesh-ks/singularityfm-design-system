@@ -29,7 +29,8 @@
 }
 
 /* The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that
-   have a label. */
+   have a label. Its glyph is the regular icon, not the large one, so air stands round it in the circle
+   (owner, 2026-11-13: "icon buttons have more padding around the icon"). */
 .icon-btn {
   padding-inline: 0;
   border-radius: var(--radius-round);
@@ -37,17 +38,17 @@
 }
 
 .icon-btn .icon-glyph {
-  width: var(--icon-size, var(--size-icon-lg));
-  height: var(--icon-size, var(--size-icon-lg));
+  width: var(--icon-size, var(--size-icon));
+  height: var(--icon-size, var(--size-icon));
 }
 
 /* An icon button that ends a row: its glyph's ink lands on the row's end, where the words of the
    rows around it end, and its target hangs out past it (D187). */
 .icon-btn-end {
   margin-inline-end: calc(
-    (var(--size-touch) - var(--size-icon-lg)) /
+    (var(--size-touch) - var(--icon-size, var(--size-icon))) /
     -2 -
-    var(--size-icon-lg) *
+    var(--icon-size, var(--size-icon)) *
     var(--ink-end, 0)
   );
 }
@@ -761,13 +762,13 @@
 
 /* The glyph alone (PlayChip with no label; owner, 2026-11-13: "the play button in the hero should be
    just the icon button, and the same in chapters"). A circle as tall as the chip, with the chip's touch
-   target, its glyph at an icon button's size, so it stands beside the hero's Favorite and Share circles
-   as one of them. Every state keeps the one
+   target, its glyph at an icon button's size (the regular icon, with air round it), so it stands beside
+   the hero's Favorite and Share circles as one of them. Every state keeps the one
    slot, so nothing moves as it plays, loads or fails. Its name is its aria-label, which the page's player
    writes with each state, as it writes a chip's words. */
 .chip-glyph-only {
-  --chip-glyph: var(--size-icon-lg);
-  --chip-icon: var(--size-icon-lg);
+  --chip-glyph: var(--size-icon);
+  --chip-icon: var(--size-icon);
   min-inline-size: var(--chip-height);
   padding-inline: 0;
 }
