@@ -79,14 +79,25 @@ const version = option("version") ?? run("npm", ["view", PACKAGE, "version"], HE
 
 /**
  * Removes a temp folder. Windows can hold a file open for a moment after its process exits (EPERM,
- * EBUSY; owner's run, 2026-11-14), so Node retries; a folder that still will not go is left with a
- * warning instead of ending the run.
+ * EBUSY; owner's run, 2026-11-14), so it retries with a real pause: `rmSync`'s own `retryDelay` is
+ * divided by 1000 before a millisecond Sleep in some Node releases (24.0.0, 26.7.0), so it barely
+ * waits. A folder that still will not go is left with a warning instead of ending the run.
  */
+const pause = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 function removeDir(dir) {
-  try {
-    rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
-  } catch (error) {
-    console.warn(`Could not remove ${dir} (${error.code ?? error.message}); delete it by hand.`);
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      rmSync(dir, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      if (attempt === 5 || !["EPERM", "EBUSY", "ENOTEMPTY"].includes(error.code)) {
+        console.warn(
+          `Could not remove ${dir} (${error.code ?? error.message}); delete it by hand.`,
+        );
+        return;
+      }
+      pause(attempt * 500);
+    }
   }
 }
 
