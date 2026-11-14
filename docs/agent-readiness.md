@@ -116,7 +116,7 @@ node scripts/agentEval/run.mjs --app C:\path\to\singularityfm-app
 node scripts/agentEval/run.mjs --app C:\path\to\singularityfm-app --agents claude,antigravity
 ```
 
-About 24 runs of 2 to 4 minutes each per agent, unattended. `--setups bare-guide,bare` skips the app; `--user-settings` adds your own Claude settings and plugins, to compare a run with them. The summary prints at the end and is saved beside the transcripts in `scripts/agentEval/runs/`.
+About 24 runs of 2 to 12 minutes each per agent, unattended. Claude Code runs `claude-haiku-5-5` unless `--model` names another, so every run is on the same model whatever your own default is; `--agy-model` picks Antigravity's. `--setups bare-guide,bare` skips the app; `--user-settings` adds your own Claude settings and plugins, to compare a run with them. The summary prints at the end and is saved beside the transcripts in `scripts/agentEval/runs/`.
 
 The Antigravity runs need `agy` signed in once in a normal session. Both agents read the setup's AGENTS.md, but they are not held to the same tools: Claude Code may edit files and run pnpm, npx, ls and cat, while `agy` has no such list outside its global settings, so it runs with every tool approved, inside its terminal sandbox (workspace and temp folders, no network) where your system has one. For both, a `git push` from the test's copy of the reader goes nowhere. `agy` also loads your global Antigravity rules, and any memory it keeps between conversations, which Claude Code's runs leave out. Compare the two agents on the same setup, and read a gap as the agent plus its defaults, not the model alone. The summary's rows paste straight under the table below.
 

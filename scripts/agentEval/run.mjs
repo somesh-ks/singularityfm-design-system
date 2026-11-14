@@ -13,7 +13,8 @@
 // the setup's AGENTS.md. Claude Code may edit files and run pnpm, npx, ls and cat; `agy` has no such
 // list outside its global settings, so it runs with every tool approved inside its terminal sandbox.
 // Options: --agents claude,antigravity  --tasks id,id  --version <package version> (default: npm
-//   latest)  --model <name> (passed to every agent listed)  --timeout <minutes per task, default 15>
+//   latest)  --model <Claude model, default claude-haiku-5-5>  --agy-model <Antigravity model,
+//   default its own>  --timeout <minutes per task, default 15>
 //   --user-settings (Claude Code only: also load your own settings and plugins, to compare a run with
 //   them)  --out <folder> (default scripts/agentEval/runs, gitignored).
 //
@@ -48,10 +49,12 @@ if (unknown.length)
 const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
 const out = join(option("out", join(HERE, "runs")), stamp);
 
-// Windows starts `pnpm.cmd`, `claude.cmd` and `agy.cmd` only through a shell. No command or
-// argument here holds a quote, so quoting each one (the command too: Node's own path has a space in
-// Program Files) is enough for cmd.
-const quoted = (words) => (WINDOWS ? words.map((word) => `"${word}"`) : words);
+// Windows starts `pnpm.cmd`, `claude.cmd` and `agy.cmd` only through a shell. Every argument is
+// quoted (none here holds a quote). A command is quoted only when it holds a space (Node's own path in
+// Program Files): cmd runs a quoted bare name such as "npm" with `%~dp0` inside npm.cmd pointing at
+// the working folder, not at Node's, and npm then fails to find itself (owner's run, 2026-11-13).
+const quoted = (words) =>
+  WINDOWS ? words.map((word, index) => (index > 0 || /\s/.test(word) ? `"${word}"` : word)) : words;
 function run(command, commandArgs, cwd, input) {
   const [program, ...rest] = quoted([command, ...commandArgs]);
   return execFileSync(program, rest, {
@@ -88,9 +91,12 @@ function inTemp(prefix, make) {
 /** A new Astro app with the package installed, committed so each task starts from the same tree. */
 const bareApp = (withGuideLine) =>
   inTemp("ds-agent-", (dir) => {
-    const peers = JSON.parse(
+    // npm 12 answers a `view <name>@<version> <field> --json` with a one-item array; older npm with
+    // the object itself.
+    const viewed = JSON.parse(
       run("npm", ["view", `${PACKAGE}@${version}`, "peerDependencies", "--json"], HERE),
     );
+    const peers = Array.isArray(viewed) ? (viewed[0] ?? {}) : viewed;
     mkdirSync(join(dir, "src/pages"), { recursive: true });
     mkdirSync(join(dir, "src/layouts"), { recursive: true });
     const write = (path, text) => writeFileSync(join(dir, path), text);
@@ -208,7 +214,7 @@ function agentCall(agent, prompt) {
       "--dangerously-skip-permissions",
       "--sandbox",
     ];
-    if (option("model")) call.push("--model", option("model"));
+    if (option("agy-model")) call.push("--model", option("agy-model"));
     return { call, input: `${JSON.stringify({ event: "user", message: { content: prompt } })}\n` };
   }
   const call = [
@@ -228,7 +234,9 @@ function agentCall(agent, prompt) {
     "--setting-sources",
     args.includes("--user-settings") ? "user,project,local" : "project,local",
   );
-  if (option("model")) call.push("--model", option("model"));
+  // Pinned, so a baseline and a later run use the same model whatever the CLI's own default is, and
+  // the small one, so a full run costs little and the docs carry more of the result (owner, 2026-11-13).
+  call.push("--model", option("model", "claude-haiku-5-5"));
   return { call, input: prompt };
 }
 
