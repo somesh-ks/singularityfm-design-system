@@ -148,9 +148,9 @@ jobs:
               "$dir/summary.json" >/dev/null; then continue; fi
             echo "$AGENT finished no task in $setup:"
             find "$dir/$setup" -type f -name '*.stderr.txt' -print0 -quit | xargs -0 -r head -c 600 --
-            # Claude Code reports a refused sign-in or an empty balance in its transcript's result
+            # Claude Code reports a refused sign-in or an empty balance in each transcript's result
             # event, not on stderr.
-            find "$dir/$setup" -type f -name '*.jsonl' -print0 -quit |
+            find "$dir/$setup" -type f -name '*.jsonl' -print0 |
               xargs -0 -r jq -Rr 'fromjson? | select(.type == "result") | .result // .subtype // empty | tostring' |
               head -c 600
             echo
