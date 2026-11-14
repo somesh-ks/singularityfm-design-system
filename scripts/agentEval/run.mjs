@@ -90,7 +90,7 @@ function removeDir(dir) {
       rmSync(dir, { recursive: true, force: true });
       return;
     } catch (error) {
-      if (attempt === 5 || !["EPERM", "EBUSY", "ENOTEMPTY"].includes(error.code)) {
+      if (attempt === 6 || !["EPERM", "EBUSY", "ENOTEMPTY"].includes(error.code)) {
         console.warn(
           `Could not remove ${dir} (${error.code ?? error.message}); delete it by hand.`,
         );
