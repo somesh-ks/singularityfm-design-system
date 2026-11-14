@@ -278,27 +278,30 @@ export type SummaryRow = {
   task: string;
   model?: string;
   finished: boolean;
-  met: number;
-  of: number;
-  invented: string[] | number;
-  outside_ui: string[] | number;
+  met: number | null;
+  of: number | null;
+  invented: string[] | number | null;
+  outside_ui: string[] | number | null;
   validate_errors: number | null;
   compiled: boolean | null;
   used_ds: boolean;
   read_guide: boolean;
-  minutes: number;
-  tokens: number;
+  minutes: number | null;
+  tokens: number | null;
 };
 
-const count = (value: string[] | number) => (Array.isArray(value) ? value.length : value);
+/** Whether a list, or CI's count of it, is empty; null when CI could not read it. */
+const none = (value: string[] | number | null) =>
+  value === null ? null : (Array.isArray(value) ? value.length : value) === 0;
 
 /** The pass or fail measures a change is counted on; null when a run could not tell. */
 const MEASURES: [string, (row: SummaryRow) => boolean | null][] = [
   ["finished", (row) => row.finished],
-  ["right part", (row) => row.met === row.of],
+  // null when a count did not read, so two missing counts never pass as equal.
+  ["right part", (row) => (row.met === null || row.of === null ? null : row.met === row.of)],
   ["compiles", (row) => row.compiled],
-  ["no invented import", (row) => count(row.invented) === 0],
-  ["no other UI library", (row) => count(row.outside_ui) === 0],
+  ["no invented import", (row) => none(row.invented)],
+  ["no other UI library", (row) => none(row.outside_ui)],
   [
     "no `ds validate` error",
     (row) => (row.validate_errors === null ? null : row.validate_errors === 0),
@@ -315,8 +318,8 @@ export type Change = {
   /** Tasks that started passing, and that stopped. */
   up: number;
   down: number;
-  /** `counts` when two or more tasks moved one way, or one did as a task did in the run before. */
-  verdict: "counts" | "noise";
+  /** Per direction: two or more tasks moved that way, or one did as a task did in the run before. */
+  counts: { up: boolean; down: boolean };
 };
 
 export type Comparison = {
@@ -330,13 +333,21 @@ export type Comparison = {
   leftOut: string[];
   models: string[];
   changes: Change[];
-  /** Medians over finished shared runs, before and after; read as information, never a verdict. */
-  minutes: [number, number];
-  tokens: [number, number];
+  /** Medians over finished shared runs, before and after; read as information, never a verdict. Null
+   * when no shared task finished. */
+  minutes: [number | null, number | null];
+  tokens: [number | null, number | null];
 };
 
-export const median = (values: number[]) =>
-  [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] ?? 0;
+/** The middle value, or the mean of the two middle ones; null for none, so nothing reads as zero. */
+export const median = (values: number[]): number | null => {
+  const sorted = [...values].sort((a, b) => a - b);
+  const half = Math.floor(sorted.length / 2);
+  if (sorted.length === 0) return null;
+  return sorted.length % 2
+    ? (sorted[half] ?? null)
+    : ((sorted[half - 1] ?? 0) + (sorted[half] ?? 0)) / 2;
+};
 
 /**
  * Whether a run moved the agent test, against the one before it (DS-18 noise rule). With 8 tasks an
@@ -376,8 +387,6 @@ export function compareRuns(runs: SummaryRow[][]): Comparison[] {
             const earlier = end >= 2 ? pairs(measure, end - 2) : [];
             const upBefore = earlier.some(([was, now]) => !was && now);
             const downBefore = earlier.some(([was, now]) => was && !now);
-            const counts =
-              up >= 2 || down >= 2 || (up === 1 && upBefore) || (down === 1 && downBefore);
             return [
               {
                 measure: name,
@@ -385,7 +394,10 @@ export function compareRuns(runs: SummaryRow[][]): Comparison[] {
                 after: judged.filter(([, now]) => now).length,
                 up,
                 down,
-                verdict: counts ? "counts" : "noise",
+                counts: {
+                  up: up >= 2 || (up === 1 && upBefore),
+                  down: down >= 2 || (down === 1 && downBefore),
+                },
               },
             ];
           });
@@ -395,6 +407,8 @@ export function compareRuns(runs: SummaryRow[][]): Comparison[] {
         return row?.finished ? [row] : [];
       });
     const [was, now] = [finished(Math.max(end - 1, 0)), finished(end)];
+    const middle = (rows: SummaryRow[], key: "minutes" | "tokens") =>
+      median(rows.flatMap((row) => (row[key] === null ? [] : [row[key]])));
     return {
       setup,
       agent,
@@ -403,8 +417,8 @@ export function compareRuns(runs: SummaryRow[][]): Comparison[] {
       leftOut: all.filter((task) => !shared.includes(task)),
       models: [...new Set(mine.flat().flatMap((row) => (row.model ? [row.model] : [])))],
       changes,
-      minutes: [median(was.map((row) => row.minutes)), median(now.map((row) => row.minutes))],
-      tokens: [median(was.map((row) => row.tokens)), median(now.map((row) => row.tokens))],
+      minutes: [middle(was, "minutes"), middle(now, "minutes")],
+      tokens: [middle(was, "tokens"), middle(now, "tokens")],
     };
   });
 }

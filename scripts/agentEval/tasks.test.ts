@@ -212,16 +212,22 @@ describe("the agent test's comparison", () => {
     ids.map((id) => row(id, passing.includes(id)));
   // Only one measure differs between these rows, so a run has at most one change.
   const verdicts = (...runs: SummaryRow[][]) =>
-    compareRuns(runs)[0]?.changes.map((change) => change.verdict);
+    compareRuns(runs)[0]?.changes.map(({ counts }) =>
+      counts.up && counts.down ? "both" : counts.up ? "up" : counts.down ? "down" : "noise",
+    );
 
   // Prevents reading one agent's coin flip on one task as the docs working, two tasks that swap
-  // places as no change, and a task that only the newer run has from moving the count at all.
+  // places as no change, a lone move down riding on two moves up, a task that only the newer run has
+  // from moving the count at all, and a count that did not read passing as the right part.
   it("counts a move only when it is larger than chance or repeats", () => {
     expect(verdicts(run([]), run(["a"]))).toEqual(["noise"]);
-    expect(verdicts(run([]), run(["a", "b"]))).toEqual(["counts"]);
-    expect(verdicts(run([]), run(["a"]), run(["a", "b"]))).toEqual(["counts"]);
+    expect(verdicts(run([]), run(["a", "b"]))).toEqual(["up"]);
+    expect(verdicts(run([]), run(["a"]), run(["a", "b"]))).toEqual(["up"]);
     expect(verdicts(run(["a"]), run([]), run(["b"]))).toEqual(["noise"]);
-    expect(verdicts(run(["a", "b"]), run(["c", "d"]))).toEqual(["counts"]);
+    expect(verdicts(run(["a", "b"]), run(["c", "d"]))).toEqual(["both"]);
+    expect(verdicts(run(["a"]), run(["b", "c"]))).toEqual(["up"]);
+    const unread = run([]).map((one) => ({ ...one, met: null, of: null }));
+    expect(verdicts(run([]), unread)).toEqual([]);
     const added = compareRuns([run([]), run(["e"], ["a", "b", "c", "d", "e"])])[0];
     expect(added?.changes).toEqual([]);
     expect(added?.leftOut).toEqual(["e"]);

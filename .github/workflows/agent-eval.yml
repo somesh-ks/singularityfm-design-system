@@ -144,7 +144,7 @@ jobs:
           token=$(openssl rand -hex 16)
           echo "::stop-commands::$token"
           for setup in ${SETUPS//,/ }; do
-            if jq -e --arg setup "$setup" '[.rows[] | select(.setup == $setup and .finished)] | length > 0' \
+            if jq -e --arg setup "$setup" '[.rows[] | select(.setup == $setup and .finished == true)] | length > 0' \
               "$dir/summary.json" >/dev/null; then continue; fi
             echo "$AGENT finished no task in $setup:"
             find "$dir/$setup" -type f -name '*.stderr.txt' -print0 -quit | xargs -0 -r head -c 600 --
@@ -152,21 +152,28 @@ jobs:
             status=1
           done
           echo "::$token::"
-          # For compare.mjs: only known setups and task ids, a model name, numbers and yes-or-no values, so no text the agent wrote
-          # (an import it made up, a file name) is kept where GitHub does not mask secrets.
+          # For compare.mjs: one row per known setup and task id, a model name of a known shape, bounded whole
+          # numbers and yes-or-no values, so no text the agent wrote (an import it made up, a file name) is
+          # kept where GitHub does not mask secrets. It narrows what a row can carry, never to nothing: the
+          # container's own network is the larger way out.
           ids=$(jq -c '[.tasks[].id]' scripts/agentEval/tasks.json)
           jq --arg setups "$SETUPS" --arg agent "$AGENT" --argjson ids "$ids" '
-            def num: if type == "number" then . else null end;
-            def model: if type == "string" and test("^([a-z0-9.-]{1,40}|agy default)$") then . else "?" end;
+            def whole($max): if type == "number" and . == floor and . >= 0 and . <= $max then . else null end;
+            def minutes: if type == "number" and . >= 0 and . <= 60 then (. * 10 | round) / 10 else null end;
+            def model: if type == "string" and
+              test("^(claude-(haiku|sonnet|opus|fable)-[0-9]{1,2}(-[0-9]{1,2})?|gemini-[0-9]{1,2}(\\.[0-9])?-(pro|flash|flash-lite)(-preview)?|agy default)$")
+              then . else "?" end;
+            def few: if type == "array" then length | whole(99) else null end;
             {rows: [.rows[] | select((.setup as $s | $setups | split(",") | index($s)) and
                                      (.task as $t | $ids | index($t)))
               | {setup, agent: $agent, task, model: (.model | model),
-                 finished: (.finished == true), met: (.met | num), of: (.of | num),
-                 invented: (.invented | length), outside_ui: (.outside_ui | length),
-                 validate_errors: (.validate_errors | num),
+                 finished: (.finished == true), met: (.met | whole(20)), of: (.of | whole(20)),
+                 invented: (.invented | few), outside_ui: (.outside_ui | few),
+                 validate_errors: (.validate_errors | whole(999)),
                  compiled: (if .compiled == null then null else .compiled == true end),
                  used_ds: (.used_ds == true), read_guide: (.read_guide == true),
-                 minutes: (.minutes | num), tokens: (.tokens | num)}]}' \
+                 minutes: (.minutes | minutes), tokens: (.tokens | whole(100000000))}]
+              | unique_by([.setup, .task])}' \
             "$dir/summary.json" > "$RUNNER_TEMP/summary.json" || status=1
           if [ "$status" -ne 0 ]; then echo "::error::$AGENT finished no task in a setup, or its rows did not read; see the log above"; fi
           exit "$status"
