@@ -63,8 +63,8 @@ jobs:
         env:
           AGENT: ${{ matrix.agent }}
           AGY_MODEL: ${{ vars.AGY_MODEL }}
-          ANTHROPIC_FEDERATION_RULE_ID: ${{ matrix.agent == 'claude' && vars.ANTHROPIC_FEDERATION_RULE_ID || '' }}
-          ANTHROPIC_ORGANIZATION_ID: ${{ matrix.agent == 'claude' && vars.ANTHROPIC_ORGANIZATION_ID || '' }}
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ matrix.agent == 'claude' && secrets.ANTHROPIC_FEDERATION_RULE_ID || '' }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ matrix.agent == 'claude' && secrets.ANTHROPIC_ORGANIZATION_ID || '' }}
           GEMINI_API_KEY: ${{ matrix.agent == 'antigravity' && secrets.GEMINI_API_KEY || '' }}
         run: |
           if [ "$AGENT" = claude ]; then
