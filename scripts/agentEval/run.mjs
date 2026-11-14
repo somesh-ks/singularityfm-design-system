@@ -77,13 +77,37 @@ const git = (cwd, ...gitArgs) => run("git", gitArgs, cwd).trim();
 
 const version = option("version") ?? run("npm", ["view", PACKAGE, "version"], HERE).trim();
 
+/**
+ * Removes a temp folder. Windows can hold a file open for a moment after its process exits (EPERM,
+ * EBUSY; owner's run, 2026-11-14), so it retries with a real pause: `rmSync`'s own `retryDelay` is
+ * divided by 1000 before a millisecond Sleep in some Node releases (24.0.0, 26.7.0), so it barely
+ * waits. A folder that still will not go is left with a warning instead of ending the run.
+ */
+const pause = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+function removeDir(dir) {
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      rmSync(dir, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      if (attempt === 6 || !["EPERM", "EBUSY", "ENOTEMPTY"].includes(error.code)) {
+        console.warn(
+          `Could not remove ${dir} (${error.code ?? error.message}); delete it by hand.`,
+        );
+        return;
+      }
+      pause(attempt * 500);
+    }
+  }
+}
+
 /** Runs `make` in a new temp folder; removes the folder when it throws. */
 function inTemp(prefix, make) {
   const dir = mkdtempSync(join(tmpdir(), prefix));
   try {
     return make(dir);
   } catch (error) {
-    rmSync(dir, { recursive: true, force: true });
+    removeDir(dir);
     throw error;
   }
 }
@@ -172,7 +196,7 @@ const bareApp = (withGuideLine) =>
       dir,
       pages: "src/pages",
       root: dir,
-      cleanup: () => rmSync(dir, { recursive: true, force: true }),
+      cleanup: () => removeDir(dir),
     };
   });
 
@@ -184,7 +208,7 @@ function readerApp() {
   return inTemp("ds-agent-app-", (dir) => {
     const cleanup = () => {
       tryRun("git", ["worktree", "remove", "--force", dir], appPath);
-      rmSync(dir, { recursive: true, force: true });
+      removeDir(dir);
     };
     git(appPath, "worktree", "add", "-q", "--detach", dir, "origin/main");
     try {
