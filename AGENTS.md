@@ -8,7 +8,7 @@
 2. [docs/decisions/](docs/decisions/README.md): DS records from DS-1, and [app-records.md](docs/decisions/app-records.md) for the app's D-records that still govern the library.
 3. [COMPATIBILITY.md](packages/design-system/COMPATIBILITY.md) before any change to what the package ships.
 
-On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs/ledger/) (the owner's asks for components, tokens and type). The ledger core, the owner's taste, is in the app repo: [design-engineering-ledger.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design-engineering-ledger.md). Read it before UI work.
+On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs/ledger/) (the owner's asks for components, tokens and type). The owner's taste for every screen is [docs/ledger/taste.md](docs/ledger/taste.md) (DS-12), shipped short as `packages/design-system/tokens/foundations.md`; how to work with him is in the app's [ledger core](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design-engineering-ledger.md). Read both before UI work.
 
 ## Layout
 
@@ -41,7 +41,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 ## The design system
 
 - A control is a component named for what it is (Button); an app draws it, never types its class (D237, D253). A UI fix starts at the component.
-- No pixel lengths in stylesheets (owner, DS-10): a token, rem, em, ch or a calc() of them; a width that must hold comes from the content (DS-9), never a measured number. `raw-px` in `ds validate` and `rules.test.ts` fail on one (0, the 1px hairline and a named SVG scene pass).
+- No pixel lengths in stylesheets (owner, DS-10): a token, rem, em, ch or a calc() of them; a control hugs its words and only its glyph slot is fixed (DS-13), never a measured or reserved width. `raw-px` in `ds validate` and `rules.test.ts` fail on one (0, the 1px hairline and a named SVG scene pass).
 - Spacing keeps the 8pt grid (4px for named cases only). Use a token; a new token or control class needs the owner's OK first. If the system cannot express a request, stop, propose a small deviation and wait.
 - Design fixes are load-bearing: a rule or markup with a rationale comment is never removed or rewritten for another task. Before changing `primitives.css`, `buttons.css` or the tokens, read `git log -L '/<selector>/,+20:<file>'` and the ledger.
 - No flag emoji: Flag (D367).

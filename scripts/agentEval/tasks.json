@@ -1,0 +1,46 @@
+{
+  "frozen": "2026-11-13",
+  "note": "Intent tasks for the agent test (DS-14). Each comes from one of the owner's real asks and never names a part; tasks.test.ts holds both rules. A task is never edited once frozen: a new one is added beside it with a new id.",
+  "tasks": [
+    {
+      "id": "confirm-remove",
+      "prompt": "On a sources page, removing a source also deletes its saved stories. Ask the person to confirm before that happens, and let them back out.",
+      "expect": [{ "components": ["Dialog"] }]
+    },
+    {
+      "id": "offline-warning",
+      "prompt": "When the device goes offline, tell the person above the story list that new stories will not load until it reconnects. Keep the list usable while it shows.",
+      "expect": [{ "components": ["Banner"] }]
+    },
+    {
+      "id": "settings-screen",
+      "prompt": "Make a settings screen with two preferences: how long a briefing is (short, medium or long), and whether new episodes download on their own.",
+      "expect": [{ "components": ["SegmentedChoice", "Select"] }, { "components": ["Switch"] }]
+    },
+    {
+      "id": "add-feed",
+      "prompt": "Let the person add a podcast feed by pasting its address. The form opens over the library from an add action, and the library stays behind it.",
+      "expect": [{ "components": ["Sheet", "Dialog"] }, { "components": ["Field"] }]
+    },
+    {
+      "id": "sort-library",
+      "prompt": "Let the person sort the library by newest, oldest or title.",
+      "expect": [{ "components": ["Select", "SegmentedChoice", "Menu"] }]
+    },
+    {
+      "id": "undo-delete",
+      "prompt": "After the person deletes a story from the library, give them a short moment to undo it.",
+      "expect": [{ "components": ["Toast"] }]
+    },
+    {
+      "id": "empty-library",
+      "prompt": "Show something useful when the library has no saved stories yet, with a way to go and find stories to save.",
+      "expect": [{ "classes": ["empty-state"] }]
+    },
+    {
+      "id": "episode-row",
+      "prompt": "Show one episode in a list: its title, the show's name, its length, and a way to start playing it right there.",
+      "expect": [{ "components": ["PlayChip"] }]
+    }
+  ]
+}

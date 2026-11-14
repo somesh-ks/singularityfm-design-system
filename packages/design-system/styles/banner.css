@@ -10,6 +10,9 @@
   padding: var(--banner-padding);
   border-radius: var(--banner-radius);
   background: var(--tone-bg);
+  /* A banner's words start at its start, in every caller: one in a centred column (the player's
+     notice under the title) never takes the centred line around it. Moved from the reader's player.css. */
+  text-align: start;
 }
 
 .banner-notice[data-tone="warning"] {

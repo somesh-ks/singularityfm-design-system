@@ -71,10 +71,15 @@
   outline-offset: var(--stroke-ring-gap);
 }
 
-/* The select's own padding, one place, so the reserve below holds the room the select does. */
+/* The select's own padding, one place, so the reserve below holds the room the select does. The
+   chevron sits a short step after the words and as far in from the end as the words are from the
+   start, so the chip reads even on both sides (owner, 2026-11-13: 16px each side with a 16px gap read
+   as too much room, the chevron side heavier). The 12px inset is a named 4px case: a chip with a
+   trailing chevron. */
 .select-tonal {
-  --select-pad-start: var(--space-4);
-  --select-pad-end: calc(var(--space-4) + var(--space-4) + var(--field-chevron-gap));
+  --select-inset: calc(var(--space-2) + var(--space-1));
+  --select-pad-start: var(--select-inset);
+  --select-pad-end: calc(var(--space-2) + var(--size-icon-sm) + var(--select-inset));
 }
 
 /* The select is 44px tall and the box around it 36px: negative margins let it reach past the border
@@ -119,7 +124,7 @@
 /* The chevron is a hint at the end of the label, a step smaller than a toolbar glyph. */
 .select-tonal > .icon-glyph {
   position: absolute;
-  inset-inline-end: var(--space-4);
+  inset-inline-end: var(--select-inset);
   inline-size: var(--size-icon-sm);
   block-size: var(--size-icon-sm);
   pointer-events: none;

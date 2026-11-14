@@ -17,7 +17,7 @@
 .code-snippet-text {
   margin: 0;
   padding: var(--space-4);
-  padding-inline-end: calc(var(--space-4) + var(--size-icon-lg) + var(--space-2));
+  padding-inline-end: calc(var(--space-4) + var(--size-icon) + var(--space-2));
   border-radius: inherit;
   font-family: var(--font-code);
   font-size: var(--font-size-label);
@@ -36,8 +36,8 @@
    first line, its ink as far in as the words are. */
 .code-snippet-copy {
   position: absolute;
-  inset-block-start: calc(var(--space-4) - (var(--size-touch) - var(--size-icon-lg)) / 2);
-  inset-inline-end: calc(var(--space-4) - (var(--size-touch) - var(--size-icon-lg)) / 2);
+  inset-block-start: calc(var(--space-4) - (var(--size-touch) - var(--size-icon)) / 2);
+  inset-inline-end: calc(var(--space-4) - (var(--size-touch) - var(--size-icon)) / 2);
 }
 
 .code-snippet-copy > [data-icon="check"],

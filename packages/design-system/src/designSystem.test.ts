@@ -31,6 +31,15 @@ describe("design-system components", () => {
     "$name: it and each of its parts say when to use them and when not to",
     (c) => {
       const parts = [["", c] as const, ...Object.entries(c.parts)];
+      // An experimental option (DS-11) carries its case and its date, which decide when it is promoted
+      // or folded away, and a hook its own sheet draws: one the sheet never names counts no usage.
+      for (const { option, hook, reason, since } of c.experimental ?? []) {
+        expect(reason, `${c.name} ${option}: reason`).not.toBe("");
+        expect(since, `${c.name} ${option}: since`).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(sheet(c.sheet), `${c.name} ${option}: ${hook} in ${c.sheet}`).toContain(
+          hook.replace(/^data-/, "[data-"),
+        );
+      }
       for (const [name, part] of parts) {
         const label = `${c.name} ${name}`.trim();
         expect(part.summary, `${label}: summary`).not.toBe("");

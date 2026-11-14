@@ -29,7 +29,8 @@
 }
 
 /* The icon button: a glyph in a round 44px target. Quiet until used; the accent is for actions that
-   have a label. */
+   have a label. Its glyph is the regular icon, not the large one, so air stands round it in the circle
+   (owner, 2026-11-13: "icon buttons have more padding around the icon"). */
 .icon-btn {
   padding-inline: 0;
   border-radius: var(--radius-round);
@@ -37,17 +38,17 @@
 }
 
 .icon-btn .icon-glyph {
-  width: var(--size-icon-lg);
-  height: var(--size-icon-lg);
+  width: var(--icon-size, var(--size-icon));
+  height: var(--icon-size, var(--size-icon));
 }
 
 /* An icon button that ends a row: its glyph's ink lands on the row's end, where the words of the
    rows around it end, and its target hangs out past it (D187). */
 .icon-btn-end {
   margin-inline-end: calc(
-    (var(--size-touch) - var(--size-icon-lg)) /
+    (var(--size-touch) - var(--icon-size, var(--size-icon))) /
     -2 -
-    var(--size-icon-lg) *
+    var(--icon-size, var(--size-icon)) *
     var(--ink-end, 0)
   );
 }
@@ -65,6 +66,33 @@
 
 .icon-btn:where(:not(:disabled, [aria-disabled="true"])):active {
   background: var(--ghost-pressed);
+}
+
+/* A toggle icon button (aria-pressed) that holds two glyphs shows the first while off and the second
+   while on (outline and fill: a vote, Favorite's heart), swapped at once in one place. Weighed as
+   lightly as the glyph rules after it, which set no display. Counted among the glyphs alone (each is
+   an svg), so the halo Favorite's glow puts first (glow.ts) never shows both hearts. */
+:where(.icon-btn[aria-pressed]:not([aria-pressed="true"]))
+  > .icon-glyph:where(:not(:first-of-type)),
+:where(.icon-btn[aria-pressed="true"]) > .icon-glyph:where(:first-of-type:not(:last-of-type)) {
+  display: none;
+}
+
+/* A standard icon button that is on takes the accent container, as every chosen thing does (D72,
+   ledger 1.5): a story's like or dislike. After the hover and the press, which it outweighs, so the
+   container holds under the pointer. The tonal one keeps its own fill when on: its fill already marks
+   it as a control, and Favorite's heart says on by itself (owner, 2026-11-12: keep Favorite as it is).
+   The filled one keeps its primary fill for the same reason. Moved from the reader's
+   story-controls.css. */
+.icon-btn:not(.icon-btn-tonal, .icon-btn-filled)[aria-pressed="true"] {
+  background: var(--color-accent-container);
+  color: var(--color-on-accent-container);
+}
+
+@media (forced-colors: active) {
+  .icon-btn:not(.icon-btn-tonal, .icon-btn-filled)[aria-pressed="true"] {
+    color: Highlight;
+  }
 }
 
 /* The secondary icon button (2026-10-29, owner: "a circle as a secondary button"): an .icon-btn on the
@@ -87,13 +115,53 @@
   background: var(--color-surface-container-pressed);
 }
 
+/* On a phone's menu sheet the tonal icon button takes the sheet's tile tone, as a tonal button on a
+   dialog does: in dark the container is the sheet's own colour and the circles vanished (owner review,
+   2026-11-02: the speed screen's - and +). The popover from 40rem is the overlay step, where the plain
+   fill shows. Moved from the reader's speed-panel.css. */
+@media (width < 40rem) {
+  .menu-sheet .icon-btn-tonal {
+    background: var(--sheet-tile-bg);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .menu-sheet .icon-btn-tonal:where(:not(:disabled, [aria-disabled="true"])):hover {
+      background: var(--sheet-tile-bg-hover);
+    }
+  }
+
+  .menu-sheet .icon-btn-tonal:where(:not(:disabled, [aria-disabled="true"])):active {
+    background: var(--sheet-tile-bg-pressed);
+  }
+}
+
+/* Icon button, filled, experimental (DS-11, 2026-11-12): the primary fill with its own hover and press,
+   for a glyph that is a primary action, the queue's Start listening (owner, 2026-11-04: "every primary
+   button one colour"); the ghost states would turn it grey under a pointer. The registry lists it
+   (iconButton.ts, ICON_BUTTON.experimental). Moved from the reader's queue.css. */
+.icon-btn-filled {
+  background: var(--cta-bg);
+  color: var(--cta-fg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .icon-btn-filled:where(:not(:disabled, [aria-disabled="true"])):hover {
+    background: var(--cta-bg-hover);
+    color: var(--cta-fg);
+  }
+}
+
+.icon-btn-filled:where(:not(:disabled, [aria-disabled="true"])):active {
+  background: var(--cta-bg-pressed);
+}
+
 /* A press on an icon button shows its state layer and nothing else: the glyph never scales or
    moves (owner, 2026-10-21; .press in foundations is layered, so this unlayered rule wins). Label
    buttons and nav tabs keep their own press. */
 :is(
   .icon-btn,
   .view-btn,
-  .search-clear,
+  .search-field-clear,
   .source-plus-btn,
   .toast-dismiss,
   .dock-btn,
@@ -305,7 +373,8 @@
 }
 
 .button-filled:is(:disabled, [aria-disabled="true"]),
-.button-tonal:is(:disabled, [aria-disabled="true"]) {
+.button-tonal:is(:disabled, [aria-disabled="true"]),
+.icon-btn-filled:is(:disabled, [aria-disabled="true"]) {
   background: var(--color-surface-container);
 }
 
@@ -360,11 +429,6 @@
     filter var(--duration-state) var(--ease-out);
 }
 
-.swap-paused {
-  /* Optical center: a play triangle's mass sits left of its box. */
-  translate: 0.0625rem 0;
-}
-
 [data-playing="false"] .swap-playing,
 [data-playing="true"] .swap-paused {
   opacity: 0;
@@ -376,11 +440,11 @@
 
 /*
  * The tonal pill that plays a briefing or one story: a play mark and a short label on the container
- * fill, with no outline. Markup:
+ * fill, with no outline; or the mark alone, a circle (.chip-glyph-only, DS-13). PlayChip.tsx draws it:
  *
  *   <button class="chip" data-state="idle" data-playing="false">
- *     <span class="chip-glyph"> play and pause icons, .chip-bars, a check icon, .spinner </span>
- *     <span class="chip-label num">1:24</span>
+ *     <span class="chip-glyph"> play and pause icons, .chip-bars, check, replay and refresh, .spinner </span>
+ *     <span class="chip-text"><span class="chip-label" data-chip-label>1:24</span></span>
  *   </button>
  *
  * data-state: idle (plays from here), current (this is what is loaded), played, preparing (audio is
@@ -395,10 +459,8 @@
   justify-content: center;
   gap: var(--chip-gap);
   min-height: var(--chip-height);
-  /* One width for every state, so what stands beside the chip never moves as it plays. 7rem fits
-     the widest story label ("Loading", 110px) in the page font; the longer briefing labels
-     ("13 min left") are wider and keep their own size. */
-  min-inline-size: 7rem;
+  /* It hugs its words: no width of its own (owner, 2026-11-13: "in general buttons should hug text";
+     DS-13). A 7rem floor here held "0:22" in the middle of a wide pill. */
   padding-inline: var(--chip-padding-start) var(--chip-padding-end);
   /* No outline: the transparent border keeps the pill's size where forced colours draw one. */
   border: var(--stroke-hairline) solid transparent;
@@ -472,12 +534,14 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: var(--chip-ring);
+  gap: calc(var(--chip-ring) * 2);
   height: var(--chip-icon);
 }
 
+/* Thin bars, near the line icons' weight beside them (owner, 2026-11-13: "the solid fill icons are
+   too thick"). */
 .chip-bars > i {
-  width: calc(var(--chip-ring) * 2);
+  width: calc(var(--chip-ring) * 1.5);
   height: 100%;
   border-radius: var(--chip-ring);
   background: currentColor;
@@ -578,10 +642,10 @@
   text-overflow: ellipsis;
 }
 
-/* Fixed-width digits only where the number ticks: a chip's time while it plays. A still label such
-   as "1 min" keeps the font's own figures, which space it evenly. Moved unchanged from the reader's
-   reader.css with the Play chip (D237). */
-.chip[data-playing="true"] .chip-label {
+/* Fixed-width digits in every state, so a time that ticks never wobbles and starting to play never
+   changes the words' width (DS-13: they once switched to tabular only while playing, which moved the
+   chip a fraction as it started, once the reserve that hid it was gone). */
+.chip-label {
   font-variant-numeric: tabular-nums;
 }
 
@@ -590,22 +654,10 @@
   display: none;
 }
 
+/* Under a pointer a played chip's check turns to the replay glyph, in the same slot. Its words stay:
+   "Play again" in their place made the chip wider than its words (DS-13), and the glyph already says
+   what a press does (D92). */
 @media (hover: hover) {
-  .chip[data-state="played"] .chip-again {
-    display: block;
-    visibility: hidden;
-  }
-
-  .chip[data-state="played"]:hover .chip-label,
-  .chip[data-state="played"]:focus-visible .chip-label {
-    visibility: hidden;
-  }
-
-  .chip[data-state="played"]:hover .chip-again,
-  .chip[data-state="played"]:focus-visible .chip-again {
-    visibility: visible;
-  }
-
   .chip[data-state="played"]:hover .chip-check,
   .chip[data-state="played"]:focus-visible .chip-check {
     display: none;
@@ -647,9 +699,11 @@
 
 /* The waiting words shimmer (owner, 2026-11-10: "Processing" with a shimmer): a light band crosses the
    letters, nothing else. A mask dims the words to 70% and lets the band through at full, so the words
-   keep whatever colour their chip gives them (the hero's fill, a story's accent, any mood). Still and at
+   keep whatever colour their chip gives them (the hero's fill, a story's accent, any mood). A chip with no
+   words shimmers its glyph instead (DS-13), until it buffers and the spinner takes the slot. Still and at
    full strength under reduced motion and forced colours. */
-.chip[data-state="preparing"] .chip-label {
+.chip[data-state="preparing"] .chip-label,
+.chip-glyph-only[data-state="preparing"]:not([data-playing="true"]) .chip-glyph {
   --chip-sheen: 2400ms;
   -webkit-mask: var(--sheen-mask) 0 0 / 250% 100%;
   mask: var(--sheen-mask) 0 0 / 250% 100%;
@@ -657,7 +711,8 @@
 }
 
 @media (prefers-reduced-motion: reduce), (forced-colors: active) {
-  .chip[data-state="preparing"] .chip-label {
+  .chip[data-state="preparing"] .chip-label,
+  .chip-glyph-only[data-state="preparing"]:not([data-playing="true"]) .chip-glyph {
     -webkit-mask: none;
     mask: none;
     animation: none;
@@ -671,6 +726,58 @@
 
 .chip[data-state="current"][data-playing="true"] .chip-bars {
   display: flex;
+}
+
+/* PlayChip, primary, experimental (DS-11, 2026-11-12): the page's one main Play takes the primary fill,
+   idle and current alike, as every primary button does (owner, 2026-11-04: "all should have the same
+   color synchronized"; D77: the hero's Play is the page's one filled action), and while it plays it is
+   the pause button: the pause glyph, not the bars a story's chip shows, so a page has one "this is
+   playing" mark per story and one way to pause. Its size, padding and corner are the chip's own.
+   Played, preparing and unavailable keep their meaning. The registry lists it (playChip.ts,
+   PLAY_CHIP.experimental). Moved from the reader's hero.css. */
+.chip-primary {
+  --chip-bg: var(--cta-bg);
+  --chip-bg-hover: var(--cta-bg-hover);
+  --chip-bg-pressed: var(--cta-bg-pressed);
+  --chip-fg: var(--cta-fg);
+  --chip-bg-current: var(--cta-bg);
+  --chip-bg-current-hover: var(--cta-bg-hover);
+  --chip-bg-current-pressed: var(--cta-bg-pressed);
+  --chip-fg-current: var(--cta-fg);
+}
+
+/* The layer over a filled control is its own ink: a press keeps the words in the fill's ink, never the
+   pressed accent a tonal chip's words take. */
+.chip-primary:where(
+  :not(:disabled, [aria-disabled="true"], [data-state="unavailable"], [data-state="played"])
+):active {
+  color: var(--cta-fg);
+}
+
+.chip-primary[data-state="current"][data-playing="true"] .chip-glyph > .swap {
+  display: grid;
+}
+
+.chip-primary[data-state="current"][data-playing="true"] .chip-bars {
+  display: none;
+}
+
+/* The glyph alone (PlayChip with no label; owner, 2026-11-13: "the play button in the hero should be
+   just the icon button, and the same in chapters"). A circle as tall as the chip, with the chip's touch
+   target, its glyph at an icon button's size (the regular icon, with air round it), so it stands beside
+   the hero's Favorite and Share circles as one of them. Every state keeps the one
+   slot, so nothing moves as it plays, loads or fails. Its name is its aria-label, which the page's player
+   writes with each state, as it writes a chip's words. */
+.chip-glyph-only {
+  --chip-glyph: var(--size-icon);
+  --chip-icon: var(--size-icon);
+  min-inline-size: var(--chip-height);
+  padding-inline: 0;
+}
+
+/* Its target is a touch wide as well as tall: the chip's reaches past the border only up and down. */
+.chip-glyph-only::after {
+  inset-inline: calc((var(--size-touch) - var(--chip-height)) / -2 - var(--stroke-hairline));
 }
 
 .chip:is([data-state="unavailable"], [aria-disabled="true"], :disabled) {

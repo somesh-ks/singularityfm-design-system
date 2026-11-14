@@ -22,6 +22,8 @@ interface SelectProps {
    * A tonal select's longest option text ("Longest first"); an outlined select ignores it. Where the browser draws the closed select
    * as its chosen option (appearance: base-select) it is as wide as that option, so it grows and
    * shrinks as a person picks. With a reserve it is as wide as these words in every state (DS-9).
+   * @deprecated Buttons hug their words (owner, 2026-11-13: "in general buttons should hug text"; DS-13).
+   *   Drop it: the words set the width. It still works until 1.0.0 removes it.
    */
   reserve?: string;
   /** The options: `<option>` and `<optgroup>`, as a native select holds them. */

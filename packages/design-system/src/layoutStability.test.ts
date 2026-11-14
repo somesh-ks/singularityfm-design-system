@@ -91,8 +91,13 @@ const label = (words: string) =>
 const dataState = (state: string) => `el.dataset.state=${JSON.stringify(state)}`;
 
 const PLAY_STATES = ["idle", "current", "played", "preparing", "error", "unavailable"];
-// The words the player writes on a story's chip, and the hero's.
-const STORY_WORDS = ["0:24", "12:34", "Loading", "Playing", "Paused", "Try again", "Play again"];
+// The glyph alone in every state it can hold, playing and buffering included.
+const GLYPH_STATES: [string, string][] = [
+  ...PLAY_STATES.map((state) => [state, dataState(state)] as [string, string]),
+  ["playing", "el.dataset.state='current';el.dataset.playing='true'"],
+  ["buffering", "el.dataset.state='preparing';el.dataset.playing='true'"],
+];
+// The words the player wrote on the hero's chip, which a deprecated `reserve` still holds (DS-13).
 const HERO_WORDS = ["3 min", "88 min left", "13 min left", "Loading", "Processing", "Try again"];
 
 const cases: Case[] = [
@@ -121,10 +126,16 @@ const cases: Case[] = [
     watch: ["[data-chip-label]"],
   },
   {
-    name: "PlayChip: every word on a story's chip",
-    el: h(PlayChip, { label: "0:24" }),
-    states: STORY_WORDS.map((words) => [words, label(words)]),
-    words: { selector: "[data-chip-label]" },
+    name: "PlayChip: the glyph alone, every state",
+    el: h(PlayChip, { "aria-label": "Play" }),
+    states: GLYPH_STATES,
+    hover: true,
+  },
+  {
+    name: "PlayChip: the hero's glyph alone, every state",
+    el: h(PlayChip, { "aria-label": "Play", primary: true }),
+    states: GLYPH_STATES,
+    hover: true,
   },
   {
     name: "PlayChip: the hero's words, with its reserve",
@@ -134,13 +145,13 @@ const cases: Case[] = [
   },
   {
     name: "PlayChip: words longer than the reserve are cut, not grown into",
-    el: h(PlayChip, { label: "3 min" }),
+    el: h(PlayChip, { label: "3 min", reserve: "Play again" }),
     states: [["a long reason", label("You are offline and this cannot play yet")]],
     words: { selector: "[data-chip-label]", cut: ["a long reason"] },
   },
   {
-    name: "PlayChip: Played turns to Play again under a pointer, with a narrower reserve",
-    el: h(PlayChip, { label: "Played", reserve: "Played" }),
+    name: "PlayChip: played, a pointer turns its check to replay and its words stay",
+    el: h(PlayChip, { label: "0:24" }),
     states: [["played", dataState("played")]],
     hover: true,
   },
@@ -272,6 +283,42 @@ const CHANGES_BOX = [
   },
 ] as const;
 
+/**
+ * What hugs its words (owner, 2026-11-13: "in general buttons should hug text"; DS-13): the room around
+ * the words is the same whatever they say, so a short word never sits in room held for a longer one,
+ * as a story's "0:22" sat in a pill as wide as "Play again". Each is measured with two words.
+ */
+const HUGS = [
+  {
+    name: "PlayChip",
+    el: h(PlayChip, { label: "0:22" }),
+    words: "[data-chip-label]",
+    swap: label("Playing"),
+  },
+  {
+    name: "Button",
+    el: h(Button, { variant: "tonal", style: { width: "auto" } }, "Save"),
+    words: "",
+    swap: "el.textContent='Save changes'",
+  },
+  {
+    name: "Fab",
+    el: draw(Fab, { label: "Add", icon: "plus" }, "Add"),
+    words: ".create-fab-label",
+    swap: "el.querySelector('.create-fab-label').textContent='Catch up'",
+  },
+] as const;
+
+/** The control's width less the width its words take, which hugging keeps the same. */
+function room(page: Page, words: string) {
+  return page.evaluate((words) => {
+    const el = document.querySelector("#w > *") as HTMLElement;
+    const range = document.createRange();
+    range.selectNodeContents(words ? (el.querySelector(words) as Element) : el);
+    return el.getBoundingClientRect().width - range.getBoundingClientRect().width;
+  }, words);
+}
+
 async function launchBrowser(): Promise<Browser | undefined> {
   let reason = "";
   for (const launch of [
@@ -373,6 +420,13 @@ describe.skipIf(!browser)("a control's box never depends on its state (DS-9)", (
               );
             }
           }
+        });
+
+        it.each(HUGS)("$name hugs its words", async ({ el, words, swap }) => {
+          await stage(page, mood, theme, renderToStaticMarkup(el));
+          const before = await room(page, words);
+          await page.evaluate(`(() => { const el = document.querySelector('#w > *'); ${swap} })()`);
+          expect(await room(page, words)).toBeCloseTo(before, 1);
         });
 
         it.each(CHANGES_BOX)("lists what may change its box: $name", async ({ el, state }) => {

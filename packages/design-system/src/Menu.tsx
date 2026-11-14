@@ -13,6 +13,11 @@ interface MenuProps {
   /** A quiet line under the title on a phone's sheet, such as a card's facts. */
   subtitle?: string;
   /**
+   * No padding above and below the list, for a host that draws its own header and body in the menu's
+   * surface. Experimental (DS-11): it may change or go in a minor release (menu.ts says why it exists).
+   */
+  flush?: boolean;
+  /**
    * For placing the popover under its own button (the anchor of a row or a story). Never its look. An
    * Astro page passes className too: @astrojs/react drops a `class` prop.
    */
@@ -28,14 +33,25 @@ interface MenuProps {
  * light dismiss and Escape are the browser's. The rows are MenuItem buttons, each with its icon at the
  * start; the arrow keys, focus and the header's Close are the page's script (the app's heroMenu.ts).
  */
-export default function Menu({ id, title, subtitle, className, children }: MenuProps) {
+export default function Menu({
+  id,
+  title,
+  subtitle,
+  flush = false,
+  className,
+  children,
+}: MenuProps) {
   const heading = (
     <h2 className={sheetTitleClass()} id={`${id}-title`}>
       {title}
     </h2>
   );
   return (
-    <div className={[menuListClass(), className].filter(Boolean).join(" ")} id={id} popover="auto">
+    <div
+      className={[menuListClass(true, flush), className].filter(Boolean).join(" ")}
+      id={id}
+      popover="auto"
+    >
       <div className={sheetHeadClass()}>
         {subtitle ? (
           <div className={sheetHeadingClass()}>

@@ -21,10 +21,12 @@ its bump.
 - A visual change to an existing part (a colour, a size, a motion curve): minor, with a line in the changeset
   that says what looks different, so an app can check its screenshots.
 - Fixes that restore the documented behaviour: patch.
+- An option marked experimental (DS-11) changed or removed: minor, with a changeset line that names it.
+  Only stable options hold the breaking rules above.
 
 ## Deprecation
 
-A deprecated export, token, class or prop keeps working for at least two minor releases, or four weeks,
+A stable export, token, class or prop that is deprecated keeps working for at least two minor releases, or four weeks,
 whichever is longer. It is marked `@deprecated` with its replacement in the source, named in the changeset,
 and listed in the style guide. The removal is a breaking release of its own.
 

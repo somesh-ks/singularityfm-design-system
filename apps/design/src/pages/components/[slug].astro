@@ -1,14 +1,18 @@
 ---
+import Badge from "@singularity/design-system/Badge";
 import Code from "@singularity/design-system/Code";
+import Field from "@singularity/design-system/Field";
+import Link from "@singularity/design-system/Link";
 import { COMPONENTS as REGISTRY } from "@singularity/design-system/registry";
 import Select from "@singularity/design-system/Select";
 import Switch from "@singularity/design-system/Switch";
 import Toast from "@singularity/design-system/Toast";
+import system from "@singularity/design-system/tokens/system.json";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import PageHead from "../../components/PageHead.astro";
 import Shell from "../../layouts/Shell.astro";
 import { allStates, codeFor, initialState, labelOf, SPECS, stateKey } from "../../lib/components";
-import { propsTable } from "../../lib/propsTable";
+import { href } from "../../lib/sections";
 
 export function getStaticPaths() {
   return SPECS.map((spec) => ({ params: { slug: spec.slug }, props: { spec } }));
@@ -16,19 +20,42 @@ export function getStaticPaths() {
 
 const { spec } = Astro.props;
 
-// The library's own sources, read for the props tables: the table is the Props interface, not a copy.
-const sources = import.meta.glob("../../../../../packages/design-system/src/*.{astro,tsx}", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-}) as Record<string, string>;
-const sourceOf = (file: string): string =>
-  Object.entries(sources).find(([path]) => path.endsWith(`/${file}`))?.[1] ?? "";
+// The props tables come from system.json, which the package builds from each component's own Props
+// interface, so the guide, `ds part` and an agent read the same rows.
+const propsOf = (
+  file: string,
+): { rows: (typeof system.components)[number]["props"]; element?: string } => {
+  const component = system.components.find((candidate) => candidate.file.endsWith(`/${file}`));
+  return {
+    rows: component?.props ?? [],
+    ...(component?.element ? { element: component.element } : {}),
+  };
+};
+
+// The parts this component and its subparts draw, each a markdown page an agent reads (llms.txt links
+// the same pages), so a reader who finds the component here can hand an agent its page. A part is the
+// component's when it imports it first: the Dialog part also imports Button, and is not a Button.
+// shortcut: a part that leads with a component it only holds (row-action, an Icon) still lists on that
+// page; name each part's component in system.json if that misleads an agent.
+const imports = new Set(
+  [spec.file, ...(spec.subparts ?? []).map((part) => part.file)].flatMap((file) =>
+    system.components
+      .filter((component) => file && component.file.endsWith(`/${file}`))
+      .map((component) => component.import),
+  ),
+);
+const markdown = system.parts
+  .filter((part) => imports.has(part.imports[0] ?? ""))
+  .map((part) => part.id);
 
 const registered = REGISTRY.find((component) => component.name === spec.registry);
 const guidance = registered ?? spec.guidance;
 const parts = Object.values(registered?.parts ?? {}) as { label?: string; summary: string }[];
-const table = spec.file ? propsTable(sourceOf(spec.file)) : undefined;
+const table = spec.file ? propsOf(spec.file) : undefined;
+// Its experimental options (DS-11): listed with their case and date, and a variant among them says so.
+const experimental = registered?.experimental ?? [];
+const isExperimental = (variant: string): boolean =>
+  experimental.some((item) => item.option === `variant="${variant}"`);
 
 const start = initialState(spec);
 const states = allStates(spec.controls);
@@ -45,29 +72,6 @@ const hasStage = !spec.noPreview;
     {
       hasStage && (
         <section aria-label="Preview" data-playground>
-          {spec.controls.length > 0 && (
-            <div class="guide-controls" role="group" aria-label="Preview controls">
-              {spec.controls.map((control) =>
-                control.kind === "choice" ? (
-                  <div class="guide-control">
-                    <span>{control.label}</span>
-                    <Select variant="tonal" label={control.label} data-control={control.id}>
-                      {control.options.map((option) => (
-                        <option value={option.value} selected={option.value === start[control.id]}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                ) : (
-                  <label class="guide-control">
-                    <span>{control.label}</span>
-                    <Switch data-control={control.id} />
-                  </label>
-                ),
-              )}
-            </div>
-          )}
           <div class="guide-stage">
             {states.map((state, index) => {
               const key = stateKey(spec.controls, state);
@@ -84,6 +88,40 @@ const hasStage = !spec.noPreview;
             })}
           </div>
           {spec.note && <p class="guide-note guide-stage-note">{spec.note}</p>}
+          {spec.controls.length > 0 && (
+            <div class="rows card-group guide-controls" role="group" aria-label="Preview controls">
+              {spec.controls.map((control) =>
+                control.kind === "choice" ? (
+                  <div class="settings-row">
+                    <span class="settings-label" aria-hidden="true">{control.label}</span>
+                    <Select variant="tonal" label={control.label} data-control={control.id}>
+                      {control.options.map((option) => (
+                        <option value={option.value} selected={option.value === start[control.id]}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                ) : control.kind === "toggle" ? (
+                  <label class="settings-row">
+                    <span class="settings-label">{control.label}</span>
+                    <Switch data-control={control.id} />
+                  </label>
+                ) : (
+                  <label class="settings-row">
+                    <span class="settings-label">{control.label}</span>
+                    <Field
+                      className="guide-control-text"
+                      defaultValue={control.sample}
+                      data-sample={control.sample}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                  </label>
+                ),
+              )}
+            </div>
+          )}
         </section>
       )
     }
@@ -139,8 +177,32 @@ const hasStage = !spec.noPreview;
           <h2 class="section-head text-heading" id="variants">Variants</h2>
           {Object.entries(registered?.parts ?? {}).map(([id, part]) => (
             <div class="guide-variant">
-              <h3 class="guide-variant-name">{(part as { label?: string }).label ?? id}</h3>
+              <h3 class="guide-variant-name">
+                {(part as { label?: string }).label ?? id}
+                {isExperimental(id) && <Badge className="guide-experimental">Experimental</Badge>}
+              </h3>
               <p class="guide-prose">{part.summary}</p>
+            </div>
+          ))}
+        </section>
+      )
+    }
+
+    {
+      experimental.length > 0 && (
+        <section aria-labelledby="experimental">
+          <h2 class="section-head text-heading" id="experimental">Experimental options</h2>
+          <p class="guide-prose">
+            Kept for one screen's case (DS-11). Each may change or go in a minor release; it becomes
+            stable once two screens or more use it unchanged for four weeks and the owner agrees.
+          </p>
+          {experimental.map((item) => (
+            <div class="guide-variant">
+              <h3 class="guide-variant-name">
+                <code>{item.option}</code>
+                <Badge className="guide-experimental">Experimental</Badge>
+              </h3>
+              <p class="guide-prose">{item.reason} Since {item.since}.</p>
             </div>
           ))}
         </section>
@@ -168,7 +230,7 @@ const hasStage = !spec.noPreview;
               </tbody>
             </table>
           </div>
-          {table.element && <p class="guide-note guide-stage-note">Every attribute of a native {table.element} element is passed through.</p>}
+          {table.element && <p class="guide-note guide-stage-note">Every attribute of a native <code>&lt;{table.element}&gt;</code> element is passed through.</p>}
         </section>
       )
     }
@@ -178,7 +240,7 @@ const hasStage = !spec.noPreview;
         <section aria-labelledby="subparts">
           <h2 class="section-head text-heading" id="subparts">Subparts</h2>
           {spec.subparts?.map((part) => {
-            const subtable = propsTable(sourceOf(part.file));
+            const subtable = propsOf(part.file);
             return (
               <div class="guide-variant">
                 <h3 class="guide-variant-name">{part.name}</h3>
@@ -204,6 +266,9 @@ const hasStage = !spec.noPreview;
                 ) : (
                   <p class="guide-note">It takes the attributes of its element and no props of its own.</p>
                 )}
+                {subtable.rows.length > 0 && subtable.element && (
+                  <p class="guide-note guide-stage-note">Every attribute of a native <code>&lt;{subtable.element}&gt;</code> element is passed through.</p>
+                )}
               </div>
             );
           })}
@@ -216,6 +281,20 @@ const hasStage = !spec.noPreview;
         <section aria-labelledby="classes">
           <h2 class="section-head text-heading" id="classes">Classes</h2>
           <p class="guide-prose">{registered.classes.map((name) => `.${name}`).join(", ")}, in {registered.sheet}.</p>
+        </section>
+      )
+    }
+
+    {
+      markdown.length > 0 && (
+        <section aria-labelledby="markdown">
+          <h2 class="section-head text-heading" id="markdown">For agents</h2>
+          <p class="guide-prose">
+            This guidance as markdown, one page per part:{" "}
+            {/* One line each: a line break inside the fragment would print a space before the comma. */}
+            {markdown.map((id, index) => <>{index > 0 ? ", " : ""}<Link href={href(`/parts/${id}.md`)}>{id}.md</Link></>)}.
+            Every part in one file: <Link href={href("/llms-full.txt")}>llms-full.txt</Link>.
+          </p>
         </section>
       )
     }

@@ -44,6 +44,14 @@
     display var(--duration-exit) allow-discrete;
 }
 
+/* Menu, flush, experimental (DS-11, 2026-11-12): no padding above and below the list, for a host that
+   draws its own header and body in the menu's surface (the reader's queue popover and emoji picker,
+   owner, 2026-11-12: keep them as they are). As specific as the list, after it; a phone's sheet keeps
+   its own padding below (the safe area), set later. The registry lists it (menu.ts, MENU.experimental). */
+.menu-list.menu-flush {
+  padding-block: 0;
+}
+
 @supports (top: anchor(bottom)) {
   .menu-list {
     position-anchor: --hero-more;

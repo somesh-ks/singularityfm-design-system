@@ -7,6 +7,7 @@
 import { mountSegmentedNav } from "@singularity/design-system/segmentedNav";
 import { installSelectSheet } from "@singularity/design-system/selectSheet";
 import { showToast } from "@singularity/design-system/toastStore";
+import { inCode } from "../lib/codeWords";
 
 // A phone opens a Select's list as the standard bottom sheet (selectSheet.ts): the page installs it once.
 installSelectSheet();
@@ -20,6 +21,50 @@ if (root) {
   );
   const states = Array.from(root.querySelectorAll<HTMLElement>("[data-combo]"));
 
+  // The editable words (a page's text controls): every state draws each sample, so the text nodes that say one
+  // exactly are found once and rewritten as it is typed; the code says it in quotes or between tags.
+  const fields = Array.from(root.querySelectorAll<HTMLInputElement>("input[data-sample]"));
+  const words = new Map(fields.map((field) => [field.dataset.sample ?? "", field.value]));
+  const said: { node: Text; sample: string; edges: [string, string] }[] = [];
+  // A control named by its words (a FAB's aria-label) is renamed with them, so its name is what it says.
+  const named = states.flatMap((state) =>
+    Array.from(state.querySelectorAll<HTMLElement>("[aria-label]")).filter((element) =>
+      words.has(element.getAttribute("aria-label") ?? ""),
+    ),
+  );
+  const names = new Map(
+    named.map((element) => [element, element.getAttribute("aria-label") ?? ""]),
+  );
+  for (const state of states) {
+    const walker = document.createTreeWalker(state, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const text = node as Text;
+      const sample = text.data.trim();
+      if (!words.has(sample)) continue;
+      const at = text.data.indexOf(sample);
+      said.push({
+        node: text,
+        sample,
+        edges: [text.data.slice(0, at), text.data.slice(at + sample.length)],
+      });
+    }
+  }
+  const literal = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // One pass for every sample, so words typed in one field that equal another's sample stay as typed.
+  const quoted = words.size
+    ? new RegExp(`(["'>])(${[...words.keys()].map(literal).join("|")})(["'<])`, "g")
+    : undefined;
+  const reword = (code: string): string =>
+    quoted
+      ? code.replace(
+          quoted,
+          (_, open: string, sample: string, close: string, at: number, whole: string) =>
+            `${open}${inCode(words.get(sample) ?? sample, open, whole[at - 1] ?? "")}${close}`,
+        )
+      : code;
+  /** What a sample says now: the person's words where the page offers them. */
+  const say = (sample: string): string => words.get(sample) ?? sample;
+
   const show = (): void => {
     const key = controls
       .map((control) =>
@@ -28,15 +73,26 @@ if (root) {
       .join("|");
     for (const state of states) {
       state.hidden = state.dataset.combo !== key;
-      if (!state.hidden && snippet && state.dataset.code) snippet.textContent = state.dataset.code;
+      if (!state.hidden && snippet && state.dataset.code)
+        snippet.textContent = reword(state.dataset.code);
     }
   };
+  const rewrite = (): void => {
+    for (const { node, sample, edges } of said) node.data = `${edges[0]}${say(sample)}${edges[1]}`;
+    for (const [element, sample] of names) element.setAttribute("aria-label", say(sample));
+    show();
+  };
+  for (const field of fields)
+    field.addEventListener("input", () => {
+      words.set(field.dataset.sample ?? "", field.value);
+      rewrite();
+    });
   // A segmented nav chooses as on an app page: its script, mounted once for each list (DS-8).
   for (const list of root.querySelectorAll<HTMLElement>('[role="tablist"]'))
     mountSegmentedNav(list, () => {});
-  // A reload keeps what the controls last said; the page draws the first state.
-  if (controls.length) {
-    show();
+  // A reload keeps what the controls last said (the words fields keep none: they say the samples).
+  if (controls.length || fields.length) {
+    rewrite();
     root.addEventListener("change", show);
   }
 
@@ -47,9 +103,9 @@ if (root) {
     if (toast) {
       const kind = toast.dataset.previewToast;
       showToast({
-        message: "Message",
+        message: say(toast.dataset.previewToastMessage ?? ""),
         kind: kind === "success" || kind === "error" ? kind : undefined,
-        actionLabel: toast.dataset.previewToastAction === undefined ? undefined : "Action",
+        actionLabel: toast.dataset.previewToastAction,
         onAction: () => {},
       });
       return;

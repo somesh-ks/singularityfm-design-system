@@ -1,5 +1,45 @@
 # @singularityfm/design-system
 
+## 0.13.0
+
+### Minor Changes
+
+- dde8902: The strip (Banner, variant strip) now looks different over an open player: it sits above the app's player (the mini bar and the open page), so a state of the device or the service stays on screen while a recording is open. A page that fills the window makes room under it with `--strip-body`.
+
+## 0.12.0
+
+### Minor Changes
+
+- 0e11b1a: The tonal Select's chip is tighter and even: 12px from each end, with the chevron 8px after the words (was 16px ends and a 16px gap). No markup change.
+
+### Patch Changes
+
+- 0e11b1a: Every props table (system.json, the part pages, llms-full.txt and `ds` answers) lists a component's props in one reading order: what it says, how it looks, wiring, value, then placement, and names the native attributes a component does not pass on (DialogTitle drops `className`, Switch `type` and `role`; system.json's `except`). No prop changed.
+
+## 0.11.0
+
+### Minor Changes
+
+- d047d39: A control hugs its words (DS-13). `reserve` on PlayChip, Button, Fab and Select is deprecated: drop it, the words set the width (it still works until 1.0.0). PlayChip no longer draws `chip-again` (deprecated; 1.0.0 removes the class). PlayChip with no `label` is its glyph alone (`chip-glyph-only`), a circle as tall as the chip named by its aria-label (required then; a page's player rewrites it with each state), that keeps one box in every state and shimmers its glyph while preparing: use it for the hero's Play and a story's. Looks different: a PlayChip with words no longer has a 7rem floor or a "Play again" reserve, its digits are tabular in every state, and a played chip under a pointer keeps its words (the replay glyph says Play again).
+- 53f2a4f: The lookup is a command now: `pnpm exec ds find "<need>"` (also `part`, `token`, `list`, `validate`) replaces `tsx node_modules/@singularityfm/design-system/scripts/system/cli.ts`, with `--json` on every command, `ds batch` for several lookups in one call, `ds version`, and a corrected search when a word is misspelt. A usage error (unknown command, missing argument) exits 2; no match exits 1.
+- 5204135: Ship `tokens/foundations.md`: the rules for every screen (grid, text and colour roles, what never moves, words, the phone), under 4 KB. The package's AGENTS.md and `llms.txt` have an agent read it first, and `llms-full.txt` includes it. The style guide serves it at `/design/foundations.md`.
+- c47b207: Each part has a markdown page, `tokens/parts/<id>.md` (import, markup, when and when not, props, tokens), and `tokens/llms-full.txt` holds every page in one file. `tokens/llms.txt` takes the llmstxt.org shape: each part id links to its page, and each part keeps one "use when" case there (its page has the rest). The style guide serves them at `/design/parts/<id>.md` and `/design/llms-full.txt`.
+  
+  `ds part --json` on a miss now keeps `components` a list of component records (empty) and lists the names under `componentNames`, as every other path does.
+- b46e15c: `tokens/system.json` lists every component under `components`, with its import and the props its source declares (a named union of strings carries its `values`). `ds part <id>` shows the props of each component the part imports, and `ds part <Component>` answers for a component no part covers yet, such as Avatar or Flag.
+- 1f01533: Three 0.10.0 rules now meet the reader's house rules. A SearchField's forced-colours edge is `ButtonBorder`, as the picker's search is, in place of `FieldText`, so its border colour can change in a forced-colours theme. A readonly Field's hover rules sit behind the fine-pointer gate. A SearchField on a `.card-group` takes the overlay tone with no `:focus` in its selector: the focus step comes after it and wins.
+- d047d39: Looks different: an icon button's glyph, a glyph-only PlayChip's and the Code copy button's are the regular icon (`--size-icon`), not the large one, so air stands round the glyph in its circle. A page that set `--icon-size` keeps its own size. The pause glyph's bars and a chip's playing bars are thinner, and the outlined heart takes its control's ink instead of the muted one, so it matches the line icons beside it.
+
+## 0.10.0
+
+### Minor Changes
+
+- 7152e86: The package ships `AGENTS.md`, a guide for an agent that builds UI with it: add `Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and follow it.` to your app's own `AGENTS.md`. `ds find` and `ds part` now name the import to use and print file paths as they sit in the package. Semantic colour, shadow, shape, size and text tokens carry a `$description`, so `ds token danger` and `ds find` reach them. `ds find` no longer marks a part down for a word it names itself by ("primary call to action button" now finds the Filled button). `llms.txt` drops the Avatar's animation durations and the component-token counts to stay under its budget.
+- dcecb5d: A filled Button with `data-busy="true"` keeps its fill and shows a progress cursor while it is also aria-disabled, and a SearchField whose input is disabled (a disabled fieldset included) dims like every other disabled control. What looks different: a busy filled button that was grey is now in its primary fill, and a disabled search field is now dimmed. A page can drop its own copies of these two rules.
+- b81624b: Search field, picker search and wheel draw their keyboard focus ring unless the last input was a pointer, so a page without an input-mode script still shows keyboard users their place (with one, nothing changes). The search field keeps an edge in forced colours, a Toast's role settles before its words so an error after a status is announced, and `.create-fab-label`'s 4px margin is a named grid exception, so `ds validate` passes on the library's own styles.
+- 7641c35: The reader's page restyles move into the library (DS-11). New experimental options, each listed by `ds find` with its reason and date and free to change or go in a minor release: `--icon-size` on the control that holds an Icon (sets the glyph's size without a rule on the glyph), IconButton `variant="filled"`, SearchField `clearable` (a Clear text button, `.search-field-wrap` and `.search-field-clear`; call `installSearchClear()` from `design-system/searchField` on each page load, and `syncSearchClear(input)` after setting the text from a script; a form reset and a page shown from the back-forward cache resync on their own), Field `tonal` (an outlined Select takes it as `data-tonal`), PlayChip `primary` and Menu `flush` (`menuListClass(sheet, flush)`). New stable states: a standard IconButton with `aria-pressed="true"` takes the accent container (a tonal or filled one keeps its own fill) and, holding two Icons, shows the second while on; a readonly Field draws itself sunken and keeps the accent edge while focused; a failed tonal select keeps its danger edge under the pointer and in focus; a `chevronDown` or `chevronUp` in an icon button or an `aria-haspopup` control turns while `aria-expanded="true"`, and in an `aria-haspopup="listbox"` trigger it takes the muted ink; the `chevronUp` glyph joins the player's registry. A page can delete its own copies of these rules. What looks different: every Play triangle (hero cover, dock, transport, queue Start listening) now sits 1/16rem right of its box, as the play chip's and the FAB's already did; a SearchField inside a `.card-group` is white in light and one grey up in dark, with the card's chip hover, instead of the container grey, and takes the focus step while focused (a page's own card gets this by being a `.card-group`); a Banner's words start at its start even inside a centred column; in a Settings or Manage row only the trailing chevron is muted and pulled out to the row's end, so another glyph there keeps its own colour and size; a tonal IconButton on a phone's menu sheet takes the sheet's tile tone.
+- b81624b: SegmentedChoice, Select and Slider log one console warning in development when drawn with no accessible name. Name a SegmentedChoice with `aria-label` or `aria-labelledby`; a Select with `label`, `aria-label`, `aria-labelledby` or an `id` an outside `<label for>` names; a Slider the same less `label`. Production builds stay silent.
+
 ## 0.9.1
 
 ### Patch Changes

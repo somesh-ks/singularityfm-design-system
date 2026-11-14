@@ -1,6 +1,6 @@
 ## DS-9: a control's box never depends on its state; the words it may say and the glyphs it may show are reserved, and a browser test measures it
 
-- Status: active
+- Status: active; amended by DS-13 (words are not reserved: a control hugs its words)
 - Date: 2026-11-09
 - Decision: the owner's call (Play button in a podcast's header, filter chips, "there shouldn't be any jerks"). In every component, what changes with state (a glyph appears or swaps, a check shows, a spinner runs, words change) never changes the component's width or height, nor where its neighbours or its own words stand.
   - A glyph slot is a fixed box; the state picks which glyph shows in it (the Play chip's glyph slot, the filter chip's check, which takes no room of its own).

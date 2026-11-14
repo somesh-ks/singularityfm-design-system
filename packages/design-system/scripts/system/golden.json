@@ -41,6 +41,7 @@
   { "area": "inputs", "need": "let the user set playback volume by dragging", "part": "slider" },
   { "area": "inputs", "need": "a text input with a label for the user's name", "part": "field" },
   { "area": "inputs", "need": "a search box at the top of the library", "part": "search-field" },
+  { "area": "inputs", "need": "a swich", "part": "switch", "why": "a misspelt word is corrected" },
   {
     "area": "actions",
     "need": "a new form sheet needs one main Save button and a Cancel beside it",
@@ -142,5 +143,17 @@
   { "area": "actions", "need": "primary call to action button", "part": "button-filled" },
   { "area": "actions", "need": "play button for an episode", "part": "play-chip" },
   { "area": "overlays", "need": "a confirmation modal before deleting a source", "part": "dialog" },
-  { "area": "tokens", "need": "shadow under a menu", "token": "--shadow-popover" }
+  { "area": "tokens", "need": "shadow under a menu", "token": "--shadow-popover" },
+  {
+    "area": "inputs",
+    "need": "a search field with a clear button",
+    "part": "search-field",
+    "why": "experimental clearable (DS-11)"
+  },
+  {
+    "area": "actions",
+    "need": "a round glyph button in the primary fill",
+    "part": "icon-btn",
+    "why": "experimental filled (DS-11)"
+  }
 ]

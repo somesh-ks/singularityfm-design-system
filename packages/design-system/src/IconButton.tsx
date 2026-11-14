@@ -5,7 +5,10 @@ import { type IconButtonVariant, iconButtonClass } from "./iconButton.ts";
 interface IconButtonProps {
   /** What a press does, for a screen reader: the glyph has no words ("Close", "Share"). */
   label: string;
-  /** Standard (the default) or tonal, the circle beside a primary action (iconButton.ts). */
+  /**
+   * Standard (the default); tonal, the circle beside a primary action; or filled, a glyph that is the
+   * primary action, experimental (DS-11). iconButton.ts says when.
+   */
   variant?: IconButtonVariant;
   /** It ends a row: its glyph's ink lands where the words of the rows around it end (D187). */
   rowEnd?: boolean;

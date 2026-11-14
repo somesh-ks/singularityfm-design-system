@@ -1,8 +1,8 @@
 /**
  * The Search field: a filled pill with the search glyph and its input, to filter a list by text
  * (D243: Field, Search field and Select are three components that share the field tokens). The one
- * place its class is written. SearchField.tsx renders from it; the style guide lists SEARCH_FIELD.
- * The rules are in styles/search-field.css.
+ * place its classes are written. SearchField.tsx renders from it; the style guide lists SEARCH_FIELD.
+ * The rules are in styles/search-field.css; a clearable field's button is wired by installSearchClear().
  */
 import type { Guidance } from "./guidance.ts";
 
@@ -13,10 +13,80 @@ export const SEARCH_FIELD: Guidance = {
     { when: "A text field in a form.", instead: "Field" },
     { when: "A person picks one of a known list.", instead: "Select" },
   ],
+  experimental: [
+    {
+      option: "clearable",
+      hook: "search-field-wrap",
+      reason:
+        "A Clear text button in the field (owner, 2026-10-08, ledger reading-library.md): the native one differs in every browser and is hidden, and without room for the button the typed text runs under it. On the Library, the Sources filter, Blocked outlets, Downloads and the emoji search.",
+      since: "2026-11-12",
+    },
+  ],
 };
 
 /** Every class the Search field draws, for the registry and its test. */
-export const SEARCH_FIELD_CLASSES: string[] = ["search-field"];
+export const SEARCH_FIELD_CLASSES: string[] = [
+  "search-field",
+  "search-field-wrap",
+  "search-field-clear",
+];
 
 /** Classes the Search field replaced; none may be written again, in any app that draws the system. */
 export const SEARCH_FIELD_RETIRED: string[] = [];
+
+const WRAP = ".search-field-wrap";
+const CLEAR = ".search-field-clear";
+
+let installed = false;
+
+/**
+ * Shows a clearable field's Clear button while the field holds text. Typing calls it through
+ * installSearchClear(); a page script that sets the value itself (a reset, a query from the address)
+ * calls it after.
+ */
+export function syncSearchClear(input: HTMLInputElement): void {
+  const clear = input.closest(WRAP)?.querySelector<HTMLButtonElement>(CLEAR);
+  // A field the reader cannot change offers no Clear.
+  if (clear) clear.hidden = input.value === "" || input.disabled || input.readOnly;
+}
+
+/**
+ * Wires every clearable SearchField (SearchField.tsx renders no script, DS-8): its Clear button shows
+ * while the field has text, and a press empties the field, fires the input's `input` event, so the
+ * page's own filter runs as it does for typing, and keeps the focus in the field for the next query.
+ * Call it on each page load: the listeners go on the document once, and each call syncs the fields in
+ * the page now (a value the browser restored). A form reset and a page shown again from the
+ * back-forward cache sync too.
+ */
+const syncAll = (root: ParentNode = document): void => {
+  for (const input of root.querySelectorAll<HTMLInputElement>(`${WRAP} input`))
+    syncSearchClear(input);
+};
+
+export function installSearchClear(): void {
+  syncAll();
+  if (installed) return;
+  installed = true;
+  // A form's reset empties its fields with no input event, and only after its reset event: sync a
+  // tick later. A page restored from the back-forward cache keeps its values and runs no load: sync
+  // on pageshow.
+  document.addEventListener("reset", (event) => {
+    const form = event.target;
+    if (form instanceof HTMLFormElement) setTimeout(() => syncAll(form));
+  });
+  addEventListener("pageshow", () => syncAll());
+  document.addEventListener("input", (event) => {
+    const input = event.target;
+    if (input instanceof HTMLInputElement && input.closest(WRAP)) syncSearchClear(input);
+  });
+  document.addEventListener("click", (event) => {
+    const clear = event.target instanceof Element ? event.target.closest(CLEAR) : null;
+    const input = clear?.closest(WRAP)?.querySelector<HTMLInputElement>("input");
+    if (!input || input.disabled || input.readOnly) return;
+    // Through the native setter: a React-controlled field reads its own value tracker, so a plain
+    // `input.value = ""` would make the input event look like no change and its onChange never runs.
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, "");
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.focus();
+  });
+}

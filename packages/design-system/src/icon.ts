@@ -36,6 +36,15 @@ export const ICON: Guidance & { sizes: Record<IconSize, Guidance & { label: stri
       dontUseWhen: [{ when: "The glyph sits beside a label.", instead: "Icon.md" }],
     },
   },
+  experimental: [
+    {
+      option: "--icon-size",
+      hook: "--icon-size",
+      reason:
+        "A control that holds a glyph sets its size once, on itself, so no page rule names the glyph: the transport's Play larger than everything around it and its skips (2026-10-22), the cover's bare Play on the scrim (owner, 2026-10-31), the Library's status mark sized from its text (owner, 2026-11-02 and 2026-11-03), and the queue ring's end check in the ring's own size (owner, 2026-11-12: keep it as it is).",
+      since: "2026-11-12",
+    },
+  ],
 };
 
 /** Every class the Icon draws, for the registry and its test. */

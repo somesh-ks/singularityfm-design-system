@@ -30,6 +30,15 @@ export const FIELD: Guidance = {
       instead: "Slider",
     },
   ],
+  experimental: [
+    {
+      option: "tonal",
+      hook: "data-tonal",
+      reason:
+        "The Topics panel's fields are tonal, as its selects and chips are (owner, 2026-10-21: \"one style now\"); on a card a text field takes the page's surface (owner, 2026-10-24). An outlined Select there passes data-tonal on to its select.",
+      since: "2026-11-12",
+    },
+  ],
 };
 
 /** Every class the Field draws, for the registry and its test. */

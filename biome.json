@@ -11,7 +11,8 @@
       "!**/.cache",
       "!**/.claude",
       "!pnpm-lock.yaml",
-      "!packages/design-system/tokens/system.json"
+      "!packages/design-system/tokens/system.json",
+      "!packages/design-system/bin"
     ]
   },
   "formatter": {
