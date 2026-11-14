@@ -1,0 +1,94 @@
+name: agent-eval
+
+# The agent test (DS-14, DS-16) in CI: Claude Code and the Antigravity CLI each build every frozen task in
+# the two bare setups (a new Astro app with the published package, with and without the guide line),
+# graded with no model call. Weekly, after release.yml's Monday run, and after each publish. The reader
+# app setup stays on the owner's computer: this repository is public and the app is not.
+#
+# Each agent signs in with a dedicated key that has a monthly spend limit, from the `agent-eval`
+# environment, which only main can use. The agent runs shell commands with its key in the environment,
+# so the cap is the containment: the job never runs on a pull request, the checkout keeps no token, and
+# no transcript is uploaded (GitHub masks secrets in logs, not in artifacts). Only the summary rows reach
+# the job summary. A key that is not set skips its agent with a warning.
+on:
+  schedule:
+    - cron: "41 9 * * 1"
+  workflow_dispatch:
+  workflow_run:
+    workflows: [release]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-eval
+  cancel-in-progress: false
+
+jobs:
+  run:
+    # A release run publishes only when the version pull request's merge pushes the changelog to main.
+    if: >-
+      github.repository == 'somesh-ks/singularityfm-design-system' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'))
+    strategy:
+      fail-fast: false
+      matrix:
+        agent: [claude, antigravity]
+    runs-on: ubuntu-latest
+    # 16 runs of at most 15 minutes, plus the two setups' installs; the hosted limit is 360.
+    timeout-minutes: 330
+    environment: agent-eval
+    # Each key reaches only its own agent's steps, never an action's.
+    steps:
+      - name: Key check
+        id: key
+        env:
+          ANTHROPIC_API_KEY: ${{ matrix.agent == 'claude' && secrets.ANTHROPIC_API_KEY || '' }}
+          GEMINI_API_KEY: ${{ matrix.agent == 'antigravity' && secrets.GEMINI_API_KEY || '' }}
+        run: |
+          if [ -n "$ANTHROPIC_API_KEY$GEMINI_API_KEY" ]; then echo "set=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "::warning::no key for ${{ matrix.agent }} in the agent-eval environment; it did not run"
+      - if: steps.key.outputs.set == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - if: steps.key.outputs.set == 'true'
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - if: steps.key.outputs.set == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - if: steps.key.outputs.set == 'true'
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      # shortcut: pinned by version, not by lockfile hash; make it a devDependency if Dependabot should
+      # bump it.
+      - if: steps.key.outputs.set == 'true' && matrix.agent == 'claude'
+        name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code@2.1.319
+      # shortcut: the official installer has no version pin (it checks the download against its own
+      # manifest's SHA-512); the summary's Model column says which model ran. Pin when it offers one.
+      # The key is only read once settings.json names the gemini provider.
+      - if: steps.key.outputs.set == 'true' && matrix.agent == 'antigravity'
+        name: Install the Antigravity CLI
+        run: |
+          curl -fsSL https://antigravity.google/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          mkdir -p "$HOME/.gemini/antigravity-cli"
+          echo '{ "modelProvider": "gemini" }' > "$HOME/.gemini/antigravity-cli/settings.json"
+      - if: steps.key.outputs.set == 'true'
+        name: Run the tasks
+        env:
+          AGENT: ${{ matrix.agent }}
+          AGY_MODEL: ${{ vars.AGY_MODEL }}
+          ANTHROPIC_API_KEY: ${{ matrix.agent == 'claude' && secrets.ANTHROPIC_API_KEY || '' }}
+          GEMINI_API_KEY: ${{ matrix.agent == 'antigravity' && secrets.GEMINI_API_KEY || '' }}
+        run: |
+          model=()
+          if [ "$AGENT" = antigravity ] && [ -n "$AGY_MODEL" ]; then model=(--agy-model "$AGY_MODEL"); fi
+          node scripts/agentEval/run.mjs --setups bare-guide,bare --agents "$AGENT" --timeout 15 \
+            --out "$RUNNER_TEMP/agent-eval" "${model[@]}"
+          cat "$RUNNER_TEMP"/agent-eval/*/summary.md >> "$GITHUB_STEP_SUMMARY"
