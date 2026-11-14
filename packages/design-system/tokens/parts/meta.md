@@ -1,6 +1,20 @@
+---
+version: "0.13.0"
+id: meta
+name: "Meta line"
+kind: layout
+imports: []
+---
+
 # Meta line (`meta`)
 
 One quiet line of facts, separated by centered dots.
+
+## Markup
+
+```astro
+<p class="meta"><span>Weekly</span><span>14 stories</span></p>
+```
 
 ## Use when
 

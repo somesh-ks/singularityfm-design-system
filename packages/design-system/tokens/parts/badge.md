@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: badge
+name: "Badge"
+kind: display
+imports:
+  - "@singularityfm/design-system/Badge"
+---
+
 # Badge (`badge`)
 
 A grey label holding one word or one number beside a name.
@@ -26,6 +35,13 @@ A grey label holding one word or one number beside a name.
 ## Rules
 
 - It holds one word or one number; the page places it with a class, never styles it.
+
+## Accessibility
+
+- Role: Static inline <span>
+- ARIA: Inline text label; ensure surrounding text provides context when a count or status alone is ambiguous.
+- Keyboard: None; non-interactive indicator.
+- Focus: Not focusable.
 
 ## Props of Badge
 

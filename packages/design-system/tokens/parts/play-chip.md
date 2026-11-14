@@ -1,3 +1,13 @@
+---
+version: "0.13.0"
+id: play-chip
+name: "Play chip"
+kind: action
+imports:
+  - "@singularityfm/design-system/PlayChip"
+  - "@singularityfm/design-system/PlayingBars"
+---
+
 # Play chip (`play-chip`)
 
 The tonal pill that plays a briefing or one story, with its state; or its glyph alone.
@@ -5,6 +15,7 @@ The tonal pill that plays a briefing or one story, with its state; or its glyph 
 ## Import
 
 - `@singularityfm/design-system/PlayChip`
+- `@singularityfm/design-system/PlayingBars`
 
 ## Markup
 
@@ -31,6 +42,14 @@ The tonal pill that plays a briefing or one story, with its state; or its glyph 
 
 - `primary` (since 2026-11-12): The page's one main Play (the hero's) takes the primary fill, idle and current, and shows the pause glyph while it plays, not the bars (owner, 2026-11-04: "all should have the same color synchronized"; D77). Only the fill and the glyph: its size and padding are the chip's.
 
+## Accessibility
+
+- Role: Native <button type="button">
+- ARIA: Requires aria-label when label is omitted (glyph-only mode).
+- ARIA: Inner glyph slot and PlayingBars are aria-hidden="true"; player script updates data-state, data-playing and aria-label.
+- Keyboard: Enter and Space toggle or start playback via native button activation.
+- Focus: Native keyboard focus ring via :focus-visible.
+
 ## Props of PlayChip
 
 | Name | Type | Default | What it does |
@@ -44,6 +63,21 @@ The tonal pill that plays a briefing or one story, with its state; or its glyph 
 
 Every attribute of a native `<button>` element passes through, except `aria-label`.
 
+### Example of PlayingBars
+
+```tsx
+<button type="button" aria-label="Playing">
+  <PlayingBars />
+</button>
+```
+
+## Props of PlayingBars
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `className?` | `string` | - | For placing the bars where they stand, or a hook a page's rule finds them by (the reader's cover button sizes them to its glyph). Never their look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
+| `slot?` | `string` | - | Astro places the bars in its parent's slot with it; it is not an attribute of the element. |
+
 ## Tokens it reads
 
 `--chip-bg` `--chip-bg-current` `--chip-bg-current-hover` `--chip-bg-current-pressed` `--chip-bg-hover` `--chip-bg-pressed` `--chip-fg` `--chip-fg-current` `--chip-gap` `--chip-glyph` `--chip-height` `--chip-icon` `--chip-padding-end` `--chip-padding-start` `--chip-radius` `--color-accent-pressed` `--color-on-surface-disabled` `--color-on-surface-muted` `--color-success` `--color-surface-sunken` `--size-touch`
@@ -52,7 +86,7 @@ Every attribute of a native `<button>` element passes through, except `aria-labe
 
 - Classes: `.chip` `.chip-glyph` `.chip-label` (a page draws the component, never types these)
 - Styled in: `styles/buttons.css`
-- Files: `src/PlayChip.tsx`, `src/playChip.ts`
+- Files: `src/PlayChip.tsx`, `src/PlayingBars.tsx`, `src/playChip.ts`
 
 ## Owner's note
 

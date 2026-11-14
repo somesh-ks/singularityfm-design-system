@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: button-small
+name: "Small button"
+kind: action
+imports:
+  - "@singularityfm/design-system/Button"
+---
+
 # Small button (`button-small`)
 
 A shorter pill, same touch target.
@@ -19,6 +28,14 @@ A shorter pill, same touch target.
 ## Not when
 
 - It commits a sheet: use [`button-filled`](button-filled.md)
+
+## Accessibility
+
+- Role: Native <button> (or <a href> when href is set)
+- ARIA: Accessible name comes from children; provide descriptive label text.
+- ARIA: Do not nest interactive elements inside Button.
+- Keyboard: Enter and Space activate <button>; Enter activates link (<a href>).
+- Focus: Native keyboard focus ring via :focus-visible.
 
 ## Props of Button
 

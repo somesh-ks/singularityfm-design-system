@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: tabs
+name: "Section tabs"
+kind: navigation
+imports:
+  - "@singularityfm/design-system/SectionTabs"
+---
+
 # Section tabs (`tabs`)
 
 A sticky strip of links to the sections of one page.
@@ -25,6 +34,13 @@ A sticky strip of links to the sections of one page.
 
 - Drawn only for two sections or more.
 - Each section's slug names its target: the section the tab jumps to has id `c-<slug>`.
+
+## Accessibility
+
+- Role: Navigation landmark <nav aria-label="Sections">
+- ARIA: Renders only for 2 or more sections; active link carries aria-current="true".
+- Keyboard: Tab navigates section links; Enter jumps to the section anchor.
+- Focus: Native anchor focus ring.
 
 ## Props of SectionTabs
 

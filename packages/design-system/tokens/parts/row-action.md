@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: row-action
+name: "Row action"
+kind: container
+imports:
+  - "@singularityfm/design-system/Icon"
+---
+
 # Row action (`row-action`)
 
 A row that is one link or button: the whole row responds as a rounded tile.
@@ -27,6 +36,14 @@ A row that is one link or button: the whole row responds as a rounded tile.
 
 - Label in regular weight, never bold.
 - Sits in a `.rows.card-group`.
+
+## Accessibility
+
+- Role: Native <a href> link row or <button type="button"> action row inside a list or card group
+- ARIA: Keep the accessible label in visible row text (.settings-label / .settings-hint); do not nest interactive controls inside the row link or button.
+- ARIA: Trailing chevron Icon carries aria-hidden="true" so the row text announces cleanly.
+- Keyboard: Enter activates a link row; Enter and Space activate a button row.
+- Focus: Minimum 44px target with native :focus-visible ring inside the card tile.
 
 ## Props of Icon
 

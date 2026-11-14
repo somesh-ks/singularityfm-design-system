@@ -1,5 +1,6 @@
 /** Answers "which part" and "which token" from a built system, so an agent need not grep stylesheets. */
 import { RETIRED_PATHS } from "../../rules/data.js";
+import type { A11yGuidance } from "../../src/guidance.js";
 
 import type { Component, Part, System, SystemToken } from "./types.js";
 
@@ -172,6 +173,35 @@ export function describeProps(component: Component): string[] {
   return [`  props of ${component.name}:`, ...lines];
 }
 
+/** Accessibility summary lines for CLI answers. */
+function describeA11y(a11y: A11yGuidance): string[] {
+  const out = [`  a11y role: ${a11y.role}`];
+  for (const item of a11y.aria) out.push(`  a11y aria: ${item}`);
+  for (const item of a11y.keyboard) out.push(`  a11y keyboard: ${item}`);
+  if (a11y.focus) out.push(`  a11y focus: ${a11y.focus}`);
+  return out;
+}
+
+/** Standalone component lookup output: import, props, example and accessibility contract. */
+export function describeComponent(component: Component): string {
+  const out = [`${component.name}: import ${component.import}`, ...describeProps(component)];
+  if (component.example) out.push(`  example: ${component.example}`);
+  if (component.a11y) out.push(...describeA11y(component.a11y));
+  return out.join("\n");
+}
+
+/** Icon names exported by src/icons.ts, optionally filtered by space-separated terms. */
+export function findIcons(system: System, query = ""): string[] {
+  const icons = system.icons ?? [];
+  const need = query.trim().toLowerCase();
+  if (!need) return icons;
+  const words = need.split(/\s+/).filter(Boolean);
+  return icons.filter((name) => {
+    const lower = name.toLowerCase();
+    return words.every((word) => lower.includes(word));
+  });
+}
+
 /**
  * The whole of a part. With `drawn` (its components, from componentsOf), it lists their props;
  * without, it says where they are, so a `find` answer stays short.
@@ -183,14 +213,21 @@ export function describePart(part: Part, drawn?: Component[]): string {
   ];
   if (part.imports.length) out.push(`  import: ${part.imports.join(", ")}`);
   if (part.files?.length) out.push(`  files: ${part.files.map(inPackage).join(", ")}`);
-  out.push(`  styled in: ${part.styles.map(inPackage).join(", ")}`);
+  if (part.styles.length) out.push(`  styled in: ${part.styles.map(inPackage).join(", ")}`);
+  else if (part.imports.length === 0)
+    out.push("  styled in: none (not yet styled or exported by this package; see GAPS.md)");
   out.push(`  use when: ${part.when.join("; ")}`);
   for (const item of part.not ?? []) out.push(`  not when: ${item.when} -> ${item.use}`);
   if (part.markup) out.push(`  markup: ${part.markup}`);
   for (const rule of part.rules ?? []) out.push(`  rule: ${rule}`);
   out.push(...experimentalLines(part));
-  if (drawn) for (const component of drawn) out.push(...describeProps(component));
-  else if (part.imports.length) out.push(`  props: \`ds part ${part.id}\``);
+  if (drawn) {
+    // Only emit a11y explicitly authored on the part (never inherit from drawn[0] component).
+    if (part.a11y) out.push(...describeA11y(part.a11y));
+    for (const component of drawn) out.push(...describeProps(component));
+    for (const component of drawn.slice(1))
+      if (component.example) out.push(`  example of ${component.name}: ${component.example}`);
+  } else if (part.imports.length) out.push(`  props: \`ds part ${part.id}\``);
   if (part.tokens.length) out.push(`  tokens: ${part.tokens.join(" ")}`);
   if (part.usage) {
     const note = part.usage.length > 240 ? `${part.usage.slice(0, 239).trimEnd()}…` : part.usage;

@@ -1,5 +1,5 @@
 /**
- * ds find "<what you need>" | part <id or Component> | token <words> | list | batch "<command>"... | version
+ * ds find "<what you need>" | part <id or Component> | token <words> | icons [query] | list | batch "<command>"... | version
  *   | validate [--exceptions <file.json>] <files or globs>; --json on any of them answers in JSON.
  * Reads tokens/system.json, so it answers in milliseconds and never greps a stylesheet. An app runs
  * it as `pnpm exec ds`, the bundle the package's `bin` names (scripts/bundleCli.mjs).
@@ -12,10 +12,11 @@ import { componentsOf } from "./pages.js";
 import { PACKAGE, SYSTEM_PATH } from "./paths.js";
 import {
   answer,
+  describeComponent,
   describePart,
-  describeProps,
   describeTokenLine,
   editDistance,
+  findIcons,
   findTokens,
   lookup,
 } from "./query.js";
@@ -31,7 +32,7 @@ function load(): System {
 
 const USAGE_VALIDATE = "Usage: ds validate [--exceptions <file.json>] <files or globs>";
 const USAGE =
-  'Usage: ds find "<need>" | part <id or Component> | token <words> | list | batch "<command>"... | version | validate [--exceptions <file.json>] <files or globs>. Add --json for JSON.';
+  'Usage: ds find "<need>" | part <id or Component> | token <words> | icons [query] | list | batch "<command>"... | version | validate [--exceptions <file.json>] <files or globs>. Add --json for JSON.';
 
 /** A finding the caller exempts by name: one rule, in one file, on a line holding `text`. */
 interface Exemption {
@@ -116,9 +117,7 @@ function read(system: System, command: string, argument: string): Answer | undef
       );
       if (component)
         return {
-          text: [`${component.name}: import ${component.import}`, ...describeProps(component)].join(
-            "\n",
-          ),
+          text: describeComponent(component),
           json: { part: null, components: [component] },
           code: 0,
         };
@@ -158,6 +157,17 @@ function read(system: System, command: string, argument: string): Answer | undef
             : hits.map(describeTokenLine).join("\n"),
         json: { tokens: hits },
         code: hits.length > 0 ? 0 : 1,
+      };
+    }
+    case "icons": {
+      const icons = findIcons(system, argument);
+      return {
+        text:
+          icons.length === 0
+            ? `No icon matches "${argument}". Run \`ds icons\` for all names.`
+            : icons.join("\n"),
+        json: { icons },
+        code: icons.length > 0 ? 0 : 1,
       };
     }
     case "list":
@@ -206,7 +216,7 @@ function batch(system: System, lines: string[]): Answer {
       const [command = "", ...words] = line.split(/\s+/);
       const argument = words.join(" ").replace(/^(["'])(.*)\1$/, "$2");
       const result = read(system, command, argument) ?? {
-        text: `"${command}" cannot run in a batch: find, part, token or list.`,
+        text: `"${command}" cannot run in a batch: find, part, token, icons or list.`,
         json: { error: "unknown command" },
         code: 2,
       };

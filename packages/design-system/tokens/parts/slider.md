@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: slider
+name: "Slider"
+kind: selection
+imports:
+  - "@singularityfm/design-system/Slider"
+---
+
 # Slider (`slider`)
 
 A track with a thumb: a value between two ends, set by dragging or by the arrow keys.
@@ -25,6 +34,14 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 
 - It is the native range and takes no client directive (DS-8): an Astro page starts it with defaultValue, a React island passes value with onChange.
 - WebKit paints the filled track from --range-fill, which starts at 0%: set it to (value - min) / (max - min) as a percentage and update it on input.
+
+## Accessibility
+
+- Role: Native <input type="range">
+- ARIA: Must be named via aria-label, aria-labelledby or associated <label for>.
+- ARIA: Expose min, max, step and native numeric value.
+- Keyboard: ArrowLeft/ArrowDown decrease, ArrowRight/ArrowUp increase, PageUp/PageDown/Home/End step.
+- Focus: Native thumb focus ring via :focus-visible.
 
 ## Props of Slider
 

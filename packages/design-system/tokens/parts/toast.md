@@ -1,3 +1,13 @@
+---
+version: "0.13.0"
+id: toast
+name: "Toast"
+kind: feedback
+imports:
+  - "@singularityfm/design-system/Toast"
+  - "@singularityfm/design-system/toastStore"
+---
+
 # Toast (`toast`)
 
 One quiet message at a time on the inverse surface, with an optional action.
@@ -28,6 +38,14 @@ showToast({ message: "Deleted", actionLabel: "Undo", onAction })
 
 - Mount <Toast client:idle /> once per page; call showToast() from toastStore, or sendToast() from toastEvent in code that must not load the store.
 - The page says where it sits with --toast-nav, --toast-dock, --toast-lift and --toast-inline-start/-end on the root, never with a rule on .toast.
+
+## Accessibility
+
+- Role: Live region role="status" (or role="alert" for danger messages)
+- ARIA: Mounted once per page; suppresses text for one render during role switches so stale text is not announced.
+- ARIA: Dismiss button uses aria-label="Dismiss".
+- Keyboard: Tab reaches action and Dismiss buttons when visible; Enter/Space activates.
+- Focus: Does not steal focus from the active control when appearing.
 
 ## Props of Toast
 

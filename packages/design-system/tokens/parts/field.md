@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: field
+name: "Field"
+kind: selection
+imports:
+  - "@singularityfm/design-system/Field"
+---
+
 # Field (`field`)
 
 An outlined box for text a person types: one line, or several lines (multiline).
@@ -34,6 +43,14 @@ An outlined box for text a person types: one line, or several lines (multiline).
 ## Experimental options
 
 - `tonal` (since 2026-11-12): The Topics panel's fields are tonal, as its selects and chips are (owner, 2026-10-21: "one style now"); on a card a text field takes the page's surface (owner, 2026-10-24). An outlined Select there passes data-tonal on to its select.
+
+## Accessibility
+
+- Role: Native <input> (or <textarea> when multiline)
+- ARIA: Associate with a visible <label>, aria-label or aria-labelledby.
+- ARIA: Set aria-invalid="true" for validation errors and aria-describedby for error messages.
+- Keyboard: Standard native text input/textarea editing and Tab navigation.
+- Focus: Native input/textarea focus ring.
 
 ## Props of Field
 

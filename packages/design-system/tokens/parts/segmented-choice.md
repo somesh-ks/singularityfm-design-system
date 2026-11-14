@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: segmented-choice
+name: "Segmented choice"
+kind: selection
+imports:
+  - "@singularityfm/design-system/SegmentedChoice"
+---
+
 # Segmented choice (`segmented-choice`)
 
 One pill of radio items: pick exactly one value.
@@ -25,6 +34,14 @@ One pill of radio items: pick exactly one value.
 ## Rules
 
 - Native radios with no client directive (DS-8).
+
+## Accessibility
+
+- Role: <fieldset role="radiogroup"> containing native <input type="radio"> controls
+- ARIA: Name the radiogroup with aria-label or aria-labelledby.
+- ARIA: Setting disabled disables all radio options in the fieldset.
+- Keyboard: ArrowLeft/ArrowUp and ArrowRight/ArrowDown move and select options natively.
+- Focus: Tab enters the selected radio item; native focus ring on the active segment.
 
 ## Props of SegmentedChoice
 

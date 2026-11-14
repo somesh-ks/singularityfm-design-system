@@ -10,9 +10,9 @@ import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildSystem, systemFiles } from "./build.js";
-import { FOUNDATIONS_PATH, LLMS_PATH, PARTS_DIR, SYSTEM_PATH } from "./paths.js";
-import { PROP_ORDER, propsTable } from "./props.js";
-import { lookup, shownTokens } from "./query.js";
+import { COMPONENTS_DIR, FOUNDATIONS_PATH, LLMS_PATH, PARTS_DIR, SYSTEM_PATH } from "./paths.js";
+import { PROP_ORDER, propsTable, stringUnionValues } from "./props.js";
+import { describePart, findIcons, lookup, shownTokens } from "./query.js";
 import type { System } from "./types.js";
 import { usageComment } from "./usage.js";
 
@@ -39,6 +39,11 @@ describe("the design system file", () => {
       .filter(([path]) => path.startsWith(PARTS_DIR))
       .map(([path]) => basename(path));
     expect(readdirSync(PARTS_DIR).sort()).toEqual(pages.sort());
+    const componentPages = files
+      .filter(([path]) => path.startsWith(COMPONENTS_DIR))
+      .map(([path]) => basename(path));
+    expect(readdirSync(COMPONENTS_DIR).sort()).toEqual(componentPages.sort());
+    expect(system.version.length).toBeGreaterThan(0);
   });
 
   // Prevents a "not this, use that" pointing at a part that does not exist.
@@ -63,12 +68,15 @@ describe("the design system file", () => {
       exports: Record<string, string>;
     };
     const guide = readFileSync(new URL("AGENTS.md", pkg), "utf8");
+    const gaps = readFileSync(new URL("GAPS.md", pkg), "utf8");
     expect(manifest.files).toContain("AGENTS.md");
+    expect(manifest.files).toContain("GAPS.md");
     // A name with an extension is a file under the package; one without is an import specifier.
-    const named = [...guide.matchAll(/@singularityfm\/design-system\/([A-Za-z][\w./-]*\w)/g)].map(
-      (match) => match[1] ?? "",
-    );
-    const imports = named.filter((name) => !/\.\w+$/.test(name));
+    const combined = `${guide}\n${gaps}`;
+    const named = [
+      ...combined.matchAll(/@singularityfm\/design-system\/([A-Za-z][\w./-]*\w)/g),
+    ].map((match) => match[1] ?? "");
+    const imports = named.filter((name) => !/\.\w+$/.test(name) && name !== "drawer");
     const paths = [
       ...named.filter((name) => /\.\w+$/.test(name)),
       ...[...guide.matchAll(/\b((?:tokens|styles|scripts)\/[\w./-]*\w)/g)].map(
@@ -193,6 +201,99 @@ type Props = Omit<FieldsetHTMLAttributes<HTMLFieldSetElement>, "role"> & {
   // Prevents the index outgrowing its purpose: it is read whole, so each byte is paid for on every task.
   it("keeps llms.txt under 14 KB", () => {
     expect(Buffer.byteLength(readFileSync(LLMS_PATH))).toBeLessThan(14 * 1024);
+  });
+
+  // Prevents inline prop unions such as Sheet's `kind?: "create" | "panel"` from omitting choices.
+  it("extracts inline string-literal union choices from prop types", () => {
+    const sheet = system.components.find((component) => component.name === "Sheet");
+    expect(sheet?.props.find((prop) => prop.name === "kind")?.values).toEqual(["create", "panel"]);
+
+    const parsed = propsTable(
+      [
+        "interface Props {",
+        '  kind?: "create" | "panel";',
+        "  size?:",
+        '    | "sm"',
+        '    | "md"',
+        '    | "lg";',
+        '  wide?: "a" | string;',
+        '  only?: "single";',
+        "}",
+      ].join("\n"),
+    );
+    expect(parsed.rows.find((row) => row.name === "kind")?.values).toEqual(["create", "panel"]);
+    expect(parsed.rows.find((row) => row.name === "size")?.values).toEqual(["sm", "md", "lg"]);
+    expect(parsed.rows.find((row) => row.name === "wide")?.values).toBeUndefined();
+    expect(parsed.rows.find((row) => row.name === "only")?.values).toBeUndefined();
+    expect(stringUnionValues("\"a\" | 'b' | undefined")).toEqual(["a", "b"]);
+  });
+
+  // Prevents build.ts from copying the first child component's a11y (e.g. Icon decorative SVG) onto composite parts.
+  it("derives accessibility only from part or single-component ownership, never imports[0]", () => {
+    const rowAction = system.parts.find((part) => part.id === "row-action");
+    const emptyState = system.parts.find((part) => part.id === "empty-state");
+    const icon = system.components.find((component) => component.name === "Icon");
+    expect(rowAction?.a11y?.role).toContain("<a href>");
+    expect(rowAction?.a11y?.role).not.toContain("<svg");
+    const rowText = rowAction ? describePart(rowAction, icon ? [icon] : []) : "";
+    expect(rowText).not.toContain("Decorative <svg");
+    expect(emptyState?.a11y).toBeUndefined();
+  });
+
+  // Prevents unshipped or partial parts from emitting broken imports or unstyled `.empty` recipes.
+  it("keeps empty-state and drawer docs honest and provides accurate markup on styled parts", () => {
+    const emptyDoc = readFileSync(join(PARTS_DIR, "empty-state.md"), "utf8");
+    const drawerDoc = readFileSync(join(PARTS_DIR, "drawer.md"), "utf8");
+    expect(emptyDoc).not.toContain("<EmptyState");
+    expect(emptyDoc).not.toContain('<section class="empty"');
+    expect(drawerDoc).not.toContain("<SheetFrame");
+
+    for (const id of [
+      "btn-action-tonal",
+      "card-group",
+      "settings-row",
+      "stat-tiles",
+      "section-head",
+      "meta",
+    ]) {
+      const part = system.parts.find((candidate) => candidate.id === id);
+      expect(part?.markup, `${id} missing markup`).toContain(id);
+    }
+
+    for (const id of ["empty-state", "multiselect", "cover"]) {
+      const part = system.parts.find((candidate) => candidate.id === id);
+      expect(part?.styles, `${id} should have no stylesheets`).toEqual([]);
+      expect(part?.markup, `${id} should omit broken markup`).toBeUndefined();
+    }
+  });
+
+  // Prevents markdown pages from dropping metadata or introducing em/en dashes.
+  it("writes complete YAML front-matter on generated part and component markdown pages", () => {
+    const pages = [
+      ...readdirSync(PARTS_DIR).map((file) => join(PARTS_DIR, file)),
+      ...readdirSync(COMPONENTS_DIR).map((file) => join(COMPONENTS_DIR, file)),
+    ];
+    for (const page of pages) {
+      const text = readFileSync(page, "utf8");
+      expect(text, page).toMatch(/^---\n/);
+      const front = text.split(/^---\n/m)[1] ?? "";
+      expect(front, page).toContain(`version: "${system.version}"`);
+      expect(front, page).toMatch(/^id:\s+\S+/m);
+      expect(front, page).toMatch(/^name:\s+/m);
+      expect(front, page).toMatch(/^kind:\s+/m);
+      expect(front, page).toMatch(/^imports:/m);
+      expect(text, page).not.toMatch(/[\u2013\u2014]/);
+    }
+  });
+
+  // Prevents `ds icons` from drifting out of sync with exported ICON_PATHS.
+  it("lists and filters exported icon glyphs via findIcons", () => {
+    expect(system.icons.length).toBeGreaterThan(20);
+    expect(findIcons(system)).toEqual(system.icons);
+    const chevrons = findIcons(system, "chevron");
+    expect(chevrons).toContain("chevronRight");
+    expect(chevrons).not.toContain("trash");
+    expect(findIcons(system, "nonexistent-icon-query")).toEqual([]);
   });
 });
 

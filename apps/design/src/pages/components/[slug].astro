@@ -50,6 +50,11 @@ const markdown = system.parts
 
 const registered = REGISTRY.find((component) => component.name === spec.registry);
 const guidance = registered ?? spec.guidance;
+const a11y =
+  registered?.a11y ??
+  (spec.file
+    ? system.components.find((candidate) => candidate.file.endsWith(`/${spec.file}`))?.a11y
+    : undefined);
 const parts = Object.values(registered?.parts ?? {}) as { label?: string; summary: string }[];
 const table = spec.file ? propsOf(spec.file) : undefined;
 // Its experimental options (DS-11): listed with their case and date, and a variant among them says so.
@@ -172,6 +177,20 @@ const hasStage = !spec.noPreview;
     }
 
     {
+      a11y && (
+        <section aria-labelledby="a11y">
+          <h2 class="section-head text-heading" id="a11y">Accessibility</h2>
+          <ul class="guide-list">
+            <li>Role: {a11y.role}</li>
+            {a11y.aria.map((line) => <li>ARIA: {line}</li>)}
+            {a11y.keyboard.map((line) => <li>Keyboard: {line}</li>)}
+            {a11y.focus && <li>Focus: {a11y.focus}</li>}
+          </ul>
+        </section>
+      )
+    }
+
+    {
       parts.length > 0 && (
         <section aria-labelledby="variants">
           <h2 class="section-head text-heading" id="variants">Variants</h2>
@@ -285,19 +304,20 @@ const hasStage = !spec.noPreview;
       )
     }
 
-    {
-      markdown.length > 0 && (
-        <section aria-labelledby="markdown">
-          <h2 class="section-head text-heading" id="markdown">For agents</h2>
-          <p class="guide-prose">
-            This guidance as markdown, one page per part:{" "}
+    <section aria-labelledby="markdown">
+      <h2 class="section-head text-heading" id="markdown">For agents</h2>
+      <p class="guide-prose">
+        This component as markdown: <Link href={href(`/components/${spec.slug}.md`)}>{spec.slug}.md</Link>.
+        {markdown.length > 0 && (
+          <>
+            {" "}Related part pages:{" "}
             {/* One line each: a line break inside the fragment would print a space before the comma. */}
             {markdown.map((id, index) => <>{index > 0 ? ", " : ""}<Link href={href(`/parts/${id}.md`)}>{id}.md</Link></>)}.
-            Every part in one file: <Link href={href("/llms-full.txt")}>llms-full.txt</Link>.
-          </p>
-        </section>
-      )
-    }
+          </>
+        )}
+        {" "}Every part in one file: <Link href={href("/llms-full.txt")}>llms-full.txt</Link>.
+      </p>
+    </section>
   </div>
 </Shell>
 <script>

@@ -1,7 +1,11 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { join } from "node:path";
+import type * as tsTypes from "typescript";
 import { describe, expect, it } from "vitest";
+import { COMPONENT_A11Y, COMPONENT_EXAMPLES, REGISTRY_A11Y } from "./a11y.ts";
 import { flagParts } from "./flag.ts";
+import type { A11yGuidance } from "./guidance.ts";
 import { COMPONENTS } from "./registry.ts";
 
 /**
@@ -229,4 +233,69 @@ describe("the component framework", () => {
       );
     expect(loose).toEqual([]);
   });
+
+  // Prevents silent drift between registry entries, exported TSX components and their documented a11y contracts.
+  it("provides accessibility contracts and standalone examples for every component", () => {
+    const byName = REGISTRY_A11Y as Record<string, A11yGuidance>;
+    for (const component of COMPONENTS) {
+      const expected = byName[component.name];
+      expect(expected, `${component.name} missing REGISTRY_A11Y`).toBeDefined();
+      expect(component.a11y, `${component.name} missing registry a11y`).toEqual(expected);
+      expect(component.a11y?.role.length, `${component.name} empty a11y role`).toBeGreaterThan(0);
+      expect(component.a11y?.aria.length, `${component.name} empty a11y aria`).toBeGreaterThan(0);
+      expect(
+        component.a11y?.keyboard.length,
+        `${component.name} empty a11y keyboard`,
+      ).toBeGreaterThan(0);
+    }
+
+    const tsxNames = files
+      .filter((file) => file.endsWith(".tsx"))
+      .map((f) => f.replace(/\.tsx$/, ""));
+    expect(Object.keys(COMPONENT_A11Y).sort()).toEqual([...tsxNames].sort());
+    expect(Object.keys(COMPONENT_EXAMPLES).sort()).toEqual([...tsxNames].sort());
+  });
+
+  // Prevents shipping doc examples that invent props or fail TSX typechecking (e.g. Field.label).
+  it("typechecks every standalone TSX example in COMPONENT_EXAMPLES", () => {
+    const repoRoot = join(import.meta.dirname, "../../..");
+    const requireFromRoot = createRequire(join(repoRoot, "package.json"));
+    const ts = requireFromRoot("typescript") as typeof tsTypes;
+    const baseConfig = ts.readConfigFile(join(repoRoot, "tsconfig.base.json"), ts.sys.readFile);
+    const parsed = ts.parseJsonConfigFileContent(baseConfig.config, ts.sys, repoRoot);
+
+    const tsxNames = files
+      .filter((file) => file.endsWith(".tsx"))
+      .map((f) => f.replace(/\.tsx$/, ""));
+    const imports = tsxNames.map((name) => `import ${name} from "./${name}.tsx";`).join("\n");
+    const bodies = Object.entries(COMPONENT_EXAMPLES)
+      .map(([name, snippet]) => `  ${name}: () => (\n    <>\n      ${snippet}\n    </>\n  ),`)
+      .join("\n");
+    const virtualSource = `${imports}\n\nexport const examples = {\n${bodies}\n};\n`;
+    const virtualPath = join(import.meta.dirname, "__examples_check__.tsx").replace(/\\/g, "/");
+
+    const host = ts.createCompilerHost(parsed.options, true);
+    const origGetSourceFile = host.getSourceFile.bind(host);
+    const origFileExists = host.fileExists.bind(host);
+    const origReadFile = host.readFile.bind(host);
+
+    const isVirtual = (fileName: string) => fileName.replace(/\\/g, "/") === virtualPath;
+    host.getSourceFile = (fileName, languageVersion, onError, shouldCreate) =>
+      isVirtual(fileName)
+        ? ts.createSourceFile(fileName, virtualSource, languageVersion)
+        : origGetSourceFile(fileName, languageVersion, onError, shouldCreate);
+    host.fileExists = (fileName) => isVirtual(fileName) || origFileExists(fileName);
+    host.readFile = (fileName) => (isVirtual(fileName) ? virtualSource : origReadFile(fileName));
+
+    const program = ts.createProgram([virtualPath], parsed.options, host);
+    const sourceFile = program.getSourceFile(virtualPath);
+    const diagnostics = [
+      ...program.getSemanticDiagnostics(sourceFile),
+      ...program.getSyntacticDiagnostics(sourceFile),
+    ];
+    const formatted = diagnostics.map((diag) =>
+      ts.flattenDiagnosticMessageText(diag.messageText, "\n"),
+    );
+    expect(formatted).toEqual([]);
+  }, 20_000);
 });

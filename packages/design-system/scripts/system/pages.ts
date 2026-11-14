@@ -4,9 +4,14 @@
  * one tokens/llms-full.txt for an agent that wants a single fetch. Built from system.json's own
  * records, so a page says what `ds part` says.
  */
+import type { A11yGuidance } from "../../src/guidance.js";
 import type { Component, Part, System } from "./types.js";
 
 const inPackage = (path: string): string => path.replace(/^packages\/design-system\//, "");
+
+/** Kebab-case slug matching guide component URLs: "BrandMark" -> "brand-mark". */
+export const componentSlug = (name: string): string =>
+  name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
 /** A table cell: a pipe would end the cell, a newline the row. */
 const cell = (text: string): string => text.replace(/\|/g, "\\|").replace(/\s+/g, " ").trim();
@@ -68,6 +73,10 @@ const IN_FULL: Placement = { depth: 1, links: "parts/" };
  * component, which the markup names and this package does not ship.
  */
 function whoDraws(part: Part): string {
+  if (part.styles.length === 0 && part.imports.length === 0)
+    return "not yet exported or styled by this package; see GAPS.md before using";
+  if (!part.markup && part.files?.length && part.imports.length === 0)
+    return "class helpers exported in files; no standalone component wrapper yet (see rules and GAPS.md)";
   const markup = part.markup ?? "";
   const typed = part.classes.every((name) => new RegExp(`class="[^"]*\\b${name}\\b`).test(markup));
   if (typed || (part.imports.length === 0 && !/<[A-Z]/.test(markup)))
@@ -77,9 +86,59 @@ function whoDraws(part: Part): string {
   return "a page draws the component, never types these";
 }
 
-export function renderPartPage(part: Part, components: Component[], at: Placement = ALONE): string {
+function frontMatter(fields: {
+  version?: string;
+  id: string;
+  name: string;
+  kind: string;
+  imports: readonly string[];
+}): string[] {
+  const lines = [
+    "---",
+    ...(fields.version ? [`version: ${JSON.stringify(fields.version)}`] : []),
+    `id: ${fields.id}`,
+    `name: ${JSON.stringify(fields.name)}`,
+    `kind: ${fields.kind}`,
+  ];
+  if (fields.imports.length === 0) lines.push("imports: []");
+  else lines.push("imports:", ...fields.imports.map((item) => `  - ${JSON.stringify(item)}`));
+  lines.push("---", "");
+  return lines;
+}
+
+function a11ySection(a11y: A11yGuidance, depth = 0): string[] {
+  return [
+    `${"#".repeat(2 + depth)} Accessibility`,
+    "",
+    `- Role: ${a11y.role}`,
+    ...a11y.aria.map((line) => `- ARIA: ${line}`),
+    ...a11y.keyboard.map((line) => `- Keyboard: ${line}`),
+    `- Focus: ${a11y.focus}`,
+  ];
+}
+
+export function renderPartPage(
+  part: Part,
+  components: Component[],
+  at: Placement = ALONE,
+  version = "",
+): string {
   const h = (level: number, text: string): string => `${"#".repeat(level + at.depth)} ${text}`;
-  const out = [h(1, `${part.name} (\`${part.id}\`)`), "", part.summary, ""];
+  const out: string[] = [
+    ...(at === ALONE
+      ? frontMatter({
+          version,
+          id: part.id,
+          name: part.name,
+          kind: part.kind,
+          imports: part.imports,
+        })
+      : []),
+    h(1, `${part.name} (\`${part.id}\`)`),
+    "",
+    part.summary,
+    "",
+  ];
   if (part.imports.length > 0)
     out.push(h(2, "Import"), "", ...part.imports.map((name) => `- \`${name}\``), "");
   if (part.markup) out.push(h(2, "Markup"), "", "```astro", part.markup, "```", "");
@@ -105,8 +164,13 @@ export function renderPartPage(part: Part, components: Component[], at: Placemen
       ),
       "",
     );
-  for (const component of componentsOf(part, components))
+  const drawn = componentsOf(part, components);
+  if (part.a11y) out.push(...a11ySection(part.a11y, at.depth), "");
+  drawn.forEach((component, index) => {
+    if (index > 0 && component.example)
+      out.push(h(3, `Example of ${component.name}`), "", "```tsx", component.example, "```", "");
     out.push(...propsSection(component, at.depth), "");
+  });
   if (part.tokens.length > 0)
     out.push(h(2, "Tokens it reads"), "", part.tokens.map((name) => `\`${name}\``).join(" "), "");
   out.push(
@@ -121,16 +185,36 @@ export function renderPartPage(part: Part, components: Component[], at: Placemen
   return `${out.join("\n").trimEnd()}\n`;
 }
 
-/** A component no part covers yet (Avatar, Flag), with its import and props. */
-function renderComponentPage(component: Component, at: Placement): string {
-  return [
-    `${"#".repeat(1 + at.depth)} ${component.name}`,
+/** A component no part covers yet (Avatar, Flag), with its import, example, accessibility and props. */
+export function renderComponentPage(
+  component: Component,
+  at: Placement = ALONE,
+  version = "",
+): string {
+  const h = (level: number, text: string): string => `${"#".repeat(level + at.depth)} ${text}`;
+  const out: string[] = [
+    ...(at === ALONE
+      ? frontMatter({
+          version,
+          id: componentSlug(component.name),
+          name: component.name,
+          kind: "component",
+          imports: [component.import],
+        })
+      : []),
+    h(1, component.name),
     "",
     `Import \`${component.import}\`. No part covers it yet, so \`ds find\` does not name it.`,
     "",
-    ...propsSection(component, at.depth),
+    h(2, "Import"),
     "",
-  ].join("\n");
+    `- \`${component.import}\``,
+    "",
+  ];
+  if (component.example) out.push(h(2, "Example"), "", "```tsx", component.example, "```", "");
+  if (component.a11y) out.push(...a11ySection(component.a11y, at.depth), "");
+  out.push(...propsSection(component, at.depth), "");
+  return `${out.join("\n").trimEnd()}\n`;
 }
 
 /**

@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: search-field
+name: "Search field"
+kind: field
+imports:
+  - "@singularityfm/design-system/SearchField"
+---
+
 # Search field (`search-field`)
 
 The rounded search pill, on the container tone, with its glyph.
@@ -29,6 +38,14 @@ The rounded search pill, on the container tone, with its glyph.
 ## Experimental options
 
 - `clearable` (since 2026-11-12): A Clear text button in the field (owner, 2026-10-08, ledger reading-library.md): the native one differs in every browser and is hidden, and without room for the button the typed text runs under it. On the Library, the Sources filter, Blocked outlets, Downloads and the emoji search.
+
+## Accessibility
+
+- Role: <label> wrapping <input type="search"> plus optional Clear IconButton
+- ARIA: Pass label for the input's aria-label.
+- ARIA: Clear button (when clearable) carries aria-label="Clear text".
+- Keyboard: Escape or activating Clear empties the search input when installSearchClear() is wired.
+- Focus: Standard search input focus; clearing returns focus appropriately via script.
 
 ## Props of SearchField
 
