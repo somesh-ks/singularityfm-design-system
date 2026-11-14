@@ -1,8 +1,18 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { gzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import type { System } from "../../packages/design-system/scripts/system/types.ts";
-import { compareRuns, exportTarget, gradeFiles, runStats, type SummaryRow } from "./grade.ts";
+import {
+  compareRuns,
+  exportTarget,
+  formatSummaryMarkdown,
+  gradeFiles,
+  readTarballPackageJson,
+  runStats,
+  type SummaryRow,
+  summarizeGroup,
+} from "./grade.ts";
 
 const PKG = join(import.meta.dirname, "../../packages/design-system");
 const { tasks, components_at_freeze: atFreeze } = JSON.parse(
@@ -189,6 +199,106 @@ describe("the agent test's transcripts", () => {
       .join("\n");
     expect(runStats(claude, "claude").finished).toBe(true);
   });
+
+  // Prevents missing guide reads in readGuide when agents open GAPS.md or tokens/components/, and
+  // prevents budget/turn-capped Claude runs from reading as finished.
+  it("counts GAPS.md and tokens/components/ as guide reads and catches Claude cap stops", () => {
+    const claudeWith = (
+      tools: { name: string; input: Record<string, unknown> }[],
+      subtype?: string,
+    ) =>
+      [
+        { type: "system", subtype: "init", model: "claude-haiku-5-5" },
+        {
+          type: "assistant",
+          message: { content: tools.map((tool) => ({ type: "tool_use", ...tool })) },
+        },
+        {
+          type: "result",
+          ...(subtype ? { subtype } : {}),
+          is_error: false,
+          num_turns: 1,
+          usage: { input_tokens: 1 },
+        },
+      ]
+        .map((event) => JSON.stringify(event))
+        .join("\n");
+
+    expect(
+      runStats(
+        claudeWith([
+          {
+            name: "Read",
+            input: { file_path: "/app/node_modules/@singularityfm/design-system/GAPS.md" },
+          },
+        ]),
+        "claude",
+      ).readGuide,
+    ).toBe(true);
+    expect(
+      runStats(
+        claudeWith([
+          {
+            name: "Read",
+            input: {
+              file_path: "node_modules/@singularityfm/design-system/tokens/components/Banner.md",
+            },
+          },
+        ]),
+        "claude",
+      ).readGuide,
+    ).toBe(true);
+    expect(
+      runStats(
+        claudeWith([
+          {
+            name: "Bash",
+            input: { command: "ls node_modules/@singularityfm/design-system/tokens/components" },
+          },
+        ]),
+        "claude",
+      ).readGuide,
+    ).toBe(true);
+    expect(
+      runStats(
+        claudeWith([
+          {
+            name: "Read",
+            input: { file_path: "/app/node_modules/@singularityfm/design-system/src/Button.tsx" },
+          },
+        ]),
+        "claude",
+      ).readGuide,
+    ).toBe(false);
+    expect(runStats(claudeWith([], "error_max_budget_usd"), "claude").finished).toBe(false);
+    expect(runStats(claudeWith([], "error_max_turns"), "claude").finished).toBe(false);
+    expect(runStats(claudeWith([], "success"), "claude").finished).toBe(true);
+
+    const agyDoc = (path: string) =>
+      JSON.stringify({
+        event: "step_update",
+        step_update: {
+          step_index: 1,
+          state: "DONE",
+          step_type: "tool",
+          tool_info: { name: "view_file", parameters: { AbsolutePath: path } },
+        },
+      });
+    expect(
+      runStats(
+        agyDoc("C:\\app\\node_modules\\@singularityfm\\design-system\\GAPS.md"),
+        "antigravity",
+      ).readGuide,
+    ).toBe(true);
+    expect(
+      runStats(
+        agyDoc(
+          "C:\\app\\node_modules\\@singularityfm\\design-system\\tokens\\components\\Button.md",
+        ),
+        "antigravity",
+      ).readGuide,
+    ).toBe(true);
+  });
 });
 
 describe("the agent test's comparison", () => {
@@ -231,5 +341,181 @@ describe("the agent test's comparison", () => {
     const added = compareRuns([run([]), run(["e"], ["a", "b", "c", "d", "e"])])[0];
     expect(added?.changes).toEqual([]);
     expect(added?.leftOut).toEqual(["e"]);
+  });
+});
+
+describe("the agent test's summary and tarball metadata", () => {
+  // Prevents unfinished timeouts or quota-errored runs from inflating Compiles, Right part, ds
+  // validate, Used ds, or Read the guide in summary.md.
+  it("excludes unfinished runs from graded summary rates and reports n/a when none finish", () => {
+    const quotaError = (task: string, extra?: Partial<SummaryRow>): SummaryRow => ({
+      setup: "bare-guide",
+      agent: "antigravity",
+      task,
+      package: "0.13.0",
+      model: "agy default",
+      finished: false,
+      met: null,
+      of: null,
+      invented: null,
+      outside_ui: null,
+      validate_errors: null,
+      compiled: null,
+      used_ds: false,
+      read_guide: false,
+      minutes: 0,
+      tokens: 0,
+      tool_calls: 0,
+      ...extra,
+    });
+    const legacyErrored = [
+      quotaError("a", {
+        met: 0,
+        of: 1,
+        compiled: true,
+        validate_errors: 0,
+        invented: [],
+        outside_ui: [],
+      }),
+      quotaError("b", {
+        met: 1,
+        of: 1,
+        compiled: true,
+        read_guide: true,
+        used_ds: true,
+        validate_errors: 0,
+        invented: [],
+        outside_ui: [],
+      }),
+    ];
+    expect(summarizeGroup(legacyErrored, "bare-guide", "antigravity")).toEqual({
+      setup: "bare-guide",
+      agent: "antigravity",
+      model: "agy default",
+      packageName: "0.13.0",
+      finished: "0/2",
+      rightPart: "n/a",
+      invented: "n/a",
+      outsideUi: "n/a",
+      validateErrors: "n/a",
+      compiles: "n/a",
+      usedDs: "n/a",
+      readGuide: "n/a",
+      minutes: null,
+      tokens: null,
+      toolCalls: null,
+    });
+
+    const mixed: SummaryRow[] = [
+      ...legacyErrored,
+      {
+        setup: "bare-guide",
+        agent: "antigravity",
+        task: "c",
+        package: "0.13.0",
+        model: "agy default",
+        finished: true,
+        met: 1,
+        of: 1,
+        invented: ["x"],
+        outside_ui: [],
+        validate_errors: 2,
+        compiled: true,
+        used_ds: true,
+        read_guide: false,
+        minutes: 1.5,
+        tokens: 1200,
+        tool_calls: 6,
+      },
+      {
+        setup: "bare-guide",
+        agent: "antigravity",
+        task: "d",
+        package: "0.13.0",
+        model: "agy default",
+        finished: true,
+        met: 0,
+        of: 1,
+        invented: 2,
+        outside_ui: 1,
+        validate_errors: 0,
+        compiled: false,
+        used_ds: false,
+        read_guide: true,
+        minutes: 2.5,
+        tokens: 1800,
+        tool_calls: 10,
+      },
+    ];
+    expect(summarizeGroup(mixed, "bare-guide", "antigravity")).toEqual({
+      setup: "bare-guide",
+      agent: "antigravity",
+      model: "agy default",
+      packageName: "0.13.0",
+      finished: "2/4",
+      rightPart: "1/2",
+      invented: "3",
+      outsideUi: "1",
+      validateErrors: "2",
+      compiles: "1/2",
+      usedDs: "1/2",
+      readGuide: "1/2",
+      minutes: 2,
+      tokens: 1500,
+      toolCalls: 8,
+    });
+
+    const md = formatSummaryMarkdown(
+      legacyErrored,
+      [["bare-guide", "antigravity"]],
+      "2026-11-14-19-14",
+    );
+    const dataRow = md.split("\n").find((line) => line.startsWith("| 2026-11-14 "));
+    const cells = dataRow
+      ?.split("|")
+      .slice(1, -1)
+      .map((cell) => cell.trim());
+    expect(cells?.slice(5)).toEqual(["0/2", ...Array<string>(10).fill("n/a")]);
+  });
+
+  // Prevents --local / --tarball runs from needing npm view online or breaking when a packed
+  // archive places other files before package/package.json.
+  it("reads peerDependencies out of a gzipped package tarball", () => {
+    const tarEntry = (name: string, bodyText: string) => {
+      const body = Buffer.from(bodyText, "utf8");
+      const header = Buffer.alloc(512);
+      header.write(name, 0, 100, "utf8");
+      header.write("0000644\0", 100, 8, "ascii");
+      header.write("0000000\0", 108, 8, "ascii");
+      header.write("0000000\0", 116, 8, "ascii");
+      header.write(`${body.length.toString(8).padStart(11, "0")}\0`, 124, 12, "ascii");
+      header.write("00000000000\0", 136, 12, "ascii");
+      header.write("        ", 148, 8, "ascii");
+      header.write("0", 156, 1, "ascii");
+      let sum = 0;
+      for (const byte of header) sum += byte;
+      header.write(`${sum.toString(8).padStart(6, "0")}\0 `, 148, 8, "ascii");
+      const pad = Buffer.alloc((512 - (body.length % 512)) % 512);
+      return Buffer.concat([header, body, pad]);
+    };
+
+    const meta = {
+      name: "@singularityfm/design-system",
+      version: "0.14.0-local",
+      peerDependencies: { react: "^19.3.0", astro: "^7.4.10" },
+    };
+    const tgz = gzipSync(
+      Buffer.concat([
+        tarEntry("package/README.md", "hello\n"),
+        tarEntry("package/package.json", JSON.stringify(meta)),
+        Buffer.alloc(1024),
+      ]),
+    );
+    expect(readTarballPackageJson(tgz)).toEqual(meta);
+
+    const missing = gzipSync(
+      Buffer.concat([tarEntry("package/README.md", "hello\n"), Buffer.alloc(1024)]),
+    );
+    expect(() => readTarballPackageJson(missing)).toThrow(/package\/package\.json/);
   });
 });
