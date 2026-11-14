@@ -7,7 +7,8 @@
 //   doc written for this repository (AGENTS.md, README.md, docs/state.md, docs/decisions/): it reads as
 //   a file here. The ledger and the specs keep such paths: their rows record where a fix was made;
 // - an en or em dash in authored text (AGENTS.md, house rule);
-// - an agent-readiness scorecard whose summary line does not follow from its table (readiness.ts).
+// - an agent-readiness scorecard whose summary line, or the line for our own rows (DS-19), does not
+//   follow from its table (readiness.ts).
 //
 // Usage: node scripts/docsCheck.mjs [--fix --app-tree <file>]
 //   --fix rewrites a broken relative link to the app repository when <file> (one path per line, the app

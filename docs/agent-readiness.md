@@ -71,6 +71,27 @@ Evidence names files in this repository unless it says `app:` (somesh-ks/singula
 | 8.3 | Drift detection between docs, tokens, and code | 3 | CI fails when the generated lookup docs no longer match what the source builds, when foundations.md or the package AGENTS.md names a missing token, component, import or path, or when tokens.css differs from tokens.json. No MCP serves drift warnings to agents. | An MCP server or registry endpoint that agents query returns a drift warning whenever docs, tokens and code disagree. | No step yet |
 | 8.4 | Generated-code attribution and review | 1 | Agent PRs are attributed only by convention: every one of the 57 owner-account PRs carries a 'Generated with Claude Code' line, but no label marks them, nothing routes them, and the ruleset requires 0 human approvals. | Every agent-authored PR gets an automatic agent label and is routed to a required human or code-owner reviewer by CI or the ruleset. | Not before 1.0.0: as 8.2 |
 
+## Our own criteria
+
+The rubric cannot see the owner's taste rules or whether agents succeed, so eight rows of ours sit under its 31 (DS-19). They use the same 0 to 4 scale and the same strict rule, and never enter the floor, the median or the tier above, which stay comparable with other systems. `node scripts/docsCheck.mjs` holds this line to the rows:
+
+Ours: lowest 1, median 1.5.
+
+Levels, for S1 to S7: 0, not written down; 1, written for agents in `foundations.md` or a part page; 2, no component or stylesheet in the library breaks it; 3, a required check fails when the library breaks it, across the whole library; 4, it is also a shipped rule an app runs (`ds validate`), so the agent test counts a page that breaks it. S8 has its own levels in its row. Scored by hand on main at f3680fd (0.13.0), 2026-11-14; the next blind rescore scores these too.
+
+| Id | Criterion | Score | Why, with evidence | What raises it one level | Plan |
+| --- | --- | --- | --- | --- | --- |
+| S1 | A control hugs its words; only its glyph slot is fixed (DS-13) | 1 | `foundations.md` says it, but Button, Fab, PlayChip and Select still ship a `reserve` prop that holds the width of longer words (DS-9, overruled by DS-13). | The four `reserve` props go, in a changeset, with the app's callers. | Master plan: DS-9 reserve removal |
+| S2 | No pixel lengths in stylesheets (DS-10) | 4 | `foundations.md` says it; `rules.test.ts` holds every library stylesheet to none in the gate; `raw-px` is an error in the shipped `ds validate`, which the agent test runs on every page. | Already at the top. | None |
+| S3 | Spacing keeps the 8pt grid, 4px only where named | 1 | Written and shipped as `off-grid`, but `ds validate` over the library finds `.settings-text { gap: var(--space-1) }` in `settings-rows.css`, outside the named 4px list, and CI never validates the library. | Name that gap a 4px exception or put it on the grid, so the library validates clean. | Step 5: the library runs its own validator |
+| S4 | Every part works in every mood and in light and dark | 2 | `foundations.md` says it; the token build sweeps contrast in every mood, gives every semantic colour a dark value, and `layoutStability.test.ts` draws 12 components in every mood and theme; no part is known to break it. Nothing draws the other components that way. | A required check draws every component page in every mood and both themes and fails on a contrast or layout fault. | Step 10: axe and screenshots |
+| S5 | Motion comes from the duration and easing tokens, and reduced motion follows the OS | 1 | `foundations.md` says it and the token tests hold the motion policy, but three stylesheets set literal durations that are no token (`--chip-sheen` in `buttons.css`, `--fab-sheen` in `fab.css`, `--wave-drift` in `slider.css`), and nothing catches one (as 1.4 says). | Those read duration tokens, so no stylesheet sets a literal duration but a near-zero one for reduced motion. | Step 5 |
+| S6 | Nothing shifts when a glyph swaps, a check shows or the words change | 2 | `foundations.md` says it; `layoutStability.test.ts` fails CI when one of 12 components changes its box with its state; no other part is known to shift. Menu, Toast, Sheet, Dialog, Slider and Field are among those with no case. | Every component with a state gets a case in that test. | Step 10 |
+| S7 | Colour is a role token, never a hex, an `oklch()` literal or a primitive | 4 | `foundations.md` says it; the token tests keep components off primitive colours and tokens.css free of hex; the `raw-colour` rule runs over the repository in Biome and is an error in the shipped `ds validate` and its Biome config. | Already at the top. | None |
+| S8 | Agents build the owner's real asks with the right parts | 1 | Levels: 0, no test; 1, frozen intent tasks and a harness; 2, a baseline on this page; 3, weekly CI runs judged by the noise rule, with a task for every component since the freeze; 4, the right part in every task of the guide setup, two weekly runs in a row. The harness and tasks exist; the baseline below has the app and guide setups but not yet the bare one. | The first full CI run adds the bare rows. | Step 3 |
+
+Levels we decline, scored as the rubric says and not counted against a plan: 5.2's MCP server (CLI only until the owner asks, DS-14) and 6.1's level 3 registry of component source (an exact npm pin is how apps take the library; not before 1.0.0).
+
 ## The plan
 
 The owner's plan v2 (2026-11-13), in order; the Plan column above names these steps. Each step ends with a blind rescore of this page.
@@ -131,5 +152,9 @@ node scripts/agentEval/compare.mjs <oldest> <older> <newest>
 
 | Date | Setup | Agent | Model | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-11-14 | app | claude | claude-haiku-5-5 | 0.13.0 | 8/8 | 5/8 | 0 | 0 | 0 | 8/8 | 2/8 | 0/8 | 7.1 | 2286254 | 25 |
+| 2026-11-14 | app | antigravity | agy default | 0.13.0 | 6/8 | 4/8 | 0 | 0 | 1 | 4/8 | 1/8 | 8/8 | 11.8 | 362521 | 88 |
+| 2026-11-14 | bare-guide | claude | claude-haiku-5-5 | 0.13.0 | 7/8 | 7/8 | 0 | 0 | 0 | 6/8 | 8/8 | 7/8 | 10.3 | 1606165 | 15 |
+| 2026-11-14 | bare-guide | antigravity | agy default | 0.13.0 | 1/8 | 1/8 | 0 | 0 | 0 | 8/8 | 0/8 | 4/8 | 12.7 | 304804 | 41 |
 
-No full run yet. A smoke run of one task (undo-delete, app with the guide line, 2026-11-13, in the cloud session) used Toast, wrote no invented import, compiled, ran `ds` and read the guide, but then read the package's source files (toastStore.ts, Toast.tsx, menu and row-exit sources) over 2.6 minutes and 26 tool calls, which suggests the docs did not say how to wire the undo.
+The baseline: the owner's run on his computer, 2026-11-14. The `bare` setup was stopped part way (15:25 UTC), so its rows come from the first full CI run. What it says so far: in the reader app, Claude Code picked the right part 5 times in 8 and never opened the package's guide, while in a new app with the guide line it opened it 7 times in 8 and picked the right part 7 times; the app's docs should send it to the package's (plan step 4). Antigravity finished only 1 task of 8 in the new app, so its row there measures the CLI's runs more than the docs.

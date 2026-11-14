@@ -1,15 +1,30 @@
 import { describe, expect, it } from "vitest";
-import { CRITERIA, readinessProblems } from "./readiness.ts";
+import { CRITERIA, OWN_CRITERIA, readinessProblems } from "./readiness.ts";
 
-// A page with every criterion at 2 unless overridden, the summary line a reader quotes, and the
-// by-category rows.
-function page(scores: Record<string, number>, summary: string, categories: string[] = []): string {
+// A page with every criterion at 2 unless overridden, the summary line a reader quotes, the
+// by-category rows, and our own eight rows (DS-19) at 2 with their line.
+function page(
+  scores: Record<string, number>,
+  summary: string,
+  categories: string[] = [],
+  ours = OWN_CRITERIA.map((id) => `| ${id} | c | 2 | w | n | p |`).concat(
+    "Ours: lowest 2, median 2.",
+  ),
+): string {
   const rows = CRITERIA.map(
     (id) => `| ${id} | criterion | ${scores[id] ?? 2} | why | next | plan |`,
   );
-  return [summary, "", ...categories, "", "| Id | Criterion | Score |", "| --- |", ...rows].join(
-    "\n",
-  );
+  return [
+    summary,
+    "",
+    ...categories,
+    "",
+    "| Id | Criterion | Score |",
+    "| --- |",
+    ...rows,
+    "",
+    ...ours,
+  ].join("\n");
 }
 
 describe("the agent-readiness scorecard", () => {
@@ -36,6 +51,25 @@ describe("the agent-readiness scorecard", () => {
     // A median no table could give (1.6) must fail too, not drop the row from the check.
     const odd = [`| 4. Composition and layout | 0 | 1.6 |`];
     expect(readinessProblems(page({ "4.1": 0 }, summary, odd))).toHaveLength(1);
+  });
+
+  // Prevents quoting a stale line for our own rows (DS-19): one of ours drops after a rescore, or
+  // the rows are deleted, and "Ours:" still gives the old lowest and median.
+  it("holds our own rows to their line, all eight of them", () => {
+    const summary = "Summary: floor 2, retrieval 2, median 2, tier 2.";
+    const ours = (line: string, ids = OWN_CRITERIA) =>
+      readinessProblems(
+        page(
+          {},
+          summary,
+          [],
+          [line, ...ids.map((id, index) => `| ${id} | c | ${index < 4 ? 1 : 4} | w | n | p |`)],
+        ),
+      );
+    expect(ours("Ours: lowest 1, median 2.5.")).toEqual([]);
+    expect(ours("Ours: lowest 2, median 2.5.")).toHaveLength(1);
+    expect(ours("Ours: lowest 1, median 2.5.", OWN_CRITERIA.slice(0, -1))).toHaveLength(1);
+    expect(ours("Ours: lowest 1, median 2.5.", []).join("\n")).toMatch(/no score for S1/);
   });
 
   // Prevents a summary computed over fewer than 31 rows: a criterion deleted or pasted twice in an
