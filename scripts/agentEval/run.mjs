@@ -1,6 +1,7 @@
 // The agent test (DS-14, DS-15, plan v2 step 3): give a coding agent each task in tasks.json, in up
 // to three setups, and grade what it wrote with no model call. It runs on the owner's computer, on his
-// own sign-ins (no API key), and keeps transcripts there; only the summary rows get committed.
+// own sign-ins, and keeps transcripts there; only the summary rows get committed. agent-eval.yml also
+// runs the two bare setups weekly in CI, inside a container, on keys capped at a monthly spend (DS-16).
 //
 //   node scripts/agentEval/run.mjs --app <path to singularityfm-app>   all three setups
 //   node scripts/agentEval/run.mjs --setups bare-guide,bare            no app checkout needed
@@ -16,7 +17,8 @@
 //   latest)  --model <Claude model, default claude-haiku-5-5>  --agy-model <Antigravity model,
 //   default its own>  --timeout <minutes per task, default 15>
 //   --user-settings (Claude Code only: also load your own settings and plugins, to compare a run with
-//   them)  --out <folder> (default scripts/agentEval/runs, gitignored).
+//   them)  --max-budget <dollars> (Claude Code only: a task stops at that spend; CI sets it)
+//   --out <folder> (default scripts/agentEval/runs, gitignored).
 //
 // Each task gets the same suffix: build it as a page at a named path, add no dependency. Grading reads
 // the changed files: imports the package does not export, other UI libraries, the expected part, `ds
@@ -261,6 +263,7 @@ function agentCall(agent, prompt) {
   // Pinned, so a baseline and a later run use the same model whatever the CLI's own default is, and
   // the small one, so a full run costs little and the docs carry more of the result (owner, 2026-11-13).
   call.push("--model", option("model", "claude-haiku-5-5"));
+  if (option("max-budget")) call.push("--max-budget-usd", option("max-budget"));
   return { call, input: prompt };
 }
 
@@ -363,96 +366,101 @@ const snake = (row) =>
 
 const rows = [];
 mkdirSync(out, { recursive: true });
-for (const setup of setups) {
-  const app = setup === "app" ? readerApp() : bareApp(setup === "bare-guide");
-  try {
-    const installed = join(app.root, "node_modules", PACKAGE);
-    const { exports: exportsMap, version: installedVersion } = JSON.parse(
-      readFileSync(join(installed, "package.json"), "utf8"),
-    );
-    const resolves = (subpath) => {
-      const target = exportTarget(subpath, exportsMap);
-      return target !== null && existsSync(join(installed, target));
-    };
-    const ds = join(installed, "bin/ds.mjs");
-    // A tree that fails `astro check` before any task cannot say whether a task broke it.
-    const checks = tryRun("pnpm", ["exec", "astro", "check"], app.root).ok;
-    for (const [agent, task] of agents.flatMap((agent) => tasks.map((task) => [agent, task]))) {
-      const page = `${app.pages}/eval/${task.id}.astro`;
-      const prompt = `${task.prompt}\n\nBuild it as a page at ${page} in this project. Do not add dependencies.`;
-      console.log(`${setup} / ${agent} / ${task.id} ...`);
-      const started = Date.now();
-      const { transcript, errors } = await runAgent(agent, prompt, app.dir);
-      const minutes = Math.round((Date.now() - started) / 6000) / 10;
-      const folder = join(out, setup, agent);
-      mkdirSync(folder, { recursive: true });
-      writeFileSync(join(folder, `${task.id}.jsonl`), transcript);
-      if (errors) writeFileSync(join(folder, `${task.id}.stderr.txt`), errors);
-      if (!transcript.trim())
-        console.log(`  ${agent} wrote no transcript; its stderr is beside the others in ${folder}`);
-      const paths = changedFiles(app.dir);
-      const files = paths.map((path) => ({
-        path,
-        text: readFileSync(join(app.dir, path), "utf8"),
-      }));
-      const grade = gradeFiles(files, resolves, task.expect);
-      const validate = paths.length
-        ? tryRun(
-            process.execPath,
-            [ds, "validate", "--json", ...paths.map((path) => join(app.dir, path))],
-            app.root,
-          )
-        : { output: '{"errors":0}' };
-      // null when `ds validate` gave no report, so a failed check never reads as a clean page.
-      let validateErrors = null;
-      try {
-        validateErrors = JSON.parse(validate.output).errors;
-      } catch {
-        validateErrors = null;
-      }
-      const compiled = checks ? tryRun("pnpm", ["exec", "astro", "check"], app.root).ok : null;
-      const row = {
-        setup,
-        agent,
-        task: task.id,
-        // The reader app keeps the version its lockfile pins, which can differ from the others.
-        package: installedVersion,
-        ...runStats(transcript, agent),
-        minutes,
-        ...grade,
-        files: paths,
-        validateErrors,
-        compiled,
+// The summary is written in `finally`, so a setup that throws hours in keeps the rows before it.
+try {
+  for (const setup of setups) {
+    const app = setup === "app" ? readerApp() : bareApp(setup === "bare-guide");
+    try {
+      const installed = join(app.root, "node_modules", PACKAGE);
+      const { exports: exportsMap, version: installedVersion } = JSON.parse(
+        readFileSync(join(installed, "package.json"), "utf8"),
+      );
+      const resolves = (subpath) => {
+        const target = exportTarget(subpath, exportsMap);
+        return target !== null && existsSync(join(installed, target));
       };
-      rows.push(row);
-      writeFileSync(join(folder, `${task.id}.json`), JSON.stringify(snake(row), null, 2));
-      git(app.dir, "reset", "-q", "--hard");
-      git(app.dir, "clean", "-qfd");
+      const ds = join(installed, "bin/ds.mjs");
+      // A tree that fails `astro check` before any task cannot say whether a task broke it.
+      const checks = tryRun("pnpm", ["exec", "astro", "check"], app.root).ok;
+      for (const [agent, task] of agents.flatMap((agent) => tasks.map((task) => [agent, task]))) {
+        const page = `${app.pages}/eval/${task.id}.astro`;
+        const prompt = `${task.prompt}\n\nBuild it as a page at ${page} in this project. Do not add dependencies.`;
+        console.log(`${setup} / ${agent} / ${task.id} ...`);
+        const started = Date.now();
+        const { transcript, errors } = await runAgent(agent, prompt, app.dir);
+        const minutes = Math.round((Date.now() - started) / 6000) / 10;
+        const folder = join(out, setup, agent);
+        mkdirSync(folder, { recursive: true });
+        writeFileSync(join(folder, `${task.id}.jsonl`), transcript);
+        if (errors) writeFileSync(join(folder, `${task.id}.stderr.txt`), errors);
+        if (!transcript.trim())
+          console.log(
+            `  ${agent} wrote no transcript; its stderr is beside the others in ${folder}`,
+          );
+        const paths = changedFiles(app.dir);
+        const files = paths.map((path) => ({
+          path,
+          text: readFileSync(join(app.dir, path), "utf8"),
+        }));
+        const grade = gradeFiles(files, resolves, task.expect);
+        const validate = paths.length
+          ? tryRun(
+              process.execPath,
+              [ds, "validate", "--json", ...paths.map((path) => join(app.dir, path))],
+              app.root,
+            )
+          : { output: '{"errors":0}' };
+        // null when `ds validate` gave no report, so a failed check never reads as a clean page.
+        let validateErrors = null;
+        try {
+          validateErrors = JSON.parse(validate.output).errors;
+        } catch {
+          validateErrors = null;
+        }
+        const compiled = checks ? tryRun("pnpm", ["exec", "astro", "check"], app.root).ok : null;
+        const row = {
+          setup,
+          agent,
+          task: task.id,
+          // The reader app keeps the version its lockfile pins, which can differ from the others.
+          package: installedVersion,
+          ...runStats(transcript, agent),
+          minutes,
+          ...grade,
+          files: paths,
+          validateErrors,
+          compiled,
+        };
+        rows.push(row);
+        writeFileSync(join(folder, `${task.id}.json`), JSON.stringify(snake(row), null, 2));
+        git(app.dir, "reset", "-q", "--hard");
+        git(app.dir, "clean", "-qfd");
+      }
+    } finally {
+      app.cleanup();
     }
-  } finally {
-    app.cleanup();
   }
+} finally {
+  writeFileSync(join(out, "summary.json"), JSON.stringify({ rows: rows.map(snake) }, null, 2));
+  const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] ?? 0;
+  const lines = [
+    `${stamp}. Medians are over finished runs; tokens count cache reads. Paste the rows under the scorecard's.`,
+    "",
+    "| Date | Setup | Agent | Model | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+  ];
+  for (const [setup, agent] of setups.flatMap((setup) => agents.map((agent) => [setup, agent]))) {
+    const mine = rows.filter((row) => row.setup === setup && row.agent === agent);
+    const count = (pick) => mine.filter(pick).length;
+    const sum = (pick) => mine.reduce((total, row) => total + pick(row), 0);
+    const done = mine.filter((row) => row.finished);
+    const errors = mine.some((row) => row.validateErrors === null)
+      ? "?"
+      : sum((row) => row.validateErrors);
+    lines.push(
+      `| ${stamp.slice(0, 10)} | ${setup} | ${agent} | ${mine.find((row) => row.model)?.model ?? "?"} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes))} | ${median(done.map((row) => row.tokens))} | ${median(done.map((row) => row.toolCalls))} |`,
+    );
+  }
+  writeFileSync(join(out, "summary.md"), `${lines.join("\n")}\n`);
+  console.log(`\n${lines.join("\n")}\n\nTranscripts and per-task grades: ${out}`);
 }
-
-writeFileSync(join(out, "summary.json"), JSON.stringify({ rows: rows.map(snake) }, null, 2));
-const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] ?? 0;
-const lines = [
-  `${stamp}. Medians are over finished runs; tokens count cache reads. Paste the rows under the scorecard's.`,
-  "",
-  "| Date | Setup | Agent | Model | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |",
-  "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
-];
-for (const [setup, agent] of setups.flatMap((setup) => agents.map((agent) => [setup, agent]))) {
-  const mine = rows.filter((row) => row.setup === setup && row.agent === agent);
-  const count = (pick) => mine.filter(pick).length;
-  const sum = (pick) => mine.reduce((total, row) => total + pick(row), 0);
-  const done = mine.filter((row) => row.finished);
-  const errors = mine.some((row) => row.validateErrors === null)
-    ? "?"
-    : sum((row) => row.validateErrors);
-  lines.push(
-    `| ${stamp.slice(0, 10)} | ${setup} | ${agent} | ${mine.find((row) => row.model)?.model ?? "?"} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes))} | ${median(done.map((row) => row.tokens))} | ${median(done.map((row) => row.toolCalls))} |`,
-  );
-}
-writeFileSync(join(out, "summary.md"), `${lines.join("\n")}\n`);
-console.log(`\n${lines.join("\n")}\n\nTranscripts and per-task grades: ${out}`);
