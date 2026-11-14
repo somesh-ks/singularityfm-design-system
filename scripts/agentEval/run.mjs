@@ -459,7 +459,7 @@ try {
       ? "?"
       : sum((row) => row.validateErrors);
     lines.push(
-      `| ${stamp.slice(0, 10)} | ${setup} | ${agent} | ${mine.find((row) => row.model)?.model ?? "?"} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes))} | ${median(done.map((row) => row.tokens))} | ${median(done.map((row) => row.toolCalls))} |`,
+      `| ${stamp.slice(0, 10)} | ${setup} | ${agent} | ${mine.find((row) => row.model)?.model ?? "?"} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes)) ?? "n/a"} | ${median(done.map((row) => row.tokens)) ?? "n/a"} | ${median(done.map((row) => row.toolCalls)) ?? "n/a"} |`,
     );
   }
   writeFileSync(join(out, "summary.md"), `${lines.join("\n")}\n`);
