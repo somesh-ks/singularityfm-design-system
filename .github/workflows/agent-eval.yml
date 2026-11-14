@@ -86,7 +86,7 @@ jobs:
         run: |
           out="$RUNNER_TEMP/out"
           if [ -n "$(find "$out" -type l)" ]; then echo "::error::the run left links in its output"; exit 1; fi
-          summary=$(find "$out" -mindepth 2 -maxdepth 2 -type f -name summary.md | head -n 1)
+          summary=$(find "$out" -mindepth 2 -maxdepth 2 -type f -name summary.md -print -quit)
           if [ -z "$summary" ]; then echo "::error::$AGENT ran but wrote no summary"; exit 1; fi
           dir=$(dirname "$summary")
           cat "$summary" >> "$GITHUB_STEP_SUMMARY"
@@ -97,7 +97,7 @@ jobs:
             if jq -e --arg setup "$setup" '[.rows[] | select(.setup == $setup and .finished)] | length > 0' \
               "$dir/summary.json" >/dev/null; then continue; fi
             echo "$AGENT finished no task in $setup:"
-            find "$dir/$setup" -type f -name '*.stderr.txt' | head -n 1 | xargs -r head -c 600
+            find "$dir/$setup" -type f -name '*.stderr.txt' -print0 -quit | xargs -0 -r head -c 600 --
             echo
             status=1
           done
