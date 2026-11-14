@@ -60,6 +60,12 @@ export function rollup(scores: Map<string, number>): Rollup {
   return { floor, retrieval, median: middle, tier };
 }
 
+/** A line the page states once: a second one, right or wrong, would let a reader quote the wrong one. */
+function once(text: string, start: string): string[] {
+  const count = text.split("\n").filter((line) => line.startsWith(start)).length;
+  return count > 1 ? [`${count} lines start "${start}"; keep one`] : [];
+}
+
 /** The rows a table scores, by id: each one of `ids` once, from 0 to 4. */
 function scored(text: string, row: RegExp, ids: string[]) {
   const problems: string[] = [];
@@ -87,6 +93,7 @@ export function readinessProblems(text: string): string[] {
 /** The rubric's 31 rows, its summary line and its by-category table. */
 function rubricProblems(text: string): string[] {
   const { scores, problems } = scored(text, ROW, CRITERIA);
+  problems.push(...once(text, "Summary:"));
   const stated = SUMMARY.exec(text);
   if (!stated) problems.push('no "Summary: floor N, retrieval N, median N, tier N." line');
   if (problems.length > 0 || !stated) return problems;
@@ -118,6 +125,7 @@ function rubricProblems(text: string): string[] {
 function ownProblems(text: string): string[] {
   const stated = OWN.exec(text);
   const { scores, problems } = scored(text, OWN_ROW, OWN_CRITERIA);
+  problems.push(...once(text, "Ours:"));
   if (!stated) return [...problems, 'no "Ours: lowest N, median N." line'];
   if (problems.length > 0) return problems;
   const [lowest, middle] = [Math.min(...scores.values()), median([...scores.values()])];

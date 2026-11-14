@@ -68,6 +68,8 @@ describe("the agent-readiness scorecard", () => {
       );
     expect(ours("Ours: lowest 1, median 2.5.")).toEqual([]);
     expect(ours("Ours: lowest 2, median 2.5.")).toHaveLength(1);
+    // A second line, even with the first one right, is one a reader could quote.
+    expect(ours("Ours: lowest 1, median 2.5.\nOurs: lowest 4, median 4.")).toHaveLength(1);
     expect(ours("Ours: lowest 1, median 2.5.", OWN_CRITERIA.slice(0, -1))).toHaveLength(1);
     expect(ours("Ours: lowest 1, median 2.5.", []).join("\n")).toMatch(/no score for S1/);
   });
