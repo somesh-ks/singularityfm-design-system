@@ -1,7 +1,8 @@
 // The agent test (DS-14, DS-15, plan v2 step 3): give a coding agent each task in tasks.json, in up
 // to three setups, and grade what it wrote with no model call. It runs on the owner's computer, on his
 // own sign-ins, and keeps transcripts there; only the summary rows get committed. agent-eval.yml also
-// runs the two bare setups weekly in CI, inside a container, on keys capped at a monthly spend (DS-16).
+// runs the two bare setups weekly in CI, inside a container, in spend-capped accounts: Claude Code with no
+// key (DS-17), Antigravity on a Gemini key (DS-16).
 //
 //   node scripts/agentEval/run.mjs --app <path to singularityfm-app>   all three setups
 //   node scripts/agentEval/run.mjs --setups bare-guide,bare            no app checkout needed

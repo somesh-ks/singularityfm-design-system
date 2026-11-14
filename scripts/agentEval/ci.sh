@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # The agent test's CI run (DS-16), inside the container agent-eval.yml starts: the repository is mounted
-# read-only at /src and the results go to /out. Nothing from the runner is mounted and only one key is
-# passed in, so an agent that runs any command can reach that key and this container, not the runner's
-# tokens, cache or files.
+# read-only at /src and the results go to /out. Nothing else from the runner is mounted and only one
+# credential is passed in: the Gemini key, or for Claude Code a GitHub identity token in /run/oidc that the
+# runner renews every minute and Anthropic trades for a short token (DS-17). An agent that runs any
+# command can reach that credential and this container, not the runner's own tokens, cache or files.
 set -euo pipefail
 
 # The pin holds for every task: no self-update between the first and the last.
