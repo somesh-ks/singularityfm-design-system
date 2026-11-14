@@ -269,3 +269,142 @@ export function runStats(transcript: string, agent: "claude" | "antigravity"): R
     ),
   };
 }
+
+/** One row of a run's summary.json, as run.mjs writes it (snake_case). CI keeps only the counts of
+ * `invented` and `outside_ui`, since their text is the agent's. */
+export type SummaryRow = {
+  setup: string;
+  agent: string;
+  task: string;
+  model?: string;
+  finished: boolean;
+  met: number;
+  of: number;
+  invented: string[] | number;
+  outside_ui: string[] | number;
+  validate_errors: number | null;
+  compiled: boolean | null;
+  used_ds: boolean;
+  read_guide: boolean;
+  minutes: number;
+  tokens: number;
+};
+
+const count = (value: string[] | number) => (Array.isArray(value) ? value.length : value);
+
+/** The pass or fail measures a change is counted on; null when a run could not tell. */
+const MEASURES: [string, (row: SummaryRow) => boolean | null][] = [
+  ["finished", (row) => row.finished],
+  ["right part", (row) => row.met === row.of],
+  ["compiles", (row) => row.compiled],
+  ["no invented import", (row) => count(row.invented) === 0],
+  ["no other UI library", (row) => count(row.outside_ui) === 0],
+  [
+    "no `ds validate` error",
+    (row) => (row.validate_errors === null ? null : row.validate_errors === 0),
+  ],
+  ["used `ds`", (row) => row.used_ds],
+  ["read the guide", (row) => row.read_guide],
+];
+
+export type Change = {
+  measure: string;
+  /** Tasks that pass, in the run before and the last, among those both runs could judge. */
+  before: number;
+  after: number;
+  /** Tasks that started passing, and that stopped. */
+  up: number;
+  down: number;
+  /** `counts` when two or more tasks moved one way, or one did as a task did in the run before. */
+  verdict: "counts" | "noise";
+};
+
+export type Comparison = {
+  setup: string;
+  agent: string;
+  /** How many of the given runs have this setup and agent; under 2, nothing is compared. */
+  runs: number;
+  /** Tasks every one of those runs has: the only ones counted. */
+  shared: string[];
+  /** Tasks some run has and another does not, so a task added later moves no count. */
+  leftOut: string[];
+  models: string[];
+  changes: Change[];
+  /** Medians over finished shared runs, before and after; read as information, never a verdict. */
+  minutes: [number, number];
+  tokens: [number, number];
+};
+
+export const median = (values: number[]) =>
+  [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] ?? 0;
+
+/**
+ * Whether a run moved the agent test, against the one before it (DS-18 noise rule). With 8 tasks an
+ * agent flips one by chance, so a one-task move counts only when the run before moved a task the same
+ * way (pass three runs, oldest first); two or more tasks one way count at once. Moves up and down are
+ * counted apart, so two that cancel still show. Each setup and agent is compared on the tasks its runs
+ * share, over the runs that have it: a weekly run with one setup is skipped for the others.
+ */
+export function compareRuns(runs: SummaryRow[][]): Comparison[] {
+  const last = runs.at(-1) ?? [];
+  const keys = [...new Set(last.map((row) => `${row.setup}\u0000${row.agent}`))];
+  return keys.map((key) => {
+    const [setup = "", agent = ""] = key.split("\u0000");
+    const mine = runs
+      .map((run) => run.filter((row) => row.setup === setup && row.agent === agent))
+      .filter((rows) => rows.length > 0);
+    const ids = mine.map((rows) => new Set(rows.map((row) => row.task)));
+    const all = [...new Set(mine.flat().map((row) => row.task))].sort();
+    const shared = all.filter((task) => ids.every((set) => set.has(task)));
+    const byTask = mine.map((rows) => new Map(rows.map((row) => [row.task, row])));
+    const end = mine.length - 1;
+    /** Each shared task's measure in run `from` and the next, where both could judge it. */
+    const pairs = (measure: (row: SummaryRow) => boolean | null, from: number) =>
+      shared.flatMap((task) => {
+        const [a, b] = [byTask[from]?.get(task), byTask[from + 1]?.get(task)];
+        const [was, now] = [a ? measure(a) : null, b ? measure(b) : null];
+        return was === null || now === null ? [] : [[was, now] as const];
+      });
+    const changes =
+      end < 1
+        ? []
+        : MEASURES.flatMap(([name, measure]): Change[] => {
+            const judged = pairs(measure, end - 1);
+            const up = judged.filter(([was, now]) => !was && now).length;
+            const down = judged.filter(([was, now]) => was && !now).length;
+            if (up === 0 && down === 0) return [];
+            const earlier = end >= 2 ? pairs(measure, end - 2) : [];
+            const upBefore = earlier.some(([was, now]) => !was && now);
+            const downBefore = earlier.some(([was, now]) => was && !now);
+            const counts =
+              up >= 2 || down >= 2 || (up === 1 && upBefore) || (down === 1 && downBefore);
+            return [
+              {
+                measure: name,
+                before: judged.filter(([was]) => was).length,
+                after: judged.filter(([, now]) => now).length,
+                up,
+                down,
+                verdict: counts ? "counts" : "noise",
+              },
+            ];
+          });
+    const finished = (at: number) =>
+      shared.flatMap((task) => {
+        const row = byTask[at]?.get(task);
+        return row?.finished ? [row] : [];
+      });
+    const [was, now] = [finished(Math.max(end - 1, 0)), finished(end)];
+    return {
+      setup,
+      agent,
+      runs: mine.length,
+      shared,
+      leftOut: all.filter((task) => !shared.includes(task)),
+      models: [...new Set(mine.flat().flatMap((row) => (row.model ? [row.model] : [])))],
+      changes,
+      minutes: [median(was.map((row) => row.minutes)), median(now.map((row) => row.minutes))],
+      tokens: [median(was.map((row) => row.tokens)), median(now.map((row) => row.tokens))],
+    };
+  });
+}
