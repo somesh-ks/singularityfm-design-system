@@ -81,6 +81,7 @@ describe("the rules", () => {
       ".b { padding: 12px var(--space-2); }",
       ".c { margin-block: calc(var(--space-4) - var(--space-1)); }",
       ".banner-body { gap: var(--space-1); }",
+      ".settings-text { gap: var(--space-1); }",
       ".sheet-head:hover { margin-inline: calc(var(--space-1) * -1); }",
       ".d { padding: var(--space-2) var(--space-4); width: 12px; inset: 50%; }",
       ".e { padding: var(--touch-target); }",
@@ -159,6 +160,40 @@ describe("the rules", () => {
     expect(lines(classOnComponent(page, "src/pages/index.astro"))).toEqual([2, 3, 5]);
     const own = 'export const BUTTON_CLASSES = ["button-filled", "button-text"];';
     expect(classOnComponent(own, "packages/design-system/src/button.ts")).toEqual([]);
+  });
+
+  // Prevents false positives on slugs, labels, copy, or dotted keys while keeping JSX expressions,
+  // DOM class APIs, HTML template attributes, and CSS selectors checked.
+  it("class-on-component: ignores non-class string literals but flags expressions and selectors", () => {
+    const page = [
+      'const meta = { slug: "chip", label: "Play chip" };',
+      'const note = slug === "avatar" ? "A chosen chip" : "error.code";',
+      'el.setAttribute("aria-label", "Play chip");',
+      'document.querySelector("code");',
+      'el.className = "x"',
+      'const afterAsi = "Play chip";',
+      '<Button className={active ? "button-filled" : "button-text"}>Go</Button>',
+      '<div class:list={["chip", isOn && "is-on"]} />',
+      'el.classList.add("banner-notice");',
+      'el.setAttribute("class", "avatar-blend");',
+      'document.querySelectorAll(".slider-hue-field, .slider-wave-field");',
+      'document.querySelector("button.button-filled");',
+      'el.closest(".row-exit");',
+      'const html = `<button class="button-filled">Play</button>`;',
+    ].join("\n");
+    expect(lines(classOnComponent(page, "src/pages/index.astro"))).toEqual([
+      7, 7, 8, 9, 10, 11, 11, 12, 13, 14,
+    ]);
+  });
+
+  // Prevents PlayingBars from failing class ownership on Play chip's chip-bars class while still
+  // stopping pages from writing chip-bars by hand.
+  it("class-on-component: treats PlayingBars.tsx as owner of chip-bars, not external pages", () => {
+    const bars = '<span className={["chip-bars", className].filter(Boolean).join(" ")} />';
+    expect(classOnComponent(bars, "packages/design-system/src/PlayingBars.tsx")).toEqual([]);
+    expect(
+      lines(classOnComponent('<span className="chip-bars" />', "src/pages/index.astro")),
+    ).toEqual([1]);
   });
 
   // Prevents an import of a path the package retired going unseen until the removal breaks a build.

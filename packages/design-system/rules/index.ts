@@ -460,6 +460,7 @@ const CLASS_OWNERS = new Map(
         .filter((part) => part.classes.some((name) => component.classes.includes(name)))
         .flatMap((part) => part.files ?? [])
         .map((path) => path.replace(/^packages\/design-system\//, "")),
+      ...(component.name === "Play chip" ? ["src/PlayingBars.tsx"] : []),
       ...[`${module}.ts`, `${name}.astro`, `${name}.tsx`, "registry.ts"].map(
         (file) => `src/${file}`,
       ),
@@ -481,23 +482,152 @@ const CLASS_NAME = new RegExp(
   "g",
 );
 
+type StringSpan = { start: number; end: number };
+
+const CLASS_ATTR_BEFORE = /(?<![\w-])class(?:Name|:list)?\s*=\s*$/;
+const OTHER_ATTR_BEFORE = /(?<![\w-])[\w:-]+\s*=\s*$/;
+const CLASS_LIST_CALL_BEFORE =
+  /\.classList\.(?:add|remove|toggle|contains|replace)(?:<[^>\n]*>)?\s*$/;
+const SET_ATTRIBUTE_BEFORE = /\.setAttribute\s*$/;
+const SET_ATTRIBUTE_CLASS_ARG = /^\s*(["'])class\1\s*,/;
+const SELECTOR_CALL_BEFORE =
+  /\.(?:querySelector|querySelectorAll|closest|matches)(?:<[^>\n]*>)?\s*$/;
+const NON_CLASS_BRACE_BEFORE = /(?:=>|\)|\b(?:else|try|finally|do|return))\s*$/;
+const ASI_PREV_COMPLETE = /(?:["'`)\]}\w$]|--|\+\+)$/;
+const ASI_NEXT_CONT = /^[?:+.,)\]}]|^(?:&&|\|\||\?\?)/;
+const INLINE_HTML_CLASS = /(?<![\w-])class\s*=\s*["'][^"']*$/;
+const CSS_SELECTOR_BEFORE = /(?:^|[\s,+~>(:[\]"'!]|\.[a-zA-Z_-][\w-]*|\[[^\]\n]+\])\.$/;
+
+function classContextKind(
+  code: string,
+  strings: StringSpan[],
+  stringIndex: number,
+): "class" | "selector-call" | "other" {
+  const span = strings[stringIndex];
+  if (!span) return "other";
+  const stringStart = span.start;
+  if (CLASS_ATTR_BEFORE.test(code.slice(Math.max(0, stringStart - 40), stringStart))) {
+    return "class";
+  }
+
+  let s = stringIndex - 1;
+  let parenDepth = 0;
+  let braceDepth = 0;
+  let bracketDepth = 0;
+  const limit = Math.max(0, stringStart - 2000);
+
+  for (let pos = stringStart - 1; pos >= limit; pos--) {
+    while (s >= 0) {
+      const prevSpan = strings[s];
+      if (!prevSpan || pos >= prevSpan.end) break;
+      if (pos >= prevSpan.start) pos = prevSpan.start - 1;
+      s--;
+    }
+    if (pos < limit) break;
+
+    const ch = code[pos];
+    if (ch === ")") {
+      parenDepth++;
+    } else if (ch === "(") {
+      if (parenDepth > 0) {
+        parenDepth--;
+      } else {
+        const before = code.slice(Math.max(0, pos - 60), pos);
+        if (CLASS_LIST_CALL_BEFORE.test(before)) return "class";
+        if (SET_ATTRIBUTE_BEFORE.test(before)) {
+          if (SET_ATTRIBUTE_CLASS_ARG.test(code.slice(pos + 1, stringStart))) return "class";
+          break;
+        }
+        if (SELECTOR_CALL_BEFORE.test(before)) return "selector-call";
+      }
+    } else if (ch === "]") {
+      bracketDepth++;
+    } else if (ch === "[") {
+      if (bracketDepth > 0) bracketDepth--;
+    } else if (ch === "}") {
+      braceDepth++;
+    } else if (ch === "{") {
+      if (braceDepth > 0) {
+        braceDepth--;
+      } else {
+        const before = code.slice(Math.max(0, pos - 50), pos);
+        if (CLASS_ATTR_BEFORE.test(before)) return "class";
+        if (
+          OTHER_ATTR_BEFORE.test(before) ||
+          NON_CLASS_BRACE_BEFORE.test(before) ||
+          />\s*$/.test(before)
+        ) {
+          break;
+        }
+      }
+    } else if (ch === ";") {
+      break;
+    } else if (ch === "=") {
+      const prev = code[pos - 1] ?? "";
+      const next = code[pos + 1] ?? "";
+      if (
+        next !== "=" &&
+        next !== ">" &&
+        prev !== "=" &&
+        prev !== "!" &&
+        prev !== "<" &&
+        prev !== ">"
+      ) {
+        if (braceDepth === 0 && parenDepth === 0 && bracketDepth === 0) {
+          const before = code.slice(Math.max(0, pos - 60), pos);
+          if (/\.className\s*(?:\+?)?$/.test(before) || CLASS_ATTR_BEFORE.test(before)) {
+            return "class";
+          }
+          break;
+        }
+      }
+    } else if (ch === "\n" && parenDepth === 0 && braceDepth === 0 && bracketDepth === 0) {
+      const prevLine = code.slice(Math.max(0, pos - 120), pos).trimEnd();
+      const nextPart = code.slice(pos + 1, stringStart).trimStart();
+      if (ASI_PREV_COMPLETE.test(prevLine) && !ASI_NEXT_CONT.test(nextPart)) break;
+    }
+  }
+
+  return "other";
+}
+
 /**
  * Prevents a page drawing a component by its class (D237: a page draws the component and never
- * types its class): `<button class="button-filled">` beside the Button, or `<Button
- * className="button-small">` where the component has a prop. A class is read in any string, as a
- * script sets it too; an import path is not a class. A hook class of the page's own on a component
- * (`<Icon class="fav-add">`) is not the component's class and passes.
+ * types its class): `<button class="button-filled">` beside the Button, `<Button
+ * className="button-small">` where the component has a prop, `.className`/`.classList` calls,
+ * or CSS selectors matching `.name`. Plain string literals (slugs, labels, prose) and import
+ * paths are ignored. A hook class of the page's own on a component (`<Icon class="fav-add">`) is
+ * not the component's class and passes.
  */
 export function classOnComponent(text: string, file: string): Finding[] {
   if (!isCode(file)) return [];
   const own = packagePath(file);
   const code = blank(withoutCodeComments(text), /\b(?:from|import)\s*\(?\s*(["'])[^"'\n]*\1/g);
-  return [...code.matchAll(/(["'`])((?:\\.|(?!\1)[^\\])*)\1/g)].flatMap((string) =>
-    [...(string[2] ?? "").matchAll(CLASS_NAME)].flatMap((match) => {
+  const stringMatches = [...code.matchAll(/(["'`])((?:\\.|(?!\1)[^\\])*)\1/g)];
+  const spans: StringSpan[] = stringMatches.map((m) => ({
+    start: m.index ?? 0,
+    end: (m.index ?? 0) + m[0].length,
+  }));
+
+  return stringMatches.flatMap((string, stringIndex) => {
+    const stringStart = string.index ?? 0;
+    const content = string[2] ?? "";
+    const context = classContextKind(code, spans, stringIndex);
+
+    return [...content.matchAll(CLASS_NAME)].flatMap((match) => {
       const name = match[0];
       const owner = CLASS_OWNERS.get(name);
       if (!owner || (own && owner.own.has(own))) return [];
-      const index = (string.index ?? 0) + 1 + (match.index ?? 0);
+      const matchOffset = match.index ?? 0;
+      const index = stringStart + 1 + matchOffset;
+      const beforeMatch = code.slice(Math.max(0, index - 64), index);
+      const isSelector =
+        context === "selector-call"
+          ? /\.$/.test(beforeMatch)
+          : CSS_SELECTOR_BEFORE.test(beforeMatch);
+      const isInlineClass = INLINE_HTML_CLASS.test(content.slice(0, matchOffset));
+      if (context !== "class" && !isSelector && !isInlineClass) return [];
+
       const tag = /<([A-Z][\w.]*)\b[^<>]*$/.exec(code.slice(0, index))?.[1];
       const message = owner.retired
         ? `${name} is a retired class; draw ${owner.component} instead`
@@ -513,8 +643,8 @@ export function classOnComponent(text: string, file: string): Finding[] {
           severity: "error" as const,
         },
       ];
-    }),
-  );
+    });
+  });
 }
 
 /**
