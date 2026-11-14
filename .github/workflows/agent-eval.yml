@@ -62,7 +62,7 @@ jobs:
         with:
           persist-credentials: false
       # The runner holds both jobs' credentials; the container is given only this job's, no added
-      # privileges, and no route to the VM's metadata endpoints.
+      # privileges, and no route to the VM's metadata endpoints but the DNS resolver.
       - name: Run the tasks
         id: run
         env:
@@ -83,8 +83,13 @@ jobs:
               exit 0
             fi
           done
-          for address in 169.254.169.254 168.63.129.16; do
-            sudo iptables -I DOCKER-USER -d "$address" -j DROP
+          # Azure's platform address is also the VM's DNS resolver, which the container uses: it is
+          # dropped but for DNS, or the container resolves no name (the first CI run, 2026-11-14, could
+          # not fetch pnpm). Each -I goes on top, so the two DNS accepts sit above its drop.
+          sudo iptables -I DOCKER-USER -d 169.254.169.254 -j DROP
+          sudo iptables -I DOCKER-USER -d 168.63.129.16 -j DROP
+          for protocol in tcp udp; do
+            sudo iptables -I DOCKER-USER -d 168.63.129.16 -p "$protocol" --dport 53 -j ACCEPT
           done
           mkdir -p "$RUNNER_TEMP/out"
           chmod a+rwx "$RUNNER_TEMP/out"
