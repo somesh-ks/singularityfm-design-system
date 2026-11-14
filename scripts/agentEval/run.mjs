@@ -77,13 +77,26 @@ const git = (cwd, ...gitArgs) => run("git", gitArgs, cwd).trim();
 
 const version = option("version") ?? run("npm", ["view", PACKAGE, "version"], HERE).trim();
 
+/**
+ * Removes a temp folder. Windows can hold a file open for a moment after its process exits (EPERM,
+ * EBUSY; owner's run, 2026-11-14), so Node retries; a folder that still will not go is left with a
+ * warning instead of ending the run.
+ */
+function removeDir(dir) {
+  try {
+    rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 500 });
+  } catch (error) {
+    console.warn(`Could not remove ${dir} (${error.code ?? error.message}); delete it by hand.`);
+  }
+}
+
 /** Runs `make` in a new temp folder; removes the folder when it throws. */
 function inTemp(prefix, make) {
   const dir = mkdtempSync(join(tmpdir(), prefix));
   try {
     return make(dir);
   } catch (error) {
-    rmSync(dir, { recursive: true, force: true });
+    removeDir(dir);
     throw error;
   }
 }
@@ -172,7 +185,7 @@ const bareApp = (withGuideLine) =>
       dir,
       pages: "src/pages",
       root: dir,
-      cleanup: () => rmSync(dir, { recursive: true, force: true }),
+      cleanup: () => removeDir(dir),
     };
   });
 
@@ -184,7 +197,7 @@ function readerApp() {
   return inTemp("ds-agent-app-", (dir) => {
     const cleanup = () => {
       tryRun("git", ["worktree", "remove", "--force", dir], appPath);
-      rmSync(dir, { recursive: true, force: true });
+      removeDir(dir);
     };
     git(appPath, "worktree", "add", "-q", "--detach", dir, "origin/main");
     try {
