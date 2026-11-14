@@ -5,17 +5,27 @@
 # tokens, cache or files.
 set -euo pipefail
 
+# The pin holds for every task: no self-update between the first and the last.
+export DISABLE_AUTOUPDATER=1
+
 cp -r /src /work
 cd /work
+# The repository's pnpm, also for the bare apps in /tmp, which name none.
 corepack enable
+corepack install -g "$(node -p "require('./package.json').packageManager")"
 pnpm install --frozen-lockfile --ignore-scripts
 
 # The version on main: right after a publish, `npm view`'s latest can still name the one before.
 version=$(node -p "require('./packages/design-system/package.json').version")
+found=""
 for _ in $(seq 1 20); do
-  npm view "@singularityfm/design-system@$version" version >/dev/null 2>&1 && break
+  if npm view "@singularityfm/design-system@$version" version >/dev/null 2>&1; then found=1; break; fi
   sleep 30
 done
+if [ -z "$found" ]; then
+  echo "::error::@singularityfm/design-system@$version is not on npm after 10 minutes"
+  exit 1
+fi
 
 extra=()
 if [ "$AGENT" = claude ]; then

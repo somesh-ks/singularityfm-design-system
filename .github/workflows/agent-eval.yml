@@ -29,25 +29,29 @@ concurrency:
 
 jobs:
   run:
-    # A release run publishes only when the version pull request's merge pushes the changelog to main.
+    # A release run publishes on the version pull request's merge (a push to main) or when started by
+    # hand; its pull request runs (canary) never start this.
     if: >-
       github.repository == 'somesh-ks/singularityfm-design-system' &&
       (github.event_name != 'workflow_run' ||
-       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'))
+       (github.event.workflow_run.conclusion == 'success' &&
+        contains(fromJSON('["push", "workflow_dispatch"]'), github.event.workflow_run.event)))
     strategy:
       fail-fast: false
       matrix:
         agent: [claude, antigravity]
     runs-on: ubuntu-latest
-    # 16 runs of at most 15 minutes, plus installs; the hosted limit is 360.
+    # At most 16 tasks of 15 minutes plus about a minute of grading each, and the installs: under 280.
     timeout-minutes: 330
     environment: agent-eval
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The runner holds both jobs' secrets; the container is given only this job's key.
+      # The runner holds both jobs' secrets; the container is given only this job's key, no added
+      # privileges, and no route to the VM's metadata endpoints.
       - name: Run the tasks
+        id: run
         env:
           AGENT: ${{ matrix.agent }}
           AGY_MODEL: ${{ vars.AGY_MODEL }}
@@ -59,27 +63,44 @@ jobs:
             echo "::warning::no $KEY_NAME in the agent-eval environment; $AGENT did not run"
             exit 0
           fi
+          echo "ran=true" >> "$GITHUB_OUTPUT"
+          for address in 169.254.169.254 168.63.129.16; do
+            sudo iptables -I DOCKER-USER -d "$address" -j DROP
+          done
           mkdir -p "$RUNNER_TEMP/out"
-          docker run --rm -e AGENT -e AGY_MODEL -e "$KEY_NAME" \
+          chmod a+rwx "$RUNNER_TEMP/out"
+          docker run --rm --init -e AGENT -e AGY_MODEL -e "$KEY_NAME" \
+            --security-opt no-new-privileges --pids-limit 4096 \
+            --cap-drop ALL --cap-add CHOWN --cap-add DAC_OVERRIDE --cap-add FOWNER \
             -v "$GITHUB_WORKSPACE:/src:ro" -v "$RUNNER_TEMP/out:/out" \
             node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496 \
             bash /src/scripts/agentEval/ci.sh
-      # A setup where no task finished (a spent or wrong key, a CLI that cannot sign in) fails the job,
-      # with the start of the agent's own error output.
+      # Everything in out/ was written by the agent's container, so it is read as untrusted: no links,
+      # only the two known setups, and its error text printed with workflow commands off. A setup where
+      # no task finished (a spent or wrong key, a CLI that cannot sign in) fails the job, as does a run
+      # that left no summary.
       - name: Report
-        if: always()
+        if: always() && steps.run.outputs.ran == 'true'
         env:
           AGENT: ${{ matrix.agent }}
         run: |
           out="$RUNNER_TEMP/out"
-          summary=$(ls "$out"/*/summary.md 2>/dev/null | head -n 1)
-          if [ -z "$summary" ]; then echo "no summary written"; exit 0; fi
-          cat "$summary" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$(find "$out" -type l)" ]; then echo "::error::the run left links in its output"; exit 1; fi
+          summary=$(find "$out" -mindepth 2 -maxdepth 2 -type f -name summary.md | head -n 1)
+          if [ -z "$summary" ]; then echo "::error::$AGENT ran but wrote no summary"; exit 1; fi
           dir=$(dirname "$summary")
-          failed=$(jq -r '.rows | group_by(.setup)[] | select(all(.finished | not)) | .[0].setup' "$dir/summary.json")
-          if [ -z "$failed" ]; then exit 0; fi
-          for setup in $failed; do
-            echo "::error::$AGENT finished no task in $setup"
-            find "$dir/$setup" -name '*.stderr.txt' | head -n 1 | xargs -r head -c 600
+          cat "$summary" >> "$GITHUB_STEP_SUMMARY"
+          status=0
+          token=$(openssl rand -hex 16)
+          echo "::stop-commands::$token"
+          for setup in bare-guide bare; do
+            if jq -e --arg setup "$setup" '[.rows[] | select(.setup == $setup and .finished)] | length > 0' \
+              "$dir/summary.json" >/dev/null; then continue; fi
+            echo "$AGENT finished no task in $setup:"
+            find "$dir/$setup" -type f -name '*.stderr.txt' | head -n 1 | xargs -r head -c 600
+            echo
+            status=1
           done
-          exit 1
+          echo "::$token::"
+          if [ "$status" -ne 0 ]; then echo "::error::$AGENT finished no task in a setup; see the log above"; fi
+          exit "$status"
