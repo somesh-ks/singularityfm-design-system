@@ -45,5 +45,5 @@ else
   if [ -n "${AGY_MODEL:-}" ]; then extra=(--agy-model "$AGY_MODEL"); fi
 fi
 
-node scripts/agentEval/run.mjs --setups bare-guide,bare --agents "$AGENT" --version "$version" \
+node scripts/agentEval/run.mjs --setups "${SETUPS:?}" --agents "$AGENT" --version "$version" \
   --timeout 15 --out /out "${extra[@]}"

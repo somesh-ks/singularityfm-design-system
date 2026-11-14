@@ -2,11 +2,14 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { System } from "../../packages/design-system/scripts/system/types.ts";
-import { exportTarget, gradeFiles, runStats } from "./grade.ts";
+import { compareRuns, exportTarget, gradeFiles, runStats, type SummaryRow } from "./grade.ts";
 
 const PKG = join(import.meta.dirname, "../../packages/design-system");
-const { tasks } = JSON.parse(readFileSync(join(import.meta.dirname, "tasks.json"), "utf8")) as {
-  tasks: { id: string; prompt: string }[];
+const { tasks, components_at_freeze: atFreeze } = JSON.parse(
+  readFileSync(join(import.meta.dirname, "tasks.json"), "utf8"),
+) as {
+  components_at_freeze: string[];
+  tasks: { id: string; prompt: string; expect: { components?: string[] }[] }[];
 };
 // Words only, so punctuation or a line break between them hides no copied phrase.
 const words = (text: string): string[] =>
@@ -56,6 +59,18 @@ describe("the agent test's tasks", () => {
         .map((run) => `${task.id}: ${run}`);
     });
     expect(quoted).toEqual([]);
+  });
+
+  // Prevents a component the test never measures: one added after the freeze with no task that
+  // expects it scores nothing whether agents find it or not, and the scorecard would not say so.
+  it("expect every component added since the freeze", () => {
+    const expected = new Set(
+      tasks.flatMap((task) => task.expect.flatMap((want) => want.components ?? [])),
+    );
+    const untested = system.components
+      .map((component) => component.name)
+      .filter((name) => !atFreeze.includes(name) && !expected.has(name));
+    expect(untested).toEqual([]);
   });
 });
 
@@ -173,5 +188,42 @@ describe("the agent test's transcripts", () => {
       .map((event) => JSON.stringify(event))
       .join("\n");
     expect(runStats(claude, "claude").finished).toBe(true);
+  });
+});
+
+describe("the agent test's comparison", () => {
+  const row = (task: string, pass: boolean): SummaryRow => ({
+    setup: "bare",
+    agent: "claude",
+    task,
+    finished: true,
+    met: pass ? 1 : 0,
+    of: 1,
+    invented: [],
+    outside_ui: [],
+    validate_errors: 0,
+    compiled: true,
+    used_ds: false,
+    read_guide: false,
+    minutes: 1,
+    tokens: 1,
+  });
+  const run = (passing: string[], ids = ["a", "b", "c", "d"]) =>
+    ids.map((id) => row(id, passing.includes(id)));
+  // Only one measure differs between these rows, so a run has at most one change.
+  const verdicts = (...runs: SummaryRow[][]) =>
+    compareRuns(runs)[0]?.changes.map((change) => change.verdict);
+
+  // Prevents reading one agent's coin flip on one task as the docs working, two tasks that swap
+  // places as no change, and a task that only the newer run has from moving the count at all.
+  it("counts a move only when it is larger than chance or repeats", () => {
+    expect(verdicts(run([]), run(["a"]))).toEqual(["noise"]);
+    expect(verdicts(run([]), run(["a", "b"]))).toEqual(["counts"]);
+    expect(verdicts(run([]), run(["a"]), run(["a", "b"]))).toEqual(["counts"]);
+    expect(verdicts(run(["a"]), run([]), run(["b"]))).toEqual(["noise"]);
+    expect(verdicts(run(["a", "b"]), run(["c", "d"]))).toEqual(["counts"]);
+    const added = compareRuns([run([]), run(["e"], ["a", "b", "c", "d", "e"])])[0];
+    expect(added?.changes).toEqual([]);
+    expect(added?.leftOut).toEqual(["e"]);
   });
 });
