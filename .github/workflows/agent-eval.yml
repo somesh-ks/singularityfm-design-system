@@ -2,14 +2,15 @@ name: agent-eval
 
 # The agent test (DS-14, DS-16) in CI: Claude Code and the Antigravity CLI each build every frozen task in
 # the two bare setups (a new Astro app with the published package, with and without the guide line),
-# graded with no model call. Weekly, after release.yml's Monday run, and after each publish. The reader
-# app setup stays on the owner's computer: this repository is public and the app is not.
+# graded with no model call. Weekly, after release.yml's Monday run, after each publish, and on demand.
+# The reader app setup stays on the owner's computer: this repository is public and the app is not.
 #
-# Each agent signs in with a dedicated key that has a monthly spend limit, from the `agent-eval`
-# environment, which only main can use. The agent runs shell commands with its key in the environment,
-# so the cap is the containment: the job never runs on a pull request, the checkout keeps no token, and
-# no transcript is uploaded (GitHub masks secrets in logs, not in artifacts). Only the summary rows reach
-# the job summary. A key that is not set skips its agent with a warning.
+# The agent may run any command, so it runs in a container (scripts/agentEval/ci.sh) that gets the
+# repository read-only, one key and nothing of the runner: no token, no cache, no step files, no sudo
+# on the host. Each key is made only for this, with a monthly spend limit, in the `agent-eval`
+# environment that only main can use; a leaked key costs at most its limit. Nothing runs on a pull
+# request and no transcript is uploaded (GitHub masks secrets in logs, not in artifacts). Only the
+# summary rows reach the job summary. A key that is not set skips its agent with a warning.
 on:
   schedule:
     - cron: "41 9 * * 1"
@@ -23,7 +24,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: agent-eval
+  group: agent-eval-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -38,57 +39,47 @@ jobs:
       matrix:
         agent: [claude, antigravity]
     runs-on: ubuntu-latest
-    # 16 runs of at most 15 minutes, plus the two setups' installs; the hosted limit is 360.
+    # 16 runs of at most 15 minutes, plus installs; the hosted limit is 360.
     timeout-minutes: 330
     environment: agent-eval
-    # Each key reaches only its own agent's steps, never an action's.
     steps:
-      - name: Key check
-        id: key
-        env:
-          ANTHROPIC_API_KEY: ${{ matrix.agent == 'claude' && secrets.ANTHROPIC_API_KEY || '' }}
-          GEMINI_API_KEY: ${{ matrix.agent == 'antigravity' && secrets.GEMINI_API_KEY || '' }}
-        run: |
-          if [ -n "$ANTHROPIC_API_KEY$GEMINI_API_KEY" ]; then echo "set=true" >> "$GITHUB_OUTPUT"; exit 0; fi
-          echo "::warning::no key for ${{ matrix.agent }} in the agent-eval environment; it did not run"
-      - if: steps.key.outputs.set == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - if: steps.key.outputs.set == 'true'
-        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
-      - if: steps.key.outputs.set == 'true'
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - if: steps.key.outputs.set == 'true'
-        run: pnpm install --frozen-lockfile --ignore-scripts
-      # shortcut: pinned by version, not by lockfile hash; make it a devDependency if Dependabot should
-      # bump it.
-      - if: steps.key.outputs.set == 'true' && matrix.agent == 'claude'
-        name: Install Claude Code
-        run: npm install -g @anthropic-ai/claude-code@2.1.319
-      # shortcut: the official installer has no version pin (it checks the download against its own
-      # manifest's SHA-512); the summary's Model column says which model ran. Pin when it offers one.
-      # The key is only read once settings.json names the gemini provider.
-      - if: steps.key.outputs.set == 'true' && matrix.agent == 'antigravity'
-        name: Install the Antigravity CLI
-        run: |
-          curl -fsSL https://antigravity.google/cli/install.sh | bash
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          mkdir -p "$HOME/.gemini/antigravity-cli"
-          echo '{ "modelProvider": "gemini" }' > "$HOME/.gemini/antigravity-cli/settings.json"
-      - if: steps.key.outputs.set == 'true'
-        name: Run the tasks
+      # The runner holds both jobs' secrets; the container is given only this job's key.
+      - name: Run the tasks
         env:
           AGENT: ${{ matrix.agent }}
           AGY_MODEL: ${{ vars.AGY_MODEL }}
+          KEY_NAME: ${{ matrix.agent == 'claude' && 'ANTHROPIC_API_KEY' || 'GEMINI_API_KEY' }}
           ANTHROPIC_API_KEY: ${{ matrix.agent == 'claude' && secrets.ANTHROPIC_API_KEY || '' }}
           GEMINI_API_KEY: ${{ matrix.agent == 'antigravity' && secrets.GEMINI_API_KEY || '' }}
         run: |
-          model=()
-          if [ "$AGENT" = antigravity ] && [ -n "$AGY_MODEL" ]; then model=(--agy-model "$AGY_MODEL"); fi
-          node scripts/agentEval/run.mjs --setups bare-guide,bare --agents "$AGENT" --timeout 15 \
-            --out "$RUNNER_TEMP/agent-eval" "${model[@]}"
-          cat "$RUNNER_TEMP"/agent-eval/*/summary.md >> "$GITHUB_STEP_SUMMARY"
+          if [ -z "${!KEY_NAME}" ]; then
+            echo "::warning::no $KEY_NAME in the agent-eval environment; $AGENT did not run"
+            exit 0
+          fi
+          mkdir -p "$RUNNER_TEMP/out"
+          docker run --rm -e AGENT -e AGY_MODEL -e "$KEY_NAME" \
+            -v "$GITHUB_WORKSPACE:/src:ro" -v "$RUNNER_TEMP/out:/out" \
+            node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496 \
+            bash /src/scripts/agentEval/ci.sh
+      # A setup where no task finished (a spent or wrong key, a CLI that cannot sign in) fails the job,
+      # with the start of the agent's own error output.
+      - name: Report
+        if: always()
+        env:
+          AGENT: ${{ matrix.agent }}
+        run: |
+          out="$RUNNER_TEMP/out"
+          summary=$(ls "$out"/*/summary.md 2>/dev/null | head -n 1)
+          if [ -z "$summary" ]; then echo "no summary written"; exit 0; fi
+          cat "$summary" >> "$GITHUB_STEP_SUMMARY"
+          dir=$(dirname "$summary")
+          failed=$(jq -r '.rows | group_by(.setup)[] | select(all(.finished | not)) | .[0].setup' "$dir/summary.json")
+          if [ -z "$failed" ]; then exit 0; fi
+          for setup in $failed; do
+            echo "::error::$AGENT finished no task in $setup"
+            find "$dir/$setup" -name '*.stderr.txt' | head -n 1 | xargs -r head -c 600
+          done
+          exit 1
