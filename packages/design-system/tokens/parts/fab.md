@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: fab
+name: "Floating action button"
+kind: action
+imports:
+  - "@singularityfm/design-system/Fab"
+---
+
 # Floating action button (`fab`)
 
 The page's one primary action below 64rem: a glyph and a word, floating.
@@ -27,6 +36,14 @@ The page's one primary action below 64rem: a glyph and a word, floating.
 - One per page, below 64rem; from 64rem it is not shown.
 - label is its whole accessible name; the word beside the glyph is hidden from a screen reader.
 - A script folds it by data-folded on FAB_SELECTOR (design-system/fab.ts).
+
+## Accessibility
+
+- Role: Native <button> (or <a href> when href is set)
+- ARIA: label prop is required and sets aria-label.
+- ARIA: The visible extended text span is aria-hidden="true" so screen readers announce label once.
+- Keyboard: Enter and Space activate the button; Enter activates link mode.
+- Focus: Native keyboard focus ring via :focus-visible.
 
 ## Props of Fab
 

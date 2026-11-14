@@ -1,6 +1,20 @@
+---
+version: "0.13.0"
+id: btn-action-tonal
+name: "Tonal action"
+kind: action
+imports: []
+---
+
 # Tonal action (`btn-action-tonal`)
 
 The one creating action in the side column (Catch up), on the action tone.
+
+## Markup
+
+```astro
+<button type="button" class="btn-action-tonal">Catch up</button>
+```
 
 ## Use when
 
@@ -9,6 +23,10 @@ The one creating action in the side column (Catch up), on the action tone.
 ## Not when
 
 - any other button: use [`button-tonal`](button-tonal.md)
+
+## Rules
+
+- Paint modifier only (radius, fill, hover and pressed states): apply it to the Catch up creating action in the side column; the host element keeps its own size and layout.
 
 ## Tokens it reads
 

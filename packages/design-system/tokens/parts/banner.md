@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: banner
+name: "Banner"
+kind: feedback
+imports:
+  - "@singularityfm/design-system/Banner"
+---
+
 # Banner (`banner`)
 
 A tinted block with an icon, a title, an optional line and at most one text button.
@@ -26,6 +35,14 @@ A tinted block with an icon, a title, an optional line and at most one text butt
 
 - Only the icon takes the tone.
 - An island draws one with bannerClass() and bannerText.
+
+## Accessibility
+
+- Role: <div role="alert"> for tone="danger", otherwise <div role="status">
+- ARIA: Leading Icon is aria-hidden="true".
+- ARIA: Pass bodyId so related controls can link with aria-describedby.
+- Keyboard: Optional action Button handles Enter/Space natively.
+- Focus: Static notice region; optional action Button is keyboard focusable.
 
 ## Props of Banner
 

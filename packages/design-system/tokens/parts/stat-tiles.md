@@ -1,6 +1,25 @@
+---
+version: "0.13.0"
+id: stat-tiles
+name: "Stat tiles"
+kind: container
+imports: []
+---
+
 # Stat tiles (`stat-tiles`)
 
 A tile per figure: the value large over its word in muted ink.
+
+## Markup
+
+```astro
+<ul class="stat-tiles">
+  <li class="stat-tile">
+    <span class="stat-tile-value">42</span>
+    <span class="stat-tile-label">Stories</span>
+  </li>
+</ul>
+```
 
 ## Use when
 

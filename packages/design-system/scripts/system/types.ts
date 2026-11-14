@@ -1,5 +1,5 @@
 /** The shape of the machine-readable design system (tokens/system.json). */
-import type { Experimental } from "../../src/guidance.js";
+import type { A11yGuidance, Experimental } from "../../src/guidance.js";
 import type { PropRow } from "./props.js";
 
 export type PartKind =
@@ -35,6 +35,8 @@ export interface PartSource {
   rules?: string[];
   /** Its options that are experimental (DS-11), from the component's registry entry; the rest are stable. */
   experimental?: Experimental[];
+  /** Accessibility contract (role/semantics, ARIA, keyboard, focus). */
+  a11y?: A11yGuidance;
 }
 
 export interface Part extends PartSource {
@@ -76,14 +78,22 @@ export interface Component {
   element?: string;
   /** That element's attributes it does not take. */
   except?: string[];
+  /** Minimal standalone React TSX usage example. */
+  example?: string;
+  /** Accessibility contract for this component. */
+  a11y?: A11yGuidance;
 }
 
 export interface System {
+  /** Package version that generated this file. */
+  version: string;
   /** Where the file comes from and how to refresh it. */
   generated: string;
   parts: Part[];
   /** Every component the package exports, with its props. A part's imports name them. */
   components: Component[];
+  /** Sorted icon names exported in src/icons.ts (ICON_PATHS). */
+  icons: string[];
   tokens: SystemToken[];
   /** Custom properties the stylesheets declare beside the tokens, by name. */
   properties: string[];

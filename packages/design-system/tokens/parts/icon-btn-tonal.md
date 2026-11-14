@@ -1,3 +1,13 @@
+---
+version: "0.13.0"
+id: icon-btn-tonal
+name: "Tonal icon button"
+kind: action
+imports:
+  - "@singularityfm/design-system/IconButton"
+  - "@singularityfm/design-system/Icon"
+---
+
 # Tonal icon button (`icon-btn-tonal`)
 
 A circle on the container fill, beside a primary action.
@@ -21,6 +31,14 @@ A circle on the container fill, beside a primary action.
 
 - A lone toolbar glyph, or one in every row: use [`icon-btn`](icon-btn.md)
 
+## Accessibility
+
+- Role: Native <button> (or <a href> when href is set)
+- ARIA: label prop is required and sets aria-label because the child Icon is aria-hidden="true".
+- ARIA: Toggle buttons pass aria-pressed and swap between off and filled child Icons.
+- Keyboard: Enter and Space activate the button; Enter activates link mode.
+- Focus: Native 44px touch target with :focus-visible focus ring.
+
 ## Props of IconButton
 
 | Name | Type | Default | What it does |
@@ -36,6 +54,12 @@ A circle on the container fill, beside a primary action.
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 
 Every attribute of a native `<button>` element passes through.
+
+### Example of Icon
+
+```tsx
+<Icon name="plus" size="lg" />
+```
 
 ## Props of Icon
 
