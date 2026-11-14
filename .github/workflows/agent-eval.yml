@@ -6,11 +6,13 @@ name: agent-eval
 # The reader app setup stays on the owner's computer: this repository is public and the app is not.
 #
 # The agent may run any command, so it runs in a container (scripts/agentEval/ci.sh) that gets the
-# repository read-only, one key and nothing of the runner: no token, no cache, no step files, no sudo
-# on the host. Each key is made only for this, with a monthly spend limit, in the `agent-eval`
-# environment that only main can use; a leaked key costs at most its limit. Nothing runs on a pull
-# request and no transcript is uploaded (GitHub masks secrets in logs, not in artifacts). Only the
-# summary rows reach the job summary. A key that is not set skips its agent with a warning.
+# repository read-only, one credential and nothing else of the runner: no runner token, no cache, no
+# step files, no sudo on the host. Claude Code holds no key (DS-17): it signs in with GitHub's identity
+# token for this workflow on main in the `agent-eval` environment, which Anthropic trades for a token
+# of at most ten minutes in a workspace with a monthly spend limit. Antigravity's Gemini key is made only for this,
+# with its own limit, in that environment, which only main can use. Nothing runs on a pull request and
+# no transcript is uploaded (GitHub masks secrets in logs, not in artifacts). Only the summary rows
+# reach the job summary. An agent whose sign-in is not set up is skipped with a warning.
 on:
   schedule:
     - cron: "41 9 * * 1"
@@ -44,32 +46,70 @@ jobs:
     # At most 16 tasks of 15 minutes plus about a minute of grading each, and the installs: under 280.
     timeout-minutes: 330
     environment: agent-eval
+    # The identity token Claude Code signs in with. The runner asks for it; the container never gets
+    # the request token, only the identity token itself. The antigravity job has the right too (one job,
+    # two agents) and passes nothing of it on.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The runner holds both jobs' secrets; the container is given only this job's key, no added
+      # The runner holds both jobs' credentials; the container is given only this job's, no added
       # privileges, and no route to the VM's metadata endpoints.
       - name: Run the tasks
         id: run
         env:
           AGENT: ${{ matrix.agent }}
           AGY_MODEL: ${{ vars.AGY_MODEL }}
-          KEY_NAME: ${{ matrix.agent == 'claude' && 'ANTHROPIC_API_KEY' || 'GEMINI_API_KEY' }}
-          ANTHROPIC_API_KEY: ${{ matrix.agent == 'claude' && secrets.ANTHROPIC_API_KEY || '' }}
+          ANTHROPIC_FEDERATION_RULE_ID: ${{ matrix.agent == 'claude' && vars.ANTHROPIC_FEDERATION_RULE_ID || '' }}
+          ANTHROPIC_ORGANIZATION_ID: ${{ matrix.agent == 'claude' && vars.ANTHROPIC_ORGANIZATION_ID || '' }}
           GEMINI_API_KEY: ${{ matrix.agent == 'antigravity' && secrets.GEMINI_API_KEY || '' }}
         run: |
-          if [ -z "${!KEY_NAME}" ]; then
-            echo "::warning::no $KEY_NAME in the agent-eval environment; $AGENT did not run"
-            exit 0
+          if [ "$AGENT" = claude ]; then
+            needs=(ANTHROPIC_FEDERATION_RULE_ID ANTHROPIC_ORGANIZATION_ID)
+          else
+            needs=(GEMINI_API_KEY)
           fi
-          echo "ran=true" >> "$GITHUB_OUTPUT"
+          for name in "${needs[@]}"; do
+            if [ -z "${!name}" ]; then
+              echo "::warning::no $name in the agent-eval environment; $AGENT did not run"
+              exit 0
+            fi
+          done
           for address in 169.254.169.254 168.63.129.16; do
             sudo iptables -I DOCKER-USER -d "$address" -j DROP
           done
           mkdir -p "$RUNNER_TEMP/out"
           chmod a+rwx "$RUNNER_TEMP/out"
-          docker run --rm --init -e AGENT -e AGY_MODEL -e "$KEY_NAME" \
+          pass=()
+          for name in "${needs[@]}"; do pass+=(-e "$name"); done
+          if [ "$AGENT" = claude ]; then
+            # A GitHub identity token lasts about five minutes and Anthropic takes each one once. The
+            # token it gives back lasts at most twice what the GitHub one has left (and the rule's ten
+            # minutes); Claude Code keeps it in its config folder, shared by every task, and trades again
+            # just before it ends, reading the file then. A fresh token every minute keeps an unused one,
+            # with four minutes or more left, there.
+            oidc="$RUNNER_TEMP/oidc"
+            mkdir -p "$oidc"
+            fetch() {
+              local token
+              token=$(curl -fsS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+                "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://api.anthropic.com" | jq -er .value) || return 1
+              echo "::add-mask::$token"
+              printf '%s' "$token" >"$oidc/token.next"
+              mv -f "$oidc/token.next" "$oidc/token"
+            }
+            fetch || { echo "::error::GitHub gave no identity token"; exit 1; }
+            (while sleep 60; do fetch || echo "::warning::the identity token was not renewed"; done) &
+            renew=$!
+            # Its sleep or curl first, so nothing it started holds the step's output open.
+            trap 'pkill -P "$renew" 2>/dev/null; kill "$renew" 2>/dev/null || true' EXIT
+            pass+=(-e ANTHROPIC_IDENTITY_TOKEN_FILE=/run/oidc/token -v "$oidc:/run/oidc:ro")
+          fi
+          echo "ran=true" >> "$GITHUB_OUTPUT"
+          docker run --rm --init -e AGENT -e AGY_MODEL "${pass[@]}" \
             --security-opt no-new-privileges --pids-limit 4096 \
             --cap-drop ALL --cap-add CHOWN --cap-add DAC_OVERRIDE --cap-add FOWNER \
             -v "$GITHUB_WORKSPACE:/src:ro" -v "$RUNNER_TEMP/out:/out" \
@@ -77,8 +117,8 @@ jobs:
             bash /src/scripts/agentEval/ci.sh
       # Everything in out/ was written by the agent's container, so it is read as untrusted: no links,
       # only the two known setups, and its error text printed with workflow commands off. A setup where
-      # no task finished (a spent or wrong key, a CLI that cannot sign in) fails the job, as does a run
-      # that left no summary.
+      # no task finished (a spent limit, a wrong key or rule, a CLI that cannot sign in) fails the job, as
+      # does a run that left no summary.
       - name: Report
         if: always() && steps.run.outputs.ran == 'true'
         env:
