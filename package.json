@@ -24,7 +24,7 @@
     "changeset": "changeset"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.6",
+    "@biomejs/biome": "^2.6.7",
     "@changesets/cli": "3.0.3",
     "@emnapi/core": "1.11.3",
     "@emnapi/runtime": "1.11.3",
