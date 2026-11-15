@@ -552,9 +552,9 @@ export function retiredPath(text: string, file: string): Finding[] {
   });
 }
 
-/** A height, or a custom property that names a size: the properties a control's size is drawn with. */
+/** A height, or a custom property that names a size or a height: the properties a control is drawn with. */
 const SIZE_PROPERTY =
-  /^(?:(?:min|max)-)?(?:height|block-size|min-block-size|max-block-size)$|^--[\w-]*-size$/;
+  /^(?:(?:min|max)-)?(?:height|block-size|min-block-size|max-block-size)$|^--[\w-]*-(?:size|height)$/;
 const REM_OR_EM = /(?<![\w.#-])(\d*\.?\d+)(?:rem|em)(?![\w-])/g;
 
 /**

@@ -252,9 +252,10 @@ describe("the rules", () => {
         ? SIZE_STEPS.expressive
         : SIZE_STEPS.default;
       for (const [, name, value] of (body ?? "").matchAll(/^\s*(--[\w-]+)\s*:\s*([^;]+);/gm)) {
-        const literal = /^(\d*\.?\d+)rem$/.exec(value?.trim() ?? "");
+        const literal = /^(\d*\.?\d+)(rem|em|px)$/.exec(value?.trim() ?? "");
         if (!name || !SIZE_TOKEN.test(name) || !literal) continue;
-        if (steps.includes(Number(literal[1]))) continue;
+        // A step is a rem: a px or em value is off the steps even where its number is one.
+        if (literal[2] === "rem" && steps.includes(Number(literal[1]))) continue;
         offStep.add(name);
         if (!debt.has(name.slice(2)))
           failures.push(

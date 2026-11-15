@@ -118,6 +118,11 @@ export const SIZE_DEBT: [name: string, reason: string][] = [
   ["switch-height", "the switch, 32px (40 Expressive): a control without a step yet"],
   ["item-play-size", "Play, 36px by default and 48 Expressive; the Expressive step is 44"],
   ["checkbox-size", "the checkbox box, 18px: a control without a step yet"],
+  ["tabs-indicator-height", "the tab's underline, 3px: a bar under the tab, not the tab's height"],
+  [
+    "mini-player-progress-height",
+    "the mini player's progress line, 2px: a line, not a control height",
+  ],
   ["cta-height", "never read by a stylesheet (dead); 56px, 64 Expressive"],
   ["toast-min-height", "never read: toast.css draws its own calc(touch + 2 space-1), 52px"],
   ["app-bar-height", "the app bar, 56px (64 Expressive): chrome, not a control"],
@@ -159,6 +164,22 @@ export const SIZE_LITERAL_EXCEPTIONS: [declaration: string, reason: string][] = 
     "the phone sheet's height cap, not a control's height",
   ],
   [".cobweb { block-size }", "the decorative scene's own box, drawn at its size"],
+  [
+    ":root { --pick-list-height }",
+    "the tallest an open list grows (select, picker): a list's cap, not a control's height",
+  ],
+  [
+    ":root { --run-height }",
+    "the Create run strip above the bottom bar: chrome, sized to its own row",
+  ],
+  [
+    ':root[data-mood="expressive"] .slider-wave-field { --wave-height }',
+    "the scrubber's wave: a drawing's height, not a control's",
+  ],
+  [
+    ':root[data-mood="halloween"] .slider-wave-field { --wave-height }',
+    "the scrubber's wave in Halloween: a drawing's height, not a control's",
+  ],
   [
     ".guide-live-side { block-size }",
     "the style guide's live stage: a box that shows a part, not a control's height",
