@@ -96,3 +96,92 @@ export const PX_EXCEPTIONS: [selector: string, reason: string][] = [
     "the figure's SVG units: the pair of phones slides in the picture's own scale",
   ],
 ];
+
+/**
+ * The control heights, in rem, per mood. Each control takes its height from one of these steps (S, M,
+ * L), so two side by side line up: Default S 36px, M 44px, L 48px; Expressive S 44px, M 52px, L 56px.
+ * Halloween is Default. The list is the one place the steps live: the size test reads it.
+ */
+export const SIZE_STEPS = {
+  default: [2.25, 2.75, 3],
+  expressive: [2.75, 3.25, 3.5],
+} as const;
+
+/**
+ * Heights that sit off the steps today, by token name, with why. A name here may hold any value in
+ * its moods: it is debt to settle, and each entry leaves this list when its height moves onto a step
+ * (or the owner decides it is chrome, not a control). A new off-step height is not on this list, so
+ * it fails.
+ */
+export const SIZE_DEBT: [name: string, reason: string][] = [
+  ["button-height-small", "the small button, 32px (40 Expressive); the step is 36 (44)"],
+  ["switch-height", "the switch, 32px (40 Expressive): a control without a step yet"],
+  ["item-play-size", "Play, 36px by default and 48 Expressive; the Expressive step is 44"],
+  ["checkbox-size", "the checkbox box, 18px: a control without a step yet"],
+  ["tabs-indicator-height", "the tab's underline, 3px: a bar under the tab, not the tab's height"],
+  [
+    "mini-player-progress-height",
+    "the mini player's progress line, 2px: a line, not a control height",
+  ],
+  ["cta-height", "never read by a stylesheet (dead); 56px, 64 Expressive"],
+  ["toast-min-height", "never read: toast.css draws its own calc(touch + 2 space-1), 52px"],
+  ["app-bar-height", "the app bar, 56px (64 Expressive): chrome, not a control"],
+  ["nav-bar-height", "the bottom navigation bar, 64px (80 Expressive): chrome"],
+  ["nav-indicator-height", "the navigation pill, 32px (40 Expressive): part of the chrome"],
+  ["control-size-md", "the medium round control, 56px: a circle, not a row control"],
+  ["control-size-lg", "the large round control, 72px (80 Expressive): a circle"],
+];
+
+/**
+ * Declarations where a rem or em length is a size on purpose, as ["selector { property }", reason]. A
+ * picture, a decoration, a glyph drawn in its text's units, a sheet's cap: none is a control height.
+ * The FAB's root size is a control (debt): it moves to a token with the owner's OK.
+ */
+export const SIZE_LITERAL_EXCEPTIONS: [declaration: string, reason: string][] = [
+  [
+    ":root { --fab-size }",
+    "debt: the floating button is a control at 56px, off the steps; a token is due",
+  ],
+  [":root { --av-size }", "the avatar's picture size, a ramp of its own: a figure, not a control"],
+  [':root[data-mood="expressive"] { --av-size }', "the avatar's picture size in Expressive"],
+  [".avatar-lg { --av-size }", "the avatar's larger picture size"],
+  [".avatar-xl { --av-size }", "the avatar's largest picture size"],
+  [
+    ':root[data-mood="expressive"] .avatar-lg { --av-size }',
+    "the avatar's larger picture size in Expressive",
+  ],
+  [
+    ':root[data-mood="expressive"] .avatar-xl { --av-size }',
+    "the avatar's largest picture size in Expressive",
+  ],
+  [
+    "textarea.field-input { min-block-size }",
+    "a multi-line field's floor: six lines of text, not a control height",
+  ],
+  [".flag-inline { block-size }", "the flag glyph, drawn in its text's em"],
+  [
+    ".picker-pop[data-sheet] { max-block-size }",
+    "the phone sheet's height cap, not a control's height",
+  ],
+  [".cobweb { block-size }", "the decorative scene's own box, drawn at its size"],
+  [
+    ":root { --pick-list-height }",
+    "the tallest an open list grows (select, picker): a list's cap, not a control's height",
+  ],
+  [
+    ":root { --run-height }",
+    "the Create run strip above the bottom bar: chrome, sized to its own row",
+  ],
+  [
+    ':root[data-mood="expressive"] .slider-wave-field { --wave-height }',
+    "the scrubber's wave: a drawing's height, not a control's",
+  ],
+  [
+    ':root[data-mood="halloween"] .slider-wave-field { --wave-height }',
+    "the scrubber's wave in Halloween: a drawing's height, not a control's",
+  ],
+  [
+    ".guide-live-side { block-size }",
+    "the style guide's live stage: a box that shows a part, not a control's height",
+  ],
+];
