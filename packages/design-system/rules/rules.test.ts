@@ -9,6 +9,9 @@ import {
   rawColour,
   rawPixels,
   retiredPath,
+  SIZE_DEBT,
+  SIZE_STEPS,
+  sizeLiteral,
   unknownProperty,
 } from "./index";
 
@@ -208,5 +211,59 @@ describe("the rules", () => {
         ).map(({ line, message }) => `${name}:${line} ${message}`),
       );
     expect(found).toEqual([]);
+  });
+
+  // Prevents a control drawn at a height no step names (a 40px button beside a 44px chip): a height is
+  // a token, or a literal rem or em only where its declaration is named and why (SIZE_LITERAL_EXCEPTIONS).
+  it("size-literal: finds a rem or em height or size written outside a token, never a token or a px", () => {
+    const css = [
+      ".a { min-height: 2.5rem; }",
+      ".b { height: var(--size-touch); min-height: calc(var(--size-touch) + 2px); }",
+      ".c { --badge-size: 1.5em; width: 1.5em; }",
+      ".d { max-block-size: min(70dvh, 24rem); }",
+      ".e { block-size: 0.9375em; font-size: 1.25rem; }",
+      ".f { min-height: 0; height: 100%; padding: 0.5rem; }",
+      "/* .g { height: 3rem; } */ .h { inline-size: 9rem; }",
+    ].join("\n");
+    expect(lines(sizeLiteral(css, "page.css"))).toEqual([1, 3, 4, 5]);
+    expect(sizeLiteral(css, "packages/design-system/styles/tokens.css")).toEqual([]);
+    // An exception excuses its one declaration: the selector and property as the finding names them.
+    expect(lines(sizeLiteral(css, "page.css", [[".a { min-height }", "a test"]]))).toEqual([
+      3, 4, 5,
+    ]);
+  });
+
+  // Prevents a control height that moves off the steps without anyone choosing it: each size token
+  // is a step of its mood, or a named debt (SIZE_DEBT), and a debt that is settled leaves the list.
+  it("size-steps: each control height is a step of its mood or a named debt, and no debt is stale", () => {
+    const tokens = readFileSync(join(import.meta.dirname, "..", "styles", "tokens.css"), "utf8");
+    // SIZE_DEBT names are bare; a custom property is read with its `--`.
+    const debt = new Set(SIZE_DEBT.map(([name]) => name));
+    // A token that names a control size: a height, a size, a touch target, an option row. A text size,
+    // a cover's picture, an icon's glyph and the speed readout's digits are not control heights.
+    const SIZE_TOKEN =
+      /^--(?!text-|font-|cover-|size-icon|chip-icon|player-speed-readout)(?:[\w-]*-)?(?:height|height-small|size|size-(?:lg|md|sm)|touch|touch-comfortable|option)$/;
+    const failures: string[] = [];
+    const offStep = new Set<string>();
+    // Each top-level block: :root, and its mood (Expressive, Halloween, Default). Dark colours do not
+    // change a size, so the @media blocks (indented) are not read.
+    for (const [, selector, body] of tokens.matchAll(/^(:root[^\n{]*)\{([\s\S]*?)^\}/gm)) {
+      const steps: readonly number[] = /expressive/.test(selector ?? "")
+        ? SIZE_STEPS.expressive
+        : SIZE_STEPS.default;
+      for (const [, name, value] of (body ?? "").matchAll(/^\s*(--[\w-]+)\s*:\s*([^;]+);/gm)) {
+        const literal = /^(\d*\.?\d+)rem$/.exec(value?.trim() ?? "");
+        if (!name || !SIZE_TOKEN.test(name) || !literal) continue;
+        if (steps.includes(Number(literal[1]))) continue;
+        offStep.add(name);
+        if (!debt.has(name.slice(2)))
+          failures.push(
+            `${name}: ${value?.trim()} in ${selector?.trim()} is not a step (${steps.map((step) => `${step * 16}px`).join(", ")})`,
+          );
+      }
+    }
+    expect(failures).toEqual([]);
+    // A debt entry that no mood holds off the steps any more is settled: take it off SIZE_DEBT.
+    expect([...debt].filter((name) => !offStep.has(`--${name}`))).toEqual([]);
   });
 });

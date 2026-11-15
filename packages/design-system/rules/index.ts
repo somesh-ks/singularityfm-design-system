@@ -6,9 +6,17 @@
  */
 import { COMPONENTS } from "../src/registry";
 import system from "../tokens/system.json" with { type: "json" };
-import { GRID_EXCEPTIONS, PX_EXCEPTIONS, RETIRED_PATHS } from "./data";
+import { GRID_EXCEPTIONS, PX_EXCEPTIONS, RETIRED_PATHS, SIZE_LITERAL_EXCEPTIONS } from "./data";
 
-export { GRID_EXCEPTIONS, PX_EXCEPTIONS, RETIRED_PATHS, type RetiredPath } from "./data";
+export {
+  GRID_EXCEPTIONS,
+  PX_EXCEPTIONS,
+  RETIRED_PATHS,
+  type RetiredPath,
+  SIZE_DEBT,
+  SIZE_LITERAL_EXCEPTIONS,
+  SIZE_STEPS,
+} from "./data";
 
 export interface Finding {
   rule: string;
@@ -544,10 +552,50 @@ export function retiredPath(text: string, file: string): Finding[] {
   });
 }
 
+/** A height, or a custom property that names a size: the properties a control's size is drawn with. */
+const SIZE_PROPERTY =
+  /^(?:(?:min|max)-)?(?:height|block-size|min-block-size|max-block-size)$|^--[\w-]*-size$/;
+const REM_OR_EM = /(?<![\w.#-])(\d*\.?\d+)(?:rem|em)(?![\w-])/g;
+
+/**
+ * Rules where a rem or em length sits in a height or a size outside the tokens. A size is a token or
+ * the step it names (tokens/SIZE_STEPS); a literal one drifts from the rest. Pixels are rawPixels' and
+ * a token file is the one place a literal lives. An exception names its rule, with the reason.
+ */
+export function sizeLiteral(
+  text: string,
+  file: string,
+  exceptions: readonly [selector: string, reason: string][] = [],
+): Finding[] {
+  if (!isCss(file) || isTokenFile(file)) return [];
+  const css = withoutCssComments(text);
+  // Exact: "selector { property }" as the finding names it, so an entry excuses one declaration.
+  const allowed = new Set([...SIZE_LITERAL_EXCEPTIONS, ...exceptions].map(([name]) => name));
+  return declarations(css)
+    .filter(({ property }) => SIZE_PROPERTY.test(property))
+    .filter(({ selector, property }) => {
+      const named = `${selector.replace(/\s+/g, " ").trim()} { ${property} }`;
+      return !allowed.has(named);
+    })
+    .flatMap(({ selector, property, value, index }) =>
+      [...withoutStrings(value).matchAll(REM_OR_EM)]
+        .filter((match) => Number(match[1]) !== 0)
+        .map((match) => ({
+          rule: "size-literal",
+          file,
+          line: lineAt(text, index),
+          message: `${selector} { ${property} } writes ${match[0]}; take the size from a token or a step (SIZE_STEPS)`,
+          severity: "error" as const,
+        })),
+    )
+    .sort((a, b) => a.line - b.line);
+}
+
 export const RULES = [
   rawColour,
   offGrid,
   rawPixels,
+  sizeLiteral,
   unknownProperty,
   classOnComponent,
   retiredPath,
