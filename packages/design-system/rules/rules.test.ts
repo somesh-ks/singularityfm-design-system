@@ -258,7 +258,7 @@ describe("the rules", () => {
       }),
     );
     const base = blocks.filter(({ selector }) => !selector.includes("data-mood"));
-    const MOODS = [
+    const MOODS: { name: string; steps: readonly number[]; mood: string | undefined }[] = [
       { name: "default", steps: SIZE_STEPS.default, mood: undefined },
       { name: "expressive", steps: SIZE_STEPS.expressive, mood: "expressive" },
       { name: "halloween", steps: SIZE_STEPS.default, mood: "halloween" },
