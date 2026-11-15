@@ -233,38 +233,67 @@ describe("the rules", () => {
     ]);
   });
 
-  // Prevents a control height that moves off the steps without anyone choosing it: each size token
-  // is a step of its mood, or a named debt (SIZE_DEBT), and a debt that is settled leaves the list.
+  // Prevents a control height that moves off the steps without anyone choosing it. Each mood's effective
+  // size tokens are read (the base, then the mood's own overrides), an alias is followed to the value it
+  // names, and a control size is a step of its mood or a named debt (SIZE_DEBT). A debt that no mood holds
+  // off the steps any more is settled, and leaves the list.
   it("size-steps: each control height is a step of its mood or a named debt, and no debt is stale", () => {
     const tokens = readFileSync(join(import.meta.dirname, "..", "styles", "tokens.css"), "utf8");
-    // SIZE_DEBT names are bare; a custom property is read with its `--`.
     const debt = new Set(SIZE_DEBT.map(([name]) => name));
-    // A token that names a control size: a height, a size, a touch target, an option row. A text size,
-    // a cover's picture, an icon's glyph and the speed readout's digits are not control heights.
+    // A token that names a control size: a height, a size, a touch target or an option row. A text size, a
+    // cover's picture, an icon's glyph, a title's text and the speed readout's digits are not control heights.
     const SIZE_TOKEN =
-      /^--(?!text-|font-|cover-|size-icon|chip-icon|player-speed-readout)(?:[\w-]*-)?(?:height|height-small|size|size-(?:lg|md|sm)|touch|touch-comfortable|option)$/;
+      /^--(?!text-|font-|cover-|size-icon|chip-icon|player-speed-readout)(?![\w-]*-(?:wordmark|title)-size$)(?:[\w-]*-)?(?:height|height-small|height-compact|size|size-(?:lg|md|sm)|touch|touch-comfortable|option)$/;
+    // Each top-level block: the base :root, and a mood's overrides (data-mood). A block inside @media is
+    // indented, and the colour theme does not change a size, so only these are read.
+    const blocks = [...tokens.matchAll(/^(:root[^\n{]*)\{([\s\S]*?)^\}/gm)].map(
+      ([, selector = "", body = ""]) => ({
+        selector: selector.trim(),
+        declarations: new Map(
+          [...body.matchAll(/^\s*(--[\w-]+)\s*:\s*([^;]+);/gm)].map(([, name = "", value = ""]) => [
+            name,
+            value.trim(),
+          ]),
+        ),
+      }),
+    );
+    const base = blocks.filter(({ selector }) => !selector.includes("data-mood"));
+    const MOODS = [
+      { name: "default", steps: SIZE_STEPS.default, mood: undefined },
+      { name: "expressive", steps: SIZE_STEPS.expressive, mood: "expressive" },
+      { name: "halloween", steps: SIZE_STEPS.default, mood: "halloween" },
+    ];
     const failures: string[] = [];
     const offStep = new Set<string>();
-    // Each top-level block: :root, and its mood (Expressive, Halloween, Default). Dark colours do not
-    // change a size, so the @media blocks (indented) are not read.
-    for (const [, selector, body] of tokens.matchAll(/^(:root[^\n{]*)\{([\s\S]*?)^\}/gm)) {
-      const steps: readonly number[] = /expressive/.test(selector ?? "")
-        ? SIZE_STEPS.expressive
-        : SIZE_STEPS.default;
-      for (const [, name, value] of (body ?? "").matchAll(/^\s*(--[\w-]+)\s*:\s*([^;]+);/gm)) {
-        const literal = /^(\d*\.?\d+)(rem|em|px)$/.exec(value?.trim() ?? "");
-        if (!name || !SIZE_TOKEN.test(name) || !literal) continue;
+    for (const { name: mood, steps, mood: key } of MOODS) {
+      const overrides = blocks.filter(
+        ({ selector }) => key !== undefined && selector.includes(`data-mood="${key}"`),
+      );
+      const effective = new Map<string, string>();
+      for (const { declarations } of [...base, ...overrides])
+        for (const [name, value] of declarations) effective.set(name, value);
+      // An alias (var(--x)) is followed to the value it names in this mood; a calc() is left unread.
+      const resolve = (value: string, depth = 0): string | undefined => {
+        const alias = /^var\((--[\w-]+)\)$/.exec(value);
+        if (!alias) return value;
+        const next = effective.get(alias[1] ?? "");
+        return next === undefined || depth > 8 ? undefined : resolve(next, depth + 1);
+      };
+      for (const [name, declared] of effective) {
+        if (!SIZE_TOKEN.test(name)) continue;
+        const value = resolve(declared);
+        const literal = /^(\d*\.?\d+)(rem|em|px)$/i.exec(value ?? "");
+        if (!literal) continue;
         // A step is a rem: a px or em value is off the steps even where its number is one.
-        if (literal[2] === "rem" && steps.includes(Number(literal[1]))) continue;
+        if (literal[2]?.toLowerCase() === "rem" && steps.includes(Number(literal[1]))) continue;
         offStep.add(name);
         if (!debt.has(name.slice(2)))
           failures.push(
-            `${name}: ${value?.trim()} in ${selector?.trim()} is not a step (${steps.map((step) => `${step * 16}px`).join(", ")})`,
+            `${mood}: ${name} is ${value} (${declared}), not a step (${steps.map((step) => `${step * 16}px`).join(", ")})`,
           );
       }
     }
     expect(failures).toEqual([]);
-    // A debt entry that no mood holds off the steps any more is settled: take it off SIZE_DEBT.
     expect([...debt].filter((name) => !offStep.has(`--${name}`))).toEqual([]);
   });
 });
