@@ -92,7 +92,6 @@ const hasStage = !spec.noPreview;
               );
             })}
           </div>
-          {spec.note && <p class="guide-note guide-stage-note">{spec.note}</p>}
           {spec.controls.length > 0 && (
             <div class="rows card-group guide-controls" role="group" aria-label="Preview controls">
               {spec.controls.map((control) =>
@@ -127,6 +126,8 @@ const hasStage = !spec.noPreview;
               )}
             </div>
           )}
+          {/* The note reads after the controls it explains, not wedged between the stage and them (owner, 23 Nov). */}
+          {spec.note && <p class="guide-note guide-stage-note">{spec.note}</p>}
         </section>
       )
     }
