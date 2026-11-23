@@ -460,6 +460,7 @@ const CLASS_OWNERS = new Map(
         .filter((part) => part.classes.some((name) => component.classes.includes(name)))
         .flatMap((part) => part.files ?? [])
         .map((path) => path.replace(/^packages\/design-system\//, "")),
+      // shortcut: remove once #91 lands (PlayingBars in componentParts)
       ...(component.name === "Play chip" ? ["src/PlayingBars.tsx"] : []),
       ...[`${module}.ts`, `${name}.astro`, `${name}.tsx`, "registry.ts"].map(
         (file) => `src/${file}`,
@@ -496,6 +497,8 @@ const NON_CLASS_BRACE_BEFORE = /(?:=>|\)|\b(?:else|try|finally|do|return))\s*$/;
 const ASI_PREV_COMPLETE = /(?:["'`)\]}\w$]|--|\+\+)$/;
 const ASI_NEXT_CONT = /^[?:+.,)\]}]|^(?:&&|\|\||\?\?)/;
 const INLINE_HTML_CLASS = /(?<![\w-])class\s*=\s*["'][^"']*$/;
+const BARE_CLASS_LIST = /^\s*[a-z][\w-]*(?:\s+[a-z][\w-]*)*\s*$/;
+const NOT_CLASS_VALUE_BEFORE = /(?:[=!]==?|(?<![\w-])slug\s*:)\s*$/;
 const CSS_SELECTOR_BEFORE = /(?:^|[\s,+~>(:[\]"'!]|\.[a-zA-Z_-][\w-]*|\[[^\]\n]+\])\.$/;
 
 function classContextKind(
@@ -626,7 +629,13 @@ export function classOnComponent(text: string, file: string): Finding[] {
           ? /\.$/.test(beforeMatch)
           : CSS_SELECTOR_BEFORE.test(beforeMatch);
       const isInlineClass = INLINE_HTML_CLASS.test(content.slice(0, matchOffset));
-      if (context !== "class" && !isSelector && !isInlineClass) return [];
+      // A string that is only class names (`const cls = "button-filled"`, a variant map, clsx())
+      // still reaches a class attribute; a comparison or a `slug:` key names a page, not a class.
+      const isBareClassList =
+        context === "other" &&
+        BARE_CLASS_LIST.test(content) &&
+        !NOT_CLASS_VALUE_BEFORE.test(code.slice(Math.max(0, stringStart - 40), stringStart));
+      if (context !== "class" && !isSelector && !isInlineClass && !isBareClassList) return [];
 
       const tag = /<([A-Z][\w.]*)\b[^<>]*$/.exec(code.slice(0, index))?.[1];
       const message = owner.retired

@@ -158,6 +158,15 @@ describe("the rules", () => {
       '<!-- class="button-text" -->',
     ].join("\n");
     expect(lines(classOnComponent(page, "src/pages/index.astro"))).toEqual([2, 3, 5]);
+    // A class held in a variable, a variant map or a clsx() call outside the attribute still
+    // reaches the page as the component's class (review of #89).
+    const indirect = [
+      'const cls = "button-filled";',
+      "<button class={cls}>Play</button>",
+      'const variants = { primary: "button-filled" };',
+      'const joined = clsx("button-filled");',
+    ].join("\n");
+    expect(lines(classOnComponent(indirect, "src/pages/index.astro"))).toEqual([1, 3, 4]);
     const own = 'export const BUTTON_CLASSES = ["button-filled", "button-text"];';
     expect(classOnComponent(own, "packages/design-system/src/button.ts")).toEqual([]);
   });
