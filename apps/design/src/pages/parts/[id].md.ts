@@ -1,6 +1,6 @@
 import type { APIRoute, GetStaticPaths } from "astro";
 
-// A markdown page per part, served at /design/parts/<id>.md where llms.txt links to it. The package
+// A markdown page per part, served at /parts/<id>.md where llms.txt links to it. The package
 // builds them (tokens/parts); the guide serves them as written.
 const pages = import.meta.glob("../../../../../packages/design-system/tokens/parts/*.md", {
   query: "?raw",
