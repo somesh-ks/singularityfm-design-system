@@ -51,6 +51,7 @@ const jumps = [
       <p class="guide-note">The 8pt grid: 8, 16, 24, 32, 48, 64 and 96px. The 4px step only where the style rules name it (D131).</p>
       <div class="guide-table-wrap">
         <table class="guide-table">
+          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Sample</th></tr></thead>
           <tbody>
             {
               space.map((token) => (
@@ -71,6 +72,7 @@ const jumps = [
       <p class="guide-note">Concentric: an inner corner is the outer radius less the padding between them. Controls are pills; containers keep a step.</p>
       <div class="guide-table-wrap">
         <table class="guide-table">
+          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Sample or use</th></tr></thead>
           <tbody>
             {
               radius.map((token) => (
@@ -100,6 +102,7 @@ const jumps = [
       <p class="guide-note">Five elevations, each a stack of layers that changes with the theme. A box on the page carries none: shadows belong to what floats.</p>
       <div class="guide-table-wrap">
         <table class="guide-table">
+          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Sample</th><th scope="col">Use</th></tr></thead>
           <tbody>
             {
               shadows.map((token) => (
@@ -119,6 +122,7 @@ const jumps = [
       <h2 class="section-head text-heading" id="layers">Layers</h2>
       <div class="guide-table-wrap">
         <table class="guide-table">
+          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Use</th></tr></thead>
           <tbody>
             {layers.map((token) => <tr data-filter-item data-name={token.name}><td><code>{token.name}</code></td><td>{token.value}</td><td>{token.description ?? ""}</td></tr>)}
           </tbody>
@@ -130,6 +134,7 @@ const jumps = [
       <h2 class="section-head text-heading" id="layout">Layout and size</h2>
       <div class="guide-table-wrap">
         <table class="guide-table">
+          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Use</th></tr></thead>
           <tbody>
             {layout.map((token) => <tr data-filter-item data-name={token.name}><td><code>{token.name}</code></td><td>{token.value}</td><td>{token.description ?? ""}</td></tr>)}
           </tbody>
@@ -146,6 +151,7 @@ const jumps = [
             <h3 class="guide-group-name">{group}</h3>
             <div class="guide-table-wrap">
               <table class="guide-table">
+                <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Use</th></tr></thead>
                 <tbody>
                   {tokens.map((token) => <tr data-filter-item data-name={token.name}><td><code>{token.name}</code></td><td>{token.value}</td><td>{token.description ?? ""}</td></tr>)}
                 </tbody>
