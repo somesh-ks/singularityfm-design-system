@@ -499,6 +499,8 @@ const CLASS_LIST_CALL_BEFORE =
   /\.classList\.(?:add|remove|toggle|contains|replace)(?:<[^>\n]*>)?\s*$/;
 const SET_ATTRIBUTE_BEFORE = /\.setAttribute\s*$/;
 const SET_ATTRIBUTE_CLASS_ARG = /^\s*(["'])class\1\s*,/;
+// clsx("a", `b ${c}`): every argument reaches a class attribute, interpolated or not.
+const CLASS_HELPER_CALL_BEFORE = /(?<![\w$.])(?:clsx|cx|classnames|classNames|cn|twMerge)\s*$/;
 const SELECTOR_CALL_BEFORE =
   /\.(?:querySelector|querySelectorAll|closest|matches)(?:<[^>\n]*>)?\s*$/;
 const NON_CLASS_BRACE_BEFORE = /(?:=>|\)|\b(?:else|try|finally|do|return))\s*$/;
@@ -507,13 +509,15 @@ const ASI_NEXT_CONT = /^[?:+.,)\]}]|^(?:&&|\|\||\?\?)/;
 const INLINE_HTML_CLASS = /(?<![\w-])class\s*=\s*["'][^"']*$/;
 const BARE_CLASS_LIST = /^\s*[a-z][\w-]*(?:\s+[a-z][\w-]*)*\s*$/;
 const NOT_CLASS_VALUE_BEFORE = /(?:[=!]==?|(?<![\w-])slug\s*:)\s*$/;
-const CSS_SELECTOR_BEFORE = /(?:^|[\s,+~>(:[\]"'!]|\.[a-zA-Z_-][\w-]*|\[[^\]\n]+\])\.$/;
+// A compound chain (`.a.chip`, `[x].chip`) counts only from a selector boundary, so a dotted key
+// (`settings.section.chip`) is not a selector.
+const CSS_SELECTOR_BEFORE = /(?:^|[\s,+~>(:[\]"'!])(?:\.[a-zA-Z_-][\w-]*|\[[^\]\n]+\])*\.$/;
 
 function classContextKind(
   code: string,
   strings: StringSpan[],
   stringIndex: number,
-): "class" | "selector-call" | "other" {
+): "class" | "selector-call" | "attr" | "other" {
   const span = strings[stringIndex];
   if (!span) return "other";
   const stringStart = span.start;
@@ -544,10 +548,12 @@ function classContextKind(
         parenDepth--;
       } else {
         const before = code.slice(Math.max(0, pos - 60), pos);
-        if (CLASS_LIST_CALL_BEFORE.test(before)) return "class";
+        if (CLASS_LIST_CALL_BEFORE.test(before) || CLASS_HELPER_CALL_BEFORE.test(before)) {
+          return "class";
+        }
         if (SET_ATTRIBUTE_BEFORE.test(before)) {
-          if (SET_ATTRIBUTE_CLASS_ARG.test(code.slice(pos + 1, stringStart))) return "class";
-          break;
+          // setAttribute("aria-label", "chip") names another attribute: never a class.
+          return SET_ATTRIBUTE_CLASS_ARG.test(code.slice(pos + 1, stringStart)) ? "class" : "attr";
         }
         if (SELECTOR_CALL_BEFORE.test(before)) return "selector-call";
       }

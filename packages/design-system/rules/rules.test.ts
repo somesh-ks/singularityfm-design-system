@@ -193,9 +193,12 @@ describe("the rules", () => {
       'document.querySelector("button.button-filled");',
       'el.closest(".row-exit");',
       'const html = `<button class="button-filled">Play</button>`;',
+      'el.setAttribute("aria-label", "chip");',
+      'const key = "settings.section.chip";',
+      "const dyn = clsx(`button-filled ${extra}`);",
     ].join("\n");
     expect(lines(classOnComponent(page, "src/pages/index.astro"))).toEqual([
-      7, 7, 8, 9, 10, 11, 11, 12, 13, 14,
+      7, 7, 8, 9, 10, 11, 11, 12, 13, 14, 17,
     ]);
   });
 
