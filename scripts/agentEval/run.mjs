@@ -13,10 +13,16 @@
 // project settings); `bare-guide` is a new Astro app with the package installed and the one line the
 // package's guide asks an app to add; `bare` is the same app without that line.
 // Agents: `claude` (Claude Code, the default) and `antigravity` (the Antigravity CLI, `agy`). Both read
-// the setup's AGENTS.md. Claude Code may edit files and run pnpm, npx, ls and cat; `agy` has no such
-// list outside its global settings, so it runs with every tool approved inside its terminal sandbox.
+// the setup's AGENTS.md. Claude Code may edit files and run read/build inspection commands (pnpm,
+// npx, ds, node, cd, ls, cat, head, tail, grep, rg, find, sed, awk, tr, cut, wc, sort, uniq, diff,
+// echo, printf, test, timeout, mkdir, pwd, which, basename, dirname, git). curl, wget, git push and
+// git fetch are denied by name, but node, pnpm, npx, find -exec and awk can still run any code and
+// reach the network, so the container (CI) is the only real boundary: run locally only on a machine
+// you would let the agent use. `agy` has no such list outside its global settings, so it runs
+// with every tool approved inside its terminal sandbox.
 // Options: --agents claude,antigravity  --tasks id,id  --version <package version> (default: npm
-//   latest)  --model <Claude model, default claude-haiku-5-5>  --agy-model <Antigravity model,
+//   latest)  --local (pack local packages/design-system instead of npm)  --tarball <path to .tgz>
+//   --model <Claude model, default claude-haiku-5-5>  --agy-model <Antigravity model,
 //   default its own>  --timeout <minutes per task, default 15>
 //   --user-settings (Claude Code only: also load your own settings and plugins, to compare a run with
 //   them)  --max-budget <dollars> (Claude Code only: a task stops at that spend; CI sets it)
@@ -27,17 +33,36 @@
 // validate` errors, and `astro check`; and the transcript: time, tokens, tool calls, whether `ds` ran
 // and whether the package's guide was opened.
 import { execFileSync, spawn } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { exportTarget, gradeFiles, median, PACKAGE, runStats } from "./grade.ts";
+import { join, resolve } from "node:path";
+import {
+  exportTarget,
+  formatSummaryMarkdown,
+  gradeFiles,
+  PACKAGE,
+  readTarballPackageJson,
+  runStats,
+} from "./grade.ts";
 
 const HERE = import.meta.dirname;
+const DS_PACKAGE_DIR = resolve(HERE, "../../packages/design-system");
 const WINDOWS = process.platform === "win32";
 const args = process.argv.slice(2);
 const option = (name, fallback) => {
   const at = args.indexOf(`--${name}`);
-  return at >= 0 ? args[at + 1] : fallback;
+  if (at < 0) return fallback;
+  const value = args[at + 1];
+  if (!value || value.startsWith("--")) throw new Error(`--${name} requires a value`);
+  return value;
 };
 const appPath = option("app");
 const setups = option("setups", appPath ? "app,bare-guide,bare" : "bare-guide,bare").split(",");
@@ -50,6 +75,16 @@ const agents = option("agents", "claude").split(",");
 const unknown = agents.filter((agent) => !AGENTS.includes(agent));
 if (unknown.length)
   throw new Error(`--agents takes ${AGENTS.join(", ")}; not ${unknown.join(", ")}`);
+const useLocal = args.includes("--local");
+const tarballArg = option("tarball");
+const versionArg = option("version");
+if (Number(useLocal) + Number(Boolean(tarballArg)) + Number(Boolean(versionArg)) > 1) {
+  throw new Error("Pass only one of --local, --tarball, or --version");
+}
+const needsBare = setups.some((setup) => setup !== "app");
+if (!needsBare && (useLocal || tarballArg || versionArg)) {
+  throw new Error("--local, --tarball, and --version only apply when running bare setups");
+}
 const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
 const out = join(option("out", join(HERE, "runs")), stamp);
 
@@ -79,7 +114,16 @@ const tryRun = (...call) => {
 };
 const git = (cwd, ...gitArgs) => run("git", gitArgs, cwd).trim();
 
-const version = option("version") ?? run("npm", ["view", PACKAGE, "version"], HERE).trim();
+const readTarballSource = (tgzPath) => {
+  const meta = readTarballPackageJson(readFileSync(tgzPath));
+  if (meta.name && meta.name !== PACKAGE) {
+    throw new Error(`Expected tarball for ${PACKAGE}, got ${meta.name}`);
+  }
+  return {
+    spec: `file:${tgzPath.replace(/\\/g, "/")}`,
+    peers: meta.peerDependencies ?? {},
+  };
+};
 
 /**
  * Removes a temp folder. Windows can hold a file open for a moment after its process exits (EPERM,
@@ -117,14 +161,9 @@ function inTemp(prefix, make) {
 }
 
 /** A new Astro app with the package installed, committed so each task starts from the same tree. */
-const bareApp = (withGuideLine) =>
+const bareApp = (withGuideLine, source) =>
   inTemp("ds-agent-", (dir) => {
-    // npm 12 answers a `view <name>@<version> <field> --json` with a one-item array; older npm with
-    // the object itself.
-    const viewed = JSON.parse(
-      run("npm", ["view", `${PACKAGE}@${version}`, "peerDependencies", "--json"], HERE),
-    );
-    const peers = Array.isArray(viewed) ? (viewed[0] ?? {}) : viewed;
+    const peers = source.peers;
     mkdirSync(join(dir, "src/pages"), { recursive: true });
     mkdirSync(join(dir, "src/layouts"), { recursive: true });
     const write = (path, text) => writeFileSync(join(dir, path), text);
@@ -140,8 +179,10 @@ const bareApp = (withGuideLine) =>
             ...peers,
             "@astrojs/react": "^7.1.4",
             "@astrojs/check": "^0.9.12",
+            "@types/react": peers["@types/react"] ?? "^19.3.0",
+            "@types/react-dom": peers["@types/react-dom"] ?? "^19.3.0",
             typescript: "~6.0.3",
-            [PACKAGE]: version,
+            [PACKAGE]: source.spec,
           },
         },
         null,
@@ -256,7 +297,61 @@ function agentCall(agent, prompt) {
   ];
   call.push(
     "--allowedTools",
-    "Read,Edit,Write,Glob,Grep,Bash(pnpm:*),Bash(npx:*),Bash(ls:*),Bash(cat:*)",
+    [
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "Bash(pnpm:*)",
+      "Bash(npx:*)",
+      "Bash(ds:*)",
+      "Bash(node:*)",
+      "Bash(cd:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(tr:*)",
+      "Bash(cut:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(diff:*)",
+      "Bash(echo:*)",
+      "Bash(printf:*)",
+      "Bash(test:*)",
+      "Bash(timeout:*)",
+      "Bash(mkdir:*)",
+      "Bash(pwd:*)",
+      "Bash(which:*)",
+      "Bash(basename:*)",
+      "Bash(dirname:*)",
+      "Bash(git:*)",
+    ].join(","),
+    "--disallowedTools",
+    [
+      "WebFetch",
+      "WebSearch",
+      "Bash(git push:*)",
+      "Bash(git * push *)",
+      "Bash(git remote:*)",
+      "Bash(git * remote *)",
+      "Bash(git fetch:*)",
+      "Bash(git * fetch *)",
+      "Bash(git pull:*)",
+      "Bash(git * pull *)",
+      "Bash(git clone:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+    ].join(","),
   );
   call.push(
     "--setting-sources",
@@ -366,12 +461,50 @@ const snake = (row) =>
     ]),
   );
 
+let packDir = null;
+const cleanupPack = () => {
+  if (packDir) {
+    removeDir(packDir);
+    packDir = null;
+  }
+};
+let packageSource = null;
+if (needsBare) {
+  if (useLocal) {
+    packDir = mkdtempSync(join(tmpdir(), "ds-eval-pack-"));
+    try {
+      run("pnpm", ["pack", "--pack-destination", packDir], DS_PACKAGE_DIR);
+      const tgz = readdirSync(packDir).find((file) => file.endsWith(".tgz"));
+      if (!tgz) throw new Error(`pnpm pack wrote no .tgz in ${packDir}`);
+      packageSource = readTarballSource(join(packDir, tgz));
+    } catch (error) {
+      cleanupPack();
+      throw error;
+    }
+  } else if (tarballArg) {
+    const tarballPath = resolve(tarballArg);
+    if (!existsSync(tarballPath)) throw new Error(`Tarball not found: ${tarballPath}`);
+    packageSource = readTarballSource(tarballPath);
+  } else {
+    const version = versionArg ?? run("npm", ["view", PACKAGE, "version"], HERE).trim();
+    // npm 12 answers a `view <name>@<version> <field> --json` with a one-item array; older npm with
+    // the object itself.
+    const viewed = JSON.parse(
+      run("npm", ["view", `${PACKAGE}@${version}`, "peerDependencies", "--json"], HERE),
+    );
+    packageSource = {
+      spec: version,
+      peers: Array.isArray(viewed) ? (viewed[0] ?? {}) : viewed,
+    };
+  }
+}
+
 const rows = [];
 mkdirSync(out, { recursive: true });
 // The summary is written in `finally`, so a setup that throws hours in keeps the rows before it.
 try {
   for (const setup of setups) {
-    const app = setup === "app" ? readerApp() : bareApp(setup === "bare-guide");
+    const app = setup === "app" ? readerApp() : bareApp(setup === "bare-guide", packageSource);
     try {
       const installed = join(app.root, "node_modules", PACKAGE);
       const { exports: exportsMap, version: installedVersion } = JSON.parse(
@@ -399,34 +532,48 @@ try {
           console.log(
             `  ${agent} wrote no transcript; its stderr is beside the others in ${folder}`,
           );
+        const stats = runStats(transcript, agent);
         const paths = changedFiles(app.dir);
-        const files = paths.map((path) => ({
-          path,
-          text: readFileSync(join(app.dir, path), "utf8"),
-        }));
-        const grade = gradeFiles(files, resolves, task.expect);
-        const validate = paths.length
-          ? tryRun(
-              process.execPath,
-              [ds, "validate", "--json", ...paths.map((path) => join(app.dir, path))],
-              app.root,
-            )
-          : { output: '{"errors":0}' };
-        // null when `ds validate` gave no report, so a failed check never reads as a clean page.
+        let grade = {
+          met: null,
+          of: null,
+          invented: null,
+          outsideUi: null,
+          missed: [],
+        };
         let validateErrors = null;
-        try {
-          validateErrors = JSON.parse(validate.output).errors;
-        } catch {
-          validateErrors = null;
+        let compiled = null;
+        if (stats.finished) {
+          const files = paths.map((path) => ({
+            path,
+            text: readFileSync(join(app.dir, path), "utf8"),
+          }));
+          grade = gradeFiles(files, resolves, task.expect);
+          const validate = paths.length
+            ? tryRun(
+                process.execPath,
+                [ds, "validate", "--json", ...paths.map((path) => join(app.dir, path))],
+                app.root,
+              )
+            : { output: '{"errors":0}' };
+          // null when `ds validate` gave no report, so a failed check never reads as a clean page.
+          try {
+            validateErrors = JSON.parse(validate.output).errors;
+          } catch {
+            validateErrors = null;
+          }
+          // An agent that exited cleanly without writing any UI file did not compile a solution.
+          compiled = checks
+            ? paths.length > 0 && tryRun("pnpm", ["exec", "astro", "check"], app.root).ok
+            : null;
         }
-        const compiled = checks ? tryRun("pnpm", ["exec", "astro", "check"], app.root).ok : null;
         const row = {
           setup,
           agent,
           task: task.id,
           // The reader app keeps the version its lockfile pins, which can differ from the others.
           package: installedVersion,
-          ...runStats(transcript, agent),
+          ...stats,
           minutes,
           ...grade,
           files: paths,
@@ -443,25 +590,14 @@ try {
     }
   }
 } finally {
-  writeFileSync(join(out, "summary.json"), JSON.stringify({ rows: rows.map(snake) }, null, 2));
-  const lines = [
-    `${stamp}. Medians are over finished runs; tokens count cache reads. Paste the rows under the scorecard's.`,
-    "",
-    "| Date | Setup | Agent | Model | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
-  ];
-  for (const [setup, agent] of setups.flatMap((setup) => agents.map((agent) => [setup, agent]))) {
-    const mine = rows.filter((row) => row.setup === setup && row.agent === agent);
-    const count = (pick) => mine.filter(pick).length;
-    const sum = (pick) => mine.reduce((total, row) => total + pick(row), 0);
-    const done = mine.filter((row) => row.finished);
-    const errors = mine.some((row) => row.validateErrors === null)
-      ? "?"
-      : sum((row) => row.validateErrors);
-    lines.push(
-      `| ${stamp.slice(0, 10)} | ${setup} | ${agent} | ${mine.find((row) => row.model)?.model ?? "?"} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes)) ?? "n/a"} | ${median(done.map((row) => row.tokens)) ?? "n/a"} | ${median(done.map((row) => row.toolCalls)) ?? "n/a"} |`,
-    );
-  }
-  writeFileSync(join(out, "summary.md"), `${lines.join("\n")}\n`);
-  console.log(`\n${lines.join("\n")}\n\nTranscripts and per-task grades: ${out}`);
+  cleanupPack();
+  const summaryRows = rows.map(snake);
+  writeFileSync(join(out, "summary.json"), JSON.stringify({ rows: summaryRows }, null, 2));
+  const markdown = formatSummaryMarkdown(
+    summaryRows,
+    setups.flatMap((setup) => agents.map((agent) => [setup, agent])),
+    stamp,
+  );
+  writeFileSync(join(out, "summary.md"), markdown);
+  console.log(`\n${markdown}\nTranscripts and per-task grades: ${out}`);
 }
