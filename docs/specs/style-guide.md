@@ -1,6 +1,6 @@
 # Style guide
 
-The reader's design system as its own site, "Singularity design": `news.someshks.com/design`, the app `apps/design`. What it does now. Reasons: [DS-2](../decisions/entries/DS-2.md), D226, D224; plan: [command-center.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design/command-center.md).
+The reader's design system as its own site, "Singularity Design System": `news.someshks.com/design`, the app `apps/design`. What it does now. Reasons: [DS-2](../decisions/entries/DS-2.md), D226, D224; plan: [command-center.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/design/command-center.md).
 
 ## Requirements
 

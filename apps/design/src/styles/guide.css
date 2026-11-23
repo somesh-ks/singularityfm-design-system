@@ -658,7 +658,8 @@
    scrolled sideways and hid the button, the one control (2026-11-23). There the row breaks in two,
    the name and value over the track and its button. */
 @media (width < 40rem) {
-  .guide-table tr:has(> .guide-motion-cell) {
+  /* A row the search hides stays hidden: this rule outweighs `.guide-table [hidden]`. */
+  .guide-table tr:has(> .guide-motion-cell):not([hidden]) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
@@ -672,6 +673,12 @@
 
   .guide-table td:first-child:has(+ .guide-motion-cell) {
     grid-column: 1 / -1;
+  }
+
+  /* A long name wraps rather than running under its value. */
+  .guide-table tr:has(> .guide-motion-cell) code {
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   .guide-motion-cell {

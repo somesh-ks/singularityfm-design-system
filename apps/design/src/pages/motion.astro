@@ -31,23 +31,24 @@ const interaction = [
       <p class="guide-note">Press a play button to run a token. Durations run on the out curve; curves run on the longest ordinary duration. Nothing in the app moves that the reader did not move.</p>
 
       <h2 class="section-head text-heading" id="durations">Durations</h2>
+      {/* The roles are spelled out: on a phone a row is laid out as a grid (guide.css), which drops a table row's role in WebKit. */}
       <div class="guide-table-wrap">
-        <table class="guide-table">
-          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Motion</th><th scope="col">Run</th></tr></thead>
+        <table class="guide-table" role="table">
+          <thead class="sr-only"><tr role="row"><th scope="col" role="columnheader">Token</th><th scope="col" role="columnheader">Value</th><th scope="col" role="columnheader">Motion</th><th scope="col" role="columnheader">Run</th></tr></thead>
           <tbody>
             {
               durations.map((token) => (
-                <tr data-filter-item data-name={token.name}>
-                  <td><code>{token.name}</code></td>
-                  <td>{token.value}</td>
-                  <td class="guide-motion-cell">
+                <tr role="row" data-filter-item data-name={token.name}>
+                  <td role="cell"><code>{token.name}</code></td>
+                  <td role="cell">{token.value}</td>
+                  <td role="cell" class="guide-motion-cell">
                     <div class="guide-motion">
                       <div class="guide-motion-track" data-run="false" style={`--run-duration: var(${token.name}); --run-ease: var(--ease-out)`}>
                         <span class="guide-motion-dot" />
                       </div>
                     </div>
                   </td>
-                  <td><IconButton label={`Run ${token.name}`} data-run-motion><Icon name="play" /></IconButton></td>
+                  <td role="cell"><IconButton label={`Run ${token.name}`} data-run-motion><Icon name="play" /></IconButton></td>
                 </tr>
               ))
             }
@@ -57,21 +58,21 @@ const interaction = [
 
       <h2 class="section-head text-heading" id="curves">Curves</h2>
       <div class="guide-table-wrap">
-        <table class="guide-table">
-          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Motion</th><th scope="col">Run</th></tr></thead>
+        <table class="guide-table" role="table">
+          <thead class="sr-only"><tr role="row"><th scope="col" role="columnheader">Token</th><th scope="col" role="columnheader">Motion</th><th scope="col" role="columnheader">Run</th></tr></thead>
           <tbody>
             {
               eases.map((token) => (
-                <tr data-filter-item data-name={token.name}>
-                  <td><code>{token.name}</code></td>
-                  <td class="guide-motion-cell">
+                <tr role="row" data-filter-item data-name={token.name}>
+                  <td role="cell"><code>{token.name}</code></td>
+                  <td role="cell" class="guide-motion-cell">
                     <div class="guide-motion">
                       <div class="guide-motion-track" data-run="false" style={`--run-duration: var(--duration-drawer-full); --run-ease: var(${token.name})`}>
                         <span class="guide-motion-dot" />
                       </div>
                     </div>
                   </td>
-                  <td><IconButton label={`Run ${token.name}`} data-run-motion><Icon name="play" /></IconButton></td>
+                  <td role="cell"><IconButton label={`Run ${token.name}`} data-run-motion><Icon name="play" /></IconButton></td>
                 </tr>
               ))
             }
