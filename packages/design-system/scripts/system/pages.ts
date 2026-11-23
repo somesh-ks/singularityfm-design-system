@@ -1,6 +1,6 @@
 /**
  * The markdown an agent fetches one at a time (plan phase 2, layer 2): a page per part, at
- * tokens/parts/<id>.md in the package and /design/parts/<id>.md on the style guide, and all of it in
+ * tokens/parts/<id>.md in the package and /parts/<id>.md on the style guide, and all of it in
  * one tokens/llms-full.txt for an agent that wants a single fetch. Built from system.json's own
  * records, so a page says what `ds part` says.
  */

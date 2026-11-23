@@ -38,8 +38,9 @@ function token(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 
-/** Everything the column scrolls: the brand, each page's row and the foot. */
-const ROWS = ".app-nav-brand, .app-nav-list > li, .guide-nav-foot";
+/** Everything the column scrolls: the brand and each page's row. The foot sticks to the column's
+ * bottom (guide.css), so it never moves with a list, and its offsetTop follows the scroll while stuck. */
+const ROWS = ".app-nav-brand, .app-nav-list > li";
 
 /** Drops what a motion held inline. Touching the style of an element with none writes `style=""`. */
 function unhold(element: HTMLElement): void {
@@ -104,13 +105,21 @@ function move(nav: HTMLElement, pressed: Group, open: boolean): void {
   // A list that closes can leave less to scroll than the column has scrolled; when it leaves the page
   // the scroll clamps. The rows end where the clamp will put them, so settling moves nothing.
   // A reader's scroll during the motion ends it (see the scroll listener): the compensation is then never stale.
-  // Measured from the last row's box, not scrollHeight, which counts a motion's translates.
-  const last = rows.at(-1);
-  const bottom = last
-    ? last.offsetTop +
-      last.offsetHeight +
-      Number.parseFloat(getComputedStyle(last).marginBlockEnd) +
-      Number.parseFloat(getComputedStyle(nav).paddingBlockEnd)
+  // Measured from the list's box and the foot's height, not scrollHeight, which counts a motion's
+  // translates. The foot is sticky, so its own offsetTop is not where it sits in the flow; where the
+  // column overflows, it sits one gap under the list (its auto margin is then zero).
+  const list = nav.querySelector<HTMLElement>(".app-nav-list");
+  const foot = nav.querySelector<HTMLElement>(".guide-nav-foot");
+  const px = (value: string): number => Number.parseFloat(value) || 0;
+  const bottom = list
+    ? list.offsetTop +
+      list.offsetHeight +
+      (foot
+        ? px(getComputedStyle(nav).rowGap) +
+          foot.offsetHeight +
+          px(getComputedStyle(foot).marginBlockEnd)
+        : 0) +
+      px(getComputedStyle(nav).paddingBlockEnd)
     : 0;
   const clamp = scroll - Math.max(0, Math.min(scroll, bottom - nav.clientHeight));
   for (const row of rows) tops.set(row, row.offsetTop + clamp);

@@ -16,7 +16,7 @@ const GUIDE_PAGES = [
   "",
 ].join("\n");
 
-// The short index of the design system for an agent (D236), served at /design/llms.txt.
+// The short index of the design system for an agent (D236), served as written at /llms.txt.
 export const GET: APIRoute = () =>
   new Response(`${llms.trimEnd()}\n${GUIDE_PAGES}`, {
     headers: { "Content-Type": "text/plain; charset=utf-8" },

@@ -2,7 +2,7 @@
 import GuideTile from "../components/GuideTile.astro";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
-import { FOUNDATION_PAGES } from "../lib/sections";
+import { FOUNDATION_PAGES, FOUNDATIONS } from "../lib/sections";
 
 const art = {
   "/color": "color",
@@ -15,6 +15,7 @@ const art = {
 <Shell title="Foundations" current="/foundations">
   <div class="settings-view guide-page" data-settings data-ready>
     <PageHead title="Foundations" />
+    <p class="guide-lead">{FOUNDATIONS.note}</p>
     <section aria-label="Foundations" class="guide-tiles guide-tiles-pairs">
       {FOUNDATION_PAGES.map((page) => <GuideTile page={page} art={art[page.path as keyof typeof art]} />)}
     </section>

@@ -14,7 +14,7 @@ const FRONT_MATTER = [
   "",
 ].join("\n");
 
-// The rules for every screen (DS-12), served as written at /design/foundations.md, where llms.txt links.
+// The rules for every screen (DS-12), served as written at /foundations.md, where llms.txt links.
 export const GET: APIRoute = () =>
   new Response(foundations.startsWith("---\n") ? foundations : `${FRONT_MATTER}${foundations}`, {
     headers: { "Content-Type": "text/markdown; charset=utf-8" },
