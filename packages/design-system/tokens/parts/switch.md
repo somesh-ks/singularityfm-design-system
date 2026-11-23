@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: switch
+name: "Switch"
+kind: selection
+imports:
+  - "@singularityfm/design-system/Switch"
+---
+
 # Switch (`switch`)
 
 A track and a thumb for one setting that is on or off.
@@ -27,6 +36,14 @@ A track and a thumb for one setting that is on or off.
 ## Rules
 
 - It is the native checkbox (role="switch") and takes no client directive (DS-8): an Astro page starts it with defaultChecked, a React island passes checked with onChange.
+
+## Accessibility
+
+- Role: Native `<input type="checkbox" role="switch">`
+- ARIA: Native checked state drives switch semantics; associate with `<label for>`, aria-label or aria-labelledby.
+- ARIA: role="switch" has no mixed state: a script-set indeterminate is visual only. Use a Checkbox when a mixed state must be announced.
+- Keyboard: Space toggles the switch; submits inside forms.
+- Focus: Native focus ring via :focus-visible on the switch control.
 
 ## Props of Switch
 

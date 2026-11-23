@@ -78,6 +78,9 @@ jobs:
           NPM_CONFIG_LOGLEVEL: verbose
         with:
           github-token: ${{ steps.app-token.outputs.token || github.token }}
+          # The generated system docs carry the package version (tokens/system.json, llms.txt, part
+          # pages), and system.test checks them against a fresh build, so the version PR rebuilds them.
+          version-script: pnpm run version-packages
           publish-script: pnpm exec changeset publish
           commit-message: "chore(release): version the design system"
           pr-title: "chore(release): version the design system"

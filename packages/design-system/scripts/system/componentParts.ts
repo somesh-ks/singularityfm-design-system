@@ -4,6 +4,7 @@
  * words a lookup matches against and the one-line rules the registry does not hold. A family that
  * becomes a component adds its entry here and deletes its hand-written ones from parts.ts.
  */
+import { REGISTRY_A11Y } from "../../src/a11y.js";
 import { BADGE } from "../../src/badge.js";
 import { BANNER } from "../../src/banner.js";
 import { BUTTON } from "../../src/button.js";
@@ -12,7 +13,7 @@ import { DIALOG } from "../../src/dialog.js";
 import { DRAWER } from "../../src/drawer.js";
 import { FAB } from "../../src/fab.js";
 import { FIELD } from "../../src/field.js";
-import type { ComponentRef, Guidance } from "../../src/guidance.js";
+import type { A11yGuidance, ComponentRef, Guidance } from "../../src/guidance.js";
 import { ICON } from "../../src/icon.js";
 import { ICON_BUTTON } from "../../src/iconButton.js";
 import { LINK } from "../../src/link.js";
@@ -120,17 +121,18 @@ const FILES = ["packages/design-system/src/Button.tsx", "packages/design-system/
 /** A single-class control (Switch, Slider): the registry's guidance plus the words a lookup matches. */
 const control = (
   id: string,
-  name: string,
+  name: keyof typeof REGISTRY_A11Y,
   guidance: Guidance,
   extra: {
     keywords: string[];
-    markup: string;
+    markup?: string;
     rules?: string[];
     classes?: string[];
     files?: string[];
     /** Exclusions that point at a part not yet a component (a hand-written one in parts.ts). */
     not?: { when: string; use: string }[];
     kind?: PartSource["kind"];
+    a11y?: A11yGuidance;
   },
 ): PartSource => ({
   id,
@@ -156,6 +158,7 @@ const control = (
   keywords: extra.keywords,
   markup: extra.markup,
   rules: extra.rules,
+  a11y: extra.a11y ?? REGISTRY_A11Y[name],
   ...(extra.classes ? { classes: extra.classes } : {}),
   ...experimentalOf(guidance),
 });
@@ -184,6 +187,7 @@ export const componentParts = (): PartSource[] => [
       keywords: extra?.keywords,
       markup: extra?.markup,
       rules: extra?.rules,
+      a11y: REGISTRY_A11Y.Button,
     };
   }),
   ...Object.entries(BUTTON.tones).map(([tone, guidance]): PartSource => {
@@ -203,6 +207,7 @@ export const componentParts = (): PartSource[] => [
       })),
       keywords: extra?.keywords,
       markup: extra?.markup,
+      a11y: REGISTRY_A11Y.Button,
     };
   }),
   ...Object.entries(BUTTON.sizes).map(([size, guidance]): PartSource => {
@@ -222,6 +227,7 @@ export const componentParts = (): PartSource[] => [
       })),
       keywords: extra?.keywords,
       markup: extra?.markup,
+      a11y: REGISTRY_A11Y.Button,
     };
   }),
   // An experimental variant (filled) is listed as an option of the standard part, which stands for
@@ -277,6 +283,7 @@ export const componentParts = (): PartSource[] => [
               'A toggle sets aria-pressed and holds two glyphs, off then on (<Icon name="thumbsUp" /><Icon name="thumbsUpFill" />): the button shows the one its state calls for, and a standard one that is on takes the accent container.',
             ]
           : undefined,
+        a11y: REGISTRY_A11Y["Icon button"],
         ...(standard ? experimentalOf(ICON_BUTTON) : {}),
       };
     }),
@@ -297,6 +304,7 @@ export const componentParts = (): PartSource[] => [
       "label is its whole accessible name; the word beside the glyph is hidden from a screen reader.",
       "A script folds it by data-folded on FAB_SELECTOR (design-system/fab.ts).",
     ],
+    a11y: REGISTRY_A11Y.FAB,
   },
   ...Object.entries(LINK.variants).map(([variant, guidance]): PartSource => {
     const text = variant === "text";
@@ -319,12 +327,17 @@ export const componentParts = (): PartSource[] => [
       rules: text
         ? ["A link is a real <a href>; an action on this page is a Button."]
         : ["One source link everywhere, the player's included: no page draws its own copy."],
+      a11y: REGISTRY_A11Y.Link,
     };
   }),
   control("play-chip", "Play chip", PLAY_CHIP, {
     kind: "action",
     classes: ["chip", "chip-glyph", "chip-label"],
-    files: ["packages/design-system/src/PlayChip.tsx", "packages/design-system/src/playChip.ts"],
+    files: [
+      "packages/design-system/src/PlayChip.tsx",
+      "packages/design-system/src/PlayingBars.tsx",
+      "packages/design-system/src/playChip.ts",
+    ],
     keywords: ["duration", "play pill", "status pill", "now playing"],
     markup: '<PlayChip label="5 min" aria-label="Play the briefing" data-play-item={0} />',
     rules: [
@@ -595,10 +608,8 @@ export const componentParts = (): PartSource[] => [
     classes: ["drawer-scrim", "drawer-viewport", "drawer-popup", "drawer-panel"],
     files: ["packages/design-system/src/drawer.ts"],
     keywords: ["island sheet", "swipe to dismiss", "Base UI drawer", "react sheet"],
-    markup:
-      '<SheetFrame open={open} onOpenChange={setOpen} title="Create" closeLabel="Close">...</SheetFrame>',
     rules: [
-      "Mount SheetFrame; it draws the scrim, viewport, popup and panel from drawer.ts, and the Sheet's head.",
+      "SheetFrame is not exported by this package: use <Sheet> for modal dialogs/sheets, or compose a host Base UI Drawer island with drawerScrimClass(), drawerViewportClass(), drawerPopupClass() and drawerPanelClass() from @singularityfm/design-system/drawer plus @singularityfm/design-system/styles/drawer.css and <SheetHeader>.",
       "Motion uses --duration-sheet-in, --duration-sheet-out and --ease-drawer.",
     ],
   }),

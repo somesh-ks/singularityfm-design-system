@@ -1,3 +1,13 @@
+---
+version: "0.13.0"
+id: filter-chip
+name: "Chip"
+kind: selection
+imports:
+  - "@singularityfm/design-system/Chip"
+  - "@singularityfm/design-system/ChipGroup"
+---
+
 # Chip (`filter-chip`)
 
 A checkbox drawn as a pill; ticked it takes the accent container.
@@ -30,6 +40,14 @@ A checkbox drawn as a pill; ticked it takes the accent container.
 
 - A native checkbox with no client directive (DS-8); scroll on the group for one sideways row.
 
+## Accessibility
+
+- Role: Native `<input type="checkbox">` wrapped in `<label>`
+- ARIA: Group related filter chips inside ChipGroup with aria-label or aria-labelledby.
+- ARIA: Checked state is native to the checkbox.
+- Keyboard: Space toggles selection; Tab moves between checkboxes.
+- Focus: Native focus ring styled around the pill via :focus-visible.
+
 ## Props of Chip
 
 | Name | Type | Default | What it does |
@@ -39,6 +57,14 @@ A checkbox drawn as a pill; ticked it takes the accent container.
 | `slot?` | `string` | - | Astro places the chip in its parent's slot with it; it is not an attribute of the checkbox. |
 
 Every attribute of a native `<input>` element passes through, except `type`.
+
+### Example of ChipGroup
+
+```tsx
+<ChipGroup aria-label="Topics">
+  <Chip name="topic" value="daily" defaultChecked>Daily</Chip>
+</ChipGroup>
+```
 
 ## Props of ChipGroup
 

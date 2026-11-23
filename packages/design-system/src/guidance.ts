@@ -40,6 +40,18 @@ export interface DontUse {
   instead?: ComponentRef;
 }
 
+/** Structured accessibility contract derived from each component's rendered DOM and scripts. */
+export interface A11yGuidance {
+  /** ARIA role or native HTML element semantics. */
+  role: string;
+  /** Required or supported ARIA and accessible-name attributes. */
+  aria: readonly string[];
+  /** Keyboard interactions supported natively or via the package script. */
+  keyboard: readonly string[];
+  /** Focus behaviour, trapping or restoration. */
+  focus: string;
+}
+
 /**
  * What a design-system component, variant or tone says about itself, so that a person or an agent
  * can pick the right one without reading the stylesheet. Every one says when to use it and, naming
@@ -54,6 +66,8 @@ export interface Guidance {
   dontUseWhen: readonly DontUse[];
   /** Its options that are experimental (DS-11); every other option is stable. */
   experimental?: readonly Experimental[];
+  /** Accessibility contract for this component. */
+  a11y?: A11yGuidance;
 }
 
 /**

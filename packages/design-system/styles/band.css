@@ -7,14 +7,12 @@
  */
 .band-section {
   padding: 0 var(--card-padding) var(--card-padding);
-  border-radius: var(--card-radius);
+  /* Concentric with the covers inside, which keep the speed dial's corner (owner, 23 Nov: one cover
+     corner everywhere, and the band's curve parallel to it): the cover's radius plus the padding. */
+  border-radius: calc(var(--cover-radius-hero) + var(--card-padding));
   background: var(--color-accent-subtle);
   --page-gutter-start: var(--card-padding);
   --page-gutter-end: var(--card-padding);
-  /* Covers inside are concentric with the band's corner: its radius less the padding between them
-     (owner, 23 Nov), never squarer than the smallest corner. */
-  --cover-radius-hero: max(var(--shape-xs), calc(var(--card-radius) - var(--card-padding)));
-  --cover-radius-thumb: max(var(--shape-xs), calc(var(--card-radius) - var(--card-padding)));
 }
 
 /* The same head as a page's shelf: the heading, and See all at the end on its 44px row. */

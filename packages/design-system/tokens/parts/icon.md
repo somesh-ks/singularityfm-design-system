@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: icon
+name: "Icon"
+kind: display
+imports:
+  - "@singularityfm/design-system/Icon"
+---
+
 # Icon (`icon`)
 
 A filled Phosphor glyph in the colour of the text beside it.
@@ -30,6 +39,13 @@ A filled Phosphor glyph in the colour of the text beside it.
 ## Experimental options
 
 - `--icon-size` (since 2026-11-12): A control that holds a glyph sets its size once, on itself, so no page rule names the glyph: the transport's Play larger than everything around it and its skips (2026-10-22), the cover's bare Play on the scrim (owner, 2026-10-31), the Library's status mark sized from its text (owner, 2026-11-02 and 2026-11-03), and the queue ring's end check in the ring's own size (owner, 2026-11-12: keep it as it is).
+
+## Accessibility
+
+- Role: Decorative `<svg aria-hidden="true" focusable="false">`
+- ARIA: Always hidden from assistive technology; wrap inside Button, IconButton or labelled text.
+- Keyboard: None; non-interactive graphic.
+- Focus: Not focusable (focusable="false").
 
 ## Props of Icon
 

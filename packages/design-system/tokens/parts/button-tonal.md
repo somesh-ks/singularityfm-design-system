@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: button-tonal
+name: "Tonal button"
+kind: action
+imports:
+  - "@singularityfm/design-system/Button"
+---
+
 # Tonal button (`button-tonal`)
 
 The accent container under its own words, with no outline; quieter than Filled.
@@ -26,6 +35,14 @@ The accent container under its own words, with no outline; quieter than Filled.
 
 - Matches the filled button's height.
 - No outline.
+
+## Accessibility
+
+- Role: Native `<button>` (or `<a href>` when href is set)
+- ARIA: Accessible name comes from children; provide descriptive label text.
+- ARIA: Do not nest interactive elements inside Button.
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
+- Focus: Native keyboard focus ring via :focus-visible.
 
 ## Props of Button
 

@@ -1,6 +1,22 @@
+---
+version: "0.13.0"
+id: card-group
+name: "Card group"
+kind: container
+imports: []
+---
+
 # Card group (`card-group`)
 
 A group of rows in one rounded container on the container tone.
+
+## Markup
+
+```astro
+<ul class="rows card-group">
+  <li class="settings-row"><span class="settings-label">Account</span><span class="settings-hint">Signed in</span></li>
+</ul>
+```
 
 ## Use when
 

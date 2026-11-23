@@ -1,3 +1,13 @@
+---
+version: "0.13.0"
+id: icon-btn
+name: "Icon button"
+kind: action
+imports:
+  - "@singularityfm/design-system/IconButton"
+  - "@singularityfm/design-system/Icon"
+---
+
 # Icon button (`icon-btn`)
 
 A glyph in a round 44px target, quiet until used.
@@ -38,6 +48,14 @@ A glyph in a round 44px target, quiet until used.
 
 - `variant="filled"` (since 2026-11-12): The queue's Start listening is a Play, so it wears the primary fill with its own hover and press (owner, 2026-11-04: "every primary button one colour").
 
+## Accessibility
+
+- Role: Native `<button>` (or `<a href>` when href is set)
+- ARIA: label prop is required and sets aria-label because the child Icon is aria-hidden="true".
+- ARIA: Toggle buttons pass aria-pressed and swap between off and filled child Icons.
+- Keyboard: Enter and Space activate the button; Enter activates link mode.
+- Focus: Native 44px touch target with :focus-visible focus ring.
+
 ## Props of IconButton
 
 | Name | Type | Default | What it does |
@@ -53,6 +71,12 @@ A glyph in a round 44px target, quiet until used.
 | `slot?` | `string` | - | Astro places the button in its parent's slot with it; it is not an attribute of the button. |
 
 Every attribute of a native `<button>` element passes through.
+
+### Example of Icon
+
+```tsx
+<Icon name="plus" size="lg" />
+```
 
 ## Props of Icon
 

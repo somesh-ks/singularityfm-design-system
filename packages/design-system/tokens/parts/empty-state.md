@@ -1,12 +1,14 @@
+---
+version: "0.13.0"
+id: empty-state
+name: "Empty state"
+kind: feedback
+imports: []
+---
+
 # Empty state (`empty-state`)
 
 A spot illustration, a title, one line and at most two actions, for a page with nothing in it.
-
-## Markup
-
-```astro
-<EmptyState art="library" title="Nothing saved yet" body="..." primary={{ label: "Go to Latest", href: "/" }} />
-```
 
 ## Use when
 
@@ -20,9 +22,10 @@ A spot illustration, a title, one line and at most two actions, for a page with 
 
 ## Rules
 
-- Never hand-write `.empty` markup.
+- EmptyState is planned (DS-14) and not yet exported or styled by this package.
+- Do not invent an EmptyState component or hand-write unstyled .empty or .empty-actions markup; shell.css uses .empty only as a layout hook and provides no visual styling. Use Banner for inline notices or ask the owner (see GAPS.md).
 
 ## Where it is drawn
 
-- Classes: `.empty` `.empty-actions` (drawn by the app's own component the markup names; this package does not ship it yet)
+- Classes: `.empty` `.empty-actions` (not yet exported or styled by this package; see GAPS.md before using)
 - Styled in: no stylesheet in this package yet

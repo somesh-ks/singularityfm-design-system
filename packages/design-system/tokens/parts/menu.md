@@ -1,3 +1,14 @@
+---
+version: "0.13.0"
+id: menu
+name: "Menu"
+kind: selection
+imports:
+  - "@singularityfm/design-system/Menu"
+  - "@singularityfm/design-system/MenuItem"
+  - "@singularityfm/design-system/Icon"
+---
+
 # Menu (`menu`)
 
 A short list of actions that opens from an icon button: a row each, its glyph first.
@@ -36,6 +47,14 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 
 - `flush` (since 2026-11-12): A host that draws its own header and body in the menu's surface (the queue's popover, the emoji picker) keeps them flush with its edges, with no list padding above and below (owner, 2026-11-12: keep the queue popover and emoji picker as they are).
 
+## Accessibility
+
+- Role: Native popover `<div popover="auto">` containing `<div role="menu" aria-label={title}>` and MenuItem buttons
+- ARIA: Trigger button opens the menu with popoverTarget={id}; title sets aria-label={title} on role="menu" and `<h2 id={id}-title>`.
+- ARIA: Close IconButton sets aria-label="Close" with data-menu-close.
+- Keyboard: Browser popover supports Escape and light dismiss. The package ships no menu script: the host page handles ArrowUp/ArrowDown between items (MENU_SELECTORS from ./menu finds them).
+- Focus: The host page moves focus to the first item on open; the browser returns focus to the popoverTarget trigger on close, and the header Close button closes it.
+
 ## Props of Menu
 
 | Name | Type | Default | What it does |
@@ -47,6 +66,14 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 | `id` | `string` | - | The popover's id: the button that opens it names it with popoverTarget. |
 | `className?` | `string` | - | For placing the popover under its own button (the anchor of a row or a story). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
 
+### Example of MenuItem
+
+```tsx
+<Menu id="row-menu" title="Row actions">
+  <MenuItem><Icon name="share" /> Share</MenuItem>
+</Menu>
+```
+
 ## Props of MenuItem
 
 | Name | Type | Default | What it does |
@@ -57,6 +84,12 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 | `slot?` | `string` | - | Astro places the row in its parent's slot with it; it is not an attribute of the row. |
 
 Every attribute of a native `<button>` element passes through, except `role`.
+
+### Example of Icon
+
+```tsx
+<Icon name="plus" size="lg" />
+```
 
 ## Props of Icon
 

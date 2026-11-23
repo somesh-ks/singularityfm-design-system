@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: segmented-nav
+name: "Segmented navigation"
+kind: navigation
+imports:
+  - "@singularityfm/design-system/SegmentedNav"
+---
+
 # Segmented navigation (`segmented-nav`)
 
 A tonal track with one sliding pill: switch between views of the same content.
@@ -24,6 +33,15 @@ A tonal track with one sliding pill: switch between views of the same content.
 ## Rules
 
 - A native tablist with no client directive (DS-8): the page calls mountSegmentedNav(list, onSelect) from design-system/segmentedNav once for each, and draws the panels (each tab's controls).
+
+## Accessibility
+
+- Role: Container role="tablist" with child `<button role="tab">` items
+- ARIA: Name the tablist with aria-label or aria-labelledby.
+- ARIA: Active tab sets aria-selected="true" and omits tabIndex; inactive tabs set aria-selected="false" and tabIndex={-1}.
+- ARIA: Each tab carries aria-controls matching its panel id; icon tabs use aria-label={tab.label}.
+- Keyboard: mountSegmentedNav() handles ArrowLeft, ArrowRight, Home, End, Enter and Space.
+- Focus: Roving tabindex moves focus onto the newly selected tab.
 
 ## Props of SegmentedNav
 

@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: ripple
+name: "Ripple"
+kind: feedback
+imports:
+  - "@singularityfm/design-system/Ripple"
+---
+
 # Ripple (`ripple`)
 
 A wave from the touch point that fills a control's touch area, then fades.
@@ -25,6 +34,13 @@ A wave from the touch point that fills a control's touch area, then fades.
 - The control is `position: relative` with its own stacking context (isolation: isolate); the layer sits beneath its icon and label.
 - To reach past the control's box set --ripple-reach-start, --ripple-reach-end or --ripple-reach-bottom on the control; --ripple-display: none turns the layer off where the control has a pointer state.
 - installRipple() (design-system/ripple.ts) is called once by the app script; the control sets nothing else.
+
+## Accessibility
+
+- Role: Decorative ripple layer (`<span aria-hidden="true">`)
+- ARIA: Always aria-hidden="true"; host `<button>` or `<a href>` provides accessible role and name.
+- Keyboard: None; host interactive element handles keyboard activation.
+- Focus: Not focusable; host element owns focus ring.
 
 ## Props of Ripple
 
