@@ -124,10 +124,12 @@ const hasStage = !spec.noPreview;
                   </label>
                 ),
               )}
+              {/* The note explains the controls, so it is the card's last line, never loose text
+                  between the stage and the card (owner, 23 Nov). */}
+              {spec.note && <p class="guide-note guide-controls-note">{spec.note}</p>}
             </div>
           )}
-          {/* The note reads after the controls it explains, not wedged between the stage and them (owner, 23 Nov). */}
-          {spec.note && <p class="guide-note guide-stage-note">{spec.note}</p>}
+          {spec.note && spec.controls.length === 0 && <p class="guide-note guide-stage-note">{spec.note}</p>}
         </section>
       )
     }
