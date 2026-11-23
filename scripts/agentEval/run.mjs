@@ -15,8 +15,10 @@
 // Agents: `claude` (Claude Code, the default) and `antigravity` (the Antigravity CLI, `agy`). Both read
 // the setup's AGENTS.md. Claude Code may edit files and run read/build inspection commands (pnpm,
 // npx, ds, node, cd, ls, cat, head, tail, grep, rg, find, sed, awk, tr, cut, wc, sort, uniq, diff,
-// echo, printf, test, timeout, mkdir, pwd, which, basename, dirname, git) with network fetch and
-// git remote mutations blocked; `agy` has no such list outside its global settings, so it runs
+// echo, printf, test, timeout, mkdir, pwd, which, basename, dirname, git). curl, wget, git push and
+// git fetch are denied by name, but node, pnpm, npx, find -exec and awk can still run any code and
+// reach the network, so the container (CI) is the only real boundary: run locally only on a machine
+// you would let the agent use. `agy` has no such list outside its global settings, so it runs
 // with every tool approved inside its terminal sandbox.
 // Options: --agents claude,antigravity  --tasks id,id  --version <package version> (default: npm
 //   latest)  --local (pack local packages/design-system instead of npm)  --tarball <path to .tgz>
