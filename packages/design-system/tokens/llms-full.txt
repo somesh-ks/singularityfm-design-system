@@ -2297,6 +2297,21 @@ Import `@singularityfm/design-system/Flag`. No part covers it yet, so `ds find` 
 
 ---
 
+## PageArrows
+
+Import `@singularityfm/design-system/PageArrows`. No part covers it yet, so `ds find` does not name it.
+
+### Props of PageArrows
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `prevLabel` | `string` | - | What Back says to a screen reader: "Earlier shows". |
+| `nextLabel` | `string` | - | What Next says: "More shows". |
+| `controls` | `string` | - | The id of the row it moves: a Dial, a TopicGrid or a shelf that scrolls sideways. |
+| `className?` | `string` | - | For placing the pair, or a hook a page's script finds it by. Never its look. |
+
+---
+
 ## PageDots
 
 Import `@singularityfm/design-system/PageDots`. No part covers it yet, so `ds find` does not name it.
@@ -2385,7 +2400,7 @@ Import `@singularityfm/design-system/TopicTile`. No part covers it yet, so `ds f
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `name` | `string` | - | The topic's name. |
-| `covers?` | `readonly string[]` | `[]` | Up to two cover images from the topic, by address; the first sits in the corner, the second beside it. |
+| `covers?` | `readonly string[]` | `[]` | Up to three cover images from the topic, by address, fanned into the bottom end from the corner. |
 | `tint?` | `string` | - | The tile's fill, a colour taken from its first cover; the container grey when absent. |
 | `href?` | `string` | - | Opens the topic's page. Without it the tile is a checkbox (first run). |
 | `className?` | `string` | - | For placing the tile, or a hook a page's script finds it by. Never its look. |

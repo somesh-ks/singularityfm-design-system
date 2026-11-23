@@ -15,6 +15,8 @@
   /* The buttons' 44px targets pad their own glyphs, so the end gives them back their room. */
   padding-inline-end: var(--space-2);
   border-radius: var(--card-radius);
+  /* The cover is concentric with the card's corner: its radius less the padding between them. */
+  --cover-radius-thumb: max(var(--shape-xs), calc(var(--card-radius) - var(--card-padding)));
   background: var(--color-surface-container);
   color: var(--color-on-surface);
 }

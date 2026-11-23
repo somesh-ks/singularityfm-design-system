@@ -986,6 +986,13 @@ export const SPECS: readonly ComponentSpec[] = [
     ],
     imports: ["PageDots"],
     code: (state) => jsx("PageDots", ["count={3}", `current={${state.current ?? "0"}}`]),
+    subparts: [
+      {
+        file: "PageArrows.tsx",
+        name: "PageArrows",
+        note: "Back and Next at a section head, for a row that scrolls sideways. Only where a pointer hovers; a finger swipes.",
+      },
+    ],
   },
   {
     slug: "resume-card",

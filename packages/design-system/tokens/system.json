@@ -3170,6 +3170,41 @@
       ]
     },
     {
+      "name": "PageArrows",
+      "import": "@singularityfm/design-system/PageArrows",
+      "file": "packages/design-system/src/PageArrows.tsx",
+      "props": [
+        {
+          "name": "prevLabel",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "What Back says to a screen reader: \"Earlier shows\"."
+        },
+        {
+          "name": "nextLabel",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "What Next says: \"More shows\"."
+        },
+        {
+          "name": "controls",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The id of the row it moves: a Dial, a TopicGrid or a shelf that scrolls sideways."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the pair, or a hook a page's script finds it by. Never its look."
+        }
+      ]
+    },
+    {
       "name": "PageDots",
       "import": "@singularityfm/design-system/PageDots",
       "file": "packages/design-system/src/PageDots.tsx",
@@ -3810,7 +3845,7 @@
           "type": "readonly string[]",
           "required": false,
           "default": "[]",
-          "description": "Up to two cover images from the topic, by address; the first sits in the corner, the second beside it."
+          "description": "Up to three cover images from the topic, by address, fanned into the bottom end from the corner."
         },
         {
           "name": "tint",

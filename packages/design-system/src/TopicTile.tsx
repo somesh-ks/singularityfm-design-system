@@ -6,7 +6,7 @@ import "../styles/topic-tile.css";
 interface TopicTileProps {
   /** The topic's name. */
   name: string;
-  /** Up to two cover images from the topic, by address; the first sits in the corner, the second beside it. */
+  /** Up to three cover images from the topic, by address, fanned into the bottom end from the corner. */
   covers?: readonly string[];
   /** The tile's fill, a colour taken from its first cover; the container grey when absent. */
   tint?: string;
@@ -19,13 +19,13 @@ interface TopicTileProps {
 type Props = TopicTileProps & Omit<InputHTMLAttributes<HTMLInputElement>, keyof TopicTileProps>;
 
 /**
- * One Topic tile in a TopicGrid: the name at the top start, two covers tipped into the bottom end.
+ * One Topic tile in a TopicGrid: the name at the top start, up to three covers tipped into the bottom end.
  * With href it is a link; without, a native checkbox drawn as the tile, ticked with the accent ring
  * and a check in a fixed slot, so ticking moves nothing. Static: no client directive.
  */
 export default function TopicTile({ name, covers = [], tint, href, className, ...passed }: Props) {
   const style = tint ? ({ "--topic-tint": tint } as CSSProperties) : undefined;
-  const art = covers.slice(0, 2).map((src) => <img key={src} src={src} alt="" loading="lazy" />);
+  const art = covers.slice(0, 3).map((src) => <img key={src} src={src} alt="" loading="lazy" />);
   const classes = ["topic-tile-hit", className].filter(Boolean).join(" ");
   return (
     <li className="topic-cell">

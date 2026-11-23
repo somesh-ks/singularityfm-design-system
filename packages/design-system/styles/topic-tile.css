@@ -1,31 +1,41 @@
 /*
- * The Topic tile (design-system/TopicTile.tsx, TopicGrid.tsx): a 96px tile, the name at its top
- * start, two covers tipped into its bottom end and cut by its edge. Two across on a phone, four on a
- * wide column. As a checkbox (first run) the ticked tile takes the accent ring and a check in a slot
- * that is always there, so ticking moves nothing.
+ * The Topic tile (design-system/TopicTile.tsx, TopicGrid.tsx): a 128px tile, the name at its top
+ * start, up to three covers fanned along its bottom end, each mostly in view (owner, 23 Nov: more
+ * thumbnails), in two rows that scroll sideways. As a checkbox (first run) the ticked tile takes
+ * the accent ring and a check in a slot that is always there, so ticking moves nothing.
  */
+/* Two rows that scroll sideways, so every topic is a swipe away (owner, 23 Nov): on a phone a tile
+   and most of the next show, so the row says it goes on; on a wide column four, with PageArrows at
+   the head. */
 .topic-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-columns: calc((100% - var(--space-2)) / 1.75);
   gap: var(--space-2);
   margin: 0;
-  padding: 0;
+  padding: var(--space-2) 0;
   list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 }
 
 .topic-grid-wide {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-columns: calc((100% - 3 * var(--space-4)) / 4);
   gap: var(--space-4);
 }
 
 .topic-cell {
   min-inline-size: 0;
+  scroll-snap-align: start;
 }
 
 .topic-tile-hit {
   position: relative;
   display: block;
-  block-size: 6rem;
+  block-size: 8rem;
   padding: var(--space-4) var(--card-padding);
   border-radius: var(--card-radius);
   overflow: hidden;
@@ -55,7 +65,7 @@
 
 .topic-tile-hit > img {
   position: absolute;
-  inset: auto calc(var(--space-2) * -1) calc(var(--space-4) * -1) auto;
+  inset: auto calc(var(--space-2) * -1) calc(var(--space-2) * -1) auto;
   /* Bigger than a row's thumb: the covers are the tile's picture, cut by its edge, not a list item. */
   inline-size: 4rem;
   block-size: 4rem;
@@ -67,8 +77,13 @@
 }
 
 .topic-tile-hit > img + img {
-  inset: auto var(--space-8) calc(var(--space-6) * -1) auto;
+  inset: auto calc(var(--space-8) + var(--space-2)) calc(var(--space-2) * -1) auto;
   rotate: -8deg;
+}
+
+.topic-tile-hit > img + img + img {
+  inset: auto calc(var(--space-16) + var(--space-6)) calc(var(--space-2) * -1) auto;
+  rotate: 6deg;
 }
 
 .topic-tile-check {

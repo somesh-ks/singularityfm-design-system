@@ -11,6 +11,10 @@
   background: var(--color-accent-subtle);
   --page-gutter-start: var(--card-padding);
   --page-gutter-end: var(--card-padding);
+  /* Covers inside are concentric with the band's corner: its radius less the padding between them
+     (owner, 23 Nov), never squarer than the smallest corner. */
+  --cover-radius-hero: max(var(--shape-xs), calc(var(--card-radius) - var(--card-padding)));
+  --cover-radius-thumb: max(var(--shape-xs), calc(var(--card-radius) - var(--card-padding)));
 }
 
 /* The same head as a page's shelf: the heading, and See all at the end on its 44px row. */

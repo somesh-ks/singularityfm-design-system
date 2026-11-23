@@ -14,9 +14,18 @@
   list-style: none;
 }
 
+/* On a wide column the dial is one row of six that scrolls sideways, as a desktop shelf does, with
+   PageArrows at its head: never a second row left part full. */
 .dial-grid-wide {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 5 * var(--space-4)) / 6);
   gap: var(--space-4);
+  padding-block: var(--space-2);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 }
 
 /* What sits over a cover keeps clear of its corner, however round the mood makes it. */
@@ -24,6 +33,10 @@
   position: relative;
   min-width: 0;
   --dial-inset: max(var(--space-2), calc(var(--cover-radius-hero) * 0.3));
+}
+
+.dial-grid-wide > .dial-tile {
+  scroll-snap-align: start;
 }
 
 .dial-hit {

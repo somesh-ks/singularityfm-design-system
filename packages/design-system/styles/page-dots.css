@@ -21,6 +21,19 @@
   background: var(--color-on-surface);
 }
 
+/* Back and Next at a section head's end (PageArrows.tsx), only where a pointer hovers: a finger
+   swipes the row. Off at the row's ends, never hidden, so the pair never shifts the head. */
+.page-dots-arrows {
+  display: none;
+  gap: var(--space-2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .page-dots-arrows {
+    display: inline-flex;
+  }
+}
+
 @media (forced-colors: active) {
   .page-dots-track > span {
     background: GrayText;

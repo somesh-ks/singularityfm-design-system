@@ -1,5 +1,5 @@
 /**
- * The Topic tile: a labelled tile with two covers from the topic tucked into its corner. It opens a
+ * The Topic tile: a labelled tile with up to three covers from the topic tucked into its corner. It opens a
  * topic page, or, at first run, is ticked to choose the topic. The one place its classes are written.
  * TopicTile.tsx and TopicGrid.tsx render from it; the style guide lists TOPIC_TILE. The rules are in
  * styles/topic-tile.css.

@@ -89,6 +89,11 @@
       "expect": [{ "components": ["ResumeCard"] }]
     },
     {
+      "id": "row-arrows",
+      "prompt": "On a wide screen with a mouse, let a person move a row of show artwork that runs off the side one screen at a time, from two small controls by the section heading; on a phone a swipe does it and those controls are not there.",
+      "expect": [{ "components": ["PageArrows"] }]
+    },
+    {
       "id": "own-briefings-apart",
       "prompt": "Among public shows on the first screen, set the app's own daily and weekly briefings apart so nobody mistakes them for someone else's show.",
       "expect": [{ "components": ["Band"] }]

@@ -57,6 +57,7 @@
     "./Dial": "./src/Dial.tsx",
     "./DialTile": "./src/DialTile.tsx",
     "./PageDots": "./src/PageDots.tsx",
+    "./PageArrows": "./src/PageArrows.tsx",
     "./ResumeCard": "./src/ResumeCard.tsx",
     "./TopicGrid": "./src/TopicGrid.tsx",
     "./TopicTile": "./src/TopicTile.tsx",
