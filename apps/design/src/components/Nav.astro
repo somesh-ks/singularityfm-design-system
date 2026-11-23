@@ -26,13 +26,13 @@ const updated = new Intl.DateTimeFormat("en-GB", {
 {/* The reader's navigation, drawn by its own classes (shell.css): a bottom bar below 64rem and a side
      column from it. The side column opens Principles, Foundations and Components into their pages (an
      accordion; Components under a heading for each group); the bottom bar has room for the four
-     top-level pages only, so there each opens its own page, which lists them. The foot holds what the reader's holds,
-     the day it was built, and the one setting. */}
+     top-level pages only, so there each opens its own page, which lists them. The foot holds the
+     source link, the one setting and the day it was built. */}
 <nav class="app-nav" aria-label="Singularity design system" data-bottom-nav>
-  <a class="app-nav-brand wordmark" href={href("")} aria-label="Singularity design system">
+  <a class="app-nav-brand wordmark" href={href("")} aria-label="Singularity Design System">
     <BrandMark />
     <span>Singularity</span>
-    <span class="guide-tag">Design</span>
+    <span class="guide-tag">Design System</span>
   </a>
   <ul class="app-nav-list" role="list">
     {
@@ -101,7 +101,12 @@ const updated = new Intl.DateTimeFormat("en-GB", {
     }
   </ul>
   <div class="guide-nav-foot">
-    <ThemeToggle />
+    <div class="guide-nav-actions">
+      <IconButton href="https://github.com/somesh-ks/singularityfm-design-system" label="Source on GitHub">
+        <Icon name="githubLogo" />
+      </IconButton>
+      <ThemeToggle />
+    </div>
     <p class="guide-updated">Updated {updated}</p>
   </div>
 </nav>

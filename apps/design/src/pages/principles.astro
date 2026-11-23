@@ -1,8 +1,10 @@
 ---
 import Icon from "@singularity/design-system/Icon";
 import type { IconName } from "@singularity/design-system/icons";
+import GuideTile from "../components/GuideTile.astro";
 import PageHead from "../components/PageHead.astro";
 import Shell from "../layouts/Shell.astro";
+import { PRINCIPLES_PAGES } from "../lib/sections";
 
 // Written from the product brief (apps/web/PRODUCT.md), the design-engineering ledger and the
 // decisions it cites. The D-numbers are the repo's decisions; a principle changes there first.
@@ -109,6 +111,17 @@ const kept: { title: string; line: string; icon: IconName }[] = [
     <PageHead title="Principles" />
 
     <p class="guide-lead">A private briefing for one design engineer, read with one hand. Quick, plain, out of the way.</p>
+
+    {/* The bottom bar opens this page and has no row for Taste, so the page lists it, as Foundations lists its pages. */}
+    <section aria-label="Pages" class="guide-tiles guide-tiles-pairs">
+      {
+        PRINCIPLES_PAGES.map((page) => (
+          <GuideTile page={page}>
+            <span slot="art" class="guide-art-disc"><Icon name={page.icon} size="lg" /></span>
+          </GuideTile>
+        ))
+      }
+    </section>
 
     <section aria-labelledby="rules">
       <h2 class="section-head text-heading" id="rules">What it follows</h2>

@@ -33,6 +33,7 @@ const interaction = [
       <h2 class="section-head text-heading" id="durations">Durations</h2>
       <div class="guide-table-wrap">
         <table class="guide-table">
+          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Motion</th><th scope="col">Run</th></tr></thead>
           <tbody>
             {
               durations.map((token) => (
@@ -57,6 +58,7 @@ const interaction = [
       <h2 class="section-head text-heading" id="curves">Curves</h2>
       <div class="guide-table-wrap">
         <table class="guide-table">
+          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Motion</th><th scope="col">Run</th></tr></thead>
           <tbody>
             {
               eases.map((token) => (
@@ -80,6 +82,7 @@ const interaction = [
       <h2 class="section-head text-heading" id="states">Press, hover and enter</h2>
       <div class="guide-table-wrap">
         <table class="guide-table">
+          <thead class="sr-only"><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Use</th></tr></thead>
           <tbody>
             {
               interaction.map((token) => (

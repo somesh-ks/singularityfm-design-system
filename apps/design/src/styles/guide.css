@@ -331,9 +331,15 @@
   inline-size: var(--space-6);
   border-radius: var(--radius-round);
   background: var(--color-accent);
-  transition-property: translate;
-  transition-duration: var(--run-duration, var(--duration-enter));
-  transition-timing-function: var(--run-ease, var(--ease-out));
+}
+
+/* Under reduced motion the dot jumps to the end and back (motion.ts). */
+@media (prefers-reduced-motion: no-preference) {
+  .guide-motion-dot {
+    transition-property: translate;
+    transition-duration: var(--run-duration, var(--duration-enter));
+    transition-timing-function: var(--run-ease, var(--ease-out));
+  }
 }
 
 .guide-motion-track[data-run="true"] .guide-motion-dot {
@@ -648,6 +654,31 @@
   inline-size: 50%;
 }
 
+/* A phone has no room for a name, a value, a track and its play button in one row: the table
+   scrolled sideways and hid the button, the one control (2026-11-23). There the row breaks in two,
+   the name and value over the track and its button. */
+@media (width < 40rem) {
+  .guide-table tr:has(> .guide-motion-cell) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    border-block-end: var(--stroke-hairline) solid var(--color-border-hairline);
+  }
+
+  .guide-table tr:has(> .guide-motion-cell) > td {
+    padding-inline-end: 0;
+    border-block-end: 0;
+  }
+
+  .guide-table td:first-child:has(+ .guide-motion-cell) {
+    grid-column: 1 / -1;
+  }
+
+  .guide-motion-cell {
+    inline-size: auto;
+  }
+}
+
 .guide-jump + .search-field {
   margin-block-end: var(--space-6);
 }
@@ -660,11 +691,43 @@
 }
 /* ------------------------------------------------------------------ brand and navigation */
 
-/* "Design", beside the name it shares with the reader: a word, not a badge. */
+/* "Design System" under the name it shares with the reader, as one lockup beside the mark, in the app
+   bar and the side column alike (owner, 2026-11-23): a word, not a badge. */
+/* The side column's brand stays hidden below 64rem (shell.css), so only the grid's display is gated. */
+.wordmark:has(> .guide-tag):not(.app-nav-brand) {
+  display: grid;
+}
+
+@media (width >= 64rem) {
+  .app-nav-brand {
+    display: grid;
+  }
+}
+
+.wordmark:has(> .guide-tag) {
+  grid-template-columns: auto auto;
+  column-gap: var(--space-2);
+  row-gap: 0;
+  align-items: center;
+  justify-items: start;
+}
+
+.wordmark:has(> .guide-tag) > :first-child {
+  grid-row: span 2;
+}
+
+.wordmark:has(> .guide-tag) > span:nth-child(2) {
+  align-self: end;
+  line-height: var(--font-leading-display);
+}
+
 .guide-tag {
-  margin-inline-start: var(--space-1);
+  align-self: start;
   color: var(--color-on-surface-muted);
+  font-size: var(--text-label-size);
   font-weight: var(--font-weight-regular);
+  letter-spacing: var(--text-label-tracking);
+  line-height: var(--font-leading-display);
 }
 
 /* The theme button at the bar's end, out of the flow so the wordmark stays centred. */
@@ -697,43 +760,30 @@
 }
 
 @media (width >= 64rem) {
-  /* The column is too narrow for the name and its tag on one line: the tag sits right under the name,
-     as one lockup beside the mark. */
-  .app-nav-brand {
-    display: grid;
-    grid-template-columns: auto auto;
-    column-gap: var(--space-2);
-    row-gap: 0;
-    align-items: center;
-    justify-items: start;
-  }
-
-  .app-nav-brand > :first-child {
-    grid-row: span 2;
-  }
-
-  .app-nav-brand > span:nth-child(2) {
-    align-self: end;
-    line-height: 1.1;
-  }
-
-  .app-nav-brand .guide-tag {
-    align-self: start;
-    margin: 0;
-    font-size: var(--font-size-label);
-    line-height: 1.1;
-  }
-
-  /* The theme button over the date; its glyph lines up with the navigation's icons. */
+  /* The source link and the theme button side by side over the date; the first glyph lines up with
+     the navigation's icons. */
+  /* The foot stays at the column's bottom while a long Components list scrolls under it, so the source
+     link and the theme button are always in reach. It runs to the column's edges and over its end
+     padding, which sticking leaves out, so no row shows round it. No hairline: the taste keeps the
+     column flat. */
   .guide-nav-foot {
+    position: sticky;
+    inset-block-end: calc(var(--space-4) * -1);
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-1);
-    margin-block: auto var(--space-2);
+    margin-block: auto calc(var(--space-4) * -1);
+    margin-inline: calc((var(--space-4) + var(--safe-left)) * -1) calc(var(--space-2) * -1);
+    padding-block: var(--space-2) calc(var(--space-4) + var(--space-2));
+    padding-inline: calc(var(--space-4) + var(--safe-left)) var(--space-2);
+    background: var(--color-surface);
   }
 
-  .guide-nav-foot .icon-btn {
+  /* The two targets touch; their glyphs keep a target's room between them. */
+  .guide-nav-actions {
+    display: flex;
     margin-inline-start: calc(var(--space-4) - (var(--size-touch) - var(--size-icon)) / 2);
   }
 
@@ -927,18 +977,23 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* A page with no glyph of its own (a component) sits flush under its group's caption, not indented
-     past a glyph: the caption separates the section, so the rows need no indent. */
+  /* A page with no glyph of its own (a component) hangs one step in under its group's caption: flush,
+     the captions read as more rows (owner, 2026-11-23). The current page's pill keeps the row's full
+     width; only the words step in. */
   .guide-nav-subitem-plain {
-    padding-inline-start: var(--space-4);
+    padding-inline-start: var(--space-6);
   }
 
-  /* The heading of a group of pages under Components. */
+  /* The heading of a group of pages under Components: the label role as shipped, full ink and medium,
+     over muted regular rows, so a heading never reads as one of its pages (owner, 2026-11-23). No
+     caps or bold: the taste bans both. */
   .guide-nav-group-label {
     padding: var(--space-4) var(--space-4) var(--space-1);
-    color: var(--color-on-surface-muted);
+    color: var(--color-on-surface);
     font-size: var(--text-label-size);
+    font-weight: var(--text-label-weight);
     letter-spacing: var(--text-label-tracking);
+    line-height: var(--text-label-leading);
   }
 
   /* A group of pages under Components is its caption over a list of its own (Nav.astro), spaced as the
@@ -1204,7 +1259,7 @@
   }
 }
 
-/* Three across only where each card keeps a whole line for its words (the note never wraps). */
+/* Three across only where each card keeps room for its words (the note wraps to two lines at most). */
 @media (width >= 80rem) {
   .guide-tiles-three {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1301,13 +1356,16 @@
   line-height: var(--text-title-leading);
 }
 
+/* Up to two lines: one cut a component's summary mid-phrase ("words on a touch-size ta..."). */
 .guide-tile-note {
+  display: -webkit-box;
   overflow: hidden;
   color: var(--color-on-surface-muted);
   font-size: var(--font-size-meta);
   line-height: var(--font-leading-body);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .guide-tile-go {
