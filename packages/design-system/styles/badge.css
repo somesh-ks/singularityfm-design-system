@@ -17,3 +17,9 @@
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
+
+/* On a grey card the grey pill would vanish into the fill: it takes the overlay surface there, as
+   the tonal select does on a card (podcasts plan, 12 Nov). */
+.card-group .badge-label {
+  background: var(--color-surface-overlay);
+}

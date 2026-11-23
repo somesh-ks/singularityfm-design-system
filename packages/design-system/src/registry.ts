@@ -6,10 +6,12 @@
  */
 import { AVATAR, AVATAR_CLASSES, AVATAR_RETIRED } from "./avatar.ts";
 import { BADGE, BADGE_CLASSES, BADGE_RETIRED } from "./badge.ts";
+import { BAND, BAND_CLASSES, BAND_RETIRED } from "./band.ts";
 import { BANNER, BANNER_CLASSES, BANNER_RETIRED } from "./banner.ts";
 import { BUTTON, BUTTON_CLASSES, BUTTON_RETIRED } from "./button.ts";
 import { CHIP, CHIP_CLASSES, CHIP_RETIRED } from "./chip.ts";
 import { CODE, CODE_CLASSES, CODE_RETIRED } from "./code.ts";
+import { DIAL, DIAL_CLASSES, DIAL_RETIRED } from "./dial.ts";
 import { DIALOG, DIALOG_CLASSES, DIALOG_RETIRED } from "./dialog.ts";
 import { DRAWER, DRAWER_CLASSES, DRAWER_RETIRED } from "./drawer.ts";
 import { FAB, FAB_CLASSES, FAB_RETIRED } from "./fab.ts";
@@ -21,7 +23,9 @@ import { ICON, ICON_CLASSES, ICON_RETIRED } from "./icon.ts";
 import { ICON_BUTTON, ICON_BUTTON_CLASSES, ICON_BUTTON_RETIRED } from "./iconButton.ts";
 import { LINK, LINK_CLASSES, LINK_RETIRED } from "./link.ts";
 import { MENU, MENU_CLASSES, MENU_RETIRED } from "./menu.ts";
+import { PAGE_DOTS, PAGE_DOTS_CLASSES, PAGE_DOTS_RETIRED } from "./pageDots.ts";
 import { PLAY_CHIP, PLAY_CHIP_CLASSES, PLAY_CHIP_RETIRED } from "./playChip.ts";
+import { RESUME_CARD, RESUME_CARD_CLASSES, RESUME_CARD_RETIRED } from "./resumeCard.ts";
 import { RIPPLE, RIPPLE_CLASSES, RIPPLE_RETIRED } from "./ripple.ts";
 import { ROW_EXIT, ROW_EXIT_CLASSES, ROW_EXIT_RETIRED } from "./rowExit.ts";
 import { SEARCH_FIELD, SEARCH_FIELD_CLASSES, SEARCH_FIELD_RETIRED } from "./searchField.ts";
@@ -36,6 +40,7 @@ import { SHEET, SHEET_CLASSES, SHEET_RETIRED } from "./sheet.ts";
 import { SLIDER, SLIDER_CLASSES, SLIDER_RETIRED, SLIDER_VARIANTS } from "./slider.ts";
 import { SWITCH, SWITCH_CLASSES, SWITCH_RETIRED } from "./switch.ts";
 import { TOAST, TOAST_CLASSES, TOAST_RETIRED } from "./toast.ts";
+import { TOPIC_TILE, TOPIC_TILE_CLASSES, TOPIC_TILE_RETIRED } from "./topicTile.ts";
 import { WHEEL, WHEEL_CLASSES, WHEEL_RETIRED } from "./wheel.ts";
 
 export interface DesignSystemComponent extends Guidance {
@@ -366,6 +371,61 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: GLOW.summary,
     useWhen: GLOW.useWhen,
     dontUseWhen: GLOW.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Dial",
+    sheet: "dial.css",
+    prefix: "dial",
+    classes: DIAL_CLASSES,
+    retired: DIAL_RETIRED,
+    summary: DIAL.summary,
+    useWhen: DIAL.useWhen,
+    dontUseWhen: DIAL.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Page dots",
+    sheet: "page-dots.css",
+    prefix: "page-dots",
+    classes: PAGE_DOTS_CLASSES,
+    retired: PAGE_DOTS_RETIRED,
+    summary: PAGE_DOTS.summary,
+    useWhen: PAGE_DOTS.useWhen,
+    dontUseWhen: PAGE_DOTS.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Resume card",
+    sheet: "resume-card.css",
+    prefix: "resume-card",
+    classes: RESUME_CARD_CLASSES,
+    retired: RESUME_CARD_RETIRED,
+    summary: RESUME_CARD.summary,
+    useWhen: RESUME_CARD.useWhen,
+    dontUseWhen: RESUME_CARD.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Band",
+    sheet: "band.css",
+    prefix: "band",
+    classes: BAND_CLASSES,
+    retired: BAND_RETIRED,
+    summary: BAND.summary,
+    useWhen: BAND.useWhen,
+    dontUseWhen: BAND.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Topic tile",
+    sheet: "topic-tile.css",
+    prefix: "topic-",
+    classes: TOPIC_TILE_CLASSES,
+    retired: TOPIC_TILE_RETIRED,
+    summary: TOPIC_TILE.summary,
+    useWhen: TOPIC_TILE.useWhen,
+    dontUseWhen: TOPIC_TILE.dontUseWhen,
     parts: {},
   },
 ];

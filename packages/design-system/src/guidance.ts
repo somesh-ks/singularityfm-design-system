@@ -25,7 +25,12 @@ export type ComponentName =
   | "Sheet"
   | "Drawer"
   | "Wheel"
-  | "Ripple";
+  | "Ripple"
+  | "Dial"
+  | "Page dots"
+  | "Resume card"
+  | "Band"
+  | "Topic tile";
 export type ComponentRef = ComponentName | `${ComponentName}.${string}`;
 
 export interface DontUse {

@@ -1,11 +1,18 @@
 ---
 import Avatar from "@singularity/design-system/Avatar";
 import Badge from "@singularity/design-system/Badge";
+import Band from "@singularity/design-system/Band";
 import Banner from "@singularity/design-system/Banner";
 import BrandMark from "@singularity/design-system/BrandMark";
 import Button from "@singularity/design-system/Button";
 import Chip from "@singularity/design-system/Chip";
 import { codeSnippetHtml } from "@singularity/design-system/code";
+import Dial from "@singularity/design-system/Dial";
+import DialTile from "@singularity/design-system/DialTile";
+import PageDots from "@singularity/design-system/PageDots";
+import ResumeCard from "@singularity/design-system/ResumeCard";
+import TopicGrid from "@singularity/design-system/TopicGrid";
+import TopicTile from "@singularity/design-system/TopicTile";
 import "@singularity/design-system/styles/code.css";
 import Fab from "@singularity/design-system/Fab";
 import Field from "@singularity/design-system/Field";
@@ -161,6 +168,49 @@ const { slug } = Astro.props;
     )
   }
   {slug === "badge" && <Badge>{SAMPLE.badge}</Badge>}
+  {
+    slug === "dial" && (
+      <Dial className="guide-dial">
+        {SAMPLE.shows.slice(0, 3).map((show, index) => (
+          <DialTile name={show} label={show} playing={index === 0}>
+            <span class="guide-cover" data-tone={index} />
+          </DialTile>
+        ))}
+      </Dial>
+    )
+  }
+  {slug === "page-dots" && <PageDots count={3} />}
+  {
+    slug === "resume-card" && (
+      <ResumeCard
+        title={SAMPLE.episode}
+        facts={SAMPLE.resumeFacts}
+        progress={0.6}
+        playLabel={SAMPLE.episode}
+        dismissLabel={SAMPLE.label}
+      >
+        <span class="guide-cover" data-tone="0" />
+      </ResumeCard>
+    )
+  }
+  {
+    slug === "band" && (
+      <Band title={SAMPLE.band} className="guide-band">
+        <span class="guide-live-row">
+          <span class="guide-cover guide-cover-card" data-tone="0" />
+          <span class="guide-cover guide-cover-card" data-tone="1" />
+        </span>
+      </Band>
+    )
+  }
+  {
+    slug === "topic-tile" && (
+      <TopicGrid className="guide-topics">
+        <TopicTile name={SAMPLE.topics[0]} tabIndex={-1} />
+        <TopicTile name={SAMPLE.topics[1]} tabIndex={-1} />
+      </TopicGrid>
+    )
+  }
   {slug === "ripple" && <span class="guide-live-ripple"><Button variant="tonal">{SAMPLE.label}</Button></span>}
   {slug === "glow" && <span class="guide-live-glow"><Icon name="heartOutline" size="lg" /></span>}
   {

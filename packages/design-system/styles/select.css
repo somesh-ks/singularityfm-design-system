@@ -219,7 +219,7 @@
     --ghost-pressed: var(--color-surface-overlay-pressed);
     box-shadow: var(--shadow-popover);
     color: var(--color-on-surface);
-    scrollbar-width: thin;
+    scrollbar-width: none; /* Only the page scrolls with a bar (owner, 13 Nov). */
     overscroll-behavior: contain;
     opacity: 0;
     transition:

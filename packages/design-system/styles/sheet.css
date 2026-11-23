@@ -241,7 +241,7 @@ dialog.sheet-side[data-scrolled] .sheet-head {
      padding and the safe area), ring included, instead of sliding under it. */
   scroll-padding-block: var(--space-4)
     calc(var(--button-height) + var(--space-12) + var(--safe-bottom));
-  scrollbar-width: thin;
+  scrollbar-width: none; /* Only the page scrolls with a bar (owner, 13 Nov). */
   /* The scrollbar's room is kept whether or not the form scrolls: opening More options must not
      narrow the column and rewrap every control. */
   scrollbar-gutter: stable;

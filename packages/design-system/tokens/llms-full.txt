@@ -2004,7 +2004,7 @@ A group of rows in one rounded container on the container tone.
 ### Where it is drawn
 
 - Classes: `.card-group` `.rows` (typed on your own element)
-- Styled in: `styles/field.css`, `styles/primitives.css`, `styles/search-field.css`, `styles/select.css`, `styles/settings-rows.css`
+- Styled in: `styles/badge.css`, `styles/field.css`, `styles/primitives.css`, `styles/search-field.css`, `styles/select.css`, `styles/settings-rows.css`
 
 ### Owner's note
 
@@ -2189,6 +2189,23 @@ Import `@singularityfm/design-system/Avatar`. No part covers it yet, so `ds find
 
 ---
 
+## Band
+
+Import `@singularityfm/design-system/Band`. No part covers it yet, so `ds find` does not name it.
+
+### Props of Band
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `title` | `string` | - | The heading's words: "Catchups". |
+| `action?` | `ReactNode` | - | What sits at the heading's end: a See all link (a Button text link). |
+| `children` | `ReactNode` | - | What the band holds: a shelf of cards, or result rows. |
+| `className?` | `string` | - | For placing the band, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
+
+Every attribute of a native `<section>` element passes through.
+
+---
+
 ## BrandMark
 
 Import `@singularityfm/design-system/BrandMark`. No part covers it yet, so `ds find` does not name it.
@@ -2229,6 +2246,44 @@ Import `@singularityfm/design-system/Code`. No part covers it yet, so `ds find` 
 
 ---
 
+## Dial
+
+Import `@singularityfm/design-system/Dial`. No part covers it yet, so `ds find` does not name it.
+
+### Props of Dial
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | - | The DialTiles, one page of them. |
+| `wide?` | `boolean` | `false` | Six across instead of three, for a wide column (desktop). |
+| `className?` | `string` | - | For placing the grid where it stands, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
+| `slot?` | `string` | - | Astro places the grid in its parent's slot with it; it is not an attribute of the list. |
+
+Every attribute of a native `<ul>` element passes through.
+
+---
+
+## DialTile
+
+Import `@singularityfm/design-system/DialTile`. No part covers it yet, so `ds find` does not name it.
+
+### Props of DialTile
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `name` | `string` | - | The show's name, written on the cover. |
+| `label` | `string` | - | What a press does, for a screen reader: "Play Hard Fork, 2 new". The name and count on the cover are drawn for the eye only, so this is the tile's whole name. |
+| `children` | `ReactNode` | - | The cover: an image or the app's own cover, filling the square. |
+| `pinned?` | `boolean` | `false` | Pinned first by the person (the newest Daily always is). |
+| `href?` | `string` | - | Draws a link instead of a button, for a tile that opens a page. |
+| `count?` | `number \| string` | - | New episodes; a word ("New") for a Catchup. Absent or 0 draws no badge. |
+| `playing?` | `boolean` | `false` | The tile whose show is playing now: the accent ring. The page's player sets data-playing. |
+| `className?` | `string` | - | For placing the tile, or a hook a page's script finds it by (data-play-item). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
+
+Every attribute of a native `<button>` element passes through.
+
+---
+
 ## Flag
 
 Import `@singularityfm/design-system/Flag`. No part covers it yet, so `ds find` does not name it.
@@ -2239,6 +2294,20 @@ Import `@singularityfm/design-system/Flag`. No part covers it yet, so `ds find` 
 | --- | --- | --- | --- |
 | `region?` | `string` | - | An ISO 3166-1 code: the flag alone, at the 16 by 12 of a row of controls. |
 | `text?` | `string` | `""` | Text that may hold flag emoji: its flags drawn at the size of the words. |
+
+---
+
+## PageDots
+
+Import `@singularityfm/design-system/PageDots`. No part covers it yet, so `ds find` does not name it.
+
+### Props of PageDots
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `count` | `number` | - | How many pages there are. One or fewer draws nothing. |
+| `current?` | `number` | `0` | The page showing, from 0. A page's script moves it with data-current on the dots. |
+| `className?` | `string` | - | For placing the row, or a hook a page's script finds it by. Never its look. |
 
 ---
 
@@ -2255,6 +2324,27 @@ Import `@singularityfm/design-system/PlayingBars`. No part covers it yet, so `ds
 
 ---
 
+## ResumeCard
+
+Import `@singularityfm/design-system/ResumeCard`. No part covers it yet, so `ds find` does not name it.
+
+### Props of ResumeCard
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `title` | `string` | - | The episode's title. Two lines at most. |
+| `facts` | `string` | - | One line under the bar: the show and the time left ("Hard Fork · 12 min left"). |
+| `children` | `ReactNode` | - | The cover, a small square. |
+| `playLabel` | `string` | - | Play's name for a screen reader: "Resume The Jensen Huang Affair". |
+| `dismissLabel` | `string` | - | Dismiss's name: "Remove from Continue listening". |
+| `progress` | `number` | - | How much is heard, 0 to 1. |
+| `playing?` | `boolean` | `false` | Draws the pause glyph: this episode is playing. The page's player sets data-playing. |
+| `className?` | `string` | - | For placing the card, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
+
+Every attribute of a native `<article>` element passes through.
+
+---
+
 ## RowExit
 
 Import `@singularityfm/design-system/RowExit`. No part covers it yet, so `ds find` does not name it.
@@ -2267,3 +2357,37 @@ Import `@singularityfm/design-system/RowExit`. No part covers it yet, so `ds fin
 | `className?` | `string` | `""` | For placing the row (its own layout). Never how it leaves. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
 Every attribute of a native `<li>` element passes through.
+
+---
+
+## TopicGrid
+
+Import `@singularityfm/design-system/TopicGrid`. No part covers it yet, so `ds find` does not name it.
+
+### Props of TopicGrid
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | - | The TopicTiles. |
+| `wide?` | `boolean` | `false` | Four across instead of two, for a wide column (desktop). |
+| `className?` | `string` | - | For placing the grid, or a hook a page's script finds it by. Never its look. |
+
+Every attribute of a native `<ul>` element passes through.
+
+---
+
+## TopicTile
+
+Import `@singularityfm/design-system/TopicTile`. No part covers it yet, so `ds find` does not name it.
+
+### Props of TopicTile
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `name` | `string` | - | The topic's name. |
+| `covers?` | `readonly string[]` | `[]` | Up to two cover images from the topic, by address; the first sits in the corner, the second beside it. |
+| `tint?` | `string` | - | The tile's fill, a colour taken from its first cover; the container grey when absent. |
+| `href?` | `string` | - | Opens the topic's page. Without it the tile is a checkbox (first run). |
+| `className?` | `string` | - | For placing the tile, or a hook a page's script finds it by. Never its look. |
+
+Every attribute of a native `<input>` element passes through.

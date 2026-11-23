@@ -154,6 +154,11 @@ export const SAMPLE = {
   duration: "1:24",
   segments: ["One", "Two", "Three", "Four"],
   search: "Search",
+  shows: ["Show one", "Show two", "Show three", "Show four", "Show five", "Show six"],
+  episode: "Episode title",
+  resumeFacts: "Show one · 12 min left",
+  topics: ["Topic one", "Topic two", "Topic three", "Topic four"],
+  band: "Catchups",
 } as const;
 
 /** The glyphs of a compact Segmented navigation's tabs, one a view. */
@@ -940,6 +945,120 @@ export const SPECS: readonly ComponentSpec[] = [
         ? `<Code client:load label="${SAMPLE.label}" text={${JSON.stringify(SAMPLE.codeLines)}} />`
         : `<Code client:load label="${SAMPLE.label}" text="${SAMPLE.code}" />`,
     note: "Press the button on the snippet: it copies the text and says so.",
+  },
+  {
+    slug: "dial",
+    name: "Dial",
+    group: "display",
+    registry: "Dial",
+    file: "Dial.tsx",
+    controls: [toggle("playing", "Playing"), toggle("pinned", "Pinned"), toggle("count", "Count")],
+    imports: ["Dial", "DialTile"],
+    code: (state) => {
+      const attrs = [`name="${SAMPLE.shows[0]}"`, `label="Play ${SAMPLE.shows[0]}"`];
+      if (state.count === "on") attrs.push("count={2}");
+      if (state.pinned === "on") attrs.push("pinned");
+      if (state.playing === "on") attrs.push("playing");
+      return `<Dial>\n  ${jsx("DialTile", attrs, '<img src="cover.webp" alt="" />')}\n</Dial>`;
+    },
+    note: "The squares stand in for covers. A press plays; the page's player sets data-playing.",
+    subparts: [
+      {
+        file: "DialTile.tsx",
+        name: "DialTile",
+        note: "One square: the cover as children, the name on it, and a count, a pin and the playing ring when set.",
+      },
+    ],
+  },
+  {
+    slug: "page-dots",
+    name: "PageDots",
+    label: "Page dots",
+    group: "navigation",
+    registry: "Page dots",
+    file: "PageDots.tsx",
+    controls: [
+      choice("current", "Page", [
+        ["0", "First"],
+        ["1", "Second"],
+        ["2", "Third"],
+      ]),
+    ],
+    imports: ["PageDots"],
+    code: (state) => jsx("PageDots", ["count={3}", `current={${state.current ?? "0"}}`]),
+  },
+  {
+    slug: "resume-card",
+    name: "ResumeCard",
+    label: "Resume card",
+    group: "display",
+    registry: "Resume card",
+    file: "ResumeCard.tsx",
+    controls: [toggle("playing", "Playing")],
+    imports: ["ResumeCard"],
+    code: (state) =>
+      jsx(
+        "ResumeCard",
+        [
+          `title="${SAMPLE.episode}"`,
+          `facts="${SAMPLE.resumeFacts}"`,
+          "progress={0.6}",
+          `playLabel="Resume ${SAMPLE.episode}"`,
+          'dismissLabel="Remove from Continue listening"',
+          ...(state.playing === "on" ? ["playing"] : []),
+        ],
+        '<img src="cover.webp" alt="" />',
+      ),
+  },
+  {
+    slug: "band",
+    name: "Band",
+    group: "display",
+    registry: "Band",
+    file: "Band.tsx",
+    controls: [toggle("action", "Action")],
+    imports: ["Band", "Button"],
+    code: (state) =>
+      jsx(
+        "Band",
+        [
+          `title="${SAMPLE.band}"`,
+          ...(state.action === "on"
+            ? ['action={<Button variant="text" href="/library">See all</Button>}']
+            : []),
+        ],
+        "\n  {shelf}\n",
+      ),
+  },
+  {
+    slug: "topic-tile",
+    name: "TopicTile",
+    label: "Topic tile",
+    group: "inputs",
+    registry: "Topic tile",
+    file: "TopicTile.tsx",
+    controls: [
+      choice("element", "Element", [
+        ["checkbox", "Checkbox"],
+        ["link", "Link"],
+      ]),
+      toggle("checked", "Ticked"),
+    ],
+    imports: ["TopicGrid", "TopicTile"],
+    code: (state) => {
+      const attrs = [`name="${SAMPLE.topics[0]}"`, 'covers={["one.webp", "two.webp"]}'];
+      if (state.element === "link") attrs.push('href="/topic/one"');
+      else if (state.checked === "on") attrs.push("defaultChecked");
+      return `<TopicGrid>\n  ${jsx("TopicTile", attrs)}\n</TopicGrid>`;
+    },
+    note: "The squares in the corner stand in for two covers from the topic.",
+    subparts: [
+      {
+        file: "TopicGrid.tsx",
+        name: "TopicGrid",
+        note: "The list that holds the tiles: two across, or four with wide.",
+      },
+    ],
   },
 ];
 

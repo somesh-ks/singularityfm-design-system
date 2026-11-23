@@ -1972,6 +1972,7 @@
       ],
       "imports": [],
       "styles": [
+        "packages/design-system/styles/badge.css",
         "packages/design-system/styles/field.css",
         "packages/design-system/styles/primitives.css",
         "packages/design-system/styles/search-field.css",
@@ -2278,6 +2279,42 @@
       ]
     },
     {
+      "name": "Band",
+      "import": "@singularityfm/design-system/Band",
+      "file": "packages/design-system/src/Band.tsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The heading's words: \"Catchups\"."
+        },
+        {
+          "name": "action",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "What sits at the heading's end: a See all link (a Button text link)."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "What the band holds: a shelf of cards, or result rows."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the band, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        }
+      ],
+      "element": "section"
+    },
+    {
       "name": "Banner",
       "import": "@singularityfm/design-system/Banner",
       "file": "packages/design-system/src/Banner.tsx",
@@ -2577,6 +2614,42 @@
       ]
     },
     {
+      "name": "Dial",
+      "import": "@singularityfm/design-system/Dial",
+      "file": "packages/design-system/src/Dial.tsx",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The DialTiles, one page of them."
+        },
+        {
+          "name": "wide",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Six across instead of three, for a wide column (desktop)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the grid where it stands, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the grid in its parent's slot with it; it is not an attribute of the list."
+        }
+      ],
+      "element": "ul"
+    },
+    {
       "name": "Dialog",
       "import": "@singularityfm/design-system/Dialog",
       "file": "packages/design-system/src/Dialog.tsx",
@@ -2654,6 +2727,70 @@
       "except": [
         "className"
       ]
+    },
+    {
+      "name": "DialTile",
+      "import": "@singularityfm/design-system/DialTile",
+      "file": "packages/design-system/src/DialTile.tsx",
+      "props": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The show's name, written on the cover."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "What a press does, for a screen reader: \"Play Hard Fork, 2 new\". The name and count on the cover are drawn for the eye only, so this is the tile's whole name."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The cover: an image or the app's own cover, filling the square."
+        },
+        {
+          "name": "pinned",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Pinned first by the person (the newest Daily always is)."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Draws a link instead of a button, for a tile that opens a page."
+        },
+        {
+          "name": "count",
+          "type": "number | string",
+          "required": false,
+          "default": "",
+          "description": "New episodes; a word (\"New\") for a Catchup. Absent or 0 draws no badge."
+        },
+        {
+          "name": "playing",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The tile whose show is playing now: the accent ring. The page's player sets data-playing."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the tile, or a hook a page's script finds it by (data-play-item). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        }
+      ],
+      "element": "button"
     },
     {
       "name": "Fab",
@@ -3033,6 +3170,34 @@
       ]
     },
     {
+      "name": "PageDots",
+      "import": "@singularityfm/design-system/PageDots",
+      "file": "packages/design-system/src/PageDots.tsx",
+      "props": [
+        {
+          "name": "count",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "How many pages there are. One or fewer draws nothing."
+        },
+        {
+          "name": "current",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "The page showing, from 0. A page's script moves it with data-current on the dots."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the row, or a hook a page's script finds it by. Never its look."
+        }
+      ]
+    },
+    {
       "name": "PlayChip",
       "import": "@singularityfm/design-system/PlayChip",
       "file": "packages/design-system/src/PlayChip.tsx",
@@ -3113,6 +3278,70 @@
           "description": "Astro places the bars in its parent's slot with it; it is not an attribute of the element."
         }
       ]
+    },
+    {
+      "name": "ResumeCard",
+      "import": "@singularityfm/design-system/ResumeCard",
+      "file": "packages/design-system/src/ResumeCard.tsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The episode's title. Two lines at most."
+        },
+        {
+          "name": "facts",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "One line under the bar: the show and the time left (\"Hard Fork · 12 min left\")."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The cover, a small square."
+        },
+        {
+          "name": "playLabel",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "Play's name for a screen reader: \"Resume The Jensen Huang Affair\"."
+        },
+        {
+          "name": "dismissLabel",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "Dismiss's name: \"Remove from Continue listening\"."
+        },
+        {
+          "name": "progress",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "How much is heard, 0 to 1."
+        },
+        {
+          "name": "playing",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Draws the pause glyph: this episode is playing. The page's player sets data-playing."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the card, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        }
+      ],
+      "element": "article"
     },
     {
       "name": "Ripple",
@@ -3534,6 +3763,78 @@
       "import": "@singularityfm/design-system/Toast",
       "file": "packages/design-system/src/Toast.tsx",
       "props": []
+    },
+    {
+      "name": "TopicGrid",
+      "import": "@singularityfm/design-system/TopicGrid",
+      "file": "packages/design-system/src/TopicGrid.tsx",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The TopicTiles."
+        },
+        {
+          "name": "wide",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Four across instead of two, for a wide column (desktop)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the grid, or a hook a page's script finds it by. Never its look."
+        }
+      ],
+      "element": "ul"
+    },
+    {
+      "name": "TopicTile",
+      "import": "@singularityfm/design-system/TopicTile",
+      "file": "packages/design-system/src/TopicTile.tsx",
+      "props": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The topic's name."
+        },
+        {
+          "name": "covers",
+          "type": "readonly string[]",
+          "required": false,
+          "default": "[]",
+          "description": "Up to two cover images from the topic, by address; the first sits in the corner, the second beside it."
+        },
+        {
+          "name": "tint",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The tile's fill, a colour taken from its first cover; the container grey when absent."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Opens the topic's page. Without it the tile is a checkbox (first run)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the tile, or a hook a page's script finds it by. Never its look."
+        }
+      ],
+      "element": "input"
     }
   ],
   "tokens": [

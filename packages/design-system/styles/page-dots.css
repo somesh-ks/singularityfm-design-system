@@ -1,0 +1,32 @@
+/*
+ * Page dots (design-system/PageDots.tsx): one 8px dot per page, 8px apart, centred under the grid.
+ * The current page's dot takes the ink; the rest the strong track. Same size either way, so nothing
+ * moves as the page changes.
+ */
+.page-dots-track {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  padding-block-start: var(--space-4);
+}
+
+.page-dots-track > span {
+  inline-size: var(--space-2);
+  block-size: var(--space-2);
+  border-radius: var(--shape-round);
+  background: var(--color-track-strong);
+}
+
+.page-dots-track > span[aria-current="true"] {
+  background: var(--color-on-surface);
+}
+
+@media (forced-colors: active) {
+  .page-dots-track > span {
+    background: GrayText;
+  }
+
+  .page-dots-track > span[aria-current="true"] {
+    background: CanvasText;
+  }
+}
