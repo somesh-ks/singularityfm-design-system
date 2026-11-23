@@ -39,6 +39,7 @@ export const GRID_EXCEPTIONS: [selector: string, reason: string][] = [
     ".create-fab-label",
     "the word's end onto the Fab's padding, which is sized for the plus's square: 4px more balances it",
   ],
+  [".settings-text", "a setting's label onto its hint, inside one row"],
 ];
 
 export interface RetiredPath {
