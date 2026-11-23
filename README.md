@@ -2,7 +2,7 @@
 
 The design system of Singularity: the `@singularityfm/design-system` package
 ([packages/design-system](packages/design-system/README.md)) and its style guide
-([apps/design](apps/design), news.someshks.work/design).
+([apps/design](apps/design), news.someshks.com/design).
 
 ```sh
 pnpm install --frozen-lockfile
