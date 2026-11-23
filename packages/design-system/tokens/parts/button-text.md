@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: button-text
+name: "Text button"
+kind: action
+imports:
+  - "@singularityfm/design-system/Button"
+---
+
 # Text button (`button-text`)
 
 An accent label with no container until it is hovered or pressed; the quietest button.
@@ -26,6 +35,14 @@ An accent label with no container until it is hovered or pressed; the quietest b
 ## Rules
 
 - In a dialog, Cancel and the filled button sit in a DialogActions row (EpisodeActions.astro); a form sheet keeps its one filled button in `.sheet-actions`.
+
+## Accessibility
+
+- Role: Native `<button>` (or `<a href>` when href is set)
+- ARIA: Accessible name comes from children; provide descriptive label text.
+- ARIA: Do not nest interactive elements inside Button.
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
+- Focus: Native keyboard focus ring via :focus-visible.
 
 ## Props of Button
 

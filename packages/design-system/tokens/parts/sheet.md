@@ -1,3 +1,13 @@
+---
+version: "0.13.0"
+id: sheet
+name: "Sheet"
+kind: container
+imports:
+  - "@singularityfm/design-system/Sheet"
+  - "@singularityfm/design-system/SheetHeader"
+---
+
 # Sheet (`sheet`)
 
 A panel over the page for a form or a list: full screen on a phone, at the right from 40rem.
@@ -30,6 +40,14 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 - A header a script builds is sheetHeadHtml() (design-system/sheetHead.ts); never write the row or its Close by hand.
 - `sheet-field*`, `sheet-form` and `sheet-actions` are form layout in sheets.css, not the shell.
 
+## Accessibility
+
+- Role: Native modal `<dialog data-sheet aria-labelledby={titleId}>`
+- ARIA: titleId links `<dialog>` aria-labelledby to the SheetHeader h2 heading.
+- ARIA: Rendered closed on server; open with dialog.showModal().
+- Keyboard: Escape closes the sheet natively; Tab cycles within modal contents.
+- Focus: Browser traps focus inside open `<dialog>` and restores focus to opener on close.
+
 ## Props of Sheet
 
 | Name | Type | Default | What it does |
@@ -44,6 +62,12 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 | `className?` | `string` | - | For placing the sheet where it stands. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
 Every attribute of a native `<dialog>` element passes through, except `open` and `style`.
+
+### Example of SheetHeader
+
+```tsx
+<SheetHeader title="Edit topic" titleId="edit-sheet-title" close="data-panel-close" />
+```
 
 ## Props of SheetHeader
 

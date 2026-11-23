@@ -1,6 +1,20 @@
+---
+version: "0.13.0"
+id: section-head
+name: "Section head"
+kind: layout
+imports: []
+---
+
 # Section head (`section-head`)
 
 A section header with more room above than below, so it belongs to what follows.
+
+## Markup
+
+```astro
+<h2 class="section-head">Settings</h2>
+```
 
 ## Use when
 

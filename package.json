@@ -22,7 +22,8 @@
     "system": "tsx packages/design-system/scripts/system/build.ts",
     "ds": "tsx packages/design-system/scripts/system/cli.ts",
     "glyphs": "tsx scripts/buildGlyphs.ts",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "version-packages": "changeset version && pnpm run system"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

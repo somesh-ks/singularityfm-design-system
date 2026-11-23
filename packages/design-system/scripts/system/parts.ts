@@ -8,6 +8,7 @@
  * built from the registry; a family that moves there deletes its entries here. system.test.ts
  * checks ids only within the whole list.
  */
+import { COMPONENT_A11Y, PART_A11Y } from "../../src/a11y.js";
 import { componentParts } from "./componentParts.js";
 import type { PartSource } from "./types.js";
 
@@ -22,6 +23,10 @@ export const PARTS: PartSource[] = [
     when: ["the Catch up action in the side column"],
     not: [{ when: "any other button", use: "button-tonal" }],
     keywords: ["catch up", "side column", "create action"],
+    markup: '<button type="button" class="btn-action-tonal">Catch up</button>',
+    rules: [
+      "Paint modifier only (radius, fill, hover and pressed states): apply it to the Catch up creating action in the side column; the host element keeps its own size and layout.",
+    ],
   },
   {
     id: "tabs",
@@ -39,6 +44,7 @@ export const PARTS: PartSource[] = [
       "Drawn only for two sections or more.",
       "Each section's slug names its target: the section the tab jumps to has id `c-<slug>`.",
     ],
+    a11y: COMPONENT_A11Y.SectionTabs,
   },
   {
     id: "row-action",
@@ -59,6 +65,7 @@ export const PARTS: PartSource[] = [
     markup:
       '<a class="row-action" href="/settings/schedule"><span class="settings-text"><span class="settings-label">Daily</span><span class="settings-hint">Every other day</span></span><Icon name="chevronRight" /></a>',
     rules: ["Label in regular weight, never bold.", "Sits in a `.rows.card-group`."],
+    a11y: PART_A11Y["row-action"],
   },
   {
     id: "card-group",
@@ -73,6 +80,8 @@ export const PARTS: PartSource[] = [
     ],
     not: [{ when: "a single stat or number", use: "stat-tiles" }],
     keywords: ["card", "settings group", "section container", "grouped list"],
+    markup:
+      '<ul class="rows card-group">\n  <li class="settings-row"><span class="settings-label">Account</span><span class="settings-hint">Signed in</span></li>\n</ul>',
     rules: [
       "A card of one row follows its height for its corner.",
       "Dividers run edge to edge inside.",
@@ -87,6 +96,8 @@ export const PARTS: PartSource[] = [
     when: ["a setting with a switch", "a setting with a select", "a labeled value with a hint"],
     not: [{ when: "a row that opens another page", use: "row-action" }],
     keywords: ["preference", "toggle row", "switch row", "setting"],
+    markup:
+      '<div class="settings-row">\n  <div class="settings-text">\n    <label class="settings-label" for="autoplay">Autoplay</label>\n    <span class="settings-hint" id="autoplay-hint">Continue to the next episode</span>\n  </div>\n  <Switch id="autoplay" name="autoplay" aria-describedby="autoplay-hint" />\n</div>',
   },
   {
     id: "empty-state",
@@ -101,9 +112,10 @@ export const PARTS: PartSource[] = [
       { when: "a notice above content that exists", use: "banner" },
     ],
     keywords: ["nothing yet", "no results", "blank slate", "zero state"],
-    markup:
-      '<EmptyState art="library" title="Nothing saved yet" body="..." primary={{ label: "Go to Latest", href: "/" }} />',
-    rules: ["Never hand-write `.empty` markup."],
+    rules: [
+      "EmptyState is planned (DS-14) and not yet exported or styled by this package.",
+      "Do not invent an EmptyState component or hand-write unstyled .empty or .empty-actions markup; shell.css uses .empty only as a layout hook and provides no visual styling. Use Banner for inline notices or ask the owner (see GAPS.md).",
+    ],
   },
   {
     id: "multiselect",
@@ -114,6 +126,9 @@ export const PARTS: PartSource[] = [
     when: ["choose several from a long list", "pick sources or topics in a field"],
     not: [{ when: "a few choices that fit on screen", use: "filter-chip" }],
     keywords: ["dropdown with checkboxes", "picker"],
+    rules: [
+      "Not yet exported or styled by this package (see GAPS.md). Use Chip and ChipGroup (filter-chip) for 2 to 6 short options, or ask the owner before building a custom multi-select.",
+    ],
   },
   {
     id: "stat-tiles",
@@ -124,6 +139,8 @@ export const PARTS: PartSource[] = [
     when: ["figures on a dashboard", "costs and spend totals"],
     not: [{ when: "a list of rows", use: "card-group" }],
     keywords: ["kpi", "numbers", "metrics"],
+    markup:
+      '<ul class="stat-tiles">\n  <li class="stat-tile">\n    <span class="stat-tile-value">42</span>\n    <span class="stat-tile-label">Stories</span>\n  </li>\n</ul>',
   },
   {
     id: "section-head",
@@ -133,6 +150,7 @@ export const PARTS: PartSource[] = [
     classes: ["section-head"],
     when: ["title a group of rows or cards on a page"],
     keywords: ["heading", "group title"],
+    markup: '<h2 class="section-head">Settings</h2>',
   },
   {
     id: "meta",
@@ -142,6 +160,7 @@ export const PARTS: PartSource[] = [
     classes: ["meta"],
     when: ["date, duration and source under a title"],
     keywords: ["subtitle", "facts line"],
+    markup: '<p class="meta"><span>Weekly</span><span>14 stories</span></p>',
   },
   {
     id: "cover",
@@ -151,5 +170,8 @@ export const PARTS: PartSource[] = [
     classes: ["cover"],
     when: ["show an episode or briefing cover"],
     keywords: ["artwork", "thumbnail", "album art"],
+    rules: [
+      "Not yet exported or styled by this package (see GAPS.md). Cover artwork generation lives in the consumer app; ask the owner before adding cover styling.",
+    ],
   },
 ];

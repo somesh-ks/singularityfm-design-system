@@ -10,7 +10,7 @@ export interface PropRow {
   required: boolean;
   default: string;
   description: string;
-  /** The choices, when the type is a named union of strings the package exports (ButtonVariant). */
+  /** The choices, when the type is a named or inline union of string literals (ButtonVariant, "create" | "panel"). */
   values?: string[];
 }
 
@@ -61,6 +61,29 @@ function splitTop(text: string, separator: RegExp): string[] {
 }
 
 const tidy = (text: string): string => text.replace(/\s+/g, " ").trim();
+
+/**
+ * Extracts choices when a prop's type is written inline as a union of string literals
+ * (`"create" | "panel"` or multiline `| "create" | "panel"`, optionally with `| undefined`).
+ */
+export function stringUnionValues(type: string): string[] | undefined {
+  let normalized = type.trim();
+  if (normalized.startsWith("(") && normalized.endsWith(")")) {
+    normalized = normalized.slice(1, -1).trim();
+  }
+  const branches = splitTop(normalized, /\|/)
+    .map((branch) => branch.trim())
+    .filter(Boolean);
+  if (branches.length < 2) return undefined;
+  const values: string[] = [];
+  for (const branch of branches) {
+    if (branch === "undefined") continue;
+    const match = /^(?:"([^"]*)"|'([^']*)')$/.exec(branch);
+    if (!match) return undefined;
+    values.push(match[1] ?? match[2] ?? "");
+  }
+  return values.length >= 2 ? values : undefined;
+}
 
 function defaults(source: string): Map<string, string> {
   const found = new Map<string, string>();
@@ -214,12 +237,15 @@ export function propsTable(source: string): PropsTable {
       const named = /^\s*(\[[^\]]+\]|[\w"-]+)(\?)?\s*:\s*([\s\S]+)$/.exec(code);
       if (!named?.[1] || named[1].startsWith("[")) continue;
       const name = named[1];
+      const type = tidy(named[3] ?? "");
+      const values = stringUnionValues(type);
       rows.push({
         name,
-        type: tidy(named[3] ?? ""),
+        type,
         required: !named[2],
         default: given.get(name) ?? "",
         description: tidy((comment ?? "").replace(/^\s*\*/gm, "")),
+        ...(values ? { values } : {}),
       });
     }
   }

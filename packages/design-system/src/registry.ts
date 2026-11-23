@@ -4,6 +4,7 @@
  * scripts/systemUse.test.ts (at the repository root) holds the apps to them. A new component is added here in the PR that adds it;
  * a class not listed here is not part of the system.
  */
+import { REGISTRY_A11Y } from "./a11y.ts";
 import { AVATAR, AVATAR_CLASSES, AVATAR_RETIRED } from "./avatar.ts";
 import { BADGE, BADGE_CLASSES, BADGE_RETIRED } from "./badge.ts";
 import { BANNER, BANNER_CLASSES, BANNER_RETIRED } from "./banner.ts";
@@ -16,7 +17,7 @@ import { FAB, FAB_CLASSES, FAB_RETIRED } from "./fab.ts";
 import { FIELD, FIELD_CLASSES, FIELD_RETIRED } from "./field.ts";
 import { FLAG, FLAG_CLASSES, FLAG_RETIRED } from "./flag.ts";
 import { GLOW, GLOW_CLASSES, GLOW_RETIRED } from "./glow.ts";
-import type { Guidance } from "./guidance.ts";
+import type { A11yGuidance, Guidance } from "./guidance.ts";
 import { ICON, ICON_CLASSES, ICON_RETIRED } from "./icon.ts";
 import { ICON_BUTTON, ICON_BUTTON_CLASSES, ICON_BUTTON_RETIRED } from "./iconButton.ts";
 import { LINK, LINK_CLASSES, LINK_RETIRED } from "./link.ts";
@@ -368,4 +369,7 @@ export const COMPONENTS: DesignSystemComponent[] = [
     dontUseWhen: GLOW.dontUseWhen,
     parts: {},
   },
-];
+].map((component) => {
+  const a11y = (REGISTRY_A11Y as Record<string, A11yGuidance>)[component.name];
+  return { ...component, ...(a11y ? { a11y } : {}) };
+});

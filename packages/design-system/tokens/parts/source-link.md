@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: source-link
+name: "Source link"
+kind: action
+imports:
+  - "@singularityfm/design-system/Link"
+---
+
 # Source link (`source-link`)
 
 The one link out of a story: the publisher's name, underlined on hover.
@@ -25,6 +34,14 @@ The one link out of a story: the publisher's name, underlined on hover.
 ## Rules
 
 - One source link everywhere, the player's included: no page draws its own copy.
+
+## Accessibility
+
+- Role: Native `<a href>`
+- ARIA: Accessible name comes from children.
+- ARIA: External source links use target="_blank" with rel="noopener noreferrer".
+- Keyboard: Enter navigates to href.
+- Focus: Native focus ring via :focus-visible with 44px tap area.
 
 ## Props of Link
 
