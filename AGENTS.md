@@ -15,7 +15,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 | Path | What |
 | --- | --- |
 | `packages/design-system/` | The published package: `src/` components and behaviour, `styles/`, `tokens/`, `fonts/`, `flags/`, `scripts/` (token and system generators, the `ds` CLI) |
-| `apps/design/` | The style guide (`@singularity/design`, private), its own Vercel project at news.someshks.work/design |
+| `apps/design/` | The style guide (`@singularity/design`, private), its own Vercel project at design.singularityfm.app |
 | `.changeset/` | Pending release notes |
 | `scripts/` | Repository checks: the pack-and-install test, the docs check, the deploy batch rule; the glyph builder |
 
@@ -37,6 +37,10 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 - Merging (owner, 2026-11-09: "do the best engineering practice"): a PR merges itself, by its thread, once its review is clean, it is up to date with `main` and the required `check` is green. That covers `.github/workflows`, `AGENTS.md`, version PRs and breaking releases; a visual change keeps his OK on stills. Only he merges changes to branch rulesets, secret or env handling, npm publish or trusted-publisher permissions, and `CODEOWNERS` or the review config that gates merging (`.coderabbit.yaml`). Why: the [app's code-review.md](https://github.com/somesh-ks/singularityfm-app/blob/main/docs/engineering/code-review.md), Who merges.
 - Do not edit `CHANGELOG.md` by hand; the version PR writes it.
 - End the reply with what you skipped or did not check.
+
+## Domain
+
+The style guide is served at https://design.singularityfm.app, its own Vercel project at the root path. The reader at https://singularityfm.app redirects its old `/design` paths there. The single source of truth for the addresses is `site.json` at the root of [somesh-ks/singularityfm-app](https://github.com/somesh-ks/singularityfm-app). It holds all three (url, admin, design). On the next move, update that file, `apps/design/astro.config.mjs` and the docs here.
 
 ## The design system
 

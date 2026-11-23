@@ -136,6 +136,6 @@ export const NAV: readonly {
   { page: COMPONENTS, children: COMPONENT_PAGES, groups: COMPONENT_GROUPS },
 ];
 
-/** An address under the base ("/design"), which Astro writes with or without a closing slash. */
+/** An address under the base (the root), which Astro writes with or without a closing slash. */
 export const href = (path: string): string =>
   `${import.meta.env.BASE_URL.replace(/\/$/, "")}${path}` || "/";
