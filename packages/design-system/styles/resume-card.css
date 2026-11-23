@@ -65,13 +65,16 @@
   background: var(--color-accent);
 }
 
+/* Two lines, never an ellipsis: the time left ends the line and is the fact a listener came for. */
 .resume-card-facts {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
   color: var(--color-on-surface-muted);
   font-size: var(--text-meta-size);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .resume-card-acts {
