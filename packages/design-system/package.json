@@ -89,7 +89,7 @@
   },
   "peerDependencies": {
     "@base-ui/react": "^1.9.0",
-    "astro": "^7.4.13",
+    "astro": "^7.4.10",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
