@@ -100,7 +100,10 @@ export const PX_EXCEPTIONS: [selector: string, reason: string][] = [
 /**
  * The control heights, in rem, per mood. Each control takes its height from one of these steps (S, M,
  * L), so two side by side line up: Default S 36px, M 44px, L 48px; Expressive S 44px, M 52px, L 56px.
- * Halloween is Default. The list is the one place the steps live: the size test reads it.
+ * Halloween is Default. The list is the one place the steps live: the size test reads it. The owner's
+ * targets (23 Nov) for the adoption PR: a select is one height, 44 (`--field-height`, 48 today); a menu
+ * row is 48 (`--size-option`); Topics' Add source is a normal button, 48. The app bar, the navigation bar
+ * and the play disc are chrome, outside the steps (SIZE_LITERAL_EXCEPTIONS).
  */
 export const SIZE_STEPS = {
   default: [2.25, 2.75, 3],
@@ -109,9 +112,9 @@ export const SIZE_STEPS = {
 
 /**
  * Heights that sit off the steps today, by token name, with why. A name here may hold any value in
- * its moods: it is debt to settle, and each entry leaves this list when its height moves onto a step
- * (or the owner decides it is chrome, not a control). A new off-step height is not on this list, so
- * it fails.
+ * its moods: it is debt to settle, and each entry leaves this list when its height moves onto a step.
+ * Chrome is not debt: it is a `:root { --name }` entry in SIZE_LITERAL_EXCEPTIONS. A new off-step
+ * height is on neither list, so it fails.
  */
 export const SIZE_DEBT: [name: string, reason: string][] = [
   ["button-height-small", "the small button, 32px (40 Expressive); the step is 36 (44)"],
@@ -125,19 +128,32 @@ export const SIZE_DEBT: [name: string, reason: string][] = [
   ],
   ["cta-height", "never read by a stylesheet (dead); 56px, 64 Expressive"],
   ["toast-min-height", "never read: toast.css draws its own calc(touch + 2 space-1), 52px"],
-  ["app-bar-height", "the app bar, 56px (64 Expressive): chrome, not a control"],
-  ["nav-bar-height", "the bottom navigation bar, 64px (80 Expressive): chrome"],
-  ["nav-indicator-height", "the navigation pill, 32px (40 Expressive): part of the chrome"],
   ["control-size-md", "the medium round control, 56px: a circle, not a row control"],
-  ["control-size-lg", "the large round control, 72px (80 Expressive): a circle"],
 ];
 
 /**
  * Declarations where a rem or em length is a size on purpose, as ["selector { property }", reason]. A
  * picture, a decoration, a glyph drawn in its text's units, a sheet's cap: none is a control height.
- * The FAB's root size is a control (debt): it moves to a token with the owner's OK.
+ * The FAB's root size is a control (debt): it moves to a token with the owner's OK. A `:root { --name }`
+ * entry for a token in tokens.css exempts that token from the size steps test: chrome, not a control.
  */
 export const SIZE_LITERAL_EXCEPTIONS: [declaration: string, reason: string][] = [
+  [
+    ":root { --app-bar-height }",
+    "the app bar, 56px (64 Expressive): chrome, outside the control steps (owner, 23 Nov)",
+  ],
+  [
+    ":root { --nav-bar-height }",
+    "the bottom navigation bar, 64px (80 Expressive): chrome, outside the control steps (owner, 23 Nov)",
+  ],
+  [
+    ":root { --nav-indicator-height }",
+    "the navigation bar's pill, 32px (40 Expressive): chrome, outside the control steps (owner, 23 Nov)",
+  ],
+  [
+    ":root { --control-size-lg }",
+    "the play disc, 72px (80 Expressive): chrome, outside the control steps (owner, 23 Nov)",
+  ],
   [
     ":root { --fab-size }",
     "debt: the floating button is a control at 56px, off the steps; a token is due",

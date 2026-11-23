@@ -10,6 +10,7 @@ import {
   rawPixels,
   retiredPath,
   SIZE_DEBT,
+  SIZE_LITERAL_EXCEPTIONS,
   SIZE_STEPS,
   sizeLiteral,
   unknownProperty,
@@ -240,6 +241,13 @@ describe("the rules", () => {
   it("size-steps: each control height is a step of its mood or a named debt, and no debt is stale", () => {
     const tokens = readFileSync(join(import.meta.dirname, "..", "styles", "tokens.css"), "utf8");
     const debt = new Set(SIZE_DEBT.map(([name]) => name));
+    // Chrome (the app bar, the navigation bar, the play disc) sits outside the steps by the owner's call:
+    // a `:root { --name }` exception names it, so it is neither checked nor debt.
+    const chrome = new Set(
+      SIZE_LITERAL_EXCEPTIONS.flatMap(
+        ([declaration]) => /^:root \{ (--[\w-]+) \}$/.exec(declaration)?.[1] ?? [],
+      ),
+    );
     // A token that names a control size: a height, a size, a touch target or an option row. A text size, a
     // cover's picture, an icon's glyph, a title's text and the speed readout's digits are not control heights.
     const SIZE_TOKEN =
@@ -280,7 +288,7 @@ describe("the rules", () => {
         return next === undefined || depth > 8 ? undefined : resolve(next, depth + 1);
       };
       for (const [name, declared] of effective) {
-        if (!SIZE_TOKEN.test(name)) continue;
+        if (!SIZE_TOKEN.test(name) || chrome.has(name)) continue;
         const value = resolve(declared);
         const literal = /^(\d*\.?\d+)(rem|em|px)$/i.exec(value ?? "");
         if (!literal) continue;
