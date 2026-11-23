@@ -1,6 +1,7 @@
 // Mechanical grading for the agent test (DS-14): what an agent wrote, and how it went about it, read
 // from its files and its transcript with no model call. run.mjs calls these after each task.
 
+import { gunzipSync } from "node:zlib";
 import ts from "typescript";
 
 export const PACKAGE = "@singularityfm/design-system";
@@ -142,7 +143,7 @@ export type RunStats = {
   toolCalls: number;
   /** Ran the package's `ds` lookup at least once. */
   usedDs: boolean;
-  /** Opened the package's agent guide, foundations, llms files or a part page. */
+  /** Opened the package's agent guide, gaps note, foundations, llms files or a part/component page. */
   readGuide: boolean;
   finished: boolean;
 };
@@ -200,7 +201,10 @@ function claudeTrace(events: Event[]): Trace {
       ...tools.map((tool) => String(tool.input?.file_path ?? tool.input?.path ?? "")),
       ...commands,
     ],
-    finished: result !== undefined && result.is_error !== true,
+    finished:
+      result !== undefined &&
+      result.is_error !== true &&
+      (!result.subtype || result.subtype === "success"),
   };
 }
 
@@ -265,7 +269,9 @@ export function runStats(transcript: string, agent: "claude" | "antigravity"): R
       /(^|[\s;&|/])ds(\.mjs)?\s+(find|part|token|list|batch|validate|version)\b/.test(command),
     ),
     readGuide: touched.some((text) =>
-      /design-system[\\/](AGENTS\.md|tokens[\\/](foundations\.md|llms|parts[\\/]))/.test(text),
+      /design-system[\\/](AGENTS\.md|GAPS\.md|tokens[\\/](foundations\.md|llms|(?:parts|components)(?:[\\/]|(?=[\s"'])|$)))/.test(
+        text,
+      ),
     ),
   };
 }
@@ -276,6 +282,7 @@ export type SummaryRow = {
   setup: string;
   agent: string;
   task: string;
+  package?: string;
   model?: string;
   finished: boolean;
   met: number | null;
@@ -288,6 +295,7 @@ export type SummaryRow = {
   read_guide: boolean;
   minutes: number | null;
   tokens: number | null;
+  tool_calls?: number | null;
 };
 
 /** Whether a list, or CI's count of it, is empty; null when CI could not read it. */
@@ -421,4 +429,151 @@ export function compareRuns(runs: SummaryRow[][]): Comparison[] {
       tokens: [middle(was, "tokens"), middle(now, "tokens")],
     };
   });
+}
+
+export type PackageMeta = {
+  name?: string;
+  version?: string;
+  peerDependencies?: Record<string, string>;
+};
+
+const TAR_BLOCK = 512;
+const textDecoder = new TextDecoder();
+
+const tarString = (block: Uint8Array, start: number, end: number): string => {
+  let stop = start;
+  while (stop < end && block[stop] !== 0) stop += 1;
+  return textDecoder.decode(block.subarray(start, stop));
+};
+
+/** Reads `package/package.json` from a gzipped `.tgz` package tarball without invoking `tar`. */
+export function readTarballPackageJson(tgz: Uint8Array): PackageMeta {
+  const tar = gunzipSync(tgz);
+  for (let offset = 0; offset + TAR_BLOCK <= tar.length; ) {
+    const header = tar.subarray(offset, offset + TAR_BLOCK);
+    offset += TAR_BLOCK;
+    if (header.every((byte) => byte === 0)) break;
+    const name = tarString(header, 0, 100);
+    const prefix = tarString(header, 345, 500);
+    const fullName = (prefix ? `${prefix}/${name}` : name).replace(/^\.\//, "");
+    const sizeText = tarString(header, 124, 136).trim();
+    const size = sizeText ? Number.parseInt(sizeText, 8) : 0;
+    if (!Number.isFinite(size) || size < 0) {
+      throw new Error(`Invalid tar entry size for ${fullName}`);
+    }
+    const typeFlag = header[156];
+    const isFile = typeFlag === 0 || typeFlag === 48;
+    if (isFile && fullName === "package/package.json") {
+      if (offset + size > tar.length) throw new Error("Truncated package/package.json in tarball");
+      return JSON.parse(textDecoder.decode(tar.subarray(offset, offset + size))) as PackageMeta;
+    }
+    offset += Math.ceil(size / TAR_BLOCK) * TAR_BLOCK;
+  }
+  throw new Error("Tarball does not contain package/package.json");
+}
+
+const itemCount = (value: string[] | number | null): number | null =>
+  value === null ? null : Array.isArray(value) ? value.length : value;
+
+export type GroupSummary = {
+  setup: string;
+  agent: string;
+  model: string;
+  packageName: string;
+  finished: string;
+  rightPart: string;
+  invented: string;
+  outsideUi: string;
+  validateErrors: string;
+  compiles: string;
+  usedDs: string;
+  readGuide: string;
+  minutes: number | null;
+  tokens: number | null;
+  toolCalls: number | null;
+};
+
+/**
+ * Summarizes one `(setup, agent)` slice for `summary.md`. Only finished runs count toward pass,
+ * compile, validate, guide, and median columns so timeouts and quota errors do not read as passes
+ * or pull rates down. When zero runs finished, every column after `Finished` reads `"n/a"`.
+ */
+export function summarizeGroup(rows: SummaryRow[], setup: string, agent: string): GroupSummary {
+  const mine = rows.filter((row) => row.setup === setup && row.agent === agent);
+  const done = mine.filter((row) => row.finished);
+  const totalDone = done.length;
+  const model = mine.find((row) => row.model)?.model ?? "?";
+  const packageName = mine.find((row) => row.package)?.package ?? "?";
+  const finished = `${totalDone}/${mine.length}`;
+
+  if (totalDone === 0) {
+    return {
+      setup,
+      agent,
+      model,
+      packageName,
+      finished,
+      rightPart: "n/a",
+      invented: "n/a",
+      outsideUi: "n/a",
+      validateErrors: "n/a",
+      compiles: "n/a",
+      usedDs: "n/a",
+      readGuide: "n/a",
+      minutes: null,
+      tokens: null,
+      toolCalls: null,
+    };
+  }
+
+  const countDone = (pick: (row: SummaryRow) => boolean) => done.filter(pick).length;
+  const sumNullable = (pick: (row: SummaryRow) => number | null): string => {
+    const values = done.map(pick);
+    if (values.some((value) => value === null)) return "?";
+    return String(values.reduce<number>((total, value) => total + (value ?? 0), 0));
+  };
+
+  return {
+    setup,
+    agent,
+    model,
+    packageName,
+    finished,
+    rightPart: done.some((row) => row.met === null || row.of === null)
+      ? "?"
+      : `${countDone((row) => row.met === row.of)}/${totalDone}`,
+    invented: sumNullable((row) => itemCount(row.invented)),
+    outsideUi: sumNullable((row) => itemCount(row.outside_ui)),
+    validateErrors: sumNullable((row) => row.validate_errors),
+    compiles: done.some((row) => row.compiled === null)
+      ? "n/a"
+      : `${countDone((row) => row.compiled === true)}/${totalDone}`,
+    usedDs: `${countDone((row) => row.used_ds)}/${totalDone}`,
+    readGuide: `${countDone((row) => row.read_guide)}/${totalDone}`,
+    minutes: median(done.flatMap((row) => (row.minutes === null ? [] : [row.minutes]))),
+    tokens: median(done.flatMap((row) => (row.tokens === null ? [] : [row.tokens]))),
+    toolCalls: median(
+      done.flatMap((row) => (typeof row.tool_calls === "number" ? [row.tool_calls] : [])),
+    ),
+  };
+}
+
+export function formatSummaryMarkdown(
+  rows: SummaryRow[],
+  groups: [string, string][],
+  stamp: string,
+): string {
+  const lines = [
+    `${stamp}. Rates, counts and medians are over finished runs; tokens count cache reads. Paste the rows under the scorecard's.`,
+    "",
+    "| Date | Setup | Agent | Model | Package | Finished | Right part | Invented imports | Other UI libraries | `ds validate` errors | Compiles | Used `ds` | Read the guide | Minutes (median) | Tokens (median) | Tool calls (median) |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+  ];
+  for (const [setup, agent] of groups) {
+    const group = summarizeGroup(rows, setup, agent);
+    lines.push(
+      `| ${stamp.slice(0, 10)} | ${group.setup} | ${group.agent} | ${group.model} | ${group.packageName} | ${group.finished} | ${group.rightPart} | ${group.invented} | ${group.outsideUi} | ${group.validateErrors} | ${group.compiles} | ${group.usedDs} | ${group.readGuide} | ${group.minutes ?? "n/a"} | ${group.tokens ?? "n/a"} | ${group.toolCalls ?? "n/a"} |`,
+    );
+  }
+  return `${lines.join("\n")}\n`;
 }
