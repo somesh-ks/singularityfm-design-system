@@ -35,7 +35,8 @@ type Props = DialTileProps & Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof
  * One tile of the Dial: a square cover with the show's name along its foot, a pin at the top start,
  * the count at the top end, and the accent ring while it plays (blue marks what is active). The press
  * area is a native button (or a link with href) over the whole square, so it presses before any
- * script; the page's player writes data-playing on the tile. Static: no client directive.
+ * script; the page's player writes data-playing on the tile and aria-current="true" on its press area
+ * (and takes both off the last one). Static: no client directive.
  */
 export default function DialTile({
   name,

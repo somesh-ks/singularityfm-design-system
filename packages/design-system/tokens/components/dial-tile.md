@@ -25,7 +25,7 @@ Import `@singularityfm/design-system/DialTile`. No part covers it yet, so `ds fi
 
 - Role: List `<ul role="list">` of DialTile items, each a native `<button>` or `<a href>`
 - ARIA: Each DialTile's label prop names its action ("Play Hard Fork"); the visible name, pin and count are aria-hidden so it reads once.
-- ARIA: The tile playing now carries aria-current="true".
+- ARIA: The tile playing now carries aria-current="true" on its press area; the page's player sets it with data-playing on the tile and clears both from the last.
 - Keyboard: Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile.
 - Focus: Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view.
 

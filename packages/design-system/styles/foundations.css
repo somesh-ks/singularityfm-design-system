@@ -79,6 +79,11 @@
     html {
       scrollbar-width: none;
     }
+
+    /* Safari before 18.2 ignores scrollbar-width. */
+    html::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   body,

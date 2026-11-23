@@ -266,7 +266,7 @@ export const REGISTRY_A11Y = {
     role: 'List <ul role="list"> of DialTile items, each a native <button> or <a href>',
     aria: [
       'Each DialTile\'s label prop names its action ("Play Hard Fork"); the visible name, pin and count are aria-hidden so it reads once.',
-      'The tile playing now carries aria-current="true".',
+      'The tile playing now carries aria-current="true" on its press area; the page\'s player sets it with data-playing on the tile and clears both from the last.',
     ],
     keyboard: [
       "Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile.",
@@ -279,6 +279,7 @@ export const REGISTRY_A11Y = {
     aria: [
       "The dots are hidden from screen readers: the row's own items carry the content.",
       "PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.",
+      "PageArrows do nothing until the page calls installPageArrows() from @singularityfm/design-system/pageDots once the row is in the page.",
     ],
     keyboard: [
       "PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden.",

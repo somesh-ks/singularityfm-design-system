@@ -71,13 +71,9 @@
   background: var(--color-accent);
 }
 
-/* Two lines, never an ellipsis: the time left ends the line and is the fact a listener came for. */
+/* Wraps, never clamped: the time left ends the line and is the fact a listener came for, so a long
+   show name may not push it out of view. */
 .resume-card-facts {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
   color: var(--color-on-surface-muted);
   font-size: var(--text-meta-size);
   font-variant-numeric: tabular-nums;
@@ -89,7 +85,7 @@
 
 /* On the grey card the tonal circle would match the fill: it takes the overlay, as the tonal select
    does on a card. */
-.resume-card-panel .icon-btn-tonal {
+.resume-card-panel .icon-btn-tonal:not(:hover, :active) {
   background: var(--color-surface-overlay);
 }
 
