@@ -1,6 +1,7 @@
 import type { CSSProperties, InputHTMLAttributes } from "react";
 import { passedAttributes } from "./attributes.ts";
 import Icon from "./Icon.tsx";
+import "../styles/topic-tile.css";
 
 interface TopicTileProps {
   /** The topic's name. */
@@ -29,7 +30,7 @@ export default function TopicTile({ name, covers = [], tint, href, className, ..
   return (
     <li className="topic-cell">
       {href ? (
-        <a className={classes} href={href} style={style}>
+        <a className={classes} href={href} style={style} {...passedAttributes(passed)}>
           <span className="topic-tile-name">{name}</span>
           {art}
         </a>

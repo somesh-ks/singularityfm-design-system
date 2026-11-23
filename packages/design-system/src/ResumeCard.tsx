@@ -45,7 +45,9 @@ export default function ResumeCard({
   children,
   ...passed
 }: Props) {
-  const heard = `${Math.round(Math.min(1, Math.max(0, progress)) * 100)}%`;
+  // A duration not yet known (0/0) reads as unheard, never as a full bar.
+  const part = Number.isFinite(progress) ? Math.min(1, Math.max(0, progress)) : 0;
+  const heard = `${Math.round(part * 100)}%`;
   return (
     <article
       className={["resume-card-panel", className].filter(Boolean).join(" ")}

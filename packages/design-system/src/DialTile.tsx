@@ -2,6 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { passedAttributes } from "./attributes.ts";
 import Badge from "./Badge.tsx";
 import Icon from "./Icon.tsx";
+import "../styles/dial.css";
 
 interface DialTileProps {
   /** The show's name, written on the cover. */
@@ -62,11 +63,23 @@ export default function DialTile({
       data-playing={String(playing)}
     >
       {href ? (
-        <a className="dial-hit" href={href} aria-label={label} {...rest}>
+        <a
+          className="dial-hit"
+          href={href}
+          aria-label={label}
+          aria-current={playing ? "true" : undefined}
+          {...rest}
+        >
           {inside}
         </a>
       ) : (
-        <button className="dial-hit" type="button" aria-label={label} {...rest}>
+        <button
+          className="dial-hit"
+          type="button"
+          aria-label={label}
+          aria-current={playing ? "true" : undefined}
+          {...rest}
+        >
           {inside}
         </button>
       )}

@@ -59,7 +59,7 @@
   background: linear-gradient(
     to bottom,
     transparent,
-    color-mix(in oklch, var(--color-scrim) 20%, black 70%)
+    color-mix(in oklch, var(--color-scrim) 20%, black 80%)
   );
   color: var(--color-on-scrim);
   font-size: var(--text-meta-size);

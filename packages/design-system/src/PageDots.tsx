@@ -17,15 +17,16 @@ interface Props {
  */
 export default function PageDots({ count, current = 0, className }: Props) {
   if (count <= 1) return null;
+  const at = Math.min(count - 1, Math.max(0, Math.trunc(current) || 0));
   return (
     <div
       className={[pageDotsClass(), className].filter(Boolean).join(" ")}
       role="img"
-      aria-label={`Page ${current + 1} of ${count}`}
+      aria-label={`Page ${at + 1} of ${count}`}
     >
       {Array.from({ length: count }, (_, page) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: the dots are positions, nothing else.
-        <span key={page} aria-current={page === current ? "true" : undefined} />
+        <span key={page} aria-current={page === at ? "true" : undefined} />
       ))}
     </div>
   );
