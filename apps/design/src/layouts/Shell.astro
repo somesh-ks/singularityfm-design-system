@@ -59,15 +59,15 @@ const savedTheme = `(() => { let t = "dark"; try { if (localStorage.getItem("des
         {/* The bar shows below 64rem, where the nav's side column is hidden. */}
         {
           parent && (
-            <IconButton className="app-bar-back" href={href(parent.path)} label={parent.label}>
+            <IconButton className="app-bar-back" href={href(parent.path)} label={`Back to ${parent.label}`}>
               <Icon name="arrowBack" />
             </IconButton>
           )
         }
-        <a class="wordmark" href={href("")} aria-label="Singularity design system">
+        <a class="wordmark" href={href("")} aria-label="Singularity Design System">
           <BrandMark />
           <span>Singularity</span>
-          <span class="guide-tag">Design</span>
+          <span class="guide-tag">Design System</span>
         </a>
         <ThemeToggle class="guide-bar-end" />
       </div>
