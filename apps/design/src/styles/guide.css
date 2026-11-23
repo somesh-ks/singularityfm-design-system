@@ -976,6 +976,10 @@
     overflow-y: auto;
     overflow-anchor: none;
     overscroll-behavior: contain;
+    /* A row that keyboard focus scrolls to stops clear of the sticky foot (its two buttons, the date
+       and its padding), ring included, as the sheet's form does (sheet.css). */
+    --nav-foot-date: calc(var(--font-size-label) * var(--font-leading-caption));
+    scroll-padding-block-end: calc(var(--space-12) + var(--size-touch) + var(--nav-foot-date));
     scrollbar-gutter: stable;
     scrollbar-width: thin;
   }
