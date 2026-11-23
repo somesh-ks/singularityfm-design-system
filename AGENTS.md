@@ -15,7 +15,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 | Path | What |
 | --- | --- |
 | `packages/design-system/` | The published package: `src/` components and behaviour, `styles/`, `tokens/`, `fonts/`, `flags/`, `scripts/` (token and system generators, the `ds` CLI) |
-| `apps/design/` | The style guide (`@singularity/design`, private), its own Vercel project at news.someshks.com/design |
+| `apps/design/` | The style guide (`@singularity/design`, private), its own Vercel project at design.singularityfm.app |
 | `.changeset/` | Pending release notes |
 | `scripts/` | Repository checks: the pack-and-install test, the docs check, the deploy batch rule; the glyph builder |
 
@@ -40,7 +40,7 @@ On demand: [docs/specs/](docs/specs/) (style guide, motion), [docs/ledger/](docs
 
 ## Domain
 
-The style guide is served at https://news.someshks.com/design through the app's `/design` proxy. The single source of truth for the site URL is `site.json` at the root of [somesh-ks/singularityfm-app](https://github.com/somesh-ks/singularityfm-app). On the next move, update that file, `apps/design/astro.config.mjs` and the docs here.
+The style guide is served at https://design.singularityfm.app, its own Vercel project at the root path. The reader at https://singularityfm.app redirects its old `/design` paths there. The single source of truth for the addresses is `site.json` at the root of [somesh-ks/singularityfm-app](https://github.com/somesh-ks/singularityfm-app). It holds all three (url, admin, design). On the next move, update that file, `apps/design/astro.config.mjs` and the docs here.
 
 ## The design system
 
