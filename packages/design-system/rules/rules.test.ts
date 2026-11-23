@@ -81,6 +81,7 @@ describe("the rules", () => {
       ".b { padding: 12px var(--space-2); }",
       ".c { margin-block: calc(var(--space-4) - var(--space-1)); }",
       ".banner-body { gap: var(--space-1); }",
+      ".settings-text { gap: var(--space-1); }",
       ".sheet-head:hover { margin-inline: calc(var(--space-1) * -1); }",
       ".d { padding: var(--space-2) var(--space-4); width: 12px; inset: 50%; }",
       ".e { padding: var(--touch-target); }",
