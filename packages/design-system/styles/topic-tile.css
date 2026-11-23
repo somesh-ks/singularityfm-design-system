@@ -26,8 +26,8 @@
   position: relative;
   display: block;
   block-size: 6rem;
-  padding: var(--space-4);
-  border-radius: var(--shape-lg);
+  padding: var(--space-4) var(--card-padding);
+  border-radius: var(--card-radius);
   overflow: hidden;
   background: var(--topic-tint, var(--color-surface-container));
   color: var(--color-on-surface);
@@ -56,11 +56,12 @@
 .topic-tile-hit > img {
   position: absolute;
   inset: auto calc(var(--space-2) * -1) calc(var(--space-4) * -1) auto;
+  /* Bigger than a row's thumb: the covers are the tile's picture, cut by its edge, not a list item. */
   inline-size: 4rem;
   block-size: 4rem;
   object-fit: cover;
-  border-radius: var(--shape-xs);
-  outline: var(--stroke-hairline) solid var(--color-image-outline);
+  border-radius: var(--cover-radius-thumb);
+  outline: var(--stroke-hairline) solid var(--cover-outline);
   rotate: 14deg;
   pointer-events: none;
 }
@@ -72,7 +73,7 @@
 
 .topic-tile-check {
   position: absolute;
-  inset: var(--space-4) var(--space-4) auto auto;
+  inset: var(--space-4) var(--card-padding) auto auto;
   display: grid;
   place-items: center;
   inline-size: var(--space-6);
@@ -85,8 +86,8 @@
 }
 
 .topic-tile-check .icon-glyph {
-  inline-size: var(--space-4);
-  block-size: var(--space-4);
+  inline-size: var(--size-icon-sm);
+  block-size: var(--size-icon-sm);
 }
 
 .topic-tile-hit:has(> input:checked)::after {

@@ -7879,6 +7879,7 @@
     "--cover-night-c",
     "--cover-night-hue",
     "--cover-spread",
+    "--dial-inset",
     "--dock-room",
     "--drawer-corner",
     "--fab-sheen",

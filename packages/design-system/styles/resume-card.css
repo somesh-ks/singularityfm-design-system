@@ -8,12 +8,13 @@
   flex: none;
   inline-size: min(21rem, 90%);
   display: grid;
-  grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+  grid-template-columns: var(--cover-size-thumb) minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-4);
+  padding: var(--space-4) var(--card-padding);
+  /* The buttons' 44px targets pad their own glyphs, so the end gives them back their room. */
   padding-inline-end: var(--space-2);
-  border-radius: var(--shape-xl);
+  border-radius: var(--card-radius);
   background: var(--color-surface-container);
   color: var(--color-on-surface);
 }
@@ -23,8 +24,13 @@
   display: block;
   inline-size: 100%;
   aspect-ratio: 1;
-  border-radius: var(--shape-xs);
+  border-radius: var(--cover-radius-thumb);
   overflow: hidden;
+}
+
+.resume-card-art {
+  outline: var(--stroke-hairline) solid var(--cover-outline);
+  outline-offset: calc(var(--stroke-hairline) * -1);
 }
 
 .resume-card-art > img {
