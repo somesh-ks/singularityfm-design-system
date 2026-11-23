@@ -225,12 +225,13 @@ describe("the rules", () => {
       ".e { block-size: 0.9375em; font-size: 1.25rem; }",
       ".f { min-height: 0; height: 100%; padding: 0.5rem; }",
       "/* .g { height: 3rem; } */ .h { inline-size: 9rem; }",
+      ".i { height: calc(var(--size-touch) + -0.5rem); min-height: var(--space-2rem); }",
     ].join("\n");
-    expect(lines(sizeLiteral(css, "page.css"))).toEqual([1, 3, 4, 5]);
+    expect(lines(sizeLiteral(css, "page.css"))).toEqual([1, 3, 4, 5, 8]);
     expect(sizeLiteral(css, "packages/design-system/styles/tokens.css")).toEqual([]);
     // An exception excuses its one declaration: the selector and property as the finding names them.
     expect(lines(sizeLiteral(css, "page.css", [[".a { min-height }", "a test"]]))).toEqual([
-      3, 4, 5,
+      3, 4, 5, 8,
     ]);
   });
 
@@ -290,7 +291,7 @@ describe("the rules", () => {
       for (const [name, declared] of effective) {
         if (!SIZE_TOKEN.test(name) || chrome.has(name)) continue;
         const value = resolve(declared);
-        const literal = /^(\d*\.?\d+)(rem|em|px)$/i.exec(value ?? "");
+        const literal = /^(\d*\.?\d+(?:e[+-]?\d+)?)(rem|em|px)$/i.exec(value ?? "");
         if (!literal) continue;
         // A step is a rem: a px or em value is off the steps even where its number is one.
         if (literal[2]?.toLowerCase() === "rem" && steps.includes(Number(literal[1]))) continue;

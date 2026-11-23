@@ -555,7 +555,7 @@ export function retiredPath(text: string, file: string): Finding[] {
 /** A height, or a custom property that names a size or a height: the properties a control is drawn with. */
 const SIZE_PROPERTY =
   /^(?:(?:min|max)-)?(?:height|block-size|min-block-size|max-block-size)$|^--[\w-]*-(?:size|height)$/;
-const REM_OR_EM = /(?<![\w.#-])(\d*\.?\d+(?:e[+-]?\d+)?)(?:rem|em)(?![\w-])/gi;
+const REM_OR_EM = /(?<![\w.#-])(-?\d*\.?\d+(?:e[+-]?\d+)?)(?:rem|em)(?![\w-])/gi;
 
 /**
  * Rules where a rem or em length sits in a height or a size outside the tokens. A size is a token or
