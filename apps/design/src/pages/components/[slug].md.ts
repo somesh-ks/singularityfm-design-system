@@ -17,10 +17,10 @@ const formatProps = (component: (typeof system.components)[number]): string[] =>
   if (component.props.length > 0) {
     out.push("| Name | Type | Default | What it does |", "| --- | --- | --- | --- |");
     for (const prop of component.props) {
-      const type = prop.values
-        ? prop.values.map((value) => `"${value}"`).join(" | ")
-        : cell(prop.type);
-      const escapedType = type.replace(/\\/g, "\\\\").replace(/\|/g, "\\|");
+      // One escape for the table: cell() already escapes the pipes a union or a type holds.
+      const escapedType = cell(
+        prop.values ? prop.values.map((value) => `"${value}"`).join(" | ") : prop.type,
+      );
       out.push(
         `| \`${prop.name}${prop.required ? "" : "?"}\` | \`${escapedType}\` | ${prop.default ? `\`${cell(prop.default)}\`` : "-"} | ${cell(prop.description) || "-"} |`,
       );
