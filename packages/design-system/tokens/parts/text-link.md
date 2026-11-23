@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: text-link
+name: "Text link"
+kind: action
+imports:
+  - "@singularityfm/design-system/Link"
+---
+
 # Text link (`text-link`)
 
 A link inside a line of small text; the words stay inline, the target is 44px.
@@ -25,6 +34,14 @@ A link inside a line of small text; the words stay inline, the target is 44px.
 ## Rules
 
 - A link is a real <a href>; an action on this page is a Button.
+
+## Accessibility
+
+- Role: Native `<a href>`
+- ARIA: Accessible name comes from children.
+- ARIA: External source links use target="_blank" with rel="noopener noreferrer".
+- Keyboard: Enter navigates to href.
+- Focus: Native focus ring via :focus-visible with 44px tap area.
 
 ## Props of Link
 

@@ -1,12 +1,14 @@
+---
+version: "0.13.0"
+id: drawer
+name: "Drawer"
+kind: container
+imports: []
+---
+
 # Drawer (`drawer`)
 
 The island modal for a form: the whole screen on a phone, a panel at the right from 40rem, with Close in the header.
-
-## Markup
-
-```astro
-<SheetFrame open={open} onOpenChange={setOpen} title="Create" closeLabel="Close">...</SheetFrame>
-```
 
 ## Use when
 
@@ -19,8 +21,15 @@ The island modal for a form: the whole screen on a phone, a panel at the right f
 
 ## Rules
 
-- Mount SheetFrame; it draws the scrim, viewport, popup and panel from drawer.ts, and the Sheet's head.
+- SheetFrame is not exported by this package: use <Sheet> for modal dialogs/sheets, or compose a host Base UI Drawer island with drawerScrimClass(), drawerViewportClass(), drawerPopupClass() and drawerPanelClass() from @singularityfm/design-system/drawer plus @singularityfm/design-system/styles/drawer.css and <SheetHeader>.
 - Motion uses --duration-sheet-in, --duration-sheet-out and --ease-drawer.
+
+## Accessibility
+
+- Role: Host Base UI drawer/dialog island contract (not exported as a React component yet)
+- ARIA: Host island provides dialog role, aria-labelledby on SheetHeader titleId and aria-label on the Close IconButton.
+- Keyboard: Escape dismisses the drawer and closes the modal viewport.
+- Focus: Base UI primitive traps focus while open and returns focus to trigger on close.
 
 ## Tokens it reads
 
@@ -28,7 +37,7 @@ The island modal for a form: the whole screen on a phone, a panel at the right f
 
 ## Where it is drawn
 
-- Classes: `.drawer-scrim` `.drawer-viewport` `.drawer-popup` `.drawer-panel` (drawn by the app's own component the markup names; this package does not ship it yet)
+- Classes: `.drawer-scrim` `.drawer-viewport` `.drawer-popup` `.drawer-panel` (class helpers exported in files; no standalone component wrapper yet (see rules and GAPS.md))
 - Styled in: `styles/buttons.css`, `styles/drawer.css`, `styles/foundations.css`
 - Files: `src/drawer.ts`
 

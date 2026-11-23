@@ -1,3 +1,15 @@
+---
+version: "0.13.0"
+id: dialog
+name: "Dialog"
+kind: container
+imports:
+  - "@singularityfm/design-system/Dialog"
+  - "@singularityfm/design-system/DialogActions"
+  - "@singularityfm/design-system/DialogTitle"
+  - "@singularityfm/design-system/Button"
+---
+
 # Dialog (`dialog`)
 
 A small centred box with a heading and a row of buttons: one question, one tap.
@@ -29,6 +41,14 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 - A script finds one with DIALOG_SELECTOR; one it builds uses dialogClass(), dialogBodyClass() and dialogActionsClass().
 - It renders closed, with no client directive: a script opens it with dialog.showModal() (an island through ref) and closes it with dialog.close() from the Cancel button's click.
 
+## Accessibility
+
+- Role: Native modal `<dialog data-dialog>`
+- ARIA: Pair with DialogTitle and pass aria-labelledby matching DialogTitle's id.
+- ARIA: Renders closed by default; open with dialog.showModal().
+- Keyboard: Escape closes the modal natively; Enter submits form method="dialog" buttons.
+- Focus: Browser traps focus inside open modal `<dialog>` and restores focus to opener on close.
+
 ## Props of Dialog
 
 | Name | Type | Default | What it does |
@@ -40,12 +60,27 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 
 Every attribute of a native `<dialog>` element passes through, except `open` and `style`.
 
+### Example of DialogActions
+
+```tsx
+<DialogActions>
+  <Button variant="text">Cancel</Button>
+  <Button variant="filled">Save</Button>
+</DialogActions>
+```
+
 ## Props of DialogActions
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `children?` | `ReactNode` | - | The answers: Buttons, Cancel first in a row. |
 | `stacked?` | `boolean` | `false` | Three answers in a column, the committing one first. |
+
+### Example of DialogTitle
+
+```tsx
+<DialogTitle id="confirm-title">Delete source?</DialogTitle>
+```
 
 ## Props of DialogTitle
 
@@ -54,6 +89,12 @@ Every attribute of a native `<dialog>` element passes through, except `open` and
 | `children?` | `ReactNode` | - | The question. |
 
 Every attribute of a native `<h2>` element passes through, except `className`.
+
+### Example of Button
+
+```tsx
+<Button variant="filled" type="submit">Save</Button>
+```
 
 ## Props of Button
 

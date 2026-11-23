@@ -24,7 +24,8 @@
     "!**/*.test.ts",
     "!**/golden.json",
     "AGENTS.md",
-    "COMPATIBILITY.md"
+    "COMPATIBILITY.md",
+    "GAPS.md"
   ],
   "sideEffects": [
     "**/*.css",

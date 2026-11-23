@@ -1742,6 +1742,12 @@
   margin-block-start: var(--space-4);
 }
 
+/* The note spans every column as the card's last line, on the rows' start edge. */
+.guide-controls-note {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
 /* The grid spaces the rows, so a row takes no margin of its own (a card stacks them with one). */
 .guide-controls.card-group > .settings-row + .settings-row {
   margin-block-start: 0;

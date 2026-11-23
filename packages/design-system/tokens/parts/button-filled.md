@@ -1,3 +1,12 @@
+---
+version: "0.13.0"
+id: button-filled
+name: "Filled button"
+kind: action
+imports:
+  - "@singularityfm/design-system/Button"
+---
+
 # Filled button (`button-filled`)
 
 The accent fill under its own words; the most prominent button.
@@ -28,6 +37,14 @@ The accent fill under its own words; the most prominent button.
 
 - At most one per surface.
 - Never a bold label.
+
+## Accessibility
+
+- Role: Native `<button>` (or `<a href>` when href is set)
+- ARIA: Accessible name comes from children; provide descriptive label text.
+- ARIA: Do not nest interactive elements inside Button.
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
+- Focus: Native keyboard focus ring via :focus-visible.
 
 ## Props of Button
 

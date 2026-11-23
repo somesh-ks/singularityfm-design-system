@@ -30,3 +30,5 @@ export const LLMS_FULL_PATH = join(PACKAGE, "tokens/llms-full.txt");
 export const FOUNDATIONS_PATH = join(PACKAGE, "tokens/foundations.md");
 /** One markdown page per part: tokens/parts/<id>.md. */
 export const PARTS_DIR = join(PACKAGE, "tokens/parts");
+/** One markdown page per part-less component: tokens/components/<slug>.md. */
+export const COMPONENTS_DIR = join(PACKAGE, "tokens/components");
