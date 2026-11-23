@@ -1,8 +1,9 @@
 // The agent test (DS-14, DS-15, plan v2 step 3): give a coding agent each task in tasks.json, in up
 // to three setups, and grade what it wrote with no model call. It runs on the owner's computer, on his
 // own sign-ins, and keeps transcripts there; only the summary rows get committed. agent-eval.yml also
-// runs the two bare setups weekly in CI, inside a container, in spend-capped accounts: Claude Code with no
-// key (DS-17), Antigravity on a Gemini key (DS-16).
+// runs the bare setups in CI (the guide one weekly, both after a publish; DS-18), inside a container, in
+// spend-capped accounts: Claude Code with no key (DS-17), Antigravity on a Gemini key (DS-16).
+// compare.mjs says whether two runs differ by more than chance.
 //
 //   node scripts/agentEval/run.mjs --app <path to singularityfm-app>   all three setups
 //   node scripts/agentEval/run.mjs --setups bare-guide,bare            no app checkout needed
@@ -29,7 +30,7 @@ import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { exportTarget, gradeFiles, PACKAGE, runStats } from "./grade.ts";
+import { exportTarget, gradeFiles, median, PACKAGE, runStats } from "./grade.ts";
 
 const HERE = import.meta.dirname;
 const WINDOWS = process.platform === "win32";
@@ -443,7 +444,6 @@ try {
   }
 } finally {
   writeFileSync(join(out, "summary.json"), JSON.stringify({ rows: rows.map(snake) }, null, 2));
-  const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] ?? 0;
   const lines = [
     `${stamp}. Medians are over finished runs; tokens count cache reads. Paste the rows under the scorecard's.`,
     "",
@@ -459,7 +459,7 @@ try {
       ? "?"
       : sum((row) => row.validateErrors);
     lines.push(
-      `| ${stamp.slice(0, 10)} | ${setup} | ${agent} | ${mine.find((row) => row.model)?.model ?? "?"} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes))} | ${median(done.map((row) => row.tokens))} | ${median(done.map((row) => row.toolCalls))} |`,
+      `| ${stamp.slice(0, 10)} | ${setup} | ${agent} | ${mine.find((row) => row.model)?.model ?? "?"} | ${mine[0]?.package ?? "?"} | ${done.length}/${mine.length} | ${count((row) => row.met === row.of)}/${mine.length} | ${sum((row) => row.invented.length)} | ${sum((row) => row.outsideUi.length)} | ${errors} | ${mine.some((row) => row.compiled === null) ? "n/a" : `${count((row) => row.compiled)}/${mine.length}`} | ${count((row) => row.usedDs)}/${mine.length} | ${count((row) => row.readGuide)}/${mine.length} | ${median(done.map((row) => row.minutes)) ?? "n/a"} | ${median(done.map((row) => row.tokens)) ?? "n/a"} | ${median(done.map((row) => row.toolCalls)) ?? "n/a"} |`,
     );
   }
   writeFileSync(join(out, "summary.md"), `${lines.join("\n")}\n`);

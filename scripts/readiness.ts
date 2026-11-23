@@ -23,6 +23,10 @@ const ROW = /^\|\s*(\d\.\d)\s*\|[^|]*\|\s*(\d)\s*\|/;
 // not skipped.
 const CATEGORY = /^\|\s*(\d)\.\s[^|]*\|([^|]*)\|([^|]*)\|/;
 const SUMMARY = /^Summary: floor (\d), retrieval (\d), median (\d), tier (\d)\.$/m;
+/** Our own criteria (DS-19), scored apart and never in the tier, with their own line. */
+export const OWN_CRITERIA = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"];
+const OWN_ROW = /^\|\s*(S\d+)\s*\|[^|]*\|\s*(\d)\s*\|/;
+const OWN = /^Ours: lowest (\d), median (\d+(?:\.5)?)\.$/m;
 
 type Rollup = { floor: number; retrieval: number; median: number; tier: number };
 
@@ -56,22 +60,40 @@ export function rollup(scores: Map<string, number>): Rollup {
   return { floor, retrieval, median: middle, tier };
 }
 
-/** What is wrong with the page's tables or its summary line; empty when they hold. */
-export function readinessProblems(text: string): string[] {
+/** A line the page states once: a second one, right or wrong, would let a reader quote the wrong one. */
+function once(text: string, start: string): string[] {
+  const count = text.split("\n").filter((line) => line.startsWith(start)).length;
+  return count > 1 ? [`${count} lines start "${start}"; keep one`] : [];
+}
+
+/** The rows a table scores, by id: each one of `ids` once, from 0 to 4. */
+function scored(text: string, row: RegExp, ids: string[]) {
   const problems: string[] = [];
   const scores = new Map<string, number>();
   for (const line of text.split("\n")) {
-    const match = ROW.exec(line);
+    const match = row.exec(line);
     if (!match) continue;
     const id = match[1] ?? "";
     const score = Number(match[2]);
-    if (!CRITERIA.includes(id)) problems.push(`${id} is not a rubric criterion`);
+    if (!ids.includes(id)) problems.push(`${id} is not a criterion of this page`);
     else if (scores.has(id)) problems.push(`${id} is scored twice`);
     else if (score > 4) problems.push(`${id} scores ${score}, above 4`);
     else scores.set(id, score);
   }
-  const missing = CRITERIA.filter((id) => !scores.has(id));
+  const missing = ids.filter((id) => !scores.has(id));
   if (missing.length > 0) problems.push(`no score for ${missing.join(", ")}`);
+  return { scores, problems };
+}
+
+/** What is wrong with the page's tables or its lines; empty when they hold. */
+export function readinessProblems(text: string): string[] {
+  return [...rubricProblems(text), ...ownProblems(text)];
+}
+
+/** The rubric's 31 rows, its summary line and its by-category table. */
+function rubricProblems(text: string): string[] {
+  const { scores, problems } = scored(text, ROW, CRITERIA);
+  problems.push(...once(text, "Summary:"));
   const stated = SUMMARY.exec(text);
   if (!stated) problems.push('no "Summary: floor N, retrieval N, median N, tier N." line');
   if (problems.length > 0 || !stated) return problems;
@@ -96,5 +118,20 @@ export function readinessProblems(text: string): string[] {
         `category ${category} says floor ${low}, median ${mid}; the table gives ${Math.min(...values)}, ${median(values)}`,
       );
   }
+  return problems;
+}
+
+/** Our own eight rows and their "Ours:" line, which the page must have. */
+function ownProblems(text: string): string[] {
+  const stated = OWN.exec(text);
+  const { scores, problems } = scored(text, OWN_ROW, OWN_CRITERIA);
+  problems.push(...once(text, "Ours:"));
+  if (!stated) return [...problems, 'no "Ours: lowest N, median N." line'];
+  if (problems.length > 0) return problems;
+  const [lowest, middle] = [Math.min(...scores.values()), median([...scores.values()])];
+  if (stated[1] !== String(lowest) || stated[2] !== String(middle))
+    problems.push(
+      `our line says lowest ${stated[1]}, median ${stated[2]}; our rows give ${lowest}, ${middle}`,
+    );
   return problems;
 }

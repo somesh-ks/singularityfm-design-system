@@ -1,8 +1,9 @@
 name: agent-eval
 
 # The agent test (DS-14, DS-16) in CI: Claude Code and the Antigravity CLI each build every frozen task in
-# the two bare setups (a new Astro app with the published package, with and without the guide line),
-# graded with no model call. Weekly, after release.yml's Monday run, after each publish, and on demand.
+# a new Astro app with the published package, graded with no model call. Weekly, after release.yml's
+# Monday run, only with the guide line (the setup the docs change); after each publish and on demand,
+# also without it (owner, 2026-11-14).
 # The reader app setup stays on the owner's computer: this repository is public and the app is not.
 #
 # The agent may run any command, so it runs in a container (scripts/agentEval/ci.sh) that gets the
@@ -11,8 +12,9 @@ name: agent-eval
 # token for this workflow on main in the `agent-eval` environment, which Anthropic trades for a token
 # of at most ten minutes in a workspace with a monthly spend limit. Antigravity's Gemini key is made only for this,
 # with its own limit, in that environment, which only main can use. Nothing runs on a pull request and
-# no transcript is uploaded (GitHub masks secrets in logs, not in artifacts). Only the summary rows
-# reach the job summary. An agent whose sign-in is not set up is skipped with a warning.
+# no transcript is uploaded (GitHub masks secrets in logs, not in artifacts). The summary rows reach
+# the job summary, and each task's counts and yes-or-no grades, with none of the agent's text, are kept
+# as an artifact for compare.mjs. An agent whose sign-in is not set up is skipped with a warning.
 on:
   schedule:
     - cron: "41 9 * * 1"
@@ -46,6 +48,9 @@ jobs:
     # At most 16 tasks of 15 minutes plus about a minute of grading each, and the installs: under 280.
     timeout-minutes: 330
     environment: agent-eval
+    env:
+      # Weekly, only the setup a docs change moves; after a publish or by hand, both (DS-18).
+      SETUPS: ${{ github.event_name == 'schedule' && 'bare-guide' || 'bare-guide,bare' }}
     # The identity token Claude Code signs in with. The runner asks for it; the container never gets
     # the request token, only the identity token itself. The antigravity job has the right too (one job,
     # two agents) and passes nothing of it on.
@@ -57,7 +62,7 @@ jobs:
         with:
           persist-credentials: false
       # The runner holds both jobs' credentials; the container is given only this job's, no added
-      # privileges, and no route to the VM's metadata endpoints.
+      # privileges, and no route to the VM's metadata endpoints but the DNS resolver.
       - name: Run the tasks
         id: run
         env:
@@ -78,8 +83,13 @@ jobs:
               exit 0
             fi
           done
-          for address in 169.254.169.254 168.63.129.16; do
-            sudo iptables -I DOCKER-USER -d "$address" -j DROP
+          # Azure's platform address is also the VM's DNS resolver, which the container uses: it is
+          # dropped but for DNS, or the container resolves no name (the first CI run, 2026-11-14, could
+          # not fetch pnpm). Each -I goes on top, so the two DNS accepts sit above its drop.
+          sudo iptables -I DOCKER-USER -d 169.254.169.254 -j DROP
+          sudo iptables -I DOCKER-USER -d 168.63.129.16 -j DROP
+          for protocol in tcp udp; do
+            sudo iptables -I DOCKER-USER -d 168.63.129.16 -p "$protocol" --dport 53 -j ACCEPT
           done
           mkdir -p "$RUNNER_TEMP/out"
           chmod a+rwx "$RUNNER_TEMP/out"
@@ -109,14 +119,14 @@ jobs:
             pass+=(-e ANTHROPIC_IDENTITY_TOKEN_FILE=/run/oidc/token -v "$oidc:/run/oidc:ro")
           fi
           echo "ran=true" >> "$GITHUB_OUTPUT"
-          docker run --rm --init -e AGENT -e AGY_MODEL "${pass[@]}" \
+          docker run --rm --init -e AGENT -e SETUPS -e AGY_MODEL "${pass[@]}" \
             --security-opt no-new-privileges --pids-limit 4096 \
             --cap-drop ALL --cap-add CHOWN --cap-add DAC_OVERRIDE --cap-add FOWNER \
             -v "$GITHUB_WORKSPACE:/src:ro" -v "$RUNNER_TEMP/out:/out" \
             node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496 \
             bash /src/scripts/agentEval/ci.sh
       # Everything in out/ was written by the agent's container, so it is read as untrusted: no links,
-      # only the two known setups, and its error text printed with workflow commands off. A setup where
+      # only the setups that ran, and its error text printed with workflow commands off. A setup where
       # no task finished (a spent limit, a wrong key or rule, a CLI that cannot sign in) fails the job, as
       # does a run that left no summary.
       - name: Report
@@ -133,14 +143,50 @@ jobs:
           status=0
           token=$(openssl rand -hex 16)
           echo "::stop-commands::$token"
-          for setup in bare-guide bare; do
-            if jq -e --arg setup "$setup" '[.rows[] | select(.setup == $setup and .finished)] | length > 0' \
+          for setup in ${SETUPS//,/ }; do
+            if jq -e --arg setup "$setup" '[.rows[] | select(.setup == $setup and .finished == true)] | length > 0' \
               "$dir/summary.json" >/dev/null; then continue; fi
             echo "$AGENT finished no task in $setup:"
             find "$dir/$setup" -type f -name '*.stderr.txt' -print0 -quit | xargs -0 -r head -c 600 --
+            # Claude Code reports a refused sign-in or an empty balance in each transcript's result
+            # event, not on stderr.
+            find "$dir/$setup" -type f -name '*.jsonl' -print0 |
+              xargs -0 -r jq -Rr 'fromjson? | select(.type == "result") | .result // .subtype // empty | tostring' |
+              head -c 600
             echo
             status=1
           done
           echo "::$token::"
-          if [ "$status" -ne 0 ]; then echo "::error::$AGENT finished no task in a setup; see the log above"; fi
+          # For compare.mjs: one row per known setup and task id, a model name of a known shape, bounded whole
+          # numbers and yes-or-no values, so no text the agent wrote (an import it made up, a file name) is
+          # kept where GitHub does not mask secrets. It narrows what a row can carry, never to nothing: the
+          # container's own network is the larger way out.
+          ids=$(jq -c '[.tasks[].id]' scripts/agentEval/tasks.json)
+          jq --arg setups "$SETUPS" --arg agent "$AGENT" --argjson ids "$ids" '
+            def whole($max): if type == "number" and . == floor and . >= 0 and . <= $max then . else null end;
+            def minutes: if type == "number" and . >= 0 and . <= 60 then (. * 10 | round) / 10 else null end;
+            def model: if type == "string" and
+              test("^(claude-(haiku|sonnet|opus|fable)-[0-9]{1,2}(-[0-9]{1,2})?|gemini-[0-9]{1,2}(\\.[0-9])?-(pro|flash|flash-lite)(-preview)?|agy default)$")
+              then . else "?" end;
+            def few: if type == "array" then length | whole(99) else null end;
+            {rows: [.rows[] | select((.setup as $s | $setups | split(",") | index($s)) and
+                                     (.task as $t | $ids | index($t)))
+              | {setup, agent: $agent, task, model: (.model | model),
+                 finished: (.finished == true), met: (.met | whole(20)), of: (.of | whole(20)),
+                 invented: (.invented | few), outside_ui: (.outside_ui | few),
+                 validate_errors: (.validate_errors | whole(999)),
+                 compiled: (if .compiled == null then null else .compiled == true end),
+                 used_ds: (.used_ds == true), read_guide: (.read_guide == true),
+                 minutes: (.minutes | minutes), tokens: (.tokens | whole(100000000))}]
+              | unique_by([.setup, .task])}' \
+            "$dir/summary.json" > "$RUNNER_TEMP/summary.json" || status=1
+          if [ "$status" -ne 0 ]; then echo "::error::$AGENT finished no task in a setup, or its rows did not read; see the log above"; fi
           exit "$status"
+      - name: Keep the rows
+        if: always() && steps.run.outputs.ran == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: agent-eval-rows-${{ matrix.agent }}
+          path: ${{ runner.temp }}/summary.json
+          if-no-files-found: ignore
+          retention-days: 90
