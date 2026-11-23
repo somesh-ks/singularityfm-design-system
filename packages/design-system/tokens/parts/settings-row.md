@@ -21,9 +21,9 @@ A row with a label and an in-place control: a switch, a select or a value.
 <div class="settings-row">
   <div class="settings-text">
     <label class="settings-label" for="autoplay">Autoplay</label>
-    <span class="settings-hint">Continue to the next episode</span>
+    <span class="settings-hint" id="autoplay-hint">Continue to the next episode</span>
   </div>
-  <Switch id="autoplay" name="autoplay" />
+  <Switch id="autoplay" name="autoplay" aria-describedby="autoplay-hint" />
 </div>
 ```
 

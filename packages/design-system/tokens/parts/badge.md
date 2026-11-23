@@ -38,7 +38,7 @@ A grey label holding one word or one number beside a name.
 
 ## Accessibility
 
-- Role: Static inline <span>
+- Role: Static inline `<span>`
 - ARIA: Inline text label; ensure surrounding text provides context when a count or status alone is ambiguous.
 - Keyboard: None; non-interactive indicator.
 - Focus: Not focusable.

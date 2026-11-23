@@ -38,10 +38,10 @@ An accent label with no container until it is hovered or pressed; the quietest b
 
 ## Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: Accessible name comes from children; provide descriptive label text.
 - ARIA: Do not nest interactive elements inside Button.
-- Keyboard: Enter and Space activate <button>; Enter activates link (<a href>).
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
 - Focus: Native keyboard focus ring via :focus-visible.
 
 ## Props of Button

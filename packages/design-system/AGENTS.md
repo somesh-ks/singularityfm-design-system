@@ -16,12 +16,12 @@ Before writing UI, read node_modules/@singularityfm/design-system/AGENTS.md and 
 ## Find the part before you write anything
 
 1. Ask the lookup: `ds find "<what you need>"`. It names the part, what to import, the markup, when not to use it and the tokens it reads. `ds part <id>` shows one part with the props of each component it imports (`ds part Avatar` takes a component's name too), `ds token <words>` a token, and `ds icons [query]` searches exported `<Icon name="..." />` glyphs. `ds` is the package's own command: `pnpm exec ds` (`npx ds` with npm). Add `--json` for data, and ask several at once with `ds batch "find <need>" "part <id>" "icons arrow"`.
-2. No lookup? Read `tokens/llms.txt` (one page: every part, the colour roles, the scales), then the part's or component's page it links (`tokens/parts/<id>.md`, `tokens/components/<Component>.md`: import, example, props, accessibility, tokens). `tokens/llms-full.txt` is every page in one file; `tokens/system.json` holds the data. Without the package, the style guide serves the same files under news.someshks.com/design/ (and every guide page has a `.md` sibling route, e.g. `/design/components.md`).
+2. No lookup? Read `tokens/llms.txt` (one page: every part, the colour roles, the scales), then the part's or component's page it links (`tokens/parts/<id>.md`, `tokens/components/<component>.md`, the name in kebab case (`brand-mark.md` for BrandMark): import, example, props, accessibility, tokens). `tokens/llms-full.txt` is every page in one file; `tokens/system.json` holds the data. Without the package, the style guide serves the same files under news.someshks.com/design/ (and every guide page has a `.md` sibling route, e.g. `/design/components.md`).
 3. Nothing fits: stop and ask the owner. Do not invent a class, and do not restyle a part from a page.
 
 ## Rules
 
-- Never invent a prop, component or icon name: use only `ds part <id>` (or `tokens/parts/<id>.md` / `tokens/components/<Component>.md`) and `ds icons [query]` for exact exported APIs and prop unions.
+- Never invent a prop, component or icon name: use only `ds part <id>` (or `tokens/parts/<id>.md` / `tokens/components/<component>.md`) and `ds icons [query]` for exact exported APIs and prop unions.
 - A control is a component named for what it is. Import it by name (`@singularityfm/design-system/Button`) and draw it. Never type its class (`button-filled`, `filter-chip`, `search-field`) on your own markup.
 - In an Astro page pass `className`, not `class`: `@astrojs/react` drops `class`.
 - Colour, spacing, type, corners, shadow and motion come from tokens (`var(--color-surface)`, `var(--space-4)`, `var(--shape-md)`). No hex, no `oklch()` literal, no pixel length. Spacing keeps the 8pt grid.

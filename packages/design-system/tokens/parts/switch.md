@@ -39,9 +39,9 @@ A track and a thumb for one setting that is on or off.
 
 ## Accessibility
 
-- Role: Native <input type="checkbox" role="switch">
-- ARIA: Native checked state drives switch semantics; associate with <label for>, aria-label or aria-labelledby.
-- ARIA: Supports indeterminate state set by script for master switches.
+- Role: Native `<input type="checkbox" role="switch">`
+- ARIA: Native checked state drives switch semantics; associate with `<label for>`, aria-label or aria-labelledby.
+- ARIA: role="switch" has no mixed state: a script-set indeterminate is visual only. Use a Checkbox when a mixed state must be announced.
 - Keyboard: Space toggles the switch; submits inside forms.
 - Focus: Native focus ring via :focus-visible on the switch control.
 

@@ -33,7 +33,7 @@ A circle on the container fill, beside a primary action.
 
 ## Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: label prop is required and sets aria-label because the child Icon is aria-hidden="true".
 - ARIA: Toggle buttons pass aria-pressed and swap between off and filled child Icons.
 - Keyboard: Enter and Space activate the button; Enter activates link mode.

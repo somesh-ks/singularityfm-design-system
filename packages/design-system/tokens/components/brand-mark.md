@@ -23,7 +23,7 @@ Import `@singularityfm/design-system/BrandMark`. No part covers it yet, so `ds f
 
 ## Accessibility
 
-- Role: Decorative <svg aria-hidden="true" focusable="false">
+- Role: Decorative `<svg aria-hidden="true" focusable="false">`
 - ARIA: Hidden from screen readers; adjacent wordmark text or link provides the name.
 - Keyboard: None; decorative SVG mark.
 - Focus: Not focusable.

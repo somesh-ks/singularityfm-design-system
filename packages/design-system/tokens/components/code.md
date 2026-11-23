@@ -23,11 +23,11 @@ Import `@singularityfm/design-system/Code`. No part covers it yet, so `ds find` 
 
 ## Accessibility
 
-- Role: Focusable <pre tabIndex={0}> + Copy IconButton + <span role="status"> live region
-- ARIA: label sets aria-label on the <pre> region.
-- ARIA: Copy button announces completion through the polite <span role="status"> live region.
-- Keyboard: Tab focuses <pre> for arrow-key scrolling/selection and moves to the Copy button; Enter/Space copies.
-- Focus: Both <pre tabIndex={0}> and the Copy button receive keyboard focus.
+- Role: Focusable `<pre tabIndex={0}>` + Copy IconButton + `<span role="status">` live region
+- ARIA: label sets aria-label on the `<pre>` region.
+- ARIA: Copy button announces completion through the polite `<span role="status">` live region.
+- Keyboard: Tab focuses `<pre>` for arrow-key scrolling/selection and moves to the Copy button; Enter/Space copies.
+- Focus: Both `<pre tabIndex={0}>` and the Copy button receive keyboard focus.
 
 ## Props of Code
 

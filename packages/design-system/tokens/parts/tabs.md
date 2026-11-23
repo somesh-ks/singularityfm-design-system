@@ -37,7 +37,7 @@ A sticky strip of links to the sections of one page.
 
 ## Accessibility
 
-- Role: Navigation landmark <nav aria-label="Sections">
+- Role: Navigation landmark `<nav aria-label="Sections">`
 - ARIA: Renders only for 2 or more sections; active link carries aria-current="true".
 - Keyboard: Tab navigates section links; Enter jumps to the section anchor.
 - Focus: Native anchor focus ring.

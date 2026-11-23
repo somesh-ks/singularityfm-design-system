@@ -39,7 +39,7 @@ The page's one primary action below 64rem: a glyph and a word, floating.
 
 ## Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: label prop is required and sets aria-label.
 - ARIA: The visible extended text span is aria-hidden="true" so screen readers announce label once.
 - Keyboard: Enter and Space activate the button; Enter activates link mode.

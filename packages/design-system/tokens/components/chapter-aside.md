@@ -23,7 +23,7 @@ Import `@singularityfm/design-system/ChapterAside`. No part covers it yet, so `d
 
 ## Accessibility
 
-- Role: Navigation landmark <nav aria-labelledby="aside-title"> with <h2> and <ul role="list">
+- Role: Navigation landmark `<nav aria-labelledby="aside-title">` with `<h2>` and `<ul role="list">`
 - ARIA: Marks active section anchor with aria-current="true".
 - ARIA: Heading #aside-title labels the landmark.
 - Keyboard: Tab navigates section links; Enter jumps to the section anchor.

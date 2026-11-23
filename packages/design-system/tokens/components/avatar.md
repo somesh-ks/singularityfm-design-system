@@ -23,7 +23,7 @@ Import `@singularityfm/design-system/Avatar`. No part covers it yet, so `ds find
 
 ## Accessibility
 
-- Role: Base UI Avatar.Root: static <span> or interactive <button type="button"> when label is set
+- Role: Base UI Avatar.Root: static `<span>` or interactive `<button type="button">` when label is set
 - ARIA: Pass label to render an interactive profile button with aria-label={label}.
 - ARIA: Decorative shape SVG inside is aria-hidden="true".
 - Keyboard: When label is provided, Enter and Space trigger the profile button.

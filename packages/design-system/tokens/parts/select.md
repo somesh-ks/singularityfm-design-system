@@ -40,8 +40,8 @@ A native select with its own chevron.
 
 ## Accessibility
 
-- Role: Native <select>
-- ARIA: Associate with label prop, aria-label, aria-labelledby or <label for>.
+- Role: Native `<select>`
+- ARIA: Associate with label prop, aria-label, aria-labelledby or `<label for>`.
 - ARIA: On phone screens selectSheet.ts opens a modal Sheet listbox alternative.
 - Keyboard: Space, Enter or Alt+ArrowDown opens the picker; Arrow keys navigate options.
 - Focus: Native select focus ring; modal picker restores focus to trigger on close.

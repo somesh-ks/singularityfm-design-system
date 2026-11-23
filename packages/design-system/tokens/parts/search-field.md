@@ -41,7 +41,7 @@ The rounded search pill, on the container tone, with its glyph.
 
 ## Accessibility
 
-- Role: <label> wrapping <input type="search"> plus optional Clear IconButton
+- Role: `<label>` wrapping `<input type="search">` plus optional Clear IconButton
 - ARIA: Pass label for the input's aria-label.
 - ARIA: Clear button (when clearable) carries aria-label="Clear text".
 - Keyboard: Escape or activating Clear empties the search input when installSearchClear() is wired.

@@ -106,14 +106,18 @@ function frontMatter(fields: {
   return lines;
 }
 
+// Element fragments such as <button> go in code spans, or Markdown renders them as tags and hides them.
+const codeTags = (line: string): string =>
+  line.replace(/<\/?[a-z][^<>`]*>/g, (tag) => `\`${tag}\``);
+
 function a11ySection(a11y: A11yGuidance, depth = 0): string[] {
   return [
     `${"#".repeat(2 + depth)} Accessibility`,
     "",
-    `- Role: ${a11y.role}`,
-    ...a11y.aria.map((line) => `- ARIA: ${line}`),
-    ...a11y.keyboard.map((line) => `- Keyboard: ${line}`),
-    `- Focus: ${a11y.focus}`,
+    `- Role: ${codeTags(a11y.role)}`,
+    ...a11y.aria.map((line) => `- ARIA: ${codeTags(line)}`),
+    ...a11y.keyboard.map((line) => `- Keyboard: ${codeTags(line)}`),
+    `- Focus: ${codeTags(a11y.focus)}`,
   ];
 }
 

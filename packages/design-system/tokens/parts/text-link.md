@@ -37,7 +37,7 @@ A link inside a line of small text; the words stay inline, the target is 44px.
 
 ## Accessibility
 
-- Role: Native <a href>
+- Role: Native `<a href>`
 - ARIA: Accessible name comes from children.
 - ARIA: External source links use target="_blank" with rel="noopener noreferrer".
 - Keyboard: Enter navigates to href.

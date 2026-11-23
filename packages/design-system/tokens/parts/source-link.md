@@ -37,7 +37,7 @@ The one link out of a story: the publisher's name, underlined on hover.
 
 ## Accessibility
 
-- Role: Native <a href>
+- Role: Native `<a href>`
 - ARIA: Accessible name comes from children.
 - ARIA: External source links use target="_blank" with rel="noopener noreferrer".
 - Keyboard: Enter navigates to href.

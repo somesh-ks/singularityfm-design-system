@@ -43,11 +43,11 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 
 ## Accessibility
 
-- Role: Native modal <dialog data-dialog>
+- Role: Native modal `<dialog data-dialog>`
 - ARIA: Pair with DialogTitle and pass aria-labelledby matching DialogTitle's id.
 - ARIA: Renders closed by default; open with dialog.showModal().
 - Keyboard: Escape closes the modal natively; Enter submits form method="dialog" buttons.
-- Focus: Browser traps focus inside open modal <dialog> and restores focus to opener on close.
+- Focus: Browser traps focus inside open modal `<dialog>` and restores focus to opener on close.
 
 ## Props of Dialog
 

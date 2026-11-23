@@ -38,11 +38,11 @@ A tinted block with an icon, a title, an optional line and at most one text butt
 
 ## Accessibility
 
-- Role: <div role="alert"> for tone="danger", otherwise <div role="status">
+- Role: `<div role="alert">` for tone="danger", otherwise `<div role="status">`
 - ARIA: Leading Icon is aria-hidden="true".
 - ARIA: Pass bodyId so related controls can link with aria-describedby.
-- Keyboard: Optional action Button handles Enter/Space natively.
-- Focus: Static notice region; optional action Button is keyboard focusable.
+- Keyboard: Enter follows the optional action link.
+- Focus: Static notice region; the optional action link is keyboard focusable.
 
 ## Props of Banner
 

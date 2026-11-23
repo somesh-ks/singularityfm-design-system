@@ -193,10 +193,10 @@ The accent fill under its own words; the most prominent button.
 
 ### Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: Accessible name comes from children; provide descriptive label text.
 - ARIA: Do not nest interactive elements inside Button.
-- Keyboard: Enter and Space activate <button>; Enter activates link (<a href>).
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
 - Focus: Native keyboard focus ring via :focus-visible.
 
 ### Props of Button
@@ -263,10 +263,10 @@ The accent container under its own words, with no outline; quieter than Filled.
 
 ### Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: Accessible name comes from children; provide descriptive label text.
 - ARIA: Do not nest interactive elements inside Button.
-- Keyboard: Enter and Space activate <button>; Enter activates link (<a href>).
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
 - Focus: Native keyboard focus ring via :focus-visible.
 
 ### Props of Button
@@ -333,10 +333,10 @@ An accent label with no container until it is hovered or pressed; the quietest b
 
 ### Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: Accessible name comes from children; provide descriptive label text.
 - ARIA: Do not nest interactive elements inside Button.
-- Keyboard: Enter and Space activate <button>; Enter activates link (<a href>).
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
 - Focus: Native keyboard focus ring via :focus-visible.
 
 ### Props of Button
@@ -397,10 +397,10 @@ A Text button in the danger colour.
 
 ### Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: Accessible name comes from children; provide descriptive label text.
 - ARIA: Do not nest interactive elements inside Button.
-- Keyboard: Enter and Space activate <button>; Enter activates link (<a href>).
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
 - Focus: Native keyboard focus ring via :focus-visible.
 
 ### Props of Button
@@ -460,10 +460,10 @@ A shorter pill, same touch target.
 
 ### Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: Accessible name comes from children; provide descriptive label text.
 - ARIA: Do not nest interactive elements inside Button.
-- Keyboard: Enter and Space activate <button>; Enter activates link (<a href>).
+- Keyboard: Enter and Space activate `<button>`; Enter activates link (`<a href>`).
 - Focus: Native keyboard focus ring via :focus-visible.
 
 ### Props of Button
@@ -541,7 +541,7 @@ A glyph in a round 44px target, quiet until used.
 
 ### Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: label prop is required and sets aria-label because the child Icon is aria-hidden="true".
 - ARIA: Toggle buttons pass aria-pressed and swap between off and filled child Icons.
 - Keyboard: Enter and Space activate the button; Enter activates link mode.
@@ -618,7 +618,7 @@ A circle on the container fill, beside a primary action.
 
 ### Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: label prop is required and sets aria-label because the child Icon is aria-hidden="true".
 - ARIA: Toggle buttons pass aria-pressed and swap between off and filled child Icons.
 - Keyboard: Enter and Space activate the button; Enter activates link mode.
@@ -702,7 +702,7 @@ The page's one primary action below 64rem: a glyph and a word, floating.
 
 ### Accessibility
 
-- Role: Native <button> (or <a href> when href is set)
+- Role: Native `<button>` (or `<a href>` when href is set)
 - ARIA: label prop is required and sets aria-label.
 - ARIA: The visible extended text span is aria-hidden="true" so screen readers announce label once.
 - Keyboard: Enter and Space activate the button; Enter activates link mode.
@@ -770,7 +770,7 @@ A link inside a line of small text; the words stay inline, the target is 44px.
 
 ### Accessibility
 
-- Role: Native <a href>
+- Role: Native `<a href>`
 - ARIA: Accessible name comes from children.
 - ARIA: External source links use target="_blank" with rel="noopener noreferrer".
 - Keyboard: Enter navigates to href.
@@ -834,7 +834,7 @@ The one link out of a story: the publisher's name, underlined on hover.
 
 ### Accessibility
 
-- Role: Native <a href>
+- Role: Native `<a href>`
 - ARIA: Accessible name comes from children.
 - ARIA: External source links use target="_blank" with rel="noopener noreferrer".
 - Keyboard: Enter navigates to href.
@@ -904,7 +904,7 @@ The tonal pill that plays a briefing or one story, with its state; or its glyph 
 
 ### Accessibility
 
-- Role: Native <button type="button">
+- Role: Native `<button type="button">`
 - ARIA: Requires aria-label when label is omitted (glyph-only mode).
 - ARIA: Inner glyph slot and PlayingBars are aria-hidden="true"; player script updates data-state, data-playing and aria-label.
 - Keyboard: Enter and Space toggle or start playback via native button activation.
@@ -988,7 +988,7 @@ A checkbox drawn as a pill; ticked it takes the accent container.
 
 ### Accessibility
 
-- Role: Native <input type="checkbox"> wrapped in <label>
+- Role: Native `<input type="checkbox">` wrapped in `<label>`
 - ARIA: Group related filter chips inside ChipGroup with aria-label or aria-labelledby.
 - ARIA: Checked state is native to the checkbox.
 - Keyboard: Space toggles selection; Tab moves between checkboxes.
@@ -1069,7 +1069,7 @@ One pill of radio items: pick exactly one value.
 
 ### Accessibility
 
-- Role: <fieldset role="radiogroup"> containing native <input type="radio"> controls
+- Role: `<fieldset role="radiogroup">` containing native `<input type="radio">` controls
 - ARIA: Name the radiogroup with aria-label or aria-labelledby.
 - ARIA: Setting disabled disables all radio options in the fieldset.
 - Keyboard: ArrowLeft/ArrowUp and ArrowRight/ArrowDown move and select options natively.
@@ -1134,7 +1134,7 @@ A tonal track with one sliding pill: switch between views of the same content.
 
 ### Accessibility
 
-- Role: Container role="tablist" with child <button role="tab"> items
+- Role: Container role="tablist" with child `<button role="tab">` items
 - ARIA: Name the tablist with aria-label or aria-labelledby.
 - ARIA: Active tab sets aria-selected="true" and omits tabIndex; inactive tabs set aria-selected="false" and tabIndex={-1}.
 - ARIA: Each tab carries aria-controls matching its panel id; icon tabs use aria-label={tab.label}.
@@ -1202,7 +1202,7 @@ The rounded search pill, on the container tone, with its glyph.
 
 ### Accessibility
 
-- Role: <label> wrapping <input type="search"> plus optional Clear IconButton
+- Role: `<label>` wrapping `<input type="search">` plus optional Clear IconButton
 - ARIA: Pass label for the input's aria-label.
 - ARIA: Clear button (when clearable) carries aria-label="Clear text".
 - Keyboard: Escape or activating Clear empties the search input when installSearchClear() is wired.
@@ -1270,7 +1270,7 @@ A filled Phosphor glyph in the colour of the text beside it.
 
 ### Accessibility
 
-- Role: Decorative <svg aria-hidden="true" focusable="false">
+- Role: Decorative `<svg aria-hidden="true" focusable="false">`
 - ARIA: Always hidden from assistive technology; wrap inside Button, IconButton or labelled text.
 - Keyboard: None; non-interactive graphic.
 - Focus: Not focusable (focusable="false").
@@ -1330,7 +1330,7 @@ A grey label holding one word or one number beside a name.
 
 ### Accessibility
 
-- Role: Static inline <span>
+- Role: Static inline `<span>`
 - ARIA: Inline text label; ensure surrounding text provides context when a count or status alone is ambiguous.
 - Keyboard: None; non-interactive indicator.
 - Focus: Not focusable.
@@ -1390,9 +1390,9 @@ A track and a thumb for one setting that is on or off.
 
 ### Accessibility
 
-- Role: Native <input type="checkbox" role="switch">
-- ARIA: Native checked state drives switch semantics; associate with <label for>, aria-label or aria-labelledby.
-- ARIA: Supports indeterminate state set by script for master switches.
+- Role: Native `<input type="checkbox" role="switch">`
+- ARIA: Native checked state drives switch semantics; associate with `<label for>`, aria-label or aria-labelledby.
+- ARIA: role="switch" has no mixed state: a script-set indeterminate is visual only. Use a Checkbox when a mixed state must be announced.
 - Keyboard: Space toggles the switch; submits inside forms.
 - Focus: Native focus ring via :focus-visible on the switch control.
 
@@ -1451,8 +1451,8 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 
 ### Accessibility
 
-- Role: Native <input type="range">
-- ARIA: Must be named via aria-label, aria-labelledby or associated <label for>.
+- Role: Native `<input type="range">`
+- ARIA: Must be named via aria-label, aria-labelledby or associated `<label for>`.
 - ARIA: Expose min, max, step and native numeric value.
 - Keyboard: ArrowLeft/ArrowDown decrease, ArrowRight/ArrowUp increase, PageUp/PageDown/Home/End step.
 - Focus: Native thumb focus ring via :focus-visible.
@@ -1523,8 +1523,8 @@ An outlined box for text a person types: one line, or several lines (multiline).
 
 ### Accessibility
 
-- Role: Native <input> (or <textarea> when multiline)
-- ARIA: Associate with a visible <label>, aria-label or aria-labelledby.
+- Role: Native `<input>` (or `<textarea>` when multiline)
+- ARIA: Associate with a visible `<label>`, aria-label or aria-labelledby.
 - ARIA: Set aria-invalid="true" for validation errors and aria-describedby for error messages.
 - Keyboard: Standard native text input/textarea editing and Tab navigation.
 - Focus: Native input/textarea focus ring.
@@ -1589,8 +1589,8 @@ A native select with its own chevron.
 
 ### Accessibility
 
-- Role: Native <select>
-- ARIA: Associate with label prop, aria-label, aria-labelledby or <label for>.
+- Role: Native `<select>`
+- ARIA: Associate with label prop, aria-label, aria-labelledby or `<label for>`.
 - ARIA: On phone screens selectSheet.ts opens a modal Sheet listbox alternative.
 - Keyboard: Space, Enter or Alt+ArrowDown opens the picker; Arrow keys navigate options.
 - Focus: Native select focus ring; modal picker restores focus to trigger on close.
@@ -1663,11 +1663,11 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 
 ### Accessibility
 
-- Role: Native popover <div popover="auto"> containing <div role="menu" aria-label={title}> and MenuItem buttons
-- ARIA: Trigger button opens the menu with popoverTarget={id}; title sets aria-label={title} on role="menu" and <h2 id={id}-title>.
+- Role: Native popover `<div popover="auto">` containing `<div role="menu" aria-label={title}>` and MenuItem buttons
+- ARIA: Trigger button opens the menu with popoverTarget={id}; title sets aria-label={title} on role="menu" and `<h2 id={id}-title>`.
 - ARIA: Close IconButton sets aria-label="Close" with data-menu-close.
-- Keyboard: Browser popover supports Escape and light dismiss; page menu script handles ArrowUp/ArrowDown navigation.
-- Focus: Page script moves focus into the menu on open and returns focus to trigger on close.
+- Keyboard: Browser popover supports Escape and light dismiss. The package ships no menu script: the host page handles ArrowUp/ArrowDown between items (MENU_SELECTORS from ./menu finds them).
+- Focus: The host page moves focus to the first item on open; the browser returns focus to the popoverTarget trigger on close, and the header Close button closes it.
 
 ### Props of Menu
 
@@ -1683,7 +1683,9 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 #### Example of MenuItem
 
 ```tsx
-<MenuItem><Icon name="share" /> Share</MenuItem>
+<Menu id="row-menu" title="Row actions">
+  <MenuItem><Icon name="share" /> Share</MenuItem>
+</Menu>
 ```
 
 ### Props of MenuItem
@@ -1758,11 +1760,11 @@ A tinted block with an icon, a title, an optional line and at most one text butt
 
 ### Accessibility
 
-- Role: <div role="alert"> for tone="danger", otherwise <div role="status">
+- Role: `<div role="alert">` for tone="danger", otherwise `<div role="status">`
 - ARIA: Leading Icon is aria-hidden="true".
 - ARIA: Pass bodyId so related controls can link with aria-describedby.
-- Keyboard: Optional action Button handles Enter/Space natively.
-- Focus: Static notice region; optional action Button is keyboard focusable.
+- Keyboard: Enter follows the optional action link.
+- Focus: Static notice region; the optional action link is keyboard focusable.
 
 ### Props of Banner
 
@@ -1885,11 +1887,11 @@ A small centred box with a heading and a row of buttons: one question, one tap.
 
 ### Accessibility
 
-- Role: Native modal <dialog data-dialog>
+- Role: Native modal `<dialog data-dialog>`
 - ARIA: Pair with DialogTitle and pass aria-labelledby matching DialogTitle's id.
 - ARIA: Renders closed by default; open with dialog.showModal().
 - Keyboard: Escape closes the modal natively; Enter submits form method="dialog" buttons.
-- Focus: Browser traps focus inside open modal <dialog> and restores focus to opener on close.
+- Focus: Browser traps focus inside open modal `<dialog>` and restores focus to opener on close.
 
 ### Props of Dialog
 
@@ -2001,11 +2003,11 @@ A panel over the page for a form or a list: full screen on a phone, at the right
 
 ### Accessibility
 
-- Role: Native modal <dialog data-sheet aria-labelledby={titleId}>
-- ARIA: titleId links <dialog> aria-labelledby to the SheetHeader h2 heading.
+- Role: Native modal `<dialog data-sheet aria-labelledby={titleId}>`
+- ARIA: titleId links `<dialog>` aria-labelledby to the SheetHeader h2 heading.
 - ARIA: Rendered closed on server; open with dialog.showModal().
 - Keyboard: Escape closes the sheet natively; Tab cycles within modal contents.
-- Focus: Browser traps focus inside open <dialog> and restores focus to opener on close.
+- Focus: Browser traps focus inside open `<dialog>` and restores focus to opener on close.
 
 ### Props of Sheet
 
@@ -2121,8 +2123,8 @@ A wave from the touch point that fills a control's touch area, then fades.
 
 ### Accessibility
 
-- Role: Decorative ripple layer (<span aria-hidden="true">)
-- ARIA: Always aria-hidden="true"; host <button> or <a href> provides accessible role and name.
+- Role: Decorative ripple layer (`<span aria-hidden="true">`)
+- ARIA: Always aria-hidden="true"; host `<button>` or `<a href>` provides accessible role and name.
 - Keyboard: None; host interactive element handles keyboard activation.
 - Focus: Not focusable; host element owns focus ring.
 
@@ -2209,7 +2211,7 @@ A sticky strip of links to the sections of one page.
 
 ### Accessibility
 
-- Role: Navigation landmark <nav aria-label="Sections">
+- Role: Navigation landmark `<nav aria-label="Sections">`
 - ARIA: Renders only for 2 or more sections; active link carries aria-current="true".
 - Keyboard: Tab navigates section links; Enter jumps to the section anchor.
 - Focus: Native anchor focus ring.
@@ -2268,7 +2270,7 @@ A row that is one link or button: the whole row responds as a rounded tile.
 
 ### Accessibility
 
-- Role: Native <a href> link row or <button type="button"> action row inside a list or card group
+- Role: Native `<a href>` link row or `<button type="button">` action row inside a list or card group
 - ARIA: Keep the accessible label in visible row text (.settings-label / .settings-hint); do not nest interactive controls inside the row link or button.
 - ARIA: Trailing chevron Icon carries aria-hidden="true" so the row text announces cleanly.
 - Keyboard: Enter activates a link row; Enter and Space activate a button row.
@@ -2353,9 +2355,9 @@ A row with a label and an in-place control: a switch, a select or a value.
 <div class="settings-row">
   <div class="settings-text">
     <label class="settings-label" for="autoplay">Autoplay</label>
-    <span class="settings-hint">Continue to the next episode</span>
+    <span class="settings-hint" id="autoplay-hint">Continue to the next episode</span>
   </div>
-  <Switch id="autoplay" name="autoplay" />
+  <Switch id="autoplay" name="autoplay" aria-describedby="autoplay-hint" />
 </div>
 ```
 
@@ -2567,7 +2569,7 @@ Import `@singularityfm/design-system/Avatar`. No part covers it yet, so `ds find
 
 ### Accessibility
 
-- Role: Base UI Avatar.Root: static <span> or interactive <button type="button"> when label is set
+- Role: Base UI Avatar.Root: static `<span>` or interactive `<button type="button">` when label is set
 - ARIA: Pass label to render an interactive profile button with aria-label={label}.
 - ARIA: Decorative shape SVG inside is aria-hidden="true".
 - Keyboard: When label is provided, Enter and Space trigger the profile button.
@@ -2601,7 +2603,7 @@ Import `@singularityfm/design-system/BrandMark`. No part covers it yet, so `ds f
 
 ### Accessibility
 
-- Role: Decorative <svg aria-hidden="true" focusable="false">
+- Role: Decorative `<svg aria-hidden="true" focusable="false">`
 - ARIA: Hidden from screen readers; adjacent wordmark text or link provides the name.
 - Keyboard: None; decorative SVG mark.
 - Focus: Not focusable.
@@ -2630,7 +2632,7 @@ Import `@singularityfm/design-system/ChapterAside`. No part covers it yet, so `d
 
 ### Accessibility
 
-- Role: Navigation landmark <nav aria-labelledby="aside-title"> with <h2> and <ul role="list">
+- Role: Navigation landmark `<nav aria-labelledby="aside-title">` with `<h2>` and `<ul role="list">`
 - ARIA: Marks active section anchor with aria-current="true".
 - ARIA: Heading #aside-title labels the landmark.
 - Keyboard: Tab navigates section links; Enter jumps to the section anchor.
@@ -2660,11 +2662,11 @@ Import `@singularityfm/design-system/Code`. No part covers it yet, so `ds find` 
 
 ### Accessibility
 
-- Role: Focusable <pre tabIndex={0}> + Copy IconButton + <span role="status"> live region
-- ARIA: label sets aria-label on the <pre> region.
-- ARIA: Copy button announces completion through the polite <span role="status"> live region.
-- Keyboard: Tab focuses <pre> for arrow-key scrolling/selection and moves to the Copy button; Enter/Space copies.
-- Focus: Both <pre tabIndex={0}> and the Copy button receive keyboard focus.
+- Role: Focusable `<pre tabIndex={0}>` + Copy IconButton + `<span role="status">` live region
+- ARIA: label sets aria-label on the `<pre>` region.
+- ARIA: Copy button announces completion through the polite `<span role="status">` live region.
+- Keyboard: Tab focuses `<pre>` for arrow-key scrolling/selection and moves to the Copy button; Enter/Space copies.
+- Focus: Both `<pre tabIndex={0}>` and the Copy button receive keyboard focus.
 
 ### Props of Code
 
@@ -2694,8 +2696,8 @@ Import `@singularityfm/design-system/Flag`. No part covers it yet, so `ds find` 
 
 ### Accessibility
 
-- Role: Decorative <img alt="" aria-hidden="true"> or <span aria-hidden="true">
-- ARIA: Always aria-hidden="true"; keep the country or language name in adjacent visible text or parent aria-label.
+- Role: Decorative `<img alt="" aria-hidden="true">` or `<span aria-hidden="true">`
+- ARIA: Flag glyphs are always aria-hidden="true"; text passed with the text prop stays readable. A region flag alone carries no name: put the country or language in nearby text or the parent's aria-label.
 - Keyboard: None; decorative region mark.
 - Focus: Not focusable.
 
@@ -2726,8 +2728,8 @@ Import `@singularityfm/design-system/RowExit`. No part covers it yet, so `ds fin
 
 ### Accessibility
 
-- Role: Native <li> list item
-- ARIA: Place inside <ul> or <ol>; page scripts mark data-removing or data-gone and pair removal with Toast Undo.
+- Role: Native `<li>` list item
+- ARIA: Place inside `<ul>` or `<ol>`; page scripts mark data-removing or data-gone and pair removal with Toast Undo.
 - Keyboard: Inherits keyboard semantics of controls placed inside the row.
 - Focus: Page script should restore or move focus cleanly when removing a focused row.
 

@@ -23,8 +23,8 @@ Import `@singularityfm/design-system/Flag`. No part covers it yet, so `ds find` 
 
 ## Accessibility
 
-- Role: Decorative <img alt="" aria-hidden="true"> or <span aria-hidden="true">
-- ARIA: Always aria-hidden="true"; keep the country or language name in adjacent visible text or parent aria-label.
+- Role: Decorative `<img alt="" aria-hidden="true">` or `<span aria-hidden="true">`
+- ARIA: Flag glyphs are always aria-hidden="true"; text passed with the text prop stays readable. A region flag alone carries no name: put the country or language in nearby text or the parent's aria-label.
 - Keyboard: None; decorative region mark.
 - Focus: Not focusable.
 

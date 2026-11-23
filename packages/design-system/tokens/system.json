@@ -1266,7 +1266,7 @@
         "role": "Native <input type=\"checkbox\" role=\"switch\">",
         "aria": [
           "Native checked state drives switch semantics; associate with <label for>, aria-label or aria-labelledby.",
-          "Supports indeterminate state set by script for master switches."
+          "role=\"switch\" has no mixed state: a script-set indeterminate is visual only. Use a Checkbox when a mixed state must be announced."
         ],
         "keyboard": [
           "Space toggles the switch; submits inside forms."
@@ -1609,9 +1609,9 @@
           "Close IconButton sets aria-label=\"Close\" with data-menu-close."
         ],
         "keyboard": [
-          "Browser popover supports Escape and light dismiss; page menu script handles ArrowUp/ArrowDown navigation."
+          "Browser popover supports Escape and light dismiss. The package ships no menu script: the host page handles ArrowUp/ArrowDown between items (MENU_SELECTORS from ./menu finds them)."
         ],
-        "focus": "Page script moves focus into the menu on open and returns focus to trigger on close."
+        "focus": "The host page moves focus to the first item on open; the browser returns focus to the popoverTarget trigger on close, and the header Close button closes it."
       },
       "experimental": [
         {
@@ -1715,9 +1715,9 @@
           "Pass bodyId so related controls can link with aria-describedby."
         ],
         "keyboard": [
-          "Optional action Button handles Enter/Space natively."
+          "Enter follows the optional action link."
         ],
-        "focus": "Static notice region; optional action Button is keyboard focusable."
+        "focus": "Static notice region; the optional action link is keyboard focusable."
       },
       "imports": [
         "@singularityfm/design-system/Banner"
@@ -2359,7 +2359,7 @@
         "switch row",
         "setting"
       ],
-      "markup": "<div class=\"settings-row\">\n  <div class=\"settings-text\">\n    <label class=\"settings-label\" for=\"autoplay\">Autoplay</label>\n    <span class=\"settings-hint\">Continue to the next episode</span>\n  </div>\n  <Switch id=\"autoplay\" name=\"autoplay\" />\n</div>",
+      "markup": "<div class=\"settings-row\">\n  <div class=\"settings-text\">\n    <label class=\"settings-label\" for=\"autoplay\">Autoplay</label>\n    <span class=\"settings-hint\" id=\"autoplay-hint\">Continue to the next episode</span>\n  </div>\n  <Switch id=\"autoplay\" name=\"autoplay\" aria-describedby=\"autoplay-hint\" />\n</div>",
       "imports": [
         "@singularityfm/design-system/Switch"
       ],
@@ -2724,9 +2724,9 @@
           "Pass bodyId so related controls can link with aria-describedby."
         ],
         "keyboard": [
-          "Optional action Button handles Enter/Space natively."
+          "Enter follows the optional action link."
         ],
-        "focus": "Static notice region; optional action Button is keyboard focusable."
+        "focus": "Static notice region; the optional action link is keyboard focusable."
       }
     },
     {
@@ -3066,7 +3066,7 @@
         "open",
         "style"
       ],
-      "example": "<Dialog id=\"confirm\" aria-labelledby=\"confirm-title\">\n  <DialogTitle id=\"confirm-title\">Delete source?</DialogTitle>\n  <DialogActions>\n    <Button variant=\"text\">Cancel</Button>\n    <Button variant=\"text\" tone=\"danger\">Delete</Button>\n  </DialogActions>\n</Dialog>",
+      "example": "<Dialog id=\"confirm\" aria-labelledby=\"confirm-title\">\n  <DialogTitle id=\"confirm-title\">Delete source?</DialogTitle>\n  <form method=\"dialog\">\n    <DialogActions>\n      <Button variant=\"text\" type=\"submit\" value=\"cancel\">Cancel</Button>\n      <Button variant=\"text\" tone=\"danger\" type=\"submit\" value=\"delete\">Delete</Button>\n    </DialogActions>\n  </form>\n</Dialog>",
       "a11y": {
         "role": "Native modal <dialog data-dialog>",
         "aria": [
@@ -3298,7 +3298,7 @@
       "a11y": {
         "role": "Decorative <img alt=\"\" aria-hidden=\"true\"> or <span aria-hidden=\"true\">",
         "aria": [
-          "Always aria-hidden=\"true\"; keep the country or language name in adjacent visible text or parent aria-label."
+          "Flag glyphs are always aria-hidden=\"true\"; text passed with the text prop stays readable. A region flag alone carries no name: put the country or language in nearby text or the parent's aria-label."
         ],
         "keyboard": [
           "None; decorative region mark."
@@ -3552,9 +3552,9 @@
           "Close IconButton sets aria-label=\"Close\" with data-menu-close."
         ],
         "keyboard": [
-          "Browser popover supports Escape and light dismiss; page menu script handles ArrowUp/ArrowDown navigation."
+          "Browser popover supports Escape and light dismiss. The package ships no menu script: the host page handles ArrowUp/ArrowDown between items (MENU_SELECTORS from ./menu finds them)."
         ],
-        "focus": "Page script moves focus into the menu on open and returns focus to trigger on close."
+        "focus": "The host page moves focus to the first item on open; the browser returns focus to the popoverTarget trigger on close, and the header Close button closes it."
       }
     },
     {
@@ -3598,14 +3598,14 @@
       "except": [
         "role"
       ],
-      "example": "<MenuItem><Icon name=\"share\" /> Share</MenuItem>",
+      "example": "<Menu id=\"row-menu\" title=\"Row actions\">\n  <MenuItem><Icon name=\"share\" /> Share</MenuItem>\n</Menu>",
       "a11y": {
         "role": "Native <button type=\"button\" role=\"menuitem\">",
         "aria": [
           "Must sit inside a role=\"menu\" container; children provide item label."
         ],
         "keyboard": [
-          "Enter/Space activates menu item; ArrowUp/ArrowDown handled by page menu script."
+          "Enter/Space activates a menu item; ArrowUp/ArrowDown come from the host page's menu script (the package ships none)."
         ],
         "focus": "Receives focus during menu keyboard navigation."
       }
@@ -4256,7 +4256,7 @@
         "role": "Native <input type=\"checkbox\" role=\"switch\">",
         "aria": [
           "Native checked state drives switch semantics; associate with <label for>, aria-label or aria-labelledby.",
-          "Supports indeterminate state set by script for master switches."
+          "role=\"switch\" has no mixed state: a script-set indeterminate is visual only. Use a Checkbox when a mixed state must be announced."
         ],
         "keyboard": [
           "Space toggles the switch; submits inside forms."

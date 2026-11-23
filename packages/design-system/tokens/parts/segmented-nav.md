@@ -36,7 +36,7 @@ A tonal track with one sliding pill: switch between views of the same content.
 
 ## Accessibility
 
-- Role: Container role="tablist" with child <button role="tab"> items
+- Role: Container role="tablist" with child `<button role="tab">` items
 - ARIA: Name the tablist with aria-label or aria-labelledby.
 - ARIA: Active tab sets aria-selected="true" and omits tabIndex; inactive tabs set aria-selected="false" and tabIndex={-1}.
 - ARIA: Each tab carries aria-controls matching its panel id; icon tabs use aria-label={tab.label}.

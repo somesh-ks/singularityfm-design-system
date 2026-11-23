@@ -97,7 +97,7 @@ export const PARTS: PartSource[] = [
     not: [{ when: "a row that opens another page", use: "row-action" }],
     keywords: ["preference", "toggle row", "switch row", "setting"],
     markup:
-      '<div class="settings-row">\n  <div class="settings-text">\n    <label class="settings-label" for="autoplay">Autoplay</label>\n    <span class="settings-hint">Continue to the next episode</span>\n  </div>\n  <Switch id="autoplay" name="autoplay" />\n</div>',
+      '<div class="settings-row">\n  <div class="settings-text">\n    <label class="settings-label" for="autoplay">Autoplay</label>\n    <span class="settings-hint" id="autoplay-hint">Continue to the next episode</span>\n  </div>\n  <Switch id="autoplay" name="autoplay" aria-describedby="autoplay-hint" />\n</div>',
   },
   {
     id: "empty-state",

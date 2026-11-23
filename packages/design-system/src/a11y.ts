@@ -99,7 +99,7 @@ export const REGISTRY_A11Y = {
   Flag: {
     role: 'Decorative <img alt="" aria-hidden="true"> or <span aria-hidden="true">',
     aria: [
-      'Always aria-hidden="true"; keep the country or language name in adjacent visible text or parent aria-label.',
+      'Flag glyphs are always aria-hidden="true"; text passed with the text prop stays readable. A region flag alone carries no name: put the country or language in nearby text or the parent\'s aria-label.',
     ],
     keyboard: ["None; decorative region mark."],
     focus: "Not focusable.",
@@ -119,7 +119,7 @@ export const REGISTRY_A11Y = {
     role: 'Native <input type="checkbox" role="switch">',
     aria: [
       "Native checked state drives switch semantics; associate with <label for>, aria-label or aria-labelledby.",
-      "Supports indeterminate state set by script for master switches.",
+      'role="switch" has no mixed state: a script-set indeterminate is visual only. Use a Checkbox when a mixed state must be announced.',
     ],
     keyboard: ["Space toggles the switch; submits inside forms."],
     focus: "Native focus ring via :focus-visible on the switch control.",
@@ -189,9 +189,10 @@ export const REGISTRY_A11Y = {
       'Close IconButton sets aria-label="Close" with data-menu-close.',
     ],
     keyboard: [
-      "Browser popover supports Escape and light dismiss; page menu script handles ArrowUp/ArrowDown navigation.",
+      "Browser popover supports Escape and light dismiss. The package ships no menu script: the host page handles ArrowUp/ArrowDown between items (MENU_SELECTORS from ./menu finds them).",
     ],
-    focus: "Page script moves focus into the menu on open and returns focus to trigger on close.",
+    focus:
+      "The host page moves focus to the first item on open; the browser returns focus to the popoverTarget trigger on close, and the header Close button closes it.",
   },
   Banner: {
     role: '<div role="alert"> for tone="danger", otherwise <div role="status">',
@@ -199,8 +200,8 @@ export const REGISTRY_A11Y = {
       'Leading Icon is aria-hidden="true".',
       "Pass bodyId so related controls can link with aria-describedby.",
     ],
-    keyboard: ["Optional action Button handles Enter/Space natively."],
-    focus: "Static notice region; optional action Button is keyboard focusable.",
+    keyboard: ["Enter follows the optional action link."],
+    focus: "Static notice region; the optional action link is keyboard focusable.",
   },
   Toast: {
     role: 'Live region role="status" (or role="alert" for danger messages)',
@@ -331,7 +332,9 @@ export const COMPONENT_A11Y: Record<string, A11yGuidance> = {
   MenuItem: {
     role: 'Native <button type="button" role="menuitem">',
     aria: ['Must sit inside a role="menu" container; children provide item label.'],
-    keyboard: ["Enter/Space activates menu item; ArrowUp/ArrowDown handled by page menu script."],
+    keyboard: [
+      "Enter/Space activates a menu item; ArrowUp/ArrowDown come from the host page's menu script (the package ships none).",
+    ],
     focus: "Receives focus during menu keyboard navigation.",
   },
   PlayChip: REGISTRY_A11Y["Play chip"],
@@ -384,7 +387,7 @@ export const COMPONENT_EXAMPLES: Record<string, string> = {
     '<ChipGroup aria-label="Topics">\n  <Chip name="topic" value="daily" defaultChecked>Daily</Chip>\n</ChipGroup>',
   Code: '<Code label="Prompt" text="pnpm run gate" />',
   Dialog:
-    '<Dialog id="confirm" aria-labelledby="confirm-title">\n  <DialogTitle id="confirm-title">Delete source?</DialogTitle>\n  <DialogActions>\n    <Button variant="text">Cancel</Button>\n    <Button variant="text" tone="danger">Delete</Button>\n  </DialogActions>\n</Dialog>',
+    '<Dialog id="confirm" aria-labelledby="confirm-title">\n  <DialogTitle id="confirm-title">Delete source?</DialogTitle>\n  <form method="dialog">\n    <DialogActions>\n      <Button variant="text" type="submit" value="cancel">Cancel</Button>\n      <Button variant="text" tone="danger" type="submit" value="delete">Delete</Button>\n    </DialogActions>\n  </form>\n</Dialog>',
   DialogActions:
     '<DialogActions>\n  <Button variant="text">Cancel</Button>\n  <Button variant="filled">Save</Button>\n</DialogActions>',
   DialogTitle: '<DialogTitle id="confirm-title">Delete source?</DialogTitle>',
@@ -396,7 +399,8 @@ export const COMPONENT_EXAMPLES: Record<string, string> = {
   IconButton: '<IconButton label="Close"><Icon name="close" size="lg" /></IconButton>',
   Link: '<Link href="/settings">Settings</Link>',
   Menu: '<Menu id="row-menu" title="Row actions">\n  <MenuItem><Icon name="share" /> Share</MenuItem>\n</Menu>',
-  MenuItem: '<MenuItem><Icon name="share" /> Share</MenuItem>',
+  MenuItem:
+    '<Menu id="row-menu" title="Row actions">\n  <MenuItem><Icon name="share" /> Share</MenuItem>\n</Menu>',
   PlayChip: '<PlayChip label="5 min" aria-label="Play the briefing" data-play-item={0} />',
   PlayingBars: '<button type="button" aria-label="Playing">\n  <PlayingBars />\n</button>',
   Ripple: '<a href="/library" data-ripple><Ripple />Library</a>',

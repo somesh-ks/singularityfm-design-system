@@ -42,7 +42,7 @@ A checkbox drawn as a pill; ticked it takes the accent container.
 
 ## Accessibility
 
-- Role: Native <input type="checkbox"> wrapped in <label>
+- Role: Native `<input type="checkbox">` wrapped in `<label>`
 - ARIA: Group related filter chips inside ChipGroup with aria-label or aria-labelledby.
 - ARIA: Checked state is native to the checkbox.
 - Keyboard: Space toggles selection; Tab moves between checkboxes.

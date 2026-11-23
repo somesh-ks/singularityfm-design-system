@@ -37,7 +37,7 @@ One pill of radio items: pick exactly one value.
 
 ## Accessibility
 
-- Role: <fieldset role="radiogroup"> containing native <input type="radio"> controls
+- Role: `<fieldset role="radiogroup">` containing native `<input type="radio">` controls
 - ARIA: Name the radiogroup with aria-label or aria-labelledby.
 - ARIA: Setting disabled disables all radio options in the fieldset.
 - Keyboard: ArrowLeft/ArrowUp and ArrowRight/ArrowDown move and select options natively.

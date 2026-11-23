@@ -39,7 +39,7 @@ A row that is one link or button: the whole row responds as a rounded tile.
 
 ## Accessibility
 
-- Role: Native <a href> link row or <button type="button"> action row inside a list or card group
+- Role: Native `<a href>` link row or `<button type="button">` action row inside a list or card group
 - ARIA: Keep the accessible label in visible row text (.settings-label / .settings-hint); do not nest interactive controls inside the row link or button.
 - ARIA: Trailing chevron Icon carries aria-hidden="true" so the row text announces cleanly.
 - Keyboard: Enter activates a link row; Enter and Space activate a button row.

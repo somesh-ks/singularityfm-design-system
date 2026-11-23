@@ -37,8 +37,8 @@ A track with a thumb: a value between two ends, set by dragging or by the arrow 
 
 ## Accessibility
 
-- Role: Native <input type="range">
-- ARIA: Must be named via aria-label, aria-labelledby or associated <label for>.
+- Role: Native `<input type="range">`
+- ARIA: Must be named via aria-label, aria-labelledby or associated `<label for>`.
 - ARIA: Expose min, max, step and native numeric value.
 - Keyboard: ArrowLeft/ArrowDown decrease, ArrowRight/ArrowUp increase, PageUp/PageDown/Home/End step.
 - Focus: Native thumb focus ring via :focus-visible.

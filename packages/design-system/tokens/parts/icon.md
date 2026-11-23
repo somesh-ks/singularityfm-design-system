@@ -42,7 +42,7 @@ A filled Phosphor glyph in the colour of the text beside it.
 
 ## Accessibility
 
-- Role: Decorative <svg aria-hidden="true" focusable="false">
+- Role: Decorative `<svg aria-hidden="true" focusable="false">`
 - ARIA: Always hidden from assistive technology; wrap inside Button, IconButton or labelled text.
 - Keyboard: None; non-interactive graphic.
 - Focus: Not focusable (focusable="false").

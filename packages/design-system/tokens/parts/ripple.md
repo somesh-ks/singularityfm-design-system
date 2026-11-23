@@ -37,8 +37,8 @@ A wave from the touch point that fills a control's touch area, then fades.
 
 ## Accessibility
 
-- Role: Decorative ripple layer (<span aria-hidden="true">)
-- ARIA: Always aria-hidden="true"; host <button> or <a href> provides accessible role and name.
+- Role: Decorative ripple layer (`<span aria-hidden="true">`)
+- ARIA: Always aria-hidden="true"; host `<button>` or `<a href>` provides accessible role and name.
 - Keyboard: None; host interactive element handles keyboard activation.
 - Focus: Not focusable; host element owns focus ring.
 

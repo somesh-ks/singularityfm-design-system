@@ -46,8 +46,8 @@ An outlined box for text a person types: one line, or several lines (multiline).
 
 ## Accessibility
 
-- Role: Native <input> (or <textarea> when multiline)
-- ARIA: Associate with a visible <label>, aria-label or aria-labelledby.
+- Role: Native `<input>` (or `<textarea>` when multiline)
+- ARIA: Associate with a visible `<label>`, aria-label or aria-labelledby.
 - ARIA: Set aria-invalid="true" for validation errors and aria-describedby for error messages.
 - Keyboard: Standard native text input/textarea editing and Tab navigation.
 - Focus: Native input/textarea focus ring.

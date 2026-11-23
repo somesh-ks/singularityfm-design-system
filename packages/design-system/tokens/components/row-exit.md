@@ -25,8 +25,8 @@ Import `@singularityfm/design-system/RowExit`. No part covers it yet, so `ds fin
 
 ## Accessibility
 
-- Role: Native <li> list item
-- ARIA: Place inside <ul> or <ol>; page scripts mark data-removing or data-gone and pair removal with Toast Undo.
+- Role: Native `<li>` list item
+- ARIA: Place inside `<ul>` or `<ol>`; page scripts mark data-removing or data-gone and pair removal with Toast Undo.
 - Keyboard: Inherits keyboard semantics of controls placed inside the row.
 - Focus: Page script should restore or move focus cleanly when removing a focused row.
 

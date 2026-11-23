@@ -49,11 +49,11 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 
 ## Accessibility
 
-- Role: Native popover <div popover="auto"> containing <div role="menu" aria-label={title}> and MenuItem buttons
-- ARIA: Trigger button opens the menu with popoverTarget={id}; title sets aria-label={title} on role="menu" and <h2 id={id}-title>.
+- Role: Native popover `<div popover="auto">` containing `<div role="menu" aria-label={title}>` and MenuItem buttons
+- ARIA: Trigger button opens the menu with popoverTarget={id}; title sets aria-label={title} on role="menu" and `<h2 id={id}-title>`.
 - ARIA: Close IconButton sets aria-label="Close" with data-menu-close.
-- Keyboard: Browser popover supports Escape and light dismiss; page menu script handles ArrowUp/ArrowDown navigation.
-- Focus: Page script moves focus into the menu on open and returns focus to trigger on close.
+- Keyboard: Browser popover supports Escape and light dismiss. The package ships no menu script: the host page handles ArrowUp/ArrowDown between items (MENU_SELECTORS from ./menu finds them).
+- Focus: The host page moves focus to the first item on open; the browser returns focus to the popoverTarget trigger on close, and the header Close button closes it.
 
 ## Props of Menu
 
@@ -69,7 +69,9 @@ A short list of actions that opens from an icon button: a row each, its glyph fi
 ### Example of MenuItem
 
 ```tsx
-<MenuItem><Icon name="share" /> Share</MenuItem>
+<Menu id="row-menu" title="Row actions">
+  <MenuItem><Icon name="share" /> Share</MenuItem>
+</Menu>
 ```
 
 ## Props of MenuItem

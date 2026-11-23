@@ -44,7 +44,7 @@ The tonal pill that plays a briefing or one story, with its state; or its glyph 
 
 ## Accessibility
 
-- Role: Native <button type="button">
+- Role: Native `<button type="button">`
 - ARIA: Requires aria-label when label is omitted (glyph-only mode).
 - ARIA: Inner glyph slot and PlayingBars are aria-hidden="true"; player script updates data-state, data-playing and aria-label.
 - Keyboard: Enter and Space toggle or start playback via native button activation.
