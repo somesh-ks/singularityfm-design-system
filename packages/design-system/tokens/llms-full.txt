@@ -49,7 +49,7 @@ An id links to its page (import, markup, props). What it is. Use: when. Not: sit
 - [cover](parts/cover.md): A generated cover image, drawn once per theme. Use: show an episode or briefing cover.
 
 ## Other components
-[Avatar](components/avatar.md), [BrandMark](components/brand-mark.md), [ChapterAside](components/chapter-aside.md), [Code](components/code.md), [Flag](components/flag.md), [RowExit](components/row-exit.md)
+[Avatar](components/avatar.md), [Band](components/band.md), [BrandMark](components/brand-mark.md), [ChapterAside](components/chapter-aside.md), [Code](components/code.md), [Dial](components/dial.md), [DialTile](components/dial-tile.md), [Flag](components/flag.md), [PageArrows](components/page-arrows.md), [PageDots](components/page-dots.md), [ResumeCard](components/resume-card.md), [RowExit](components/row-exit.md), [TopicGrid](components/topic-grid.md), [TopicTile](components/topic-tile.md)
 
 ## Color roles
 Components read only these (never a hex, never a primitive color).
@@ -2591,6 +2591,25 @@ Import `@singularityfm/design-system/Avatar`. No part covers it yet, so `ds find
 
 Import `@singularityfm/design-system/Band`. No part covers it yet, so `ds find` does not name it.
 
+### Import
+
+- `@singularityfm/design-system/Band`
+
+### Example
+
+```tsx
+<Band title="Catchups">
+  <ul role="list">...</ul>
+</Band>
+```
+
+### Accessibility
+
+- Role: `<section>` with an `<h2>` heading
+- ARIA: The heading names the section; the Singularity mark before it is decorative.
+- Keyboard: None of its own; the action and the items inside take focus in DOM order.
+- Focus: Not focusable; children manage focus.
+
 ### Props of Band
 
 | Name | Type | Default | What it does |
@@ -2701,6 +2720,26 @@ Import `@singularityfm/design-system/Code`. No part covers it yet, so `ds find` 
 
 Import `@singularityfm/design-system/Dial`. No part covers it yet, so `ds find` does not name it.
 
+### Import
+
+- `@singularityfm/design-system/Dial`
+
+### Example
+
+```tsx
+<Dial>
+  <DialTile name="Hard Fork" label="Play Hard Fork" count={2}><img src="cover.webp" alt="" /></DialTile>
+</Dial>
+```
+
+### Accessibility
+
+- Role: List `<ul role="list">` of DialTile items, each a native `<button>` or `<a href>`
+- ARIA: Each DialTile's label prop names its action ("Play Hard Fork"); the visible name, pin and count are aria-hidden so it reads once.
+- ARIA: The tile playing now carries aria-current="true".
+- Keyboard: Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile.
+- Focus: Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view.
+
 ### Props of Dial
 
 | Name | Type | Default | What it does |
@@ -2717,6 +2756,24 @@ Every attribute of a native `<ul>` element passes through.
 ## DialTile
 
 Import `@singularityfm/design-system/DialTile`. No part covers it yet, so `ds find` does not name it.
+
+### Import
+
+- `@singularityfm/design-system/DialTile`
+
+### Example
+
+```tsx
+<DialTile name="Hard Fork" label="Play Hard Fork" playing><img src="cover.webp" alt="" /></DialTile>
+```
+
+### Accessibility
+
+- Role: List `<ul role="list">` of DialTile items, each a native `<button>` or `<a href>`
+- ARIA: Each DialTile's label prop names its action ("Play Hard Fork"); the visible name, pin and count are aria-hidden so it reads once.
+- ARIA: The tile playing now carries aria-current="true".
+- Keyboard: Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile.
+- Focus: Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view.
 
 ### Props of DialTile
 
@@ -2765,10 +2822,27 @@ Import `@singularityfm/design-system/Flag`. No part covers it yet, so `ds find` 
 
 ---
 
-<<<<<<< HEAD
 ## PageArrows
 
 Import `@singularityfm/design-system/PageArrows`. No part covers it yet, so `ds find` does not name it.
+
+### Import
+
+- `@singularityfm/design-system/PageArrows`
+
+### Example
+
+```tsx
+<PageArrows controls="topics" prevLabel="Earlier topics" nextLabel="More topics" />
+```
+
+### Accessibility
+
+- Role: Decorative dots `<span aria-hidden="true">`; PageArrows are native `<button>`s
+- ARIA: The dots are hidden from screen readers: the row's own items carry the content.
+- ARIA: PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.
+- Keyboard: PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden.
+- Focus: PageArrows show the native :focus-visible ring; disabled arrows leave the tab order.
 
 ### Props of PageArrows
 
@@ -2785,6 +2859,24 @@ Import `@singularityfm/design-system/PageArrows`. No part covers it yet, so `ds 
 
 Import `@singularityfm/design-system/PageDots`. No part covers it yet, so `ds find` does not name it.
 
+### Import
+
+- `@singularityfm/design-system/PageDots`
+
+### Example
+
+```tsx
+<PageDots count={3} current={0} />
+```
+
+### Accessibility
+
+- Role: Decorative dots `<span aria-hidden="true">`; PageArrows are native `<button>`s
+- ARIA: The dots are hidden from screen readers: the row's own items carry the content.
+- ARIA: PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.
+- Keyboard: PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden.
+- Focus: PageArrows show the native :focus-visible ring; disabled arrows leave the tab order.
+
 ### Props of PageDots
 
 | Name | Type | Default | What it does |
@@ -2795,22 +2887,26 @@ Import `@singularityfm/design-system/PageDots`. No part covers it yet, so `ds fi
 
 ---
 
-## PlayingBars
-
-Import `@singularityfm/design-system/PlayingBars`. No part covers it yet, so `ds find` does not name it.
-
-### Props of PlayingBars
-
-| Name | Type | Default | What it does |
-| --- | --- | --- | --- |
-| `className?` | `string` | - | For placing the bars where they stand, or a hook a page's rule finds them by (the reader's cover button sizes them to its glyph). Never their look. An Astro page passes className too: @astrojs/react drops a `class` prop. |
-| `slot?` | `string` | - | Astro places the bars in its parent's slot with it; it is not an attribute of the element. |
-
----
-
 ## ResumeCard
 
 Import `@singularityfm/design-system/ResumeCard`. No part covers it yet, so `ds find` does not name it.
+
+### Import
+
+- `@singularityfm/design-system/ResumeCard`
+
+### Example
+
+```tsx
+<ResumeCard title="The Jensen Huang Affair" facts="Hard Fork, 12 min left" progress={0.6} playLabel="Play" dismissLabel="Remove from Continue listening"><img src="cover.webp" alt="" /></ResumeCard>
+```
+
+### Accessibility
+
+- Role: `<article>` with Play and Dismiss native `<button>`s
+- ARIA: playLabel and dismissLabel name the two IconButtons; the progress bar is aria-hidden and facts says the time left in words.
+- Keyboard: Tab reaches Dismiss then Play; Enter or Space activates each.
+- Focus: IconButtons show the native :focus-visible ring.
 
 ### Props of ResumeCard
 
@@ -2829,8 +2925,6 @@ Every attribute of a native `<article>` element passes through.
 
 ---
 
-=======
->>>>>>> origin/main
 ## RowExit
 
 Import `@singularityfm/design-system/RowExit`. No part covers it yet, so `ds find` does not name it.
@@ -2869,6 +2963,26 @@ Every attribute of a native `<li>` element passes through.
 
 Import `@singularityfm/design-system/TopicGrid`. No part covers it yet, so `ds find` does not name it.
 
+### Import
+
+- `@singularityfm/design-system/TopicGrid`
+
+### Example
+
+```tsx
+<TopicGrid>
+  <TopicTile name="Technology" href="/topic/technology" covers={["one.webp"]} />
+</TopicGrid>
+```
+
+### Accessibility
+
+- Role: List `<ul role="list">` of tiles, each a native `<a href>` or a visually hidden `<input type="checkbox">`
+- ARIA: The visible topic name is the accessible name; covers are decorative (alt="").
+- ARIA: A checkbox tile's checked state is native; the check glyph is aria-hidden.
+- Keyboard: Tab moves across tiles; Enter opens a link tile, Space toggles a checkbox tile.
+- Focus: The tile wears the foundations' focus ring for its hidden input or its link.
+
 ### Props of TopicGrid
 
 | Name | Type | Default | What it does |
@@ -2884,6 +2998,24 @@ Every attribute of a native `<ul>` element passes through.
 ## TopicTile
 
 Import `@singularityfm/design-system/TopicTile`. No part covers it yet, so `ds find` does not name it.
+
+### Import
+
+- `@singularityfm/design-system/TopicTile`
+
+### Example
+
+```tsx
+<TopicTile name="Science" href="/topic/science" covers={["one.webp", "two.webp", "three.webp"]} />
+```
+
+### Accessibility
+
+- Role: List `<ul role="list">` of tiles, each a native `<a href>` or a visually hidden `<input type="checkbox">`
+- ARIA: The visible topic name is the accessible name; covers are decorative (alt="").
+- ARIA: A checkbox tile's checked state is native; the check glyph is aria-hidden.
+- Keyboard: Tab moves across tiles; Enter opens a link tile, Space toggles a checkbox tile.
+- Focus: The tile wears the foundations' focus ring for its hidden input or its link.
 
 ### Props of TopicTile
 

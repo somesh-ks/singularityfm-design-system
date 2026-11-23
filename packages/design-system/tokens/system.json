@@ -2680,7 +2680,18 @@
           "description": "For placing the band, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
         }
       ],
-      "element": "section"
+      "element": "section",
+      "example": "<Band title=\"Catchups\">\n  <ul role=\"list\">...</ul>\n</Band>",
+      "a11y": {
+        "role": "<section> with an <h2> heading",
+        "aria": [
+          "The heading names the section; the Singularity mark before it is decorative."
+        ],
+        "keyboard": [
+          "None of its own; the action and the items inside take focus in DOM order."
+        ],
+        "focus": "Not focusable; children manage focus."
+      }
     },
     {
       "name": "Banner",
@@ -3098,7 +3109,19 @@
           "description": "Astro places the grid in its parent's slot with it; it is not an attribute of the list."
         }
       ],
-      "element": "ul"
+      "element": "ul",
+      "example": "<Dial>\n  <DialTile name=\"Hard Fork\" label=\"Play Hard Fork\" count={2}><img src=\"cover.webp\" alt=\"\" /></DialTile>\n</Dial>",
+      "a11y": {
+        "role": "List <ul role=\"list\"> of DialTile items, each a native <button> or <a href>",
+        "aria": [
+          "Each DialTile's label prop names its action (\"Play Hard Fork\"); the visible name, pin and count are aria-hidden so it reads once.",
+          "The tile playing now carries aria-current=\"true\"."
+        ],
+        "keyboard": [
+          "Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile."
+        ],
+        "focus": "Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view."
+      }
     },
     {
       "name": "Dialog",
@@ -3275,7 +3298,19 @@
           "description": "For placing the tile, or a hook a page's script finds it by (data-play-item). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
         }
       ],
-      "element": "button"
+      "element": "button",
+      "example": "<DialTile name=\"Hard Fork\" label=\"Play Hard Fork\" playing><img src=\"cover.webp\" alt=\"\" /></DialTile>",
+      "a11y": {
+        "role": "List <ul role=\"list\"> of DialTile items, each a native <button> or <a href>",
+        "aria": [
+          "Each DialTile's label prop names its action (\"Play Hard Fork\"); the visible name, pin and count are aria-hidden so it reads once.",
+          "The tile playing now carries aria-current=\"true\"."
+        ],
+        "keyboard": [
+          "Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile."
+        ],
+        "focus": "Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view."
+      }
     },
     {
       "name": "Fab",
@@ -3780,7 +3815,19 @@
           "default": "",
           "description": "For placing the pair, or a hook a page's script finds it by. Never its look."
         }
-      ]
+      ],
+      "example": "<PageArrows controls=\"topics\" prevLabel=\"Earlier topics\" nextLabel=\"More topics\" />",
+      "a11y": {
+        "role": "Decorative dots <span aria-hidden=\"true\">; PageArrows are native <button>s",
+        "aria": [
+          "The dots are hidden from screen readers: the row's own items carry the content.",
+          "PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled."
+        ],
+        "keyboard": [
+          "PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden."
+        ],
+        "focus": "PageArrows show the native :focus-visible ring; disabled arrows leave the tab order."
+      }
     },
     {
       "name": "PageDots",
@@ -3808,7 +3855,19 @@
           "default": "",
           "description": "For placing the row, or a hook a page's script finds it by. Never its look."
         }
-      ]
+      ],
+      "example": "<PageDots count={3} current={0} />",
+      "a11y": {
+        "role": "Decorative dots <span aria-hidden=\"true\">; PageArrows are native <button>s",
+        "aria": [
+          "The dots are hidden from screen readers: the row's own items carry the content.",
+          "PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled."
+        ],
+        "keyboard": [
+          "PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden."
+        ],
+        "focus": "PageArrows show the native :focus-visible ring; disabled arrows leave the tab order."
+      }
     },
     {
       "name": "PlayChip",
@@ -3977,7 +4036,18 @@
           "description": "For placing the card, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
         }
       ],
-      "element": "article"
+      "element": "article",
+      "example": "<ResumeCard title=\"The Jensen Huang Affair\" facts=\"Hard Fork, 12 min left\" progress={0.6} playLabel=\"Play\" dismissLabel=\"Remove from Continue listening\"><img src=\"cover.webp\" alt=\"\" /></ResumeCard>",
+      "a11y": {
+        "role": "<article> with Play and Dismiss native <button>s",
+        "aria": [
+          "playLabel and dismissLabel name the two IconButtons; the progress bar is aria-hidden and facts says the time left in words."
+        ],
+        "keyboard": [
+          "Tab reaches Dismiss then Play; Enter or Space activates each."
+        ],
+        "focus": "IconButtons show the native :focus-visible ring."
+      }
     },
     {
       "name": "Ripple",
@@ -4532,8 +4602,19 @@
       "name": "Toast",
       "import": "@singularityfm/design-system/Toast",
       "file": "packages/design-system/src/Toast.tsx",
-<<<<<<< HEAD
-      "props": []
+      "props": [],
+      "example": "<Toast />",
+      "a11y": {
+        "role": "Live region role=\"status\" (or role=\"alert\" for danger messages)",
+        "aria": [
+          "Mounted once per page; suppresses text for one render during role switches so stale text is not announced.",
+          "Dismiss button uses aria-label=\"Dismiss\"."
+        ],
+        "keyboard": [
+          "Tab reaches action and Dismiss buttons when visible; Enter/Space activates."
+        ],
+        "focus": "Does not steal focus from the active control when appearing."
+      }
     },
     {
       "name": "TopicGrid",
@@ -4562,7 +4643,19 @@
           "description": "For placing the grid, or a hook a page's script finds it by. Never its look."
         }
       ],
-      "element": "ul"
+      "element": "ul",
+      "example": "<TopicGrid>\n  <TopicTile name=\"Technology\" href=\"/topic/technology\" covers={[\"one.webp\"]} />\n</TopicGrid>",
+      "a11y": {
+        "role": "List <ul role=\"list\"> of tiles, each a native <a href> or a visually hidden <input type=\"checkbox\">",
+        "aria": [
+          "The visible topic name is the accessible name; covers are decorative (alt=\"\").",
+          "A checkbox tile's checked state is native; the check glyph is aria-hidden."
+        ],
+        "keyboard": [
+          "Tab moves across tiles; Enter opens a link tile, Space toggles a checkbox tile."
+        ],
+        "focus": "The tile wears the foundations' focus ring for its hidden input or its link."
+      }
     },
     {
       "name": "TopicTile",
@@ -4605,22 +4698,19 @@
           "description": "For placing the tile, or a hook a page's script finds it by. Never its look."
         }
       ],
-      "element": "input"
-=======
-      "props": [],
-      "example": "<Toast />",
+      "element": "input",
+      "example": "<TopicTile name=\"Science\" href=\"/topic/science\" covers={[\"one.webp\", \"two.webp\", \"three.webp\"]} />",
       "a11y": {
-        "role": "Live region role=\"status\" (or role=\"alert\" for danger messages)",
+        "role": "List <ul role=\"list\"> of tiles, each a native <a href> or a visually hidden <input type=\"checkbox\">",
         "aria": [
-          "Mounted once per page; suppresses text for one render during role switches so stale text is not announced.",
-          "Dismiss button uses aria-label=\"Dismiss\"."
+          "The visible topic name is the accessible name; covers are decorative (alt=\"\").",
+          "A checkbox tile's checked state is native; the check glyph is aria-hidden."
         ],
         "keyboard": [
-          "Tab reaches action and Dismiss buttons when visible; Enter/Space activates."
+          "Tab moves across tiles; Enter opens a link tile, Space toggles a checkbox tile."
         ],
-        "focus": "Does not steal focus from the active control when appearing."
+        "focus": "The tile wears the foundations' focus ring for its hidden input or its link."
       }
->>>>>>> origin/main
     }
   ],
   "icons": [
@@ -4683,6 +4773,7 @@
     "replay",
     "rss",
     "search",
+    "searchFill",
     "settings",
     "settingsFill",
     "shapes",

@@ -374,7 +374,6 @@ export const COMPONENTS: DesignSystemComponent[] = [
     dontUseWhen: GLOW.dontUseWhen,
     parts: {},
   },
-<<<<<<< HEAD
   {
     name: "Dial",
     sheet: "dial.css",
@@ -430,10 +429,7 @@ export const COMPONENTS: DesignSystemComponent[] = [
     dontUseWhen: TOPIC_TILE.dontUseWhen,
     parts: {},
   },
-];
-=======
 ].map((component) => {
   const a11y = (REGISTRY_A11Y as Record<string, A11yGuidance>)[component.name];
   return { ...component, ...(a11y ? { a11y } : {}) };
 });
->>>>>>> origin/main
