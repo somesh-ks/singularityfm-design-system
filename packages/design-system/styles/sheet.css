@@ -157,6 +157,9 @@ dialog.sheet-side[data-handoff][open]::backdrop {
   /* The title at the start, on the body's gutter; Close at the end, its 44px reaching the edge. */
   padding-inline: max(var(--space-6), var(--safe-left)) max(var(--space-2), var(--safe-right));
   background: var(--sheet-bg);
+  /* The title and its quiet line start on one edge wherever the sheet is placed: a menu inside a
+     centred hero inherited its centring, and the line sat indented under the title (owner, 2026-11-25). */
+  text-align: start;
   transition: background-color var(--duration-state) var(--ease-out);
 }
 

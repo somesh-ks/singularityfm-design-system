@@ -1160,6 +1160,22 @@
   padding: var(--card-padding);
 }
 
+/* A card of content blocks, not rows (a briefing's stories): the same room on all four sides, as the
+   chips have. Each block keeps its own padding between it and the next, half the gap on each side of
+   the divider, but not at the card's edges, where it stacked on the card's own and the top and bottom
+   stood well past the sides (owner, 2026-11-25). */
+.card-group-content {
+  padding: var(--card-padding);
+}
+
+.card-group-content > :first-child {
+  padding-block-start: 0;
+}
+
+.card-group-content > :last-child {
+  padding-block-end: 0;
+}
+
 /* A card sits on the container tone, so an unticked chip in it needs one step up to show. The step
    is the overlay tone: white in light, as the raised tone is, and one grey up in dark, where the
    raised tone equals the card's and the chip read as bare text (2026-10-22). */

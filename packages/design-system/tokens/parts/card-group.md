@@ -23,6 +23,7 @@ A group of rows in one rounded container on the container tone.
 - group several settings rows
 - a card of chips
 - one note that is an offer, with the accent tone
+- blocks of content, not rows (a briefing's stories), with .card-group-content
 
 ## Not when
 
@@ -32,6 +33,7 @@ A group of rows in one rounded container on the container tone.
 
 - A card of one row follows its height for its corner.
 - Dividers run edge to edge inside.
+- A card of content blocks (.card-group-content) has the card padding on all four sides; the blocks keep their own padding only between each other.
 
 ## Tokens it reads
 
