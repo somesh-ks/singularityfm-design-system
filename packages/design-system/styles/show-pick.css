@@ -45,25 +45,13 @@
   object-fit: cover;
 }
 
-/* The press layer and, picked, the ring: one layer over the art, inside its corners. */
-.show-pick-art::after {
+/* Picked, the ring: inside the art's corners, so the card keeps its size. The ring itself answers
+   the press, as on the Topic tile: no second layer over the art. */
+.show-pick:has(> input:checked) .show-pick-art::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: color-mix(in oklch, var(--color-on-surface) var(--state-press), transparent);
-  opacity: 0;
-  transition: opacity var(--duration-press-out) var(--ease-out);
-}
-
-.show-pick:active .show-pick-art::after {
-  opacity: 1;
-  transition-duration: var(--duration-press-in);
-}
-
-.show-pick:has(> input:checked) .show-pick-art::after {
-  opacity: 1;
-  background: transparent;
   outline: var(--space-1) solid var(--color-accent);
   outline-offset: calc(var(--space-1) * -1);
 }
