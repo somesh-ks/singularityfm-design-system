@@ -15,6 +15,16 @@
   --page-gutter-end: var(--card-padding);
 }
 
+/* A group of rows in the band lies on its tint, not in a card of its own (12 Nov canvas, Settings
+   board: no box inside the box). The group reaches the band's edges, so a row's text starts on the
+   heading's line and the band, not the rows, meets the page's gutter. */
+.band-section > .card-group {
+  margin-inline: calc(var(--card-padding) * -1);
+  background: transparent;
+  --ghost-hover: var(--color-accent-subtle-hover);
+  --ghost-pressed: var(--color-accent-subtle-pressed);
+}
+
 /* The same head as a page's shelf: the heading, and See all at the end on its 44px row. */
 .band-head {
   display: flex;
