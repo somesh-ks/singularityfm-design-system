@@ -382,6 +382,7 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
     <ResumeCard
       title={SAMPLE.episode}
       facts={SAMPLE.resumeFacts}
+      remaining={SAMPLE.resumeLeft}
       progress={0.6}
       playLabel={`Resume ${SAMPLE.episode}`}
       dismissLabel="Remove from Continue listening"

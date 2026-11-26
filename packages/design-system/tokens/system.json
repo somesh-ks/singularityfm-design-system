@@ -3996,7 +3996,14 @@
           "type": "string",
           "required": true,
           "default": "",
-          "description": "One line under the bar: the show and the time left (\"Hard Fork · 12 min left\")."
+          "description": "The show's name, one line under the title; a long one is cut short (\"Hard Fork\")."
+        },
+        {
+          "name": "remaining",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The time left, after the show and never cut short (\"12 min left\")."
         },
         {
           "name": "children",
@@ -4010,7 +4017,7 @@
           "type": "string",
           "required": true,
           "default": "",
-          "description": "Play's name for a screen reader: \"Resume The Jensen Huang Affair\"."
+          "description": "The card's name for a screen reader, what a press does: \"Resume The Jensen Huang Affair\"."
         },
         {
           "name": "dismissLabel",
@@ -4042,16 +4049,16 @@
         }
       ],
       "element": "article",
-      "example": "<ResumeCard title=\"The Jensen Huang Affair\" facts=\"Hard Fork, 12 min left\" progress={0.6} playLabel=\"Play\" dismissLabel=\"Remove from Continue listening\"><img src=\"cover.webp\" alt=\"\" /></ResumeCard>",
+      "example": "<ResumeCard title=\"The Jensen Huang Affair\" facts=\"Hard Fork\" remaining=\"12 min left\" progress={0.6} playLabel=\"Play\" dismissLabel=\"Remove from Continue listening\"><img src=\"cover.webp\" alt=\"\" /></ResumeCard>",
       "a11y": {
-        "role": "<article> with Play and Dismiss native <button>s",
+        "role": "<article> with two native <button>s: the card's press area (Resume) and Dismiss",
         "aria": [
-          "playLabel and dismissLabel name the two IconButtons; the progress bar is aria-hidden and facts says the time left in words."
+          "playLabel names the press area and dismissLabel the Dismiss IconButton; the progress bar is aria-hidden and remaining says the time left in words."
         ],
         "keyboard": [
-          "Tab reaches Dismiss then Play; Enter or Space activates each."
+          "Tab reaches Resume then Dismiss; Enter or Space activates each."
         ],
-        "focus": "IconButtons show the native :focus-visible ring."
+        "focus": "Both show the native :focus-visible ring; the press area's follows the card's corners."
       }
     },
     {

@@ -156,7 +156,8 @@ export const SAMPLE = {
   search: "Search",
   shows: ["Show one", "Show two", "Show three", "Show four", "Show five", "Show six"],
   episode: "Episode title",
-  resumeFacts: "Show one · 12 min left",
+  resumeFacts: "Show one",
+  resumeLeft: "12 min left",
   topics: ["Topic one", "Topic two", "Topic three", "Topic four"],
   band: "Catchups",
 } as const;
@@ -1009,6 +1010,7 @@ export const SPECS: readonly ComponentSpec[] = [
         [
           `title="${SAMPLE.episode}"`,
           `facts="${SAMPLE.resumeFacts}"`,
+          `remaining="${SAMPLE.resumeLeft}"`,
           "progress={0.6}",
           `playLabel="Resume ${SAMPLE.episode}"`,
           'dismissLabel="Remove from Continue listening"',

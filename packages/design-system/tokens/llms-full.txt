@@ -2902,24 +2902,25 @@ Import `@singularityfm/design-system/ResumeCard`. No part covers it yet, so `ds 
 ### Example
 
 ```tsx
-<ResumeCard title="The Jensen Huang Affair" facts="Hard Fork, 12 min left" progress={0.6} playLabel="Play" dismissLabel="Remove from Continue listening"><img src="cover.webp" alt="" /></ResumeCard>
+<ResumeCard title="The Jensen Huang Affair" facts="Hard Fork" remaining="12 min left" progress={0.6} playLabel="Play" dismissLabel="Remove from Continue listening"><img src="cover.webp" alt="" /></ResumeCard>
 ```
 
 ### Accessibility
 
-- Role: `<article>` with Play and Dismiss native `<button>`s
-- ARIA: playLabel and dismissLabel name the two IconButtons; the progress bar is aria-hidden and facts says the time left in words.
-- Keyboard: Tab reaches Dismiss then Play; Enter or Space activates each.
-- Focus: IconButtons show the native :focus-visible ring.
+- Role: `<article>` with two native `<button>`s: the card's press area (Resume) and Dismiss
+- ARIA: playLabel names the press area and dismissLabel the Dismiss IconButton; the progress bar is aria-hidden and remaining says the time left in words.
+- Keyboard: Tab reaches Resume then Dismiss; Enter or Space activates each.
+- Focus: Both show the native :focus-visible ring; the press area's follows the card's corners.
 
 ### Props of ResumeCard
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `title` | `string` | - | The episode's title. Two lines at most. |
-| `facts` | `string` | - | One line under the bar: the show and the time left ("Hard Fork · 12 min left"). |
+| `facts` | `string` | - | The show's name, one line under the title; a long one is cut short ("Hard Fork"). |
+| `remaining?` | `string` | - | The time left, after the show and never cut short ("12 min left"). |
 | `children` | `ReactNode` | - | The cover, a small square. |
-| `playLabel` | `string` | - | Play's name for a screen reader: "Resume The Jensen Huang Affair". |
+| `playLabel` | `string` | - | The card's name for a screen reader, what a press does: "Resume The Jensen Huang Affair". |
 | `dismissLabel` | `string` | - | Dismiss's name: "Remove from Continue listening". |
 | `progress` | `number` | - | How much is heard, 0 to 1. |
 | `playing?` | `boolean` | `false` | Draws the pause glyph: this episode is playing. The page's player sets data-playing. |

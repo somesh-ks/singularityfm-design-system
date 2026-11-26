@@ -7,11 +7,13 @@ import "../styles/resume-card.css";
 interface ResumeCardProps {
   /** The episode's title. Two lines at most. */
   title: string;
-  /** One line under the bar: the show and the time left ("Hard Fork · 12 min left"). */
+  /** The show's name, one line under the title; a long one is cut short ("Hard Fork"). */
   facts: string;
+  /** The time left, after the show and never cut short ("12 min left"). */
+  remaining?: string;
   /** How much is heard, 0 to 1. */
   progress: number;
-  /** Play's name for a screen reader: "Resume The Jensen Huang Affair". */
+  /** The card's name for a screen reader, what a press does: "Resume The Jensen Huang Affair". */
   playLabel: string;
   /** Dismiss's name: "Remove from Continue listening". */
   dismissLabel: string;
@@ -29,14 +31,15 @@ interface ResumeCardProps {
 type Props = ResumeCardProps & Omit<ComponentProps<"article">, keyof ResumeCardProps>;
 
 /**
- * The Resume card: native buttons for Play (tonal, the card's main action) and Dismiss (standard),
- * found by data-resume-play and data-resume-dismiss; the play glyph swaps to pause on data-playing
- * with no change in size. The bar is drawn for the eye: the facts say the time left in words. Static:
- * no client directive.
+ * The Resume card: the whole card is one native button that resumes (data-resume-play), with the play
+ * glyph on the cover, and one Dismiss IconButton at its top end (data-resume-dismiss), outside the
+ * press area so the two never nest. The glyph swaps to pause on data-playing with no change in size.
+ * The bar is drawn for the eye: the facts say the time left in words. Static: no client directive.
  */
 export default function ResumeCard({
   title,
   facts,
+  remaining,
   progress,
   playLabel,
   dismissLabel,
@@ -54,27 +57,30 @@ export default function ResumeCard({
       data-playing={String(playing)}
       {...passedAttributes(passed)}
     >
-      <span className="resume-card-art">{children}</span>
-      <span className="resume-card-text">
-        <span className="resume-card-title">{title}</span>
-        <span
-          className="resume-card-bar"
-          aria-hidden="true"
-          style={{ "--progress": heard } as CSSProperties}
-        />
-        <span className="resume-card-facts">{facts}</span>
-      </span>
-      <span className="resume-card-acts">
-        <IconButton label={dismissLabel} data-resume-dismiss="">
-          <Icon name="close" />
-        </IconButton>
-        <IconButton label={playLabel} variant="tonal" data-resume-play="">
-          <span className="swap">
+      <button className="resume-card-hit" type="button" aria-label={playLabel} data-resume-play="">
+        <span className="resume-card-art">
+          {children}
+          <span className="resume-card-glyph swap" aria-hidden="true">
             <Icon name="play" className="swap-paused" />
             <Icon name="pause" className="swap-playing" />
           </span>
-        </IconButton>
-      </span>
+        </span>
+        <span className="resume-card-text">
+          <span className="resume-card-title">{title}</span>
+          <span className="resume-card-facts">
+            <span className="resume-card-show">{facts}</span>
+            {remaining && <span className="resume-card-left">{remaining}</span>}
+          </span>
+          <span
+            className="resume-card-bar"
+            aria-hidden="true"
+            style={{ "--progress": heard } as CSSProperties}
+          />
+        </span>
+      </button>
+      <IconButton label={dismissLabel} className="resume-card-dismiss" data-resume-dismiss="">
+        <Icon name="close" />
+      </IconButton>
     </article>
   );
 }
