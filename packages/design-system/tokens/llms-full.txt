@@ -2316,6 +2316,7 @@ A group of rows in one rounded container on the container tone.
 - group several settings rows
 - a card of chips
 - one note that is an offer, with the accent tone
+- blocks of content, not rows (a briefing's stories), with .card-group-content
 
 ### Not when
 
@@ -2325,6 +2326,7 @@ A group of rows in one rounded container on the container tone.
 
 - A card of one row follows its height for its corner.
 - Dividers run edge to edge inside.
+- A card of content blocks (.card-group-content) has the card padding on all four sides; the blocks keep their own padding only between each other.
 
 ### Tokens it reads
 
@@ -2332,7 +2334,7 @@ A group of rows in one rounded container on the container tone.
 
 ### Where it is drawn
 
-- Classes: `.card-group` `.rows` (typed on your own element)
+- Classes: `.card-group` `.rows` `.card-group-content` (typed on your own element)
 - Styled in: `styles/field.css`, `styles/primitives.css`, `styles/search-field.css`, `styles/select.css`, `styles/settings-rows.css`
 
 ### Owner's note
