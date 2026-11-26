@@ -2279,7 +2279,8 @@
       "summary": "A group of rows in one rounded container on the container tone.",
       "classes": [
         "card-group",
-        "rows"
+        "rows",
+        "card-group-content"
       ],
       "when": [
         "group several settings rows",

@@ -72,7 +72,7 @@ export const PARTS: PartSource[] = [
     name: "Card group",
     kind: "container",
     summary: "A group of rows in one rounded container on the container tone.",
-    classes: ["card-group", "rows"],
+    classes: ["card-group", "rows", "card-group-content"],
     when: [
       "group several settings rows",
       "a card of chips",

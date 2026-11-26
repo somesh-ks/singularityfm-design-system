@@ -41,7 +41,7 @@ A group of rows in one rounded container on the container tone.
 
 ## Where it is drawn
 
-- Classes: `.card-group` `.rows` (typed on your own element)
+- Classes: `.card-group` `.rows` `.card-group-content` (typed on your own element)
 - Styled in: `styles/field.css`, `styles/primitives.css`, `styles/search-field.css`, `styles/select.css`, `styles/settings-rows.css`
 
 ## Owner's note
