@@ -62,6 +62,10 @@ jobs:
         run: pnpm run typecheck
       - name: Lint
         run: pnpm run lint
+      - name: Validate package rules
+        run: pnpm run pkg:validate
+      - name: Validate style guide rules
+        run: pnpm run guide:validate
       - name: Test
         run: pnpm test
       # The token build must leave the committed tokens.css as it is; then the style guide builds.

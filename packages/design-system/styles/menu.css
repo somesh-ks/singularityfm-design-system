@@ -28,6 +28,8 @@
   background: var(--color-surface-overlay);
   box-shadow: var(--shadow-popover);
   color: var(--color-on-surface);
+  /* Its own alignment, not the host's: a menu in a centred hero took the hero's (owner, 2026-11-25). */
+  text-align: start;
   --color-focus-gap: var(--color-surface-overlay);
   --ghost-hover: var(--color-surface-overlay-hover);
   --ghost-pressed: var(--color-surface-overlay-pressed);

@@ -39,6 +39,7 @@ export const GRID_EXCEPTIONS: [selector: string, reason: string][] = [
     ".create-fab-label",
     "the word's end onto the Fab's padding, which is sized for the plus's square: 4px more balances it",
   ],
+  [".settings-text", "a setting's label onto its hint, inside one row"],
 ];
 
 export interface RetiredPath {
@@ -175,6 +176,11 @@ export const SIZE_LITERAL_EXCEPTIONS: [declaration: string, reason: string][] = 
     "a multi-line field's floor: six lines of text, not a control height",
   ],
   [".flag-inline { block-size }", "the flag glyph, drawn in its text's em"],
+  [
+    ".topic-tile-hit { block-size }",
+    "the topic tile, a picture card whose covers it cuts at its edge: a card's height, not a control's",
+  ],
+  [".topic-tile-hit > img { block-size }", "a cover on the topic tile: a picture, not a control"],
   [
     ".picker-pop[data-sheet] { max-block-size }",
     "the phone sheet's height cap, not a control's height",

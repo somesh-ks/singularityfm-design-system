@@ -72,11 +72,12 @@ export const PARTS: PartSource[] = [
     name: "Card group",
     kind: "container",
     summary: "A group of rows in one rounded container on the container tone.",
-    classes: ["card-group", "rows"],
+    classes: ["card-group", "rows", "card-group-content"],
     when: [
       "group several settings rows",
       "a card of chips",
       "one note that is an offer, with the accent tone",
+      "blocks of content, not rows (a briefing's stories), with .card-group-content",
     ],
     not: [{ when: "a single stat or number", use: "stat-tiles" }],
     keywords: ["card", "settings group", "section container", "grouped list"],
@@ -85,6 +86,7 @@ export const PARTS: PartSource[] = [
     rules: [
       "A card of one row follows its height for its corner.",
       "Dividers run edge to edge inside.",
+      "A card of content blocks (.card-group-content) has the card padding on all four sides; the blocks keep their own padding only between each other.",
     ],
   },
   {
