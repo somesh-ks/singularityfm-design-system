@@ -4,7 +4,7 @@ import { topicGridClass } from "./topicTile.ts";
 import "../styles/topic-tile.css";
 
 interface TopicGridProps {
-  /** Four across instead of two, for a wide column (desktop). */
+  /** Four across instead of two, for a wide column (desktop); each tile stops at 10rem, so a very wide column fits more. */
   wide?: boolean;
   /** For placing the grid, or a hook a page's script finds it by. Never its look. */
   className?: string;
