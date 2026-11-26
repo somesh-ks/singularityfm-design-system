@@ -50,7 +50,9 @@
   line-clamp: 2;
   overflow: hidden;
   font-size: var(--text-label-size);
-  font-weight: var(--font-weight-medium);
+  /* A title's weight, regular, as every heading is (the app's house rule; taste: a bold label
+     "captures too much attention"). */
+  font-weight: var(--text-title-weight);
   line-height: var(--font-leading-label);
 }
 
@@ -84,9 +86,20 @@
 }
 
 /* On the grey card the tonal circle would match the fill: it takes the overlay, as the tonal select
-   does on a card. */
-.resume-card-panel .icon-btn-tonal:not(:hover, :active) {
+   does on a card. Hover and press keep the tonal steps and outrank this rule whatever the sheets'
+   order. Hover sits behind the fine-pointer gate, so a tap on a phone does not leave a hover fill. */
+.resume-card-panel .icon-btn-tonal {
   background: var(--color-surface-overlay);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .resume-card-panel .icon-btn-tonal:where(:not(:disabled, [aria-disabled="true"])):hover {
+    background: var(--color-surface-container-hover);
+  }
+}
+
+.resume-card-panel .icon-btn-tonal:where(:not(:disabled, [aria-disabled="true"])):active {
+  background: var(--color-surface-container-pressed);
 }
 
 @media (forced-colors: active) {
