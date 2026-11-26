@@ -43,7 +43,7 @@ textarea.field-input {
     );
     overflow-y: auto;
     overscroll-behavior: contain;
-    scrollbar-width: thin;
+    scrollbar-width: none; /* Only the page scrolls with a bar (owner, 13 Nov). */
     field-sizing: content;
     resize: none;
   }

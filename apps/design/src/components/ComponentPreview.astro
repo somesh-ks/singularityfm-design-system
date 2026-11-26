@@ -1,15 +1,18 @@
 ---
 import Avatar from "@singularity/design-system/Avatar";
 import Badge from "@singularity/design-system/Badge";
+import Band from "@singularity/design-system/Band";
 import Banner from "@singularity/design-system/Banner";
 import BrandMark from "@singularity/design-system/BrandMark";
 import Button from "@singularity/design-system/Button";
 import Chip from "@singularity/design-system/Chip";
 import ChipGroup from "@singularity/design-system/ChipGroup";
 import Code from "@singularity/design-system/Code";
+import Dial from "@singularity/design-system/Dial";
 import Dialog from "@singularity/design-system/Dialog";
 import DialogActions from "@singularity/design-system/DialogActions";
 import DialogTitle from "@singularity/design-system/DialogTitle";
+import DialTile from "@singularity/design-system/DialTile";
 import Fab from "@singularity/design-system/Fab";
 import Field from "@singularity/design-system/Field";
 import Flag from "@singularity/design-system/Flag";
@@ -19,8 +22,10 @@ import type { IconName } from "@singularity/design-system/icons";
 import Link from "@singularity/design-system/Link";
 import Menu from "@singularity/design-system/Menu";
 import MenuItem from "@singularity/design-system/MenuItem";
+import PageDots from "@singularity/design-system/PageDots";
 import PlayChip from "@singularity/design-system/PlayChip";
 import type { PlayChipState } from "@singularity/design-system/playChip";
+import ResumeCard from "@singularity/design-system/ResumeCard";
 import Ripple from "@singularity/design-system/Ripple";
 import RowExit from "@singularity/design-system/RowExit";
 import SearchField from "@singularity/design-system/SearchField";
@@ -31,6 +36,8 @@ import Select from "@singularity/design-system/Select";
 import Sheet from "@singularity/design-system/Sheet";
 import Slider from "@singularity/design-system/Slider";
 import Switch from "@singularity/design-system/Switch";
+import TopicGrid from "@singularity/design-system/TopicGrid";
+import TopicTile from "@singularity/design-system/TopicTile";
 import type { CSSProperties } from "react";
 import {
   BANNER_ICON,
@@ -349,6 +356,71 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
 }
 
 {slug === "badge" && <Badge>{state.content === "number" ? "12" : SAMPLE.badge}</Badge>}
+
+{
+  slug === "dial" && (
+    <Dial className="guide-dial">
+      {SAMPLE.shows.slice(0, 3).map((show, index) => (
+        <DialTile
+          name={show}
+          label={`Play ${show}`}
+          count={index === 0 && on("count") ? 2 : undefined}
+          pinned={index === 0 && on("pinned")}
+          playing={index === 0 && on("playing")}
+        >
+          <span class="guide-cover" data-tone={index} />
+        </DialTile>
+      ))}
+    </Dial>
+  )
+}
+
+{slug === "page-dots" && <PageDots count={3} current={Number(state.current ?? 0)} />}
+
+{
+  slug === "resume-card" && (
+    <ResumeCard
+      title={SAMPLE.episode}
+      facts={SAMPLE.resumeFacts}
+      progress={0.6}
+      playLabel={`Resume ${SAMPLE.episode}`}
+      dismissLabel="Remove from Continue listening"
+      playing={on("playing")}
+    >
+      <span class="guide-cover" data-tone="0" />
+    </ResumeCard>
+  )
+}
+
+{
+  slug === "band" && (
+    <Band
+      title={SAMPLE.band}
+      className="guide-band"
+    >
+      {on("action") && <Button slot="action" variant="text" href="#">See all</Button>}
+      <span class="guide-live-row">
+        <span class="guide-cover guide-cover-card" data-tone="0" />
+        <span class="guide-cover guide-cover-card" data-tone="1" />
+        <span class="guide-cover guide-cover-card" data-tone="2" />
+      </span>
+    </Band>
+  )
+}
+
+{
+  slug === "topic-tile" && (
+    <TopicGrid className="guide-topics">
+      {SAMPLE.topics.slice(0, 2).map((topic, index) =>
+        state.element === "link" ? (
+          <TopicTile name={topic} href="#" />
+        ) : (
+          <TopicTile name={topic} defaultChecked={index === 0 && on("checked")} />
+        ),
+      )}
+    </TopicGrid>
+  )
+}
 
 {
   slug === "ripple" && (

@@ -177,6 +177,11 @@ export const SIZE_LITERAL_EXCEPTIONS: [declaration: string, reason: string][] = 
   ],
   [".flag-inline { block-size }", "the flag glyph, drawn in its text's em"],
   [
+    ".topic-tile-hit { block-size }",
+    "the topic tile, a picture card whose covers it cuts at its edge: a card's height, not a control's",
+  ],
+  [".topic-tile-hit > img { block-size }", "a cover on the topic tile: a picture, not a control"],
+  [
     ".picker-pop[data-sheet] { max-block-size }",
     "the phone sheet's height cap, not a control's height",
   ],

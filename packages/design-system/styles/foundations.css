@@ -72,6 +72,20 @@
     interpolate-size: allow-keywords;
   }
 
+  /* No scrollbar anywhere on a phone, the page's included (owner, 13 Nov: "no scrollbars anywhere on
+     mobile"); the library hides it so no browser's default decides. On desktop the page keeps its
+     bar, the one cue for where you are on a long page; nothing inside it draws one. */
+  @media (hover: none), (width < 40rem) {
+    html {
+      scrollbar-width: none;
+    }
+
+    /* Safari before 18.2 ignores scrollbar-width. */
+    html::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
   body,
   h1,
   h2,
@@ -259,7 +273,7 @@
   .scroll-area {
     overflow-y: auto;
     overscroll-behavior: contain;
-    scrollbar-width: thin;
+    scrollbar-width: none; /* Only the page scrolls with a bar (owner, 13 Nov). */
     scrollbar-gutter: stable;
   }
 

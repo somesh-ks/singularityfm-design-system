@@ -2308,6 +2308,7 @@
       ],
       "imports": [],
       "styles": [
+        "packages/design-system/styles/badge.css",
         "packages/design-system/styles/field.css",
         "packages/design-system/styles/primitives.css",
         "packages/design-system/styles/search-field.css",
@@ -2646,6 +2647,53 @@
           "None; non-interactive indicator."
         ],
         "focus": "Not focusable."
+      }
+    },
+    {
+      "name": "Band",
+      "import": "@singularityfm/design-system/Band",
+      "file": "packages/design-system/src/Band.tsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The heading's words: \"Catchups\"."
+        },
+        {
+          "name": "action",
+          "type": "ReactNode",
+          "required": false,
+          "default": "",
+          "description": "What sits at the heading's end: a See all link (a Button text link)."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "What the band holds: a shelf of cards, or result rows."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the band, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        }
+      ],
+      "element": "section",
+      "example": "<Band title=\"Catchups\">\n  <ul role=\"list\">...</ul>\n</Band>",
+      "a11y": {
+        "role": "<section> with an <h2> heading",
+        "aria": [
+          "The heading names the section; the Singularity mark before it is decorative."
+        ],
+        "keyboard": [
+          "None of its own; the action and the items inside take focus in DOM order."
+        ],
+        "focus": "Not focusable; children manage focus."
       }
     },
     {
@@ -3031,6 +3079,54 @@
       }
     },
     {
+      "name": "Dial",
+      "import": "@singularityfm/design-system/Dial",
+      "file": "packages/design-system/src/Dial.tsx",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The DialTiles, one page of them."
+        },
+        {
+          "name": "wide",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Six across instead of three, for a wide column (desktop)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the grid where it stands, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Astro places the grid in its parent's slot with it; it is not an attribute of the list."
+        }
+      ],
+      "element": "ul",
+      "example": "<Dial>\n  <DialTile name=\"Hard Fork\" label=\"Play Hard Fork, 2 new\" count={2}><img src=\"cover.webp\" alt=\"\" /></DialTile>\n</Dial>",
+      "a11y": {
+        "role": "List <ul role=\"list\"> of DialTile items, each a native <button> or <a href>",
+        "aria": [
+          "Each DialTile's label prop names its action and any count (\"Play Hard Fork, 2 new\"); the visible name, pin and count are aria-hidden so it reads once.",
+          "The tile playing now carries aria-current=\"true\" on its press area; the page's player sets it with data-playing on the tile and clears both from the last."
+        ],
+        "keyboard": [
+          "Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile."
+        ],
+        "focus": "Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view."
+      }
+    },
+    {
       "name": "Dialog",
       "import": "@singularityfm/design-system/Dialog",
       "file": "packages/design-system/src/Dialog.tsx",
@@ -3141,6 +3237,82 @@
           "None; static heading."
         ],
         "focus": "Not focusable."
+      }
+    },
+    {
+      "name": "DialTile",
+      "import": "@singularityfm/design-system/DialTile",
+      "file": "packages/design-system/src/DialTile.tsx",
+      "props": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The show's name, written on the cover."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "What a press does, for a screen reader: \"Play Hard Fork, 2 new\". The name and count on the cover are drawn for the eye only, so this is the tile's whole name."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The cover: an image or the app's own cover, filling the square."
+        },
+        {
+          "name": "pinned",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Pinned first by the person (the newest Daily always is)."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Draws a link instead of a button, for a tile that opens a page."
+        },
+        {
+          "name": "count",
+          "type": "number | string",
+          "required": false,
+          "default": "",
+          "description": "New episodes; a word (\"New\") for a Catchup. Absent or 0 draws no badge."
+        },
+        {
+          "name": "playing",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The tile whose show is playing now: the accent ring. The page's player sets data-playing."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the tile, or a hook a page's script finds it by (data-play-item). Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        }
+      ],
+      "element": "button",
+      "example": "<DialTile name=\"Hard Fork\" label=\"Play Hard Fork\" playing><img src=\"cover.webp\" alt=\"\" /></DialTile>",
+      "a11y": {
+        "role": "List <ul role=\"list\"> of DialTile items, each a native <button> or <a href>",
+        "aria": [
+          "Each DialTile's label prop names its action and any count (\"Play Hard Fork, 2 new\"); the visible name, pin and count are aria-hidden so it reads once.",
+          "The tile playing now carries aria-current=\"true\" on its press area; the page's player sets it with data-playing on the tile and clears both from the last."
+        ],
+        "keyboard": [
+          "Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile."
+        ],
+        "focus": "Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view."
       }
     },
     {
@@ -3614,6 +3786,95 @@
       }
     },
     {
+      "name": "PageArrows",
+      "import": "@singularityfm/design-system/PageArrows",
+      "file": "packages/design-system/src/PageArrows.tsx",
+      "props": [
+        {
+          "name": "prevLabel",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "What Back says to a screen reader: \"Earlier shows\"."
+        },
+        {
+          "name": "nextLabel",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "What Next says: \"More shows\"."
+        },
+        {
+          "name": "controls",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The id of the row it moves: a Dial, a TopicGrid or a shelf that scrolls sideways."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the pair, or a hook a page's script finds it by. Never its look."
+        }
+      ],
+      "example": "<PageArrows controls=\"topics\" prevLabel=\"Earlier topics\" nextLabel=\"More topics\" />",
+      "a11y": {
+        "role": "PageDots is one named image (role=\"img\", \"Page 2 of 3\"); PageArrows are native <button>s",
+        "aria": [
+          "PageDots reads as one picture, its aria-label \"Page X of Y\"; a script that pages the row moves aria-current to the new dot and rewrites that label with it.",
+          "PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.",
+          "PageArrows do nothing until the page calls installPageArrows() from @singularityfm/design-system/pageDots once the row is in the page."
+        ],
+        "keyboard": [
+          "PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden."
+        ],
+        "focus": "PageArrows show the native :focus-visible ring; disabled arrows leave the tab order."
+      }
+    },
+    {
+      "name": "PageDots",
+      "import": "@singularityfm/design-system/PageDots",
+      "file": "packages/design-system/src/PageDots.tsx",
+      "props": [
+        {
+          "name": "count",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "How many pages there are. One or fewer draws nothing."
+        },
+        {
+          "name": "current",
+          "type": "number",
+          "required": false,
+          "default": "0",
+          "description": "The page showing, from 0. A page's script moves it by setting aria-current=\"true\" on that dot's span (and removing it from the last) and rewriting the root's aria-label (\"Page 3 of 3\")."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the row, or a hook a page's script finds it by. Never its look."
+        }
+      ],
+      "example": "<PageDots count={3} current={0} />",
+      "a11y": {
+        "role": "PageDots is one named image (role=\"img\", \"Page 2 of 3\"); PageArrows are native <button>s",
+        "aria": [
+          "PageDots reads as one picture, its aria-label \"Page X of Y\"; a script that pages the row moves aria-current to the new dot and rewrites that label with it.",
+          "PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.",
+          "PageArrows do nothing until the page calls installPageArrows() from @singularityfm/design-system/pageDots once the row is in the page."
+        ],
+        "keyboard": [
+          "PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden."
+        ],
+        "focus": "PageArrows show the native :focus-visible ring; disabled arrows leave the tab order."
+      }
+    },
+    {
       "name": "PlayChip",
       "import": "@singularityfm/design-system/PlayChip",
       "file": "packages/design-system/src/PlayChip.tsx",
@@ -3716,6 +3977,81 @@
           "None; decorative animated state indicator (static under prefers-reduced-motion)."
         ],
         "focus": "Not focusable."
+      }
+    },
+    {
+      "name": "ResumeCard",
+      "import": "@singularityfm/design-system/ResumeCard",
+      "file": "packages/design-system/src/ResumeCard.tsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The episode's title. Two lines at most."
+        },
+        {
+          "name": "facts",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "One line under the bar: the show and the time left (\"Hard Fork · 12 min left\")."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The cover, a small square."
+        },
+        {
+          "name": "playLabel",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "Play's name for a screen reader: \"Resume The Jensen Huang Affair\"."
+        },
+        {
+          "name": "dismissLabel",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "Dismiss's name: \"Remove from Continue listening\"."
+        },
+        {
+          "name": "progress",
+          "type": "number",
+          "required": true,
+          "default": "",
+          "description": "How much is heard, 0 to 1."
+        },
+        {
+          "name": "playing",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Draws the pause glyph: this episode is playing. The page's player sets data-playing."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the card, or a hook a page's script finds it by. Never its look. An Astro page passes className too: @astrojs/react drops a `class` prop."
+        }
+      ],
+      "element": "article",
+      "example": "<ResumeCard title=\"The Jensen Huang Affair\" facts=\"Hard Fork, 12 min left\" progress={0.6} playLabel=\"Play\" dismissLabel=\"Remove from Continue listening\"><img src=\"cover.webp\" alt=\"\" /></ResumeCard>",
+      "a11y": {
+        "role": "<article> with Play and Dismiss native <button>s",
+        "aria": [
+          "playLabel and dismissLabel name the two IconButtons; the progress bar is aria-hidden and facts says the time left in words."
+        ],
+        "keyboard": [
+          "Tab reaches Dismiss then Play; Enter or Space activates each."
+        ],
+        "focus": "IconButtons show the native :focus-visible ring."
       }
     },
     {
@@ -4284,6 +4620,102 @@
         ],
         "focus": "Does not steal focus from the active control when appearing."
       }
+    },
+    {
+      "name": "TopicGrid",
+      "import": "@singularityfm/design-system/TopicGrid",
+      "file": "packages/design-system/src/TopicGrid.tsx",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "default": "",
+          "description": "The TopicTiles."
+        },
+        {
+          "name": "wide",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Four across instead of two, for a wide column (desktop)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the grid, or a hook a page's script finds it by. Never its look."
+        }
+      ],
+      "element": "ul",
+      "example": "<TopicGrid>\n  <TopicTile name=\"Technology\" href=\"/topic/technology\" covers={[\"one.webp\"]} />\n</TopicGrid>",
+      "a11y": {
+        "role": "List <ul role=\"list\"> of tiles, each a native <a href> or a visually hidden <input type=\"checkbox\">",
+        "aria": [
+          "The visible topic name is the accessible name; covers are decorative (alt=\"\").",
+          "A checkbox tile's checked state is native; the check glyph is aria-hidden."
+        ],
+        "keyboard": [
+          "Tab moves across tiles; Enter opens a link tile, Space toggles a checkbox tile."
+        ],
+        "focus": "The tile wears the foundations' focus ring for its hidden input or its link."
+      }
+    },
+    {
+      "name": "TopicTile",
+      "import": "@singularityfm/design-system/TopicTile",
+      "file": "packages/design-system/src/TopicTile.tsx",
+      "props": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The topic's name, shown on the tile. It is not the checkbox's form name; a value tells ticked tiles apart."
+        },
+        {
+          "name": "covers",
+          "type": "readonly string[]",
+          "required": false,
+          "default": "[]",
+          "description": "Up to three cover images from the topic, by address, fanned into the bottom end from the corner."
+        },
+        {
+          "name": "tint",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The tile's fill, a colour taken from its first cover; the container grey when absent."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "Opens the topic's page. Without it the tile is a checkbox (first run)."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the tile, or a hook a page's script finds it by. Never its look."
+        }
+      ],
+      "element": "input",
+      "example": "<TopicTile name=\"Science\" href=\"/topic/science\" covers={[\"one.webp\", \"two.webp\", \"three.webp\"]} />",
+      "a11y": {
+        "role": "List <ul role=\"list\"> of tiles, each a native <a href> or a visually hidden <input type=\"checkbox\">",
+        "aria": [
+          "The visible topic name is the accessible name; covers are decorative (alt=\"\").",
+          "A checkbox tile's checked state is native; the check glyph is aria-hidden."
+        ],
+        "keyboard": [
+          "Tab moves across tiles; Enter opens a link tile, Space toggles a checkbox tile."
+        ],
+        "focus": "The tile wears the foundations' focus ring for its hidden input or its link."
+      }
     }
   ],
   "icons": [
@@ -4346,6 +4778,7 @@
     "replay",
     "rss",
     "search",
+    "searchFill",
     "settings",
     "settingsFill",
     "shapes",
@@ -8418,6 +8851,7 @@
     "--cover-night-c",
     "--cover-night-hue",
     "--cover-spread",
+    "--dial-inset",
     "--dock-room",
     "--drawer-corner",
     "--fab-sheen",

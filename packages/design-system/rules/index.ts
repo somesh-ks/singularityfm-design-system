@@ -474,11 +474,14 @@ const CLASS_OWNERS = new Map(
         (file) => `src/${file}`,
       ),
     ]);
+    // A sub-component's file, named for the family and one more word (DialTile beside Dial), is its
+    // own too; Dialog is not Dial's, since the next letter after the family's name is lower case.
+    const sub = new RegExp(`^src/${escapeRegex(name)}[A-Z]\\w*\\.(?:tsx|astro)$`);
     return [...component.classes, ...component.retired].map(
       (name) =>
         [
           name,
-          { component: component.name, retired: component.retired.includes(name), own },
+          { component: component.name, retired: component.retired.includes(name), own, sub },
         ] as const,
     );
   }),
@@ -634,7 +637,7 @@ export function classOnComponent(text: string, file: string): Finding[] {
     return [...content.matchAll(CLASS_NAME)].flatMap((match) => {
       const name = match[0];
       const owner = CLASS_OWNERS.get(name);
-      if (!owner || (own && owner.own.has(own))) return [];
+      if (!owner || (own && (owner.own.has(own) || owner.sub.test(own)))) return [];
       const matchOffset = match.index ?? 0;
       const index = stringStart + 1 + matchOffset;
       const beforeMatch = code.slice(Math.max(0, index - 64), index);

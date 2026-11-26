@@ -244,10 +244,14 @@ dialog.sheet-side[data-scrolled] .sheet-head {
      padding and the safe area), ring included, instead of sliding under it. */
   scroll-padding-block: var(--space-4)
     calc(var(--button-height) + var(--space-12) + var(--safe-bottom));
-  scrollbar-width: thin;
-  /* The scrollbar's room is kept whether or not the form scrolls: opening More options must not
-     narrow the column and rewrap every control. */
+  scrollbar-width: none; /* Only the page scrolls with a bar (owner, 13 Nov). */
+  /* Where a browser still draws a bar (scrollbar-width unsupported), its room is kept whether or
+     not the form scrolls: opening More options must not narrow the column and rewrap every control. */
   scrollbar-gutter: stable;
+}
+
+.sheet-body::-webkit-scrollbar {
+  display: none;
 }
 
 /* What runs on under the sticky foot fades out just above it, as the lists fade at their ends, so a

@@ -2018,3 +2018,34 @@
   display: grid;
   place-items: center;
 }
+
+/* A cover's stand-in on the Dial, Resume card and Band pages: a square in a container tone. */
+.guide-cover {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  background: var(--color-accent-container);
+}
+
+.guide-cover[data-tone="1"] {
+  background: var(--color-surface-overlay);
+}
+
+.guide-cover[data-tone="2"] {
+  background: var(--color-track-strong);
+}
+
+.guide-cover-card {
+  inline-size: 6rem;
+  border-radius: var(--shape-md);
+}
+
+.guide-dial,
+.guide-topics {
+  inline-size: min(22rem, 100%);
+}
+
+.guide-band {
+  inline-size: min(22rem, 100%);
+  margin-inline: 0;
+}

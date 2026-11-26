@@ -136,7 +136,7 @@
   padding-inline: max(var(--space-6), var(--safe-left)) max(var(--space-6), var(--safe-right));
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
+  scrollbar-width: none; /* Only the page scrolls with a bar (owner, 13 Nov). */
 }
 
 .drawer-panel > .sheet-form > .sheet-actions {

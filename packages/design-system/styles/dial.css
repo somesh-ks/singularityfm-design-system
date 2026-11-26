@@ -1,0 +1,125 @@
+/*
+ * The Dial (design-system/Dial.tsx, DialTile.tsx): Home's speed dial. Square covers three across (six
+ * on a wide column), 8px apart, each with the show's name on a dark fade along its foot, a pin at the
+ * top start, the count at the top end, and a ring in the accent on the tile that is playing: blue is
+ * for what is active, and a playing show is (owner's plan, 12 Nov). Nothing moves when the ring, pin
+ * or count appear: each sits over the cover, in no flow.
+ */
+.dial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* On a wide column the dial is one row of six that scrolls sideways, as a desktop shelf does, with
+   PageArrows at its head: never a second row left part full. */
+.dial-grid-wide {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 5 * var(--space-4)) / 6);
+  gap: var(--space-4);
+  padding-block: var(--space-2);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+/* What sits over a cover keeps clear of its corner, however round the mood makes it. */
+.dial-tile {
+  position: relative;
+  min-width: 0;
+  --dial-inset: max(var(--space-2), calc(var(--cover-radius-hero) * 0.3));
+}
+
+.dial-grid-wide > .dial-tile {
+  scroll-snap-align: start;
+}
+
+.dial-hit {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: var(--cover-radius-hero);
+  overflow: hidden;
+  background: var(--color-surface-container);
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The cover fills the square, whatever draws it: an image, or the app's own cover. */
+.dial-art,
+.dial-art > * {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.dial-art > img {
+  object-fit: cover;
+}
+
+.dial-name {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: var(--space-6) var(--dial-inset) var(--space-2);
+  /* The scrim a briefing card's foot takes, held under the words so they read on a pale cover. */
+  background: linear-gradient(to top, var(--color-scrim), var(--color-scrim) 40%, transparent);
+  color: var(--color-on-scrim);
+  font-size: var(--text-label-size);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-label);
+  text-align: start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Drawn over the cover, inside its edge, so the ring never takes room or shifts the grid. */
+.dial-tile[data-playing="true"] > .dial-hit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  outline: var(--space-1) solid var(--color-accent);
+  outline-offset: calc(var(--space-1) * -1);
+  pointer-events: none;
+}
+
+.dial-pin {
+  position: absolute;
+  inset: var(--dial-inset) auto auto var(--dial-inset);
+  display: grid;
+  place-items: center;
+  inline-size: var(--space-6);
+  block-size: var(--space-6);
+  border-radius: var(--shape-round);
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  pointer-events: none;
+}
+
+.dial-pin .icon-glyph {
+  inline-size: var(--size-icon-sm);
+  block-size: var(--size-icon-sm);
+}
+
+.dial-count {
+  position: absolute;
+  inset: var(--dial-inset) var(--dial-inset) auto auto;
+  pointer-events: none;
+}
+
+/* On a cover the grey pill would vanish into the art: it takes the page's own surface. */
+.dial-count > .badge-label {
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+}

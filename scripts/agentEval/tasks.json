@@ -77,6 +77,31 @@
       "id": "episode-row",
       "prompt": "Show one episode in a list: its title, the show's name, its length, and a way to start playing it right there.",
       "expect": [{ "components": ["PlayChip"] }]
+    },
+    {
+      "id": "closest-shows",
+      "prompt": "On the first screen, put the shows a person keeps closest in a square grid of their artwork, nine at a time, where one press starts the newest unheard episode and the one playing now stands out. Make it clear which nine are showing when there are more.",
+      "expect": [{ "components": ["Dial", "DialTile", "PageDots"] }]
+    },
+    {
+      "id": "carry-on-listening",
+      "prompt": "Above the new episodes, list the ones the person stopped part way through, each with how far they got, how long is left, a way to carry on and a way to drop it from the list.",
+      "expect": [{ "components": ["ResumeCard"] }]
+    },
+    {
+      "id": "row-arrows",
+      "prompt": "On a wide screen with a mouse, let a person move a row of show artwork that runs off the side one screen at a time, from two small controls by the section heading; on a phone a swipe does it and those controls are not there.",
+      "expect": [{ "components": ["PageArrows"] }]
+    },
+    {
+      "id": "own-briefings-apart",
+      "prompt": "Among public shows on the first screen, set the app's own daily and weekly briefings apart so nobody mistakes them for someone else's show.",
+      "expect": [{ "components": ["Band"] }]
+    },
+    {
+      "id": "choose-interests",
+      "prompt": "When the app opens for the first time, let a person choose a few subjects they care about from a grid, each with a little artwork from that subject.",
+      "expect": [{ "components": ["TopicGrid", "TopicTile"] }]
     }
   ]
 }

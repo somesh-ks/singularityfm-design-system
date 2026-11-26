@@ -212,6 +212,14 @@ describe("the rules", () => {
     ).toEqual([1]);
   });
 
+  // Prevents a component's own sub-component (DialTile beside Dial) failing on its family's classes,
+  // while a neighbour whose name only starts the same (Dialog) still may not type them.
+  it("class-on-component: a sub-component's file owns its family's classes, a lookalike's does not", () => {
+    const tile = '<li className="dial-tile" />';
+    expect(classOnComponent(tile, "packages/design-system/src/DialTile.tsx")).toEqual([]);
+    expect(lines(classOnComponent(tile, "packages/design-system/src/Dialog.tsx"))).toEqual([1]);
+  });
+
   // Prevents an import of a path the package retired going unseen until the removal breaks a build.
   it("retired-path: warns on a deprecated import and names its replacement", () => {
     const page = [

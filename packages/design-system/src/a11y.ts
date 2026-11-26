@@ -262,6 +262,53 @@ export const REGISTRY_A11Y = {
     keyboard: ["None; host toggle button retains aria-pressed and keyboard handling."],
     focus: "Not focusable.",
   },
+  Dial: {
+    role: 'List <ul role="list"> of DialTile items, each a native <button> or <a href>',
+    aria: [
+      'Each DialTile\'s label prop names its action and any count ("Play Hard Fork, 2 new"); the visible name, pin and count are aria-hidden so it reads once.',
+      'The tile playing now carries aria-current="true" on its press area; the page\'s player sets it with data-playing on the tile and clears both from the last.',
+    ],
+    keyboard: [
+      "Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile.",
+    ],
+    focus:
+      "Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view.",
+  },
+  "Page dots": {
+    role: 'PageDots is one named image (role="img", "Page 2 of 3"); PageArrows are native <button>s',
+    aria: [
+      'PageDots reads as one picture, its aria-label "Page X of Y"; a script that pages the row moves aria-current to the new dot and rewrites that label with it.',
+      "PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.",
+      "PageArrows do nothing until the page calls installPageArrows() from @singularityfm/design-system/pageDots once the row is in the page.",
+    ],
+    keyboard: [
+      "PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden.",
+    ],
+    focus: "PageArrows show the native :focus-visible ring; disabled arrows leave the tab order.",
+  },
+  "Resume card": {
+    role: "<article> with Play and Dismiss native <button>s",
+    aria: [
+      "playLabel and dismissLabel name the two IconButtons; the progress bar is aria-hidden and facts says the time left in words.",
+    ],
+    keyboard: ["Tab reaches Dismiss then Play; Enter or Space activates each."],
+    focus: "IconButtons show the native :focus-visible ring.",
+  },
+  Band: {
+    role: "<section> with an <h2> heading",
+    aria: ["The heading names the section; the Singularity mark before it is decorative."],
+    keyboard: ["None of its own; the action and the items inside take focus in DOM order."],
+    focus: "Not focusable; children manage focus.",
+  },
+  "Topic tile": {
+    role: 'List <ul role="list"> of tiles, each a native <a href> or a visually hidden <input type="checkbox">',
+    aria: [
+      'The visible topic name is the accessible name; covers are decorative (alt="").',
+      "A checkbox tile's checked state is native; the check glyph is aria-hidden.",
+    ],
+    keyboard: ["Tab moves across tiles; Enter opens a link tile, Space toggles a checkbox tile."],
+    focus: "The tile wears the foundations' focus ring for its hidden input or its link.",
+  },
 } satisfies Record<string, A11yGuidance>;
 
 /** Accessibility contract for hand-authored composite/interactive parts in parts.ts. */
@@ -282,6 +329,14 @@ export const COMPONENT_A11Y: Record<string, A11yGuidance> = {
   Avatar: REGISTRY_A11Y.Avatar,
   Badge: REGISTRY_A11Y.Badge,
   Banner: REGISTRY_A11Y.Banner,
+  Band: REGISTRY_A11Y.Band,
+  Dial: REGISTRY_A11Y.Dial,
+  DialTile: REGISTRY_A11Y.Dial,
+  PageArrows: REGISTRY_A11Y["Page dots"],
+  PageDots: REGISTRY_A11Y["Page dots"],
+  ResumeCard: REGISTRY_A11Y["Resume card"],
+  TopicGrid: REGISTRY_A11Y["Topic tile"],
+  TopicTile: REGISTRY_A11Y["Topic tile"],
   BrandMark: {
     role: 'Decorative <svg aria-hidden="true" focusable="false">',
     aria: ["Hidden from screen readers; adjacent wordmark text or link provides the name."],
@@ -379,6 +434,18 @@ export const COMPONENT_EXAMPLES: Record<string, string> = {
   Badge: "<Badge>Admin</Badge>",
   Banner: '<Banner tone="danger" icon="alert" title="Download failed" />',
   BrandMark: "<BrandMark />",
+  Band: '<Band title="Catchups">\n  <ul role="list">...</ul>\n</Band>',
+  Dial: '<Dial>\n  <DialTile name="Hard Fork" label="Play Hard Fork, 2 new" count={2}><img src="cover.webp" alt="" /></DialTile>\n</Dial>',
+  DialTile:
+    '<DialTile name="Hard Fork" label="Play Hard Fork" playing><img src="cover.webp" alt="" /></DialTile>',
+  PageArrows: '<PageArrows controls="topics" prevLabel="Earlier topics" nextLabel="More topics" />',
+  PageDots: "<PageDots count={3} current={0} />",
+  ResumeCard:
+    '<ResumeCard title="The Jensen Huang Affair" facts="Hard Fork, 12 min left" progress={0.6} playLabel="Play" dismissLabel="Remove from Continue listening"><img src="cover.webp" alt="" /></ResumeCard>',
+  TopicGrid:
+    '<TopicGrid>\n  <TopicTile name="Technology" href="/topic/technology" covers={["one.webp"]} />\n</TopicGrid>',
+  TopicTile:
+    '<TopicTile name="Science" href="/topic/science" covers={["one.webp", "two.webp", "three.webp"]} />',
   Button: '<Button variant="filled" type="submit">Save</Button>',
   ChapterAside:
     '<ChapterAside sections={[{ slug: "intro", title: "Overview" }, { slug: "notes", title: "Notes" }]} />',
