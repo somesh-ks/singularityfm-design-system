@@ -1,5 +1,5 @@
 ---
-version: "0.15.0"
+version: "0.16.1"
 id: button-danger
 name: "Danger button"
 kind: action

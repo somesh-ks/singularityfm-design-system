@@ -1,40 +1,81 @@
 /*
- * The Resume card (design-system/ResumeCard.tsx): a wide grey card, a small square cover, the title
- * over a thin progress bar and one line of facts, and Dismiss over Play at the end. The card is as
- * wide as a shelf shows one and a bit of (21rem, or 90% of a narrow column), so the next one peeks.
- * The bar fills in the accent: progress is active state.
+ * The Resume card (design-system/ResumeCard.tsx): a wide grey card that is one press area: a square
+ * cover with the play glyph on it, the title, one line of facts and a thin progress bar, and no other
+ * control (owner, 26 Nov: "too close with many options"; the stacked Dismiss and Play left the words
+ * no room and only the two circles answered a press; then "it shouldnt be dismissable with X": the
+ * shelf clears itself as episodes finish). The card is as wide as a shelf shows one and a bit of (21rem, or 90% of
+ * a narrow column), so the next one peeks. The bar fills in the accent: progress is active state.
  */
 .resume-card-panel {
+  position: relative;
   flex: none;
   inline-size: min(21rem, 90%);
-  display: grid;
-  grid-template-columns: var(--cover-size-thumb) minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--card-padding);
-  /* The buttons' 44px targets pad their own glyphs, so the end gives them back their room. */
-  padding-inline-end: var(--space-2);
   border-radius: var(--card-radius);
   background: var(--color-surface-container);
   color: var(--color-on-surface);
 }
 
-.resume-card-art,
-.resume-card-art > * {
-  display: block;
+.resume-card-hit {
+  display: grid;
+  grid-template-columns: var(--space-16) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
   inline-size: 100%;
-  aspect-ratio: 1;
-  border-radius: var(--cover-radius-thumb);
-  overflow: hidden;
+  padding: var(--space-4);
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .resume-card-hit:hover {
+    background: var(--color-surface-container-hover);
+  }
+}
+
+.resume-card-hit:active {
+  background: var(--color-surface-container-pressed);
+}
+
+.resume-card-dismiss {
+  position: absolute;
+  /* In the top end corner, its target clear of the facts line below the title. */
+  inset-block-start: 0;
+  inset-inline-end: 0;
 }
 
 .resume-card-art {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  border-radius: var(--cover-radius-thumb);
+  overflow: hidden;
   outline: var(--stroke-hairline) solid var(--cover-outline);
   outline-offset: calc(var(--stroke-hairline) * -1);
 }
 
+.resume-card-art > :not(.resume-card-glyph) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
 .resume-card-art > img {
   object-fit: cover;
+}
+
+/* The press's meaning, drawn on the cover: the scrim a briefing card's foot takes keeps the glyph
+   legible on a pale cover. */
+.resume-card-art > .resume-card-glyph {
+  position: absolute;
+  inset: 0;
+  background: var(--color-scrim);
+  color: var(--color-on-scrim);
 }
 
 .resume-card-text {
@@ -50,8 +91,15 @@
   line-clamp: 2;
   overflow: hidden;
   font-size: var(--text-label-size);
-  font-weight: var(--font-weight-medium);
+  /* A title's weight, regular, as every heading is (the app's house rule; taste: a bold label
+     "captures too much attention"). */
+  font-weight: var(--text-title-weight);
   line-height: var(--font-leading-label);
+}
+
+/* A deprecated Dismiss shares the top line with the title only, so only the title stops short of it. */
+.resume-card-panel:has(> .resume-card-dismiss) .resume-card-title {
+  padding-inline-end: var(--space-8);
 }
 
 .resume-card-bar {
@@ -71,22 +119,34 @@
   background: var(--color-accent);
 }
 
-/* Wraps, never clamped: the time left ends the line and is the fact a listener came for, so a long
-   show name may not push it out of view. */
+/* One line under the title, smaller than it: the show's name gives way, the time left never does,
+   as it is the fact a listener came for. */
 .resume-card-facts {
+  display: flex;
+  min-inline-size: 0;
   color: var(--color-on-surface-muted);
   font-size: var(--text-meta-size);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
+.resume-card-show {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resume-card-left {
+  flex: none;
+}
+
+.resume-card-left::before {
+  content: "\00A0\00B7\00A0";
+}
+
+/* Deprecated: the old column of Dismiss over Play. ResumeCard no longer draws it; 1.0.0 removes it. */
 .resume-card-acts {
   display: grid;
-}
-
-/* On the grey card the tonal circle would match the fill: it takes the overlay, as the tonal select
-   does on a card. */
-.resume-card-panel .icon-btn-tonal:not(:hover, :active) {
-  background: var(--color-surface-overlay);
 }
 
 @media (forced-colors: active) {

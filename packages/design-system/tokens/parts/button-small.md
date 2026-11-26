@@ -1,5 +1,5 @@
 ---
-version: "0.15.0"
+version: "0.16.1"
 id: button-small
 name: "Small button"
 kind: action
