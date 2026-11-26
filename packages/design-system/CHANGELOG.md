@@ -1,5 +1,11 @@
 # @singularityfm/design-system
 
+## 0.16.1
+
+### Patch Changes
+
+- cfbff2c: ResumeCard's facts line reads the meta role's size, so it follows the role when the role changes (it read the raw meta size before).
+
 ## 0.16.0
 
 ### Minor Changes
