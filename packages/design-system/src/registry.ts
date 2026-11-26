@@ -38,6 +38,7 @@ import {
 import { SEGMENTED_NAV, SEGMENTED_NAV_CLASSES, SEGMENTED_NAV_RETIRED } from "./segmentedNav.ts";
 import { SELECT, SELECT_CLASSES, SELECT_RETIRED } from "./select.ts";
 import { SHEET, SHEET_CLASSES, SHEET_RETIRED } from "./sheet.ts";
+import { SHOW_PICK, SHOW_PICK_CLASSES, SHOW_PICK_RETIRED } from "./showPick.ts";
 import { SLIDER, SLIDER_CLASSES, SLIDER_RETIRED, SLIDER_VARIANTS } from "./slider.ts";
 import { SWITCH, SWITCH_CLASSES, SWITCH_RETIRED } from "./switch.ts";
 import { TOAST, TOAST_CLASSES, TOAST_RETIRED } from "./toast.ts";
@@ -427,6 +428,17 @@ export const COMPONENTS: DesignSystemComponent[] = [
     summary: TOPIC_TILE.summary,
     useWhen: TOPIC_TILE.useWhen,
     dontUseWhen: TOPIC_TILE.dontUseWhen,
+    parts: {},
+  },
+  {
+    name: "Show pick",
+    sheet: "show-pick.css",
+    prefix: "show-pick",
+    classes: SHOW_PICK_CLASSES,
+    retired: SHOW_PICK_RETIRED,
+    summary: SHOW_PICK.summary,
+    useWhen: SHOW_PICK.useWhen,
+    dontUseWhen: SHOW_PICK.dontUseWhen,
     parts: {},
   },
 ].map((component) => {

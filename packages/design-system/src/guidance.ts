@@ -30,7 +30,8 @@ export type ComponentName =
   | "Page dots"
   | "Resume card"
   | "Band"
-  | "Topic tile";
+  | "Topic tile"
+  | "Show pick";
 export type ComponentRef = ComponentName | `${ComponentName}.${string}`;
 
 export interface DontUse {

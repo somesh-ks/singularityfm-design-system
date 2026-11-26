@@ -1039,6 +1039,22 @@ export const SPECS: readonly ComponentSpec[] = [
       ),
   },
   {
+    slug: "show-pick",
+    name: "ShowPick",
+    label: "Show pick",
+    group: "inputs",
+    registry: "Show pick",
+    file: "ShowPick.tsx",
+    controls: [toggle("checked", "Picked")],
+    imports: ["ShowPick"],
+    code: (state) => {
+      const attrs = [`title="${SAMPLE.shows[0]}"`, 'facts="Its maker"', 'cover="cover.webp"'];
+      if (state.checked === "on") attrs.push("defaultChecked");
+      return `<ul role="list">\n  ${jsx("ShowPick", attrs)}\n</ul>`;
+    },
+    note: "The grey square stands in for the cover. The page's grid places the cards.",
+  },
+  {
     slug: "topic-tile",
     name: "TopicTile",
     label: "Topic tile",
