@@ -1,5 +1,5 @@
 ---
-version: "0.16.0"
+version: "0.16.1"
 id: drawer
 name: "Drawer"
 kind: container
