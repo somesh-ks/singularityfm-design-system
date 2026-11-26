@@ -1,12 +1,14 @@
 /*
- * The Topic tile (design-system/TopicTile.tsx, TopicGrid.tsx): a 128px tile, the name at its top
+ * The Topic tile (design-system/TopicTile.tsx, TopicGrid.tsx): a tile 8rem high and at most 10rem wide, the name at its top
  * start, up to three covers fanned along its bottom end, each mostly in view (owner, 23 Nov: more
  * thumbnails), in two rows that scroll sideways. As a checkbox (first run) the ticked tile takes
  * the accent ring and a check in a slot that is always there, so ticking moves nothing.
  */
 /* Two rows that scroll sideways, so every topic is a swipe away (owner, 23 Nov): on a phone a tile
    and most of the next show, so the row says it goes on; on a wide column four, with PageArrows at
-   the head. */
+   the head. From 40rem a tile stops at a small card's width, so a desktop column holds small tiles,
+   not two giant ones (owner, 26 Nov: "cute and nice"); a phone keeps its share, so a fixed width
+   can never fit the row exactly and hide the next tile. */
 .topic-grid {
   display: grid;
   grid-auto-flow: column;
@@ -22,8 +24,14 @@
   scrollbar-width: none;
 }
 
+@media (width >= 40rem) {
+  .topic-grid {
+    grid-auto-columns: min(calc((100% - var(--space-2)) / 1.75), 10rem);
+  }
+}
+
 .topic-grid-wide {
-  grid-auto-columns: calc((100% - 3 * var(--space-4)) / 4);
+  grid-auto-columns: min(calc((100% - 3 * var(--space-4)) / 4), 10rem);
   gap: var(--space-4);
 }
 
