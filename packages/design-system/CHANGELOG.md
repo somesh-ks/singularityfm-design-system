@@ -1,5 +1,18 @@
 # @singularityfm/design-system
 
+## 0.14.0
+
+### Minor Changes
+
+- 6e41f04: Add `.card-group-content`, a card of content blocks (a briefing's stories) with the card padding on all four sides; the blocks keep their own padding only between each other. A Menu and every sheet header now keep their own start alignment, so a menu placed in a centred hero no longer indents its subtitle.
+- e84d4aa: Adds the `githubLogo` glyph (Phosphor github-logo, regular with its bold twin) for a link to source code.
+- 90f8593: `ds validate` flags a height or size written as a literal rem or em (`size-literal`). Controls take their height from a step (SIZE_STEPS in rules/data.ts); the sizes off the steps today are listed as debt (SIZE_DEBT) until each one moves. No visual change.
+- 84edd0e: Add accessibility metadata (`src/a11y.ts`, `registry.ts`), `ds icons [query]` search, inline prop-union extraction, component docs (`tokens/components/*.md`), YAML front-matter across generated docs, `GAPS.md` documenting unexported parts (`empty-state`, `drawer`, `multiselect`, `cover`), and corrected `empty-state`/`row-action`/`drawer` guidance without changing `build.ts` to inherit `imports[0]` a11y onto composites.
+
+### Patch Changes
+
+- b1a26c8: `ds validate` scopes `class-on-component` to class attributes, DOM class APIs, and CSS selectors so plain string literals stop needing exemptions, marks `PlayingBars.tsx` as owner of `chip-bars`, and lists `.settings-text` in `GRID_EXCEPTIONS`.
+
 ## 0.13.0
 
 ### Minor Changes
