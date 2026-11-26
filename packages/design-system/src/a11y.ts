@@ -265,7 +265,7 @@ export const REGISTRY_A11Y = {
   Dial: {
     role: 'List <ul role="list"> of DialTile items, each a native <button> or <a href>',
     aria: [
-      'Each DialTile\'s label prop names its action ("Play Hard Fork"); the visible name, pin and count are aria-hidden so it reads once.',
+      'Each DialTile\'s label prop names its action and any count ("Play Hard Fork, 2 new"); the visible name, pin and count are aria-hidden so it reads once.',
       'The tile playing now carries aria-current="true" on its press area; the page\'s player sets it with data-playing on the tile and clears both from the last.',
     ],
     keyboard: [
@@ -275,9 +275,9 @@ export const REGISTRY_A11Y = {
       "Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view.",
   },
   "Page dots": {
-    role: 'Decorative dots <span aria-hidden="true">; PageArrows are native <button>s',
+    role: 'PageDots is one named image (role="img", "Page 2 of 3"); PageArrows are native <button>s',
     aria: [
-      "The dots are hidden from screen readers: the row's own items carry the content.",
+      'PageDots reads as one picture, its aria-label "Page X of Y"; a script that pages the row moves aria-current to the new dot and rewrites that label with it.',
       "PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.",
       "PageArrows do nothing until the page calls installPageArrows() from @singularityfm/design-system/pageDots once the row is in the page.",
     ],
@@ -435,7 +435,7 @@ export const COMPONENT_EXAMPLES: Record<string, string> = {
   Banner: '<Banner tone="danger" icon="alert" title="Download failed" />',
   BrandMark: "<BrandMark />",
   Band: '<Band title="Catchups">\n  <ul role="list">...</ul>\n</Band>',
-  Dial: '<Dial>\n  <DialTile name="Hard Fork" label="Play Hard Fork" count={2}><img src="cover.webp" alt="" /></DialTile>\n</Dial>',
+  Dial: '<Dial>\n  <DialTile name="Hard Fork" label="Play Hard Fork, 2 new" count={2}><img src="cover.webp" alt="" /></DialTile>\n</Dial>',
   DialTile:
     '<DialTile name="Hard Fork" label="Play Hard Fork" playing><img src="cover.webp" alt="" /></DialTile>',
   PageArrows: '<PageArrows controls="topics" prevLabel="Earlier topics" nextLabel="More topics" />',

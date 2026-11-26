@@ -250,6 +250,10 @@ dialog.sheet-side[data-scrolled] .sheet-head {
   scrollbar-gutter: stable;
 }
 
+.sheet-body::-webkit-scrollbar {
+  display: none;
+}
+
 /* What runs on under the sticky foot fades out just above it, as the lists fade at their ends, so a
    row resting at the foot's edge reads as "more below", not as cut through (2026-10-22). The mask
    stays opaque over the foot itself; the fade shrinks to nothing as the form reaches its end, and a

@@ -2730,14 +2730,14 @@ Import `@singularityfm/design-system/Dial`. No part covers it yet, so `ds find` 
 
 ```tsx
 <Dial>
-  <DialTile name="Hard Fork" label="Play Hard Fork" count={2}><img src="cover.webp" alt="" /></DialTile>
+  <DialTile name="Hard Fork" label="Play Hard Fork, 2 new" count={2}><img src="cover.webp" alt="" /></DialTile>
 </Dial>
 ```
 
 ### Accessibility
 
 - Role: List `<ul role="list">` of DialTile items, each a native `<button>` or `<a href>`
-- ARIA: Each DialTile's label prop names its action ("Play Hard Fork"); the visible name, pin and count are aria-hidden so it reads once.
+- ARIA: Each DialTile's label prop names its action and any count ("Play Hard Fork, 2 new"); the visible name, pin and count are aria-hidden so it reads once.
 - ARIA: The tile playing now carries aria-current="true" on its press area; the page's player sets it with data-playing on the tile and clears both from the last.
 - Keyboard: Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile.
 - Focus: Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view.
@@ -2772,7 +2772,7 @@ Import `@singularityfm/design-system/DialTile`. No part covers it yet, so `ds fi
 ### Accessibility
 
 - Role: List `<ul role="list">` of DialTile items, each a native `<button>` or `<a href>`
-- ARIA: Each DialTile's label prop names its action ("Play Hard Fork"); the visible name, pin and count are aria-hidden so it reads once.
+- ARIA: Each DialTile's label prop names its action and any count ("Play Hard Fork, 2 new"); the visible name, pin and count are aria-hidden so it reads once.
 - ARIA: The tile playing now carries aria-current="true" on its press area; the page's player sets it with data-playing on the tile and clears both from the last.
 - Keyboard: Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile.
 - Focus: Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view.
@@ -2840,8 +2840,8 @@ Import `@singularityfm/design-system/PageArrows`. No part covers it yet, so `ds 
 
 ### Accessibility
 
-- Role: Decorative dots `<span aria-hidden="true">`; PageArrows are native `<button>`s
-- ARIA: The dots are hidden from screen readers: the row's own items carry the content.
+- Role: PageDots is one named image (role="img", "Page 2 of 3"); PageArrows are native `<button>`s
+- ARIA: PageDots reads as one picture, its aria-label "Page X of Y"; a script that pages the row moves aria-current to the new dot and rewrites that label with it.
 - ARIA: PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.
 - ARIA: PageArrows do nothing until the page calls installPageArrows() from @singularityfm/design-system/pageDots once the row is in the page.
 - Keyboard: PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden.
@@ -2874,8 +2874,8 @@ Import `@singularityfm/design-system/PageDots`. No part covers it yet, so `ds fi
 
 ### Accessibility
 
-- Role: Decorative dots `<span aria-hidden="true">`; PageArrows are native `<button>`s
-- ARIA: The dots are hidden from screen readers: the row's own items carry the content.
+- Role: PageDots is one named image (role="img", "Page 2 of 3"); PageArrows are native `<button>`s
+- ARIA: PageDots reads as one picture, its aria-label "Page X of Y"; a script that pages the row moves aria-current to the new dot and rewrites that label with it.
 - ARIA: PageArrows take prevLabel and nextLabel as aria-label and aria-controls the row's id; an arrow at the row's end is disabled.
 - ARIA: PageArrows do nothing until the page calls installPageArrows() from @singularityfm/design-system/pageDots once the row is in the page.
 - Keyboard: PageArrows: Enter and Space move the row a screen. A swipe or Tab through the row does the same where they are hidden.
@@ -2886,7 +2886,7 @@ Import `@singularityfm/design-system/PageDots`. No part covers it yet, so `ds fi
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `count` | `number` | - | How many pages there are. One or fewer draws nothing. |
-| `current?` | `number` | `0` | The page showing, from 0. A page's script moves it by setting aria-current="true" on that dot's span (and removing it from the last). |
+| `current?` | `number` | `0` | The page showing, from 0. A page's script moves it by setting aria-current="true" on that dot's span (and removing it from the last) and rewriting the root's aria-label ("Page 3 of 3"). |
 | `className?` | `string` | - | For placing the row, or a hook a page's script finds it by. Never its look. |
 
 ---
@@ -3025,7 +3025,7 @@ Import `@singularityfm/design-system/TopicTile`. No part covers it yet, so `ds f
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `name` | `string` | - | The topic's name. |
+| `name` | `string` | - | The topic's name, shown on the tile. It is not the checkbox's form name; a value tells ticked tiles apart. |
 | `covers?` | `readonly string[]` | `[]` | Up to three cover images from the topic, by address, fanned into the bottom end from the corner. |
 | `tint?` | `string` | - | The tile's fill, a colour taken from its first cover; the container grey when absent. |
 | `href?` | `string` | - | Opens the topic's page. Without it the tile is a checkbox (first run). |

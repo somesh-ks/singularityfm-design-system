@@ -33,7 +33,7 @@ Import `@singularityfm/design-system/TopicTile`. No part covers it yet, so `ds f
 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
-| `name` | `string` | - | The topic's name. |
+| `name` | `string` | - | The topic's name, shown on the tile. It is not the checkbox's form name; a value tells ticked tiles apart. |
 | `covers?` | `readonly string[]` | `[]` | Up to three cover images from the topic, by address, fanned into the bottom end from the corner. |
 | `tint?` | `string` | - | The tile's fill, a colour taken from its first cover; the container grey when absent. |
 | `href?` | `string` | - | Opens the topic's page. Without it the tile is a checkbox (first run). |

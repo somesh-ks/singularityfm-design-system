@@ -19,14 +19,14 @@ Import `@singularityfm/design-system/Dial`. No part covers it yet, so `ds find` 
 
 ```tsx
 <Dial>
-  <DialTile name="Hard Fork" label="Play Hard Fork" count={2}><img src="cover.webp" alt="" /></DialTile>
+  <DialTile name="Hard Fork" label="Play Hard Fork, 2 new" count={2}><img src="cover.webp" alt="" /></DialTile>
 </Dial>
 ```
 
 ## Accessibility
 
 - Role: List `<ul role="list">` of DialTile items, each a native `<button>` or `<a href>`
-- ARIA: Each DialTile's label prop names its action ("Play Hard Fork"); the visible name, pin and count are aria-hidden so it reads once.
+- ARIA: Each DialTile's label prop names its action and any count ("Play Hard Fork, 2 new"); the visible name, pin and count are aria-hidden so it reads once.
 - ARIA: The tile playing now carries aria-current="true" on its press area; the page's player sets it with data-playing on the tile and clears both from the last.
 - Keyboard: Tab moves across tiles; Enter or Space plays a button tile, Enter opens a link tile.
 - Focus: Each tile shows the native :focus-visible ring; a focused tile in a sideways row scrolls into view.

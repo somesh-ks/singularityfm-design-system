@@ -4,7 +4,7 @@ import Icon from "./Icon.tsx";
 import "../styles/topic-tile.css";
 
 interface TopicTileProps {
-  /** The topic's name. */
+  /** The topic's name, shown on the tile. It is not the checkbox's form name; a value tells ticked tiles apart. */
   name: string;
   /** Up to three cover images from the topic, by address, fanned into the bottom end from the corner. */
   covers?: readonly string[];

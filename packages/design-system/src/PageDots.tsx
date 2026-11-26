@@ -4,7 +4,7 @@ import "../styles/page-dots.css";
 interface Props {
   /** How many pages there are. One or fewer draws nothing. */
   count: number;
-  /** The page showing, from 0. A page's script moves it by setting aria-current="true" on that dot's span (and removing it from the last). */
+  /** The page showing, from 0. A page's script moves it by setting aria-current="true" on that dot's span (and removing it from the last) and rewriting the root's aria-label ("Page 3 of 3"). */
   current?: number;
   /** For placing the row, or a hook a page's script finds it by. Never its look. */
   className?: string;
