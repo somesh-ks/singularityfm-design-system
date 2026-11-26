@@ -2908,7 +2908,7 @@ Import `@singularityfm/design-system/ResumeCard`. No part covers it yet, so `ds 
 ### Accessibility
 
 - Role: `<article>` holding one native `<button>`, the card's press area (Resume)
-- ARIA: playLabel names the press area; the progress bar is aria-hidden and remaining says the time left in words.
+- ARIA: playLabel names the press area; the title, facts and remaining describe it (aria-describedby); the progress bar is aria-hidden.
 - Keyboard: Tab reaches the card; Enter or Space resumes.
 - Focus: The native :focus-visible ring, following the card's corners.
 

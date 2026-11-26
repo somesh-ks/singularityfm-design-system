@@ -1,4 +1,4 @@
-import type { ComponentProps, CSSProperties, ReactNode } from "react";
+import { type ComponentProps, type CSSProperties, type ReactNode, useId } from "react";
 import { passedAttributes } from "./attributes.ts";
 import Icon from "./Icon.tsx";
 import IconButton from "./IconButton.tsx";
@@ -57,13 +57,22 @@ export default function ResumeCard({
   // A duration not yet known (0/0) reads as unheard, never as a full bar.
   const part = Number.isFinite(progress) ? Math.min(1, Math.max(0, progress)) : 0;
   const heard = `${Math.round(part * 100)}%`;
+  // playLabel names the action; the title, show and time left describe it, so a screen reader hears
+  // which episode and how much is left as well as what a press does.
+  const text = useId();
   return (
     <article
       className={["resume-card-panel", className].filter(Boolean).join(" ")}
       data-playing={String(playing)}
       {...passedAttributes(passed)}
     >
-      <button className="resume-card-hit" type="button" aria-label={playLabel} data-resume-play="">
+      <button
+        className="resume-card-hit"
+        type="button"
+        aria-label={playLabel}
+        aria-describedby={text}
+        data-resume-play=""
+      >
         <span className="resume-card-art">
           {children}
           <span className="resume-card-glyph swap" aria-hidden="true">
@@ -71,7 +80,7 @@ export default function ResumeCard({
             <Icon name="pause" className="swap-playing" />
           </span>
         </span>
-        <span className="resume-card-text">
+        <span className="resume-card-text" id={text}>
           <span className="resume-card-title">{title}</span>
           <span className="resume-card-facts">
             <span className="resume-card-show">{facts}</span>

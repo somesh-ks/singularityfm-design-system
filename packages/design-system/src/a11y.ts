@@ -289,7 +289,7 @@ export const REGISTRY_A11Y = {
   "Resume card": {
     role: "<article> holding one native <button>, the card's press area (Resume)",
     aria: [
-      "playLabel names the press area; the progress bar is aria-hidden and remaining says the time left in words.",
+      "playLabel names the press area; the title, facts and remaining describe it (aria-describedby); the progress bar is aria-hidden.",
     ],
     keyboard: ["Tab reaches the card; Enter or Space resumes."],
     focus: "The native :focus-visible ring, following the card's corners.",
