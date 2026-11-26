@@ -7,9 +7,12 @@ import "../styles/resume-card.css";
 interface ResumeCardProps {
   /** The episode's title. Two lines at most. */
   title: string;
-  /** The show's name, one line under the title; a long one is cut short ("Hard Fork"). */
+  /**
+   * The one line under the title, cut short when long: the show and the time left ("Hard Fork · 12 min
+   * left"), or, with `remaining`, the show's name alone ("Hard Fork").
+   */
   facts: string;
-  /** The time left, after the show and never cut short ("12 min left"). */
+  /** The time left, after the facts and never cut short ("12 min left"). */
   remaining?: string;
   /** How much is heard, 0 to 1. */
   progress: number;

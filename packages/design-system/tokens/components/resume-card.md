@@ -33,8 +33,8 @@ Import `@singularityfm/design-system/ResumeCard`. No part covers it yet, so `ds 
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `title` | `string` | - | The episode's title. Two lines at most. |
-| `facts` | `string` | - | The show's name, one line under the title; a long one is cut short ("Hard Fork"). |
-| `remaining?` | `string` | - | The time left, after the show and never cut short ("12 min left"). |
+| `facts` | `string` | - | The one line under the title, cut short when long: the show and the time left ("Hard Fork · 12 min left"), or, with `remaining`, the show's name alone ("Hard Fork"). |
+| `remaining?` | `string` | - | The time left, after the facts and never cut short ("12 min left"). |
 | `children` | `ReactNode` | - | The cover, a small square. |
 | `playLabel` | `string` | - | The card's name for a screen reader, what a press does: "Resume The Jensen Huang Affair". |
 | `dismissLabel` | `string` | - | Dismiss's name: "Remove from Continue listening". |

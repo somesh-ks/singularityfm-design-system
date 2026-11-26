@@ -34,7 +34,9 @@ export const RESUME_CARD_CLASSES: string[] = [
   "resume-card-facts",
   "resume-card-show",
   "resume-card-left",
+  // Deprecated: ResumeCard no longer draws it (the card is one press area, Dismiss at its corner). 1.0.0 removes it.
+  "resume-card-acts",
 ];
 
 /** Classes the card replaced; none may be written again, in any app that draws the system. */
-export const RESUME_CARD_RETIRED: string[] = ["resume-card-acts"];
+export const RESUME_CARD_RETIRED: string[] = [];

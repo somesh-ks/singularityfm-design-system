@@ -141,6 +141,11 @@
   content: "\00A0\00B7\00A0";
 }
 
+/* Deprecated: the old column of Dismiss over Play. ResumeCard no longer draws it; 1.0.0 removes it. */
+.resume-card-acts {
+  display: grid;
+}
+
 @media (forced-colors: active) {
   .resume-card-panel {
     outline: var(--stroke-hairline) solid CanvasText;
