@@ -287,12 +287,12 @@ export const REGISTRY_A11Y = {
     focus: "PageArrows show the native :focus-visible ring; disabled arrows leave the tab order.",
   },
   "Resume card": {
-    role: "<article> with two native <button>s: the card's press area (Resume) and Dismiss",
+    role: "<article> holding one native <button>, the card's press area (Resume)",
     aria: [
-      "playLabel names the press area and dismissLabel the Dismiss IconButton; the progress bar is aria-hidden and remaining says the time left in words.",
+      "playLabel names the press area; the progress bar is aria-hidden and remaining says the time left in words.",
     ],
-    keyboard: ["Tab reaches Resume then Dismiss; Enter or Space activates each."],
-    focus: "Both show the native :focus-visible ring; the press area's follows the card's corners.",
+    keyboard: ["Tab reaches the card; Enter or Space resumes."],
+    focus: "The native :focus-visible ring, following the card's corners.",
   },
   Band: {
     role: "<section> with an <h2> heading",
@@ -441,7 +441,7 @@ export const COMPONENT_EXAMPLES: Record<string, string> = {
   PageArrows: '<PageArrows controls="topics" prevLabel="Earlier topics" nextLabel="More topics" />',
   PageDots: "<PageDots count={3} current={0} />",
   ResumeCard:
-    '<ResumeCard title="The Jensen Huang Affair" facts="Hard Fork" remaining="12 min left" progress={0.6} playLabel="Play" dismissLabel="Remove from Continue listening"><img src="cover.webp" alt="" /></ResumeCard>',
+    '<ResumeCard title="The Jensen Huang Affair" facts="Hard Fork" remaining="12 min left" progress={0.6} playLabel="Resume The Jensen Huang Affair"><img src="cover.webp" alt="" /></ResumeCard>',
   TopicGrid:
     '<TopicGrid>\n  <TopicTile name="Technology" href="/topic/technology" covers={["one.webp"]} />\n</TopicGrid>',
   TopicTile:

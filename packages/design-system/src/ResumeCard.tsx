@@ -18,8 +18,11 @@ interface ResumeCardProps {
   progress: number;
   /** The card's name for a screen reader, what a press does: "Resume The Jensen Huang Affair". */
   playLabel: string;
-  /** Dismiss's name: "Remove from Continue listening". */
-  dismissLabel: string;
+  /**
+   * @deprecated The card draws no Dismiss (owner, 26 Nov: a shelf clears itself as episodes finish).
+   * Passing it still draws one until 1.0.0 removes it.
+   */
+  dismissLabel?: string;
   /** Draws the pause glyph: this episode is playing. The page's player sets data-playing. */
   playing?: boolean;
   /**
@@ -35,8 +38,8 @@ type Props = ResumeCardProps & Omit<ComponentProps<"article">, keyof ResumeCardP
 
 /**
  * The Resume card: the whole card is one native button that resumes (data-resume-play), with the play
- * glyph on the cover, and one Dismiss IconButton at its top end (data-resume-dismiss), outside the
- * press area so the two never nest. The glyph swaps to pause on data-playing with no change in size.
+ * glyph on the cover. It has no other control: the shelf clears itself as episodes finish (owner,
+ * 26 Nov). A deprecated dismissLabel still draws a Dismiss at the top end, outside the press area. The glyph swaps to pause on data-playing with no change in size.
  * The bar is drawn for the eye: the facts say the time left in words. Static: no client directive.
  */
 export default function ResumeCard({
@@ -81,9 +84,11 @@ export default function ResumeCard({
           />
         </span>
       </button>
-      <IconButton label={dismissLabel} className="resume-card-dismiss" data-resume-dismiss="">
-        <Icon name="close" />
-      </IconButton>
+      {dismissLabel && (
+        <IconButton label={dismissLabel} className="resume-card-dismiss" data-resume-dismiss="">
+          <Icon name="close" />
+        </IconButton>
+      )}
     </article>
   );
 }

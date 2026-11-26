@@ -1,6 +1,6 @@
 /**
  * The Resume card: one episode a person is part way through, on Home's Continue listening shelf:
- * cover, title, progress and time left in one press area that resumes, and Dismiss at its corner. The one place its classes are
+ * cover, title, progress and time left in one press area that resumes. The one place its classes are
  * written. ResumeCard.tsx renders from it; the style guide lists RESUME_CARD. The rules are in
  * styles/resume-card.css.
  */
@@ -8,10 +8,10 @@ import type { Guidance } from "./guidance.ts";
 
 export const RESUME_CARD: Guidance = {
   summary:
-    "A wide card for an episode part way heard: the whole card resumes it; Dismiss at its corner.",
+    "A wide card for an episode part way heard: the whole card resumes it; no other control.",
   useWhen: [
     "Pick up an episode where it stopped, without opening its page.",
-    "A shelf of them, last played first, each dismissable.",
+    "A shelf of them, last played first; a finished episode leaves it.",
   ],
   dontUseWhen: [
     {

@@ -4022,9 +4022,9 @@
         {
           "name": "dismissLabel",
           "type": "string",
-          "required": true,
+          "required": false,
           "default": "",
-          "description": "Dismiss's name: \"Remove from Continue listening\"."
+          "description": "@deprecated The card draws no Dismiss (owner, 26 Nov: a shelf clears itself as episodes finish). Passing it still draws one until 1.0.0 removes it."
         },
         {
           "name": "progress",
@@ -4049,16 +4049,16 @@
         }
       ],
       "element": "article",
-      "example": "<ResumeCard title=\"The Jensen Huang Affair\" facts=\"Hard Fork\" remaining=\"12 min left\" progress={0.6} playLabel=\"Play\" dismissLabel=\"Remove from Continue listening\"><img src=\"cover.webp\" alt=\"\" /></ResumeCard>",
+      "example": "<ResumeCard title=\"The Jensen Huang Affair\" facts=\"Hard Fork\" remaining=\"12 min left\" progress={0.6} playLabel=\"Resume The Jensen Huang Affair\"><img src=\"cover.webp\" alt=\"\" /></ResumeCard>",
       "a11y": {
-        "role": "<article> with two native <button>s: the card's press area (Resume) and Dismiss",
+        "role": "<article> holding one native <button>, the card's press area (Resume)",
         "aria": [
-          "playLabel names the press area and dismissLabel the Dismiss IconButton; the progress bar is aria-hidden and remaining says the time left in words."
+          "playLabel names the press area; the progress bar is aria-hidden and remaining says the time left in words."
         ],
         "keyboard": [
-          "Tab reaches Resume then Dismiss; Enter or Space activates each."
+          "Tab reaches the card; Enter or Space resumes."
         ],
-        "focus": "Both show the native :focus-visible ring; the press area's follows the card's corners."
+        "focus": "The native :focus-visible ring, following the card's corners."
       }
     },
     {

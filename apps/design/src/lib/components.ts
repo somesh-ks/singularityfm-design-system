@@ -1013,7 +1013,6 @@ export const SPECS: readonly ComponentSpec[] = [
           `remaining="${SAMPLE.resumeLeft}"`,
           "progress={0.6}",
           `playLabel="Resume ${SAMPLE.episode}"`,
-          'dismissLabel="Remove from Continue listening"',
           ...(state.playing === "on" ? ["playing"] : []),
         ],
         '<img src="cover.webp" alt="" />',

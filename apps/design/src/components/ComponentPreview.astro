@@ -385,7 +385,6 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
       remaining={SAMPLE.resumeLeft}
       progress={0.6}
       playLabel={`Resume ${SAMPLE.episode}`}
-      dismissLabel="Remove from Continue listening"
       playing={on("playing")}
     >
       <span class="guide-cover" data-tone="0" />

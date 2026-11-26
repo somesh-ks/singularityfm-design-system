@@ -1,9 +1,9 @@
 /*
  * The Resume card (design-system/ResumeCard.tsx): a wide grey card that is one press area: a square
- * cover with the play glyph on it, the title, one line of facts and a thin progress bar. Dismiss is
- * the one other control, at the top end, over the card and outside the press area (owner, 26 Nov:
- * "too close with many options"; the stacked Dismiss and Play left the words no room and only the two
- * circles answered a press). The card is as wide as a shelf shows one and a bit of (21rem, or 90% of
+ * cover with the play glyph on it, the title, one line of facts and a thin progress bar, and no other
+ * control (owner, 26 Nov: "too close with many options"; the stacked Dismiss and Play left the words
+ * no room and only the two circles answered a press; then "it shouldnt be dismissable with X": the
+ * shelf clears itself as episodes finish). The card is as wide as a shelf shows one and a bit of (21rem, or 90% of
  * a narrow column), so the next one peeks. The bar fills in the accent: progress is active state.
  */
 .resume-card-panel {
@@ -95,7 +95,10 @@
      "captures too much attention"). */
   font-weight: var(--text-title-weight);
   line-height: var(--font-leading-label);
-  /* Only the title shares the top line with Dismiss, so only it stops short of Dismiss's target. */
+}
+
+/* A deprecated Dismiss shares the top line with the title only, so only the title stops short of it. */
+.resume-card-panel:has(> .resume-card-dismiss) .resume-card-title {
   padding-inline-end: var(--space-8);
 }
 
