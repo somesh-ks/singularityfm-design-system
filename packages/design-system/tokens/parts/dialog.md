@@ -1,5 +1,5 @@
 ---
-version: "0.16.0"
+version: "0.16.1"
 id: dialog
 name: "Dialog"
 kind: container
