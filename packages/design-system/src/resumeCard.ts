@@ -38,5 +38,18 @@ export const RESUME_CARD_CLASSES: string[] = [
   "resume-card-acts",
 ];
 
+/**
+ * What a page's script finds a card's parts by, never by typing the classes: a card a device fills
+ * (an episode part way heard) is cloned from a template, then titled and its progress set.
+ */
+export const RESUME_CARD_SELECTORS = {
+  card: ".resume-card-panel",
+  hit: ".resume-card-hit",
+  title: ".resume-card-title",
+  show: ".resume-card-show",
+  left: ".resume-card-left",
+  bar: ".resume-card-bar",
+} as const;
+
 /** Classes the card replaced; none may be written again, in any app that draws the system. */
 export const RESUME_CARD_RETIRED: string[] = [];
