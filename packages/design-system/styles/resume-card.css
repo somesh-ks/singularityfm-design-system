@@ -21,6 +21,9 @@
   align-items: center;
   gap: var(--space-4);
   inline-size: 100%;
+  /* The whole card, when a shelf stretches it to a taller neighbour (a title on two lines): the cover
+     and words stay centred in it, not stuck at its top with the space all below. */
+  block-size: 100%;
   padding: var(--space-4);
   border: 0;
   border-radius: inherit;

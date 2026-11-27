@@ -25,6 +25,12 @@
   --ghost-pressed: var(--color-accent-subtle-pressed);
 }
 
+/* Ending on a group of rows, the rows' own padding is the band's foot, as a card of rows has: the
+   band's padding on top of it left more space below the last row than any card on the page. */
+.band-section:has(> .card-group:last-child) {
+  padding-block-end: 0;
+}
+
 /* The same head as a page's shelf: the heading, and See all at the end on its 44px row. */
 .band-head {
   display: flex;
