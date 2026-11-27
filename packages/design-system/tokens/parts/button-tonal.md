@@ -1,5 +1,5 @@
 ---
-version: "0.19.0"
+version: "0.19.1"
 id: button-tonal
 name: "Tonal button"
 kind: action

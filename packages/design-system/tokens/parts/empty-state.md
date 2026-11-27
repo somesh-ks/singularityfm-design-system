@@ -1,5 +1,5 @@
 ---
-version: "0.19.0"
+version: "0.19.1"
 id: empty-state
 name: "Empty state"
 kind: feedback
