@@ -19,8 +19,12 @@
 .dial-grid-wide {
   grid-template-columns: none;
   grid-auto-flow: column;
-  grid-auto-columns: calc((100% - 5 * var(--space-4)) / 6);
-  gap: var(--space-4);
+  /* 8px apart, as on the phone: at 16 a tile in a phone-width column was too narrow for the pin and a
+     "New" count side by side, and they overlapped. */
+  /* Never narrower than a pin, a "New" count and their insets side by side: a narrower column
+     scrolls sideways instead. */
+  grid-auto-columns: max(calc((100% - 5 * var(--space-2)) / 6), 5.75rem);
+  gap: var(--space-2);
   padding-block: var(--space-2);
   overflow-x: auto;
   overscroll-behavior-x: contain;

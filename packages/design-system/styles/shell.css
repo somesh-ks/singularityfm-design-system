@@ -692,6 +692,12 @@ html[data-nav-arrived] .app-nav-item:not([aria-current="page"]) .app-nav-indicat
     margin-inline: 0;
   }
 
+  /* A destination only the bottom bar holds: from 64rem its page is reached another way (the 12 Nov
+     canvas: Search is a bar at the top of Home on desktop, a tab on the phone). */
+  .app-nav-list > li:has(> [data-nav-bar-only]) {
+    display: none;
+  }
+
   /* The row is the pill here, so the icon's own pill steps aside. */
   .app-nav-indicator {
     display: contents;
