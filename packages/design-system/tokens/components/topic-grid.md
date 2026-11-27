@@ -1,5 +1,5 @@
 ---
-version: "0.16.1"
+version: "0.17.0"
 id: topic-grid
 name: "TopicGrid"
 kind: component
@@ -36,7 +36,7 @@ Import `@singularityfm/design-system/TopicGrid`. No part covers it yet, so `ds f
 | Name | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `children` | `ReactNode` | - | The TopicTiles. |
-| `wide?` | `boolean` | `false` | Four across instead of two, for a wide column (desktop). |
+| `wide?` | `boolean` | `false` | Four across instead of two, for a wide column (desktop); each tile stops at 10rem, so a very wide column fits more. |
 | `className?` | `string` | - | For placing the grid, or a hook a page's script finds it by. Never its look. |
 
 Every attribute of a native `<ul>` element passes through.
