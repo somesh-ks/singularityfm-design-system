@@ -2,7 +2,7 @@
 "@singularityfm/design-system": minor
 ---
 
-Dial and ResumeCard export DIAL_SELECTORS and RESUME_CARD_SELECTORS, so a page's script that fills tiles or cards cloned from a template finds their parts without typing the classes.
+`@singularityfm/design-system/dial` exports DIAL_SELECTORS and `@singularityfm/design-system/resumeCard` exports RESUME_CARD_SELECTORS, so a page's script that fills tiles or cards cloned from a template finds their parts without typing the classes.
 
 The app navigation takes `data-nav-bar-only` on a destination's link: the bottom bar shows it and the side column from 64rem leaves it out.
 

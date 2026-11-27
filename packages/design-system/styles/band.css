@@ -18,7 +18,7 @@
 /* A group of rows in the band lies on its tint, not in a card of its own (12 Nov canvas, Settings
    board: no box inside the box). The group reaches the band's edges, so a row's text starts on the
    heading's line and the band, not the rows, meets the page's gutter. */
-.band-section > .card-group {
+.band-section > .card-group:not(.card-group-accent) {
   margin-inline: calc(var(--card-padding) * -1);
   background: transparent;
   --ghost-hover: var(--color-accent-subtle-hover);
@@ -27,7 +27,7 @@
 
 /* Ending on a group of rows, the rows' own padding is the band's foot, as a card of rows has: the
    band's padding on top of it left more space below the last row than any card on the page. */
-.band-section:has(> .card-group:last-child) {
+.band-section:has(> .card-group:not(.card-group-accent):last-child) {
   padding-block-end: 0;
 }
 
