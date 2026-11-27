@@ -1,5 +1,5 @@
 ---
-version: "0.18.0"
+version: "0.19.0"
 id: cover
 name: "Cover"
 kind: container

@@ -1,5 +1,5 @@
 ---
-version: "0.18.0"
+version: "0.19.0"
 id: dial-tile
 name: "DialTile"
 kind: component
