@@ -2045,6 +2045,16 @@
   inline-size: min(22rem, 100%);
 }
 
+.guide-picks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-8) var(--space-4);
+  inline-size: min(22rem, 100%);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .guide-band {
   inline-size: min(22rem, 100%);
   margin-inline: 0;

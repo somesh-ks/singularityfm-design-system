@@ -49,7 +49,7 @@ An id links to its page (import, markup, props). What it is. Use: when. Not: sit
 - [cover](parts/cover.md): A generated cover image, drawn once per theme. Use: show an episode or briefing cover.
 
 ## Other components
-[Avatar](components/avatar.md), [Band](components/band.md), [BrandMark](components/brand-mark.md), [ChapterAside](components/chapter-aside.md), [Code](components/code.md), [Dial](components/dial.md), [DialTile](components/dial-tile.md), [Flag](components/flag.md), [PageArrows](components/page-arrows.md), [PageDots](components/page-dots.md), [ResumeCard](components/resume-card.md), [RowExit](components/row-exit.md), [TopicGrid](components/topic-grid.md), [TopicTile](components/topic-tile.md)
+[Avatar](components/avatar.md), [Band](components/band.md), [BrandMark](components/brand-mark.md), [ChapterAside](components/chapter-aside.md), [Code](components/code.md), [Dial](components/dial.md), [DialTile](components/dial-tile.md), [Flag](components/flag.md), [PageArrows](components/page-arrows.md), [PageDots](components/page-dots.md), [ResumeCard](components/resume-card.md), [RowExit](components/row-exit.md), [ShowPick](components/show-pick.md), [TopicGrid](components/topic-grid.md), [TopicTile](components/topic-tile.md)
 
 ## Color roles
 Components read only these (never a hex, never a primitive color).
@@ -2961,6 +2961,43 @@ Import `@singularityfm/design-system/RowExit`. No part covers it yet, so `ds fin
 | `className?` | `string` | `""` | For placing the row (its own layout). Never how it leaves. An Astro page passes className too: @astrojs/react drops a `class` prop before the component sees it. |
 
 Every attribute of a native `<li>` element passes through.
+
+---
+
+## ShowPick
+
+Import `@singularityfm/design-system/ShowPick`. No part covers it yet, so `ds find` does not name it.
+
+### Import
+
+- `@singularityfm/design-system/ShowPick`
+
+### Example
+
+```tsx
+<ul role="list">
+  <ShowPick title="Hard Fork" facts="The New York Times" cover="cover.webp" name="show" value="hard-fork" />
+</ul>
+```
+
+### Accessibility
+
+- Role: A list item holding a `<label>` around a visually hidden `<input type="checkbox">`
+- ARIA: The visible show name and its quiet line are the accessible name; the cover is decorative (alt="").
+- ARIA: The picked state is the checkbox's own; the check glyph is aria-hidden.
+- Keyboard: Tab moves across cards; Space toggles one.
+- Focus: The cover wears the foundations' focus ring for the hidden input.
+
+### Props of ShowPick
+
+| Name | Type | Default | What it does |
+| --- | --- | --- | --- |
+| `title` | `string` | - | The show's name, under its cover. A script that fills a cloned card writes [data-show-pick-title]. |
+| `facts?` | `string` | - | The quiet line under the name (who makes it). Filled by a script at [data-show-pick-facts]. |
+| `cover?` | `string` | - | The cover's address. Filled by a script at [data-show-pick-cover]. |
+| `className?` | `string` | - | For placing the card, or a hook a page's script finds it by. Never its look. |
+
+Every attribute of a native `<input>` element passes through, except `type`.
 
 ---
 

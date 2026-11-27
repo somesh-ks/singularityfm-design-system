@@ -61,6 +61,7 @@
     "./PageArrows": "./src/PageArrows.tsx",
     "./ResumeCard": "./src/ResumeCard.tsx",
     "./TopicGrid": "./src/TopicGrid.tsx",
+    "./ShowPick": "./src/ShowPick.tsx",
     "./TopicTile": "./src/TopicTile.tsx",
     "./Avatar": "./src/Avatar.tsx",
     "./BrandMark": "./src/BrandMark.tsx",

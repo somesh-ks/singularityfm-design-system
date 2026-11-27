@@ -1,0 +1,119 @@
+/*
+ * The Show pick (design-system/ShowPick.tsx): a show's gallery card, cover over name over a quiet
+ * line, drawn as a checkbox for first run (Nov 12 canvas, "First run 2"). Picked, the cover takes the
+ * accent ring inside its edge and a check in a slot that is always there, so picking moves nothing.
+ */
+.show-pick-cell {
+  min-inline-size: 0;
+}
+
+.show-pick {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  color: var(--color-on-surface);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The native box is invisible over the whole card, so a press anywhere on it ticks. */
+.show-pick > input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* A show that cannot be picked (already followed, or a request in flight) dims and takes no pointer. */
+.show-pick:has(> input:disabled) {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.show-pick > input:disabled {
+  cursor: default;
+}
+
+.show-pick-art {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  margin-block-end: var(--space-2);
+  overflow: hidden;
+  border-radius: min(var(--cover-radius-hero), 25%);
+  background: var(--color-surface-sunken);
+  outline: var(--stroke-hairline) solid var(--cover-outline);
+  outline-offset: calc(var(--stroke-hairline) * -1);
+  pointer-events: none;
+}
+
+.show-pick-art > img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* Picked, the ring: inside the art's corners, so the card keeps its size. The ring itself answers
+   the press, as on the Topic tile: no second layer over the art. */
+.show-pick:has(> input:checked) .show-pick-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  outline: var(--space-1) solid var(--color-accent);
+  outline-offset: calc(var(--space-1) * -1);
+}
+
+.show-pick-check {
+  position: absolute;
+  inset: var(--space-2) var(--space-2) auto auto;
+  z-index: var(--z-raised);
+  display: grid;
+  place-items: center;
+  inline-size: var(--space-6);
+  block-size: var(--space-6);
+  border-radius: var(--shape-round);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  opacity: 0;
+}
+
+.show-pick-check .icon-glyph {
+  inline-size: var(--size-icon-sm);
+  block-size: var(--size-icon-sm);
+}
+
+.show-pick:has(> input:checked) .show-pick-check {
+  opacity: 1;
+}
+
+/* Two lines at most, so a long name does not break the row. */
+.show-pick-title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--text-body-size);
+  line-height: var(--font-leading-label);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.show-pick-facts {
+  color: var(--color-on-surface-muted);
+  font-size: var(--text-meta-size);
+  line-height: var(--font-leading-label);
+}
+
+/* The input is invisible, so the cover wears the foundations' focus ring for it. */
+.show-pick:has(> input:focus-visible) .show-pick-art {
+  outline: var(--stroke-ring) solid var(--color-focus-ring);
+  outline-offset: var(--stroke-ring-gap);
+}
+
+@media (forced-colors: active) {
+  .show-pick:has(> input:checked) .show-pick-art::after {
+    outline-color: Highlight;
+  }
+}

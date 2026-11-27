@@ -34,6 +34,7 @@ import SegmentedChoice from "@singularity/design-system/SegmentedChoice";
 import SegmentedNav from "@singularity/design-system/SegmentedNav";
 import Select from "@singularity/design-system/Select";
 import Sheet from "@singularity/design-system/Sheet";
+import ShowPick from "@singularity/design-system/ShowPick";
 import Slider from "@singularity/design-system/Slider";
 import Switch from "@singularity/design-system/Switch";
 import TopicGrid from "@singularity/design-system/TopicGrid";
@@ -405,6 +406,16 @@ const tone = (state.tone ?? "warning") as keyof typeof BANNER_ICON;
         <span class="guide-cover guide-cover-card" data-tone="2" />
       </span>
     </Band>
+  )
+}
+
+{
+  slug === "show-pick" && (
+    <ul class="guide-picks" role="list">
+      {SAMPLE.shows.slice(0, 2).map((show, index) => (
+        <ShowPick title={show} facts="Its maker" defaultChecked={index === 0 && on("checked")} />
+      ))}
+    </ul>
   )
 }
 

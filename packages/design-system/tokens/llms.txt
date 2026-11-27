@@ -49,7 +49,7 @@ An id links to its page (import, markup, props). What it is. Use: when. Not: sit
 - [cover](parts/cover.md): A generated cover image, drawn once per theme. Use: show an episode or briefing cover.
 
 ## Other components
-[Avatar](components/avatar.md), [Band](components/band.md), [BrandMark](components/brand-mark.md), [ChapterAside](components/chapter-aside.md), [Code](components/code.md), [Dial](components/dial.md), [DialTile](components/dial-tile.md), [Flag](components/flag.md), [PageArrows](components/page-arrows.md), [PageDots](components/page-dots.md), [ResumeCard](components/resume-card.md), [RowExit](components/row-exit.md), [TopicGrid](components/topic-grid.md), [TopicTile](components/topic-tile.md)
+[Avatar](components/avatar.md), [Band](components/band.md), [BrandMark](components/brand-mark.md), [ChapterAside](components/chapter-aside.md), [Code](components/code.md), [Dial](components/dial.md), [DialTile](components/dial-tile.md), [Flag](components/flag.md), [PageArrows](components/page-arrows.md), [PageDots](components/page-dots.md), [ResumeCard](components/resume-card.md), [RowExit](components/row-exit.md), [ShowPick](components/show-pick.md), [TopicGrid](components/topic-grid.md), [TopicTile](components/topic-tile.md)
 
 ## Color roles
 Components read only these (never a hex, never a primitive color).

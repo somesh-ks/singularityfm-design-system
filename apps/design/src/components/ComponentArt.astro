@@ -11,6 +11,7 @@ import Dial from "@singularity/design-system/Dial";
 import DialTile from "@singularity/design-system/DialTile";
 import PageDots from "@singularity/design-system/PageDots";
 import ResumeCard from "@singularity/design-system/ResumeCard";
+import ShowPick from "@singularity/design-system/ShowPick";
 import TopicGrid from "@singularity/design-system/TopicGrid";
 import TopicTile from "@singularity/design-system/TopicTile";
 import "@singularity/design-system/styles/code.css";
@@ -209,6 +210,14 @@ const { slug } = Astro.props;
         <TopicTile name={SAMPLE.topics[0]} tabIndex={-1} />
         <TopicTile name={SAMPLE.topics[1]} tabIndex={-1} />
       </TopicGrid>
+    )
+  }
+  {
+    slug === "show-pick" && (
+      <ul class="guide-picks" role="list">
+        <ShowPick title={SAMPLE.shows[0]} facts="Its maker" tabIndex={-1} defaultChecked />
+        <ShowPick title={SAMPLE.shows[2]} facts="Its maker" tabIndex={-1} />
+      </ul>
     )
   }
   {slug === "ripple" && <span class="guide-live-ripple"><Button variant="tonal">{SAMPLE.label}</Button></span>}

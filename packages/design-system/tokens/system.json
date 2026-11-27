@@ -4522,6 +4522,57 @@
       }
     },
     {
+      "name": "ShowPick",
+      "import": "@singularityfm/design-system/ShowPick",
+      "file": "packages/design-system/src/ShowPick.tsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": "",
+          "description": "The show's name, under its cover. A script that fills a cloned card writes [data-show-pick-title]."
+        },
+        {
+          "name": "facts",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The quiet line under the name (who makes it). Filled by a script at [data-show-pick-facts]."
+        },
+        {
+          "name": "cover",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "The cover's address. Filled by a script at [data-show-pick-cover]."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "description": "For placing the card, or a hook a page's script finds it by. Never its look."
+        }
+      ],
+      "element": "input",
+      "except": [
+        "type"
+      ],
+      "example": "<ul role=\"list\">\n  <ShowPick title=\"Hard Fork\" facts=\"The New York Times\" cover=\"cover.webp\" name=\"show\" value=\"hard-fork\" />\n</ul>",
+      "a11y": {
+        "role": "A list item holding a <label> around a visually hidden <input type=\"checkbox\">",
+        "aria": [
+          "The visible show name and its quiet line are the accessible name; the cover is decorative (alt=\"\").",
+          "The picked state is the checkbox's own; the check glyph is aria-hidden."
+        ],
+        "keyboard": [
+          "Tab moves across cards; Space toggles one."
+        ],
+        "focus": "The cover wears the foundations' focus ring for the hidden input."
+      }
+    },
+    {
       "name": "Slider",
       "import": "@singularityfm/design-system/Slider",
       "file": "packages/design-system/src/Slider.tsx",

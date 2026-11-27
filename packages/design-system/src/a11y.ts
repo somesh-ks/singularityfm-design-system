@@ -309,6 +309,15 @@ export const REGISTRY_A11Y = {
     keyboard: ["Tab moves across tiles; Enter opens a link tile, Space toggles a checkbox tile."],
     focus: "The tile wears the foundations' focus ring for its hidden input or its link.",
   },
+  "Show pick": {
+    role: 'A list item holding a <label> around a visually hidden <input type="checkbox">',
+    aria: [
+      'The visible show name and its quiet line are the accessible name; the cover is decorative (alt="").',
+      "The picked state is the checkbox's own; the check glyph is aria-hidden.",
+    ],
+    keyboard: ["Tab moves across cards; Space toggles one."],
+    focus: "The cover wears the foundations' focus ring for the hidden input.",
+  },
 } satisfies Record<string, A11yGuidance>;
 
 /** Accessibility contract for hand-authored composite/interactive parts in parts.ts. */
@@ -324,7 +333,7 @@ export const PART_A11Y: Record<string, A11yGuidance> = {
   },
 };
 
-/** Accessibility contract for every exported React component (all 34 .tsx exports in package.json). */
+/** Accessibility contract for every exported React component (all 35 .tsx exports in package.json). */
 export const COMPONENT_A11Y: Record<string, A11yGuidance> = {
   Avatar: REGISTRY_A11Y.Avatar,
   Badge: REGISTRY_A11Y.Badge,
@@ -337,6 +346,7 @@ export const COMPONENT_A11Y: Record<string, A11yGuidance> = {
   ResumeCard: REGISTRY_A11Y["Resume card"],
   TopicGrid: REGISTRY_A11Y["Topic tile"],
   TopicTile: REGISTRY_A11Y["Topic tile"],
+  ShowPick: REGISTRY_A11Y["Show pick"],
   BrandMark: {
     role: 'Decorative <svg aria-hidden="true" focusable="false">',
     aria: ["Hidden from screen readers; adjacent wordmark text or link provides the name."],
@@ -428,7 +438,7 @@ export const COMPONENT_A11Y: Record<string, A11yGuidance> = {
   Toast: REGISTRY_A11Y.Toast,
 };
 
-/** Minimal standalone React TSX usage example for every exported React component (all 34 .tsx exports). */
+/** Minimal standalone React TSX usage example for every exported React component (all 35 .tsx exports). */
 export const COMPONENT_EXAMPLES: Record<string, string> = {
   Avatar: '<Avatar shape="cookie" size="md" label="Open profile" />',
   Badge: "<Badge>Admin</Badge>",
@@ -446,6 +456,8 @@ export const COMPONENT_EXAMPLES: Record<string, string> = {
     '<TopicGrid>\n  <TopicTile name="Technology" href="/topic/technology" covers={["one.webp"]} />\n</TopicGrid>',
   TopicTile:
     '<TopicTile name="Science" href="/topic/science" covers={["one.webp", "two.webp", "three.webp"]} />',
+  ShowPick:
+    '<ul role="list">\n  <ShowPick title="Hard Fork" facts="The New York Times" cover="cover.webp" name="show" value="hard-fork" />\n</ul>',
   Button: '<Button variant="filled" type="submit">Save</Button>',
   ChapterAside:
     '<ChapterAside sections={[{ slug: "intro", title: "Overview" }, { slug: "notes", title: "Notes" }]} />',

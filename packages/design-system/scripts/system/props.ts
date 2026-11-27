@@ -163,6 +163,7 @@ export const PROP_ORDER: readonly string[] = [
   "action",
   "facts",
   "remaining",
+  "cover",
   "covers",
   "sections",
   "tabs",
