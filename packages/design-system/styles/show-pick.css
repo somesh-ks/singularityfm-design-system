@@ -25,6 +25,16 @@
   cursor: pointer;
 }
 
+/* A show that cannot be picked (already followed, or a request in flight) dims and takes no pointer. */
+.show-pick:has(> input:disabled) {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.show-pick > input:disabled {
+  cursor: default;
+}
+
 .show-pick-art {
   position: relative;
   display: block;

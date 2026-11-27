@@ -4556,6 +4556,9 @@
         }
       ],
       "element": "input",
+      "except": [
+        "type"
+      ],
       "example": "<ul role=\"list\">\n  <ShowPick title=\"Hard Fork\" facts=\"The New York Times\" cover=\"cover.webp\" name=\"show\" value=\"hard-fork\" />\n</ul>",
       "a11y": {
         "role": "A list item holding a <label> around a visually hidden <input type=\"checkbox\">",

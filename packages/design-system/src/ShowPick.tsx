@@ -14,7 +14,9 @@ interface ShowPickProps {
   className?: string;
 }
 
-type Props = ShowPickProps & Omit<InputHTMLAttributes<HTMLInputElement>, keyof ShowPickProps>;
+/** Always a checkbox: `type` is not the caller's to set. */
+type Props = ShowPickProps &
+  Omit<InputHTMLAttributes<HTMLInputElement>, keyof ShowPickProps | "type">;
 
 /**
  * A show to pick (first run): a gallery card, cover over name over a quiet line, that is a native
@@ -25,7 +27,7 @@ export default function ShowPick({ title, facts, cover, className, ...passed }: 
   return (
     <li className="show-pick-cell">
       <label className={["show-pick", className].filter(Boolean).join(" ")}>
-        <input type="checkbox" {...passedAttributes(passed)} />
+        <input {...passedAttributes(passed)} type="checkbox" />
         <span className="show-pick-art">
           <img
             src={cover || undefined}

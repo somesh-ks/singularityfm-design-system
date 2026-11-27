@@ -40,4 +40,4 @@ Import `@singularityfm/design-system/ShowPick`. No part covers it yet, so `ds fi
 | `cover?` | `string` | - | The cover's address. Filled by a script at [data-show-pick-cover]. |
 | `className?` | `string` | - | For placing the card, or a hook a page's script finds it by. Never its look. |
 
-Every attribute of a native `<input>` element passes through.
+Every attribute of a native `<input>` element passes through, except `type`.
