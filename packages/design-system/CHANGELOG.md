@@ -1,5 +1,11 @@
 # @singularityfm/design-system
 
+## 0.19.0
+
+### Minor Changes
+
+- be3d43c: New `ShowPick`: a show's cover, name and maker as one checkbox, ringed in the accent with a check when picked, for following shows at first run.
+
 ## 0.18.0
 
 ### Minor Changes
