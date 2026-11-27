@@ -1,5 +1,5 @@
 ---
-version: "0.19.0"
+version: "0.19.1"
 id: section-head
 name: "Section head"
 kind: layout
