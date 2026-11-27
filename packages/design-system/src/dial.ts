@@ -30,6 +30,18 @@ export const DIAL_CLASSES: string[] = [
   "dial-count",
 ];
 
+/**
+ * What a page's script finds a tile's parts by, never by typing the classes: the tiles of a dial a
+ * device fills (its favorite shows) are cloned from a template, then named, counted and ringed.
+ */
+export const DIAL_SELECTORS = {
+  tile: ".dial-tile",
+  hit: ".dial-hit",
+  name: ".dial-name",
+  pin: ".dial-pin",
+  count: ".dial-count",
+} as const;
+
 /** Classes the Dial replaced; none may be written again, in any app that draws the system. */
 export const DIAL_RETIRED: string[] = [];
 
