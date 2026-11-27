@@ -1,5 +1,5 @@
 ---
-version: "0.16.1"
+version: "0.17.0"
 id: fab
 name: "Floating action button"
 kind: action
