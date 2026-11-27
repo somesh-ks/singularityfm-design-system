@@ -1140,8 +1140,10 @@
   --card-inner-radius: calc(var(--card-radius) - var(--card-inset));
 }
 
+/* The row reaches past the card's padding to one inset from its edge. Stated, not auto: a button
+   with an auto width hugs its words, so a row that is a button stopped short and its divider with it. */
 .card-group > .row-action {
-  width: auto;
+  width: calc(100% + 2 * (var(--card-padding) - var(--card-inset)));
   margin-inline: calc(var(--card-inset) - var(--card-padding));
   padding-inline: calc(var(--card-padding) - var(--card-inset));
 }
@@ -1212,6 +1214,12 @@
    stopped at the content edge). */
 .card-group > * + *::before {
   inset-inline: calc(var(--card-padding) * -1);
+}
+
+/* A row that is one link or button already reaches to one inset from the card's edge, so its
+   divider reaches only the inset further: measured from the padding, it ran past the card. */
+.card-group > .row-action::before {
+  inset-inline: calc(var(--card-inset) * -1);
 }
 
 /* A card of one note (the install card): an accent tone says it is an offer, not a setting. */
